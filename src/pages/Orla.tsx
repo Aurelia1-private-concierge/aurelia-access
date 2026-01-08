@@ -37,7 +37,30 @@ const Orla = () => {
   const [connectionDuration, setConnectionDuration] = useState(0);
   const [connectionStartTime, setConnectionStartTime] = useState<Date | null>(null);
   const [actionNotifications, setActionNotifications] = useState<ActionNotification[]>([]);
+  const [userProfile, setUserProfile] = useState<{ display_name: string | null; avatar_url: string | null } | null>(null);
   const transcriptEndRef = useRef<HTMLDivElement>(null);
+
+  // Fetch user profile for avatar display
+  useEffect(() => {
+    if (!user) {
+      setUserProfile(null);
+      return;
+    }
+    
+    const fetchProfile = async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("display_name, avatar_url")
+        .eq("user_id", user.id)
+        .single();
+      
+      if (data) {
+        setUserProfile(data);
+      }
+    };
+    
+    fetchProfile();
+  }, [user]);
 
   // Helper to show action taken by Orla
   const showActionNotification = (title: string, message: string, type: "success" | "info" | "warning" = "success") => {
@@ -406,17 +429,27 @@ const Orla = () => {
           
           {/* Connection Status & User Indicator */}
           <div className="flex items-center gap-4">
-            {/* Authenticated User Badge */}
+            {/* Authenticated User Badge with Avatar */}
             {user && (
               <motion.div
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full"
+                className="flex items-center gap-2 bg-primary/10 border border-primary/20 px-2 py-1 rounded-full"
               >
-                <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
-                  <User className="w-3 h-3 text-primary" />
-                </div>
-                <span className="text-xs text-foreground/80 hidden sm:inline">Member</span>
+                {userProfile?.avatar_url ? (
+                  <img 
+                    src={userProfile.avatar_url} 
+                    alt={userProfile.display_name || "Member"} 
+                    className="w-6 h-6 rounded-full object-cover border border-primary/30"
+                  />
+                ) : (
+                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
+                    <User className="w-3.5 h-3.5 text-primary" />
+                  </div>
+                )}
+                <span className="text-xs text-foreground/80 hidden sm:inline pr-1">
+                  {userProfile?.display_name || user.email?.split('@')[0] || "Member"}
+                </span>
               </motion.div>
             )}
             

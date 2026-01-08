@@ -1,5 +1,6 @@
-import { Bell, Shield, Search } from "lucide-react";
+import { Shield, Search } from "lucide-react";
 import { motion } from "framer-motion";
+import NotificationPanel from "./NotificationPanel";
 
 type ActiveView = "portfolio" | "messaging" | "documents";
 
@@ -45,10 +46,7 @@ const DashboardHeader = ({ activeView }: DashboardHeaderProps) => {
         </div>
 
         {/* Notifications */}
-        <button className="relative p-2 rounded-lg hover:bg-muted/50 transition-colors">
-          <Bell className="w-5 h-5 text-muted-foreground" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full" />
-        </button>
+        <NotificationPanel />
 
         {/* Time */}
         <div className="hidden lg:block text-right">

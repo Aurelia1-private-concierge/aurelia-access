@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageSquare, X, Minus, Crown, Lock, ArrowRight, Sparkles } from "lucide-react";
+import { MessageSquare, X, Minus, Lock, ArrowRight, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import orlaAvatar from "@/assets/orla-avatar.png";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -12,7 +13,7 @@ const ChatWidget = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Good evening. Welcome to Aurelia. I'm your Private Liaison, here to assist with any request. How may I be of service today?"
+      content: "Good evening. Welcome to Aurelia. I'm Orla, your Private Liaison. I'm here to orchestrate the extraordinary—from private aviation to rare acquisitions. How may I be of service?"
     }
   ]);
   const [input, setInput] = useState("");
@@ -143,33 +144,43 @@ const ChatWidget = () => {
             className="fixed bottom-28 right-6 md:right-8 z-50 w-80 sm:w-96 h-[520px] bg-card/95 backdrop-blur-xl border border-border/30 rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden origin-bottom-right"
           >
             {/* Chat Header */}
-            <div className="p-4 border-b border-border/30 bg-gradient-to-r from-background/80 to-secondary/30 flex items-center justify-between">
+            <div className="p-4 border-b border-primary/20 bg-gradient-to-r from-background via-secondary/20 to-background flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="relative">
                   <motion.div 
-                    animate={{ rotate: [0, 5, -5, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                    className="w-11 h-11 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 overflow-hidden flex items-center justify-center"
+                    animate={{ 
+                      boxShadow: [
+                        "0 0 20px rgba(212, 175, 55, 0.2)",
+                        "0 0 35px rgba(212, 175, 55, 0.4)",
+                        "0 0 20px rgba(212, 175, 55, 0.2)"
+                      ]
+                    }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                    className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border-2 border-primary/50 overflow-hidden p-0.5"
                   >
-                    <Crown className="w-5 h-5 text-primary" strokeWidth={1.5} />
+                    <img 
+                      src={orlaAvatar} 
+                      alt="Orla" 
+                      className="w-full h-full rounded-full object-cover"
+                    />
                   </motion.div>
                   <motion.div 
-                    animate={{ scale: [1, 1.2, 1] }}
+                    animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" 
+                    className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-background shadow-lg shadow-emerald-500/50" 
                   />
                 </div>
                 <div>
-                  <h4 className="font-serif text-foreground text-sm tracking-wide">Private Liaison</h4>
-                  <p className="text-[10px] text-primary uppercase tracking-widest font-medium flex items-center gap-1">
+                  <h4 className="font-serif text-foreground text-base tracking-wide">Orla</h4>
+                  <p className="text-[10px] text-primary uppercase tracking-[0.2em] font-medium flex items-center gap-1.5">
                     <Sparkles className="w-2.5 h-2.5" />
-                    {isLoading ? "Composing..." : "Concierge Active"}
+                    {isLoading ? "Composing..." : "Private Liaison"}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="w-8 h-8 rounded-full hover:bg-secondary/50 flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
+                className="w-8 h-8 rounded-full hover:bg-primary/10 flex items-center justify-center text-muted-foreground hover:text-primary transition-all"
               >
                 <Minus className="w-4 h-4" />
               </button>
@@ -185,8 +196,8 @@ const ChatWidget = () => {
                   className={`flex ${message.role === "user" ? "justify-end" : "items-start space-x-3"}`}
                 >
                   {message.role === "assistant" && (
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary/20 to-background border border-border/30 flex-shrink-0 flex items-center justify-center mt-1">
-                      <Crown className="w-3 h-3 text-primary" strokeWidth={1.5} />
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/40 flex-shrink-0 overflow-hidden mt-0.5 shadow-sm shadow-primary/20">
+                      <img src={orlaAvatar} alt="Orla" className="w-full h-full object-cover" />
                     </div>
                   )}
                   <div className={`${
@@ -212,13 +223,13 @@ const ChatWidget = () => {
                     exit={{ opacity: 0 }}
                     className="flex items-start space-x-3"
                   >
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary/20 to-background border border-border/30 flex-shrink-0 flex items-center justify-center mt-1">
-                      <Crown className="w-3 h-3 text-primary" strokeWidth={1.5} />
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/40 flex-shrink-0 overflow-hidden mt-0.5 shadow-sm shadow-primary/20">
+                      <img src={orlaAvatar} alt="Orla" className="w-full h-full object-cover" />
                     </div>
-                    <div className="bg-secondary/40 border border-border/20 px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1">
-                      <motion.span animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1, repeat: Infinity, delay: 0 }} className="w-1.5 h-1.5 rounded-full bg-primary/60" />
-                      <motion.span animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1, repeat: Infinity, delay: 0.2 }} className="w-1.5 h-1.5 rounded-full bg-primary/60" />
-                      <motion.span animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1, repeat: Infinity, delay: 0.4 }} className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                    <div className="bg-secondary/40 border border-primary/20 px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
+                      <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.2, repeat: Infinity, delay: 0 }} className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.2, repeat: Infinity, delay: 0.2 }} className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.2, repeat: Infinity, delay: 0.4 }} className="w-1.5 h-1.5 rounded-full bg-primary" />
                     </div>
                   </motion.div>
                 )}
@@ -248,53 +259,67 @@ const ChatWidget = () => {
                   <ArrowRight className="w-4 h-4" />
                 </motion.button>
               </div>
-              <div className="flex justify-between items-center mt-2.5 px-1">
-                <p className="text-[9px] text-muted-foreground/50 flex items-center">
-                  <Lock className="w-2.5 h-2.5 mr-1" />
+              <div className="flex justify-between items-center mt-3 px-1">
+                <p className="text-[9px] text-muted-foreground/60 flex items-center">
+                  <Lock className="w-2.5 h-2.5 mr-1 text-emerald-500/70" />
                   End-to-End Encrypted
                 </p>
-                <p className="text-[9px] text-primary/60">Powered by Aurelia AI</p>
+                <p className="text-[9px] text-primary/70 font-medium tracking-wide">Powered by Orla AI</p>
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Chat Trigger Button */}
+      {/* Chat Trigger Button - Orla Avatar */}
       <motion.button
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ delay: 2.5, type: "spring", stiffness: 200 }}
         onClick={() => setIsOpen(!isOpen)}
-        whileHover={{ scale: 1.05 }}
+        whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
-        className="fixed bottom-8 right-6 md:right-8 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground gold-glow flex items-center justify-center transition-all duration-300 group"
+        className="fixed bottom-8 right-6 md:right-8 z-50 w-16 h-16 rounded-full bg-gradient-to-br from-primary/90 to-primary overflow-hidden border-2 border-primary/60 shadow-[0_0_40px_rgba(212,175,55,0.4)] flex items-center justify-center transition-all duration-300 group"
       >
-        {/* Pulsing ring */}
+        {/* Animated glow ring */}
         <motion.span 
-          animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0, 0.5] }}
-          transition={{ duration: 2, repeat: Infinity }}
+          animate={{ 
+            scale: [1, 1.4, 1], 
+            opacity: [0.4, 0, 0.4],
+          }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute inset-0 rounded-full bg-primary/40"
+        />
+        <motion.span 
+          animate={{ 
+            scale: [1, 1.2, 1], 
+            opacity: [0.6, 0.2, 0.6],
+          }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
           className="absolute inset-0 rounded-full bg-primary/30"
         />
         
         {/* Notification Dot */}
         {!isOpen && (
           <motion.span 
-            animate={{ scale: [1, 1.1, 1] }}
+            animate={{ scale: [1, 1.15, 1] }}
             transition={{ duration: 1.5, repeat: Infinity }}
-            className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 border-2 border-background rounded-full z-10 flex items-center justify-center"
+            className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 border-2 border-background rounded-full z-10 flex items-center justify-center shadow-lg shadow-emerald-500/40"
           >
-            <span className="text-[8px] font-bold text-white">1</span>
+            <span className="text-[9px] font-bold text-white">1</span>
           </motion.span>
         )}
 
-        <MessageSquare
-          className={`w-6 h-6 absolute transition-all duration-300 ${
-            isOpen ? "scale-0 opacity-0 rotate-90" : "scale-100 opacity-100 rotate-0"
+        {/* Orla Avatar / Close icon */}
+        <img 
+          src={orlaAvatar} 
+          alt="Orla"
+          className={`w-full h-full object-cover absolute transition-all duration-300 ${
+            isOpen ? "scale-0 opacity-0 rotate-45" : "scale-100 opacity-100 rotate-0"
           }`}
         />
         <X
-          className={`w-6 h-6 absolute transition-all duration-300 ${
+          className={`w-7 h-7 text-primary-foreground absolute transition-all duration-300 ${
             isOpen ? "scale-100 opacity-100 rotate-0" : "scale-0 opacity-0 -rotate-90"
           }`}
         />

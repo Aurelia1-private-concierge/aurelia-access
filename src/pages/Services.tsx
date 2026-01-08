@@ -11,7 +11,16 @@ import {
   Heart, 
   ShoppingBag,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  Moon,
+  Fingerprint,
+  BookOpen,
+  Brain,
+  Users,
+  Cloud,
+  Key,
+  Home,
+  Flower2
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -81,6 +90,70 @@ const services = [
   }
 ];
 
+// Discovery Services - innovative offerings clients never knew they needed
+const discoveryServices = [
+  {
+    icon: Moon,
+    title: "Sleep Architecture",
+    description: "Custom sleep environment engineering—bespoke mattress science, circadian lighting design, and acoustic optimization for perfect rest.",
+    features: ["Sleep environment audit", "Custom mattress creation", "Circadian lighting", "Acoustic engineering"]
+  },
+  {
+    icon: Fingerprint,
+    title: "Digital Estate Planning",
+    description: "Comprehensive management of your digital legacy—cryptocurrency inheritance, password vault architecture, and social media legacy planning.",
+    features: ["Crypto inheritance", "Digital asset inventory", "Password architecture", "Legacy documentation"]
+  },
+  {
+    icon: Shield,
+    title: "Reputation Sentinel",
+    description: "Proactive protection of your digital presence—dark web monitoring, digital footprint management, and crisis response retainers.",
+    features: ["Dark web monitoring", "Footprint scrubbing", "Privacy audits", "Crisis PR retainer"]
+  },
+  {
+    icon: BookOpen,
+    title: "Legacy Curation",
+    description: "Professional archivists documenting your family history, digitizing heirlooms, and creating museum-quality legacy publications.",
+    features: ["Family archives", "Heirloom digitization", "Coffee table books", "Oral histories"]
+  },
+  {
+    icon: Brain,
+    title: "Longevity Concierge",
+    description: "Access to cutting-edge treatments, personalized health optimization protocols, and the world's foremost specialists in preventive medicine.",
+    features: ["Preventive protocols", "Specialist network", "Biometric tracking", "Treatment access"]
+  },
+  {
+    icon: Flower2,
+    title: "Signature Scent Creation",
+    description: "Bespoke fragrance development for your homes, offices, and private aircraft—working with master perfumers to capture your essence.",
+    features: ["Personal fragrance", "Home scenting", "Aircraft & yacht", "Seasonal variations"]
+  },
+  {
+    icon: Users,
+    title: "Companion Matching",
+    description: "Vetted travel and dining companions for solo journeys—intelligent, cultured individuals for meaningful connection without complication.",
+    features: ["Travel companions", "Dining partners", "Event escorts", "Background verification"]
+  },
+  {
+    icon: Cloud,
+    title: "Private Meteorology",
+    description: "Personal weather forecasting services for yacht crossings, outdoor events, and optimal travel windows—your own meteorologist on call.",
+    features: ["Event forecasting", "Sailing windows", "Travel optimization", "Storm tracking"]
+  },
+  {
+    icon: Key,
+    title: "Second Passport Advisory",
+    description: "Discreet guidance on citizenship-by-investment programs, residency planning, and global mobility optimization for ultimate freedom.",
+    features: ["CBI programs", "Residency planning", "Tax optimization", "Global mobility"]
+  },
+  {
+    icon: Home,
+    title: "Household Optimization",
+    description: "Comprehensive estate management—staff training and vetting, smart home integration, and operational efficiency consulting.",
+    features: ["Staff training", "Smart integration", "Vendor management", "Efficiency audits"]
+  }
+];
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -140,54 +213,137 @@ const Services = () => {
         </div>
       </section>
 
-      {/* Services Grid */}
+      {/* Core Services Grid */}
       <section className="py-20 px-6">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8"
-        >
-          {services.map((service, index) => (
-            <motion.div
-              key={service.title}
-              variants={itemVariants}
-              className="group relative bg-card/50 border border-border/30 rounded-2xl p-8 hover:border-primary/30 transition-all duration-500 overflow-hidden"
-            >
-              {/* Hover gradient */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              
-              <div className="relative z-10">
-                <div className="flex items-start justify-between mb-6">
-                  <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
-                    <service.icon className="w-6 h-6 text-primary" strokeWidth={1.5} />
-                  </div>
-                  <span className="text-xs text-muted-foreground/50 font-light">
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
-                </div>
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-12"
+          >
+            <h2 className="text-2xl font-serif text-foreground mb-2">Core Services</h2>
+            <p className="text-muted-foreground font-light">The foundation of extraordinary living</p>
+          </motion.div>
+          
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="grid md:grid-cols-2 gap-8"
+          >
+            {services.map((service, index) => (
+              <motion.div
+                key={service.title}
+                variants={itemVariants}
+                className="group relative bg-card/50 border border-border/30 rounded-2xl p-8 hover:border-primary/30 transition-all duration-500 overflow-hidden"
+              >
+                {/* Hover gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 
-                <h3 className="text-xl font-serif text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
-                  {service.title}
-                </h3>
-                
-                <p className="text-sm text-muted-foreground font-light leading-relaxed mb-6">
-                  {service.description}
-                </p>
-                
-                <div className="grid grid-cols-2 gap-2">
-                  {service.features.map((feature) => (
-                    <div key={feature} className="flex items-center space-x-2">
-                      <div className="w-1 h-1 rounded-full bg-primary/60" />
-                      <span className="text-xs text-muted-foreground/80">{feature}</span>
+                <div className="relative z-10">
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
+                      <service.icon className="w-6 h-6 text-primary" strokeWidth={1.5} />
                     </div>
-                  ))}
+                    <span className="text-xs text-muted-foreground/50 font-light">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                  </div>
+                  
+                  <h3 className="text-xl font-serif text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
+                    {service.title}
+                  </h3>
+                  
+                  <p className="text-sm text-muted-foreground font-light leading-relaxed mb-6">
+                    {service.description}
+                  </p>
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    {service.features.map((feature) => (
+                      <div key={feature} className="flex items-center space-x-2">
+                        <div className="w-1 h-1 rounded-full bg-primary/60" />
+                        <span className="text-xs text-muted-foreground/80">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Discovery Services Section */}
+      <section className="py-20 px-6 bg-gradient-to-b from-secondary/30 to-background">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <div className="inline-flex items-center space-x-2 border border-primary/30 bg-primary/5 backdrop-blur-sm rounded-full px-4 py-1.5 mb-6">
+              <Sparkles className="w-3 h-3 text-primary" />
+              <span className="text-xs uppercase tracking-[0.2em] text-primary font-medium">
+                Discovery Services
+              </span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-serif text-foreground mb-4">
+              Services You Never Knew <span className="text-primary italic">You Needed</span>
+            </h2>
+            <p className="text-muted-foreground font-light max-w-2xl mx-auto">
+              Beyond the expected, we anticipate desires you haven&apos;t yet articulated. 
+              These invisible infrastructures and sensory luxuries define the AURELIA difference.
+            </p>
+          </motion.div>
+          
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {discoveryServices.map((service, index) => (
+              <motion.div
+                key={service.title}
+                variants={itemVariants}
+                className="group relative bg-card/30 border border-primary/10 rounded-2xl p-6 hover:border-primary/40 hover:bg-card/50 transition-all duration-500 overflow-hidden"
+              >
+                {/* Shimmer effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                
+                <div className="relative z-10">
+                  <div className="flex items-center space-x-4 mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
+                      <service.icon className="w-5 h-5 text-primary" strokeWidth={1.5} />
+                    </div>
+                    <h3 className="text-lg font-serif text-foreground group-hover:text-primary transition-colors duration-300">
+                      {service.title}
+                    </h3>
+                  </div>
+                  
+                  <p className="text-sm text-muted-foreground font-light leading-relaxed mb-5">
+                    {service.description}
+                  </p>
+                  
+                  <div className="flex flex-wrap gap-2">
+                    {service.features.map((feature) => (
+                      <span 
+                        key={feature} 
+                        className="text-xs px-2 py-1 rounded-full bg-primary/5 text-muted-foreground/80 border border-primary/10"
+                      >
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
       </section>
 
       {/* CTA Section */}

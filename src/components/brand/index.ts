@@ -12,5 +12,10 @@ export const BRAND = {
   entity: "Aurelia Holdings Ltd.",
   email: "liaison@aurelia.com",
   locations: ["Geneva", "London", "Singapore"],
-  year: 2024,
+  year: 2026,
+  legal: {
+    copyright: "All rights reserved. Unauthorized reproduction prohibited.",
+    trademark: "AURELIA® is a registered trademark of Aurelia Holdings Ltd.",
+    jurisdiction: "Registered in Switzerland. All disputes subject to Geneva jurisdiction.",
+  },
 } as const;

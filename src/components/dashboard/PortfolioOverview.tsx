@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { 
   TrendingUp, 
@@ -12,13 +12,16 @@ import {
   Plane,
   Gem
 } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import OrlaCompanion from "./OrlaCompanion";
 import TravelDNACard from "./TravelDNACard";
 import SurpriseMeCard from "./SurpriseMeCard";
 import RecommendationsFeed from "./RecommendationsFeed";
 import SubscriptionCard from "./SubscriptionCard";
 import ExclusivePerks from "./ExclusivePerks";
+import UpgradeCelebration from "./UpgradeCelebration";
 import TravelDNAOnboarding from "@/components/TravelDNAOnboarding";
+import { useSubscription } from "@/hooks/useSubscription";
 
 const portfolioStats = [
   { label: "Total Assets", value: "$47.8M", change: "+12.4%", trending: "up" },
@@ -44,9 +47,43 @@ const recentActivity = [
 
 const PortfolioOverview = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { tier, tierDetails } = useSubscription();
+  const previousTierRef = useRef<string | null>(null);
+
+  // Check for successful checkout redirect
+  useEffect(() => {
+    const checkoutSuccess = searchParams.get("checkout_success");
+    if (checkoutSuccess === "true") {
+      // Small delay to let subscription state update
+      setTimeout(() => {
+        setShowCelebration(true);
+      }, 500);
+      // Clean up URL
+      searchParams.delete("checkout_success");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
+
+  // Detect tier upgrades
+  useEffect(() => {
+    if (tier && previousTierRef.current && tier !== previousTierRef.current) {
+      setShowCelebration(true);
+    }
+    previousTierRef.current = tier;
+  }, [tier]);
 
   return (
     <div className="space-y-6">
+      {/* Upgrade Celebration Modal */}
+      <UpgradeCelebration
+        isOpen={showCelebration}
+        onClose={() => setShowCelebration(false)}
+        tierName={tierDetails?.name || tier || ""}
+        tierId={tier || "gold"}
+      />
+
       {/* Travel DNA Onboarding Modal */}
       {showOnboarding && (
         <TravelDNAOnboarding

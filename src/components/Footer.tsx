@@ -68,14 +68,14 @@ const Footer = () => {
                   </Link>
                 </li>
                 <li>
-                  <a href="#security" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
+                  <Link to="/#security" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
                     {t("nav.security")}
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#experiences" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
+                  <Link to="/#experiences" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
                     {t("nav.experiences")}
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <Link to="/auth" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">

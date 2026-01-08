@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import ReactCrop, { type Crop, type PixelCrop, centerCrop, makeAspectCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { motion } from "framer-motion";
-import { X, RotateCcw, ZoomIn, ZoomOut, Check, Eye } from "lucide-react";
+import { X, RotateCcw, ZoomIn, ZoomOut, Check, Eye, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import {
@@ -50,6 +50,7 @@ const AvatarCropModal = ({
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [scale, setScale] = useState(1);
+  const [rotation, setRotation] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const onImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -91,6 +92,11 @@ const AvatarCropModal = ({
     const sourceWidth = completedCrop.width * scaleX;
     const sourceHeight = completedCrop.height * scaleY;
 
+    // Apply rotation
+    ctx.translate(previewSize / 2, previewSize / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.translate(-previewSize / 2, -previewSize / 2);
+
     ctx.drawImage(
       image,
       sourceX,
@@ -102,7 +108,7 @@ const AvatarCropModal = ({
       previewSize,
       previewSize
     );
-  }, [completedCrop]);
+  }, [completedCrop, rotation]);
 
   const getCroppedImage = useCallback(async (): Promise<Blob | null> => {
     if (!imgRef.current || !completedCrop) return null;
@@ -131,6 +137,11 @@ const AvatarCropModal = ({
     const sourceWidth = completedCrop.width * scaleX;
     const sourceHeight = completedCrop.height * scaleY;
 
+    // Apply rotation
+    ctx.translate(outputSize / 2, outputSize / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.translate(-outputSize / 2, -outputSize / 2);
+
     // Draw the cropped image
     ctx.drawImage(
       image,
@@ -151,7 +162,7 @@ const AvatarCropModal = ({
         0.92
       );
     });
-  }, [completedCrop]);
+  }, [completedCrop, rotation]);
 
   const handleConfirm = async () => {
     setIsProcessing(true);
@@ -167,10 +178,19 @@ const AvatarCropModal = ({
 
   const handleReset = () => {
     setScale(1);
+    setRotation(0);
     if (imgRef.current) {
       const { width, height } = imgRef.current;
       setCrop(centerAspectCrop(width, height, 1));
     }
+  };
+
+  const handleRotateLeft = () => {
+    setRotation((prev) => (prev - 90) % 360);
+  };
+
+  const handleRotateRight = () => {
+    setRotation((prev) => (prev + 90) % 360);
   };
 
   return (
@@ -271,18 +291,43 @@ const AvatarCropModal = ({
             </div>
           </div>
 
-          {/* Zoom Control */}
+          {/* Controls */}
           <div className="flex items-center gap-4 px-2">
-            <ZoomOut className="w-4 h-4 text-muted-foreground" />
-            <Slider
-              value={[scale]}
-              onValueChange={([value]) => setScale(value)}
-              min={0.5}
-              max={2}
-              step={0.01}
-              className="flex-1"
-            />
-            <ZoomIn className="w-4 h-4 text-muted-foreground" />
+            {/* Rotation Controls */}
+            <div className="flex items-center gap-1">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={handleRotateLeft}
+                title="Rotate left 90°"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={handleRotateRight}
+                title="Rotate right 90°"
+              >
+                <RotateCw className="w-4 h-4" />
+              </Button>
+            </div>
+
+            {/* Zoom Control */}
+            <div className="flex items-center gap-2 flex-1">
+              <ZoomOut className="w-4 h-4 text-muted-foreground" />
+              <Slider
+                value={[scale]}
+                onValueChange={([value]) => setScale(value)}
+                min={0.5}
+                max={2}
+                step={0.01}
+                className="flex-1"
+              />
+              <ZoomIn className="w-4 h-4 text-muted-foreground" />
+            </div>
           </div>
 
           {/* Actions */}
@@ -293,7 +338,6 @@ const AvatarCropModal = ({
               onClick={handleReset}
               className="text-muted-foreground"
             >
-              <RotateCcw className="w-4 h-4 mr-2" />
               Reset
             </Button>
 
@@ -322,7 +366,7 @@ const AvatarCropModal = ({
           </div>
 
           <p className="text-xs text-muted-foreground text-center">
-            Drag to reposition • Use slider to zoom • See live preview on the right
+            Drag to reposition • Use buttons to rotate • Use slider to zoom
           </p>
         </div>
       </DialogContent>

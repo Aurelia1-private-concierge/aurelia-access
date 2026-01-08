@@ -132,6 +132,43 @@ const OrlaAnimatedAvatar = ({
         viewBox="0 0 100 100"
         style={{ pointerEvents: "none" }}
       >
+        {/* Eyebrows - animated based on speaking/listening state */}
+        <g>
+          {/* Left eyebrow */}
+          <motion.path
+            d="M 30 34 Q 38 32 46 34"
+            fill="none"
+            stroke="rgba(80, 60, 50, 0.7)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            animate={{
+              d: isSpeaking 
+                ? "M 30 36 Q 38 35 46 36" // Lowered/relaxed when speaking
+                : isConnected 
+                  ? "M 30 32 Q 38 29 46 32" // Raised when listening
+                  : "M 30 34 Q 38 32 46 34", // Neutral
+            }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          />
+          
+          {/* Right eyebrow */}
+          <motion.path
+            d="M 54 34 Q 62 32 70 34"
+            fill="none"
+            stroke="rgba(80, 60, 50, 0.7)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            animate={{
+              d: isSpeaking 
+                ? "M 54 36 Q 62 35 70 36" // Lowered/relaxed when speaking
+                : isConnected 
+                  ? "M 54 32 Q 62 29 70 32" // Raised when listening
+                  : "M 54 34 Q 62 32 70 34", // Neutral
+            }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          />
+        </g>
+        
         {/* Eyes container - positioned over the avatar's eyes */}
         <g transform={`translate(${eyePosition.x}, ${eyePosition.y})`}>
           {/* Left eye */}

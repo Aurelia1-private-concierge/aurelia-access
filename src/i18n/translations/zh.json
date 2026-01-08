@@ -13,6 +13,117 @@
     "joinButton": "加入 Aurelia",
     "discoverButton": "探索体验"
   },
+  "features": {
+    "label": "我们的服务",
+    "title": "主权",
+    "titleHighlight": "标准",
+    "subtitle": "我们将最先进的加密安全与超个性化服务的温暖相结合。",
+    "viewAll": "查看所有规格",
+    "encryption": {
+      "title": "端到端加密",
+      "description": "所有通信均采用主权级加密保护。您的请求、行程和财务数据仅对您和您的专属私人联络员可见。"
+    },
+    "curation": {
+      "title": "定制策划",
+      "description": "我们的专家在您表达需求之前就已预见，根据您的偏好和历史模式策划选项。"
+    },
+    "liquidity": {
+      "title": "全球流动性",
+      "description": "多币种全球支付解决方案。为艺术品拍卖、房地产或包机押金提供安全即时转账，无银行摩擦。"
+    },
+    "biometric": {
+      "title": "生物识别零信任访问",
+      "description": "无密码认证。语音识别和生物识别验证确保只有您才能授权高价值交易。"
+    }
+  },
+  "security": {
+    "label": "主权安全",
+    "title": "您的隐私，",
+    "titleHighlight": "不妥协。",
+    "subtitle": "在数据泄露和监控的世界中，Aurelia 以绝对保密的原则运营。我们的安全架构专为那些要求无懈可击隐私的人设计。",
+    "uptimeSla": "可用性SLA",
+    "dataBreaches": "数据泄露",
+    "zero": "零",
+    "aes": {
+      "title": "256位 AES 加密",
+      "description": "军用级加密保护所有通信和静态数据。"
+    },
+    "zeroKnowledge": {
+      "title": "零知识架构",
+      "description": "我们无法访问您的数据。只有您持有解密密钥。"
+    },
+    "swiss": {
+      "title": "瑞士数据驻留",
+      "description": "您的信息存储在安全的瑞士数据中心，超出管辖范围。"
+    },
+    "privacy": {
+      "title": "端到端隐私",
+      "description": "从请求到完成，您的活动完全保密。"
+    }
+  },
+  "experiences": {
+    "label": "私人通道",
+    "title": "不可企及，",
+    "titleHighlight": "已获取。",
+    "subtitle": "Aurelia 获得他人无法获得的。从竞拍稀有古董手表到最后一刻进入摩纳哥晚会。我们的网络绕过等候名单，打开紧闭的大门。",
+    "viewAcquisitions": "查看最近收购",
+    "benefit1": "场外房地产直接谈判。",
+    "benefit2": "私人航空管理与停机坪接送。",
+    "benefit3": "策划艺术品收购和安全存储。"
+  },
+  "testimonials": {
+    "label": "客户评价",
+    "title": "受到",
+    "titleHighlight": "杰出人士的信赖"
+  },
+  "faq": {
+    "label": "问答",
+    "title": "常见",
+    "titleHighlight": "问题",
+    "moreQuestions": "还有更多问题？",
+    "contactLiaison": "联系您的联络员",
+    "q1": {
+      "question": "会员费用结构是什么？",
+      "answer": "Aurelia 采用年度预付金模式。Sovereign 级别年费从 $150,000 起，包括无限礼宾请求、专属私人联络员以及全球网络访问权限。Legacy 级别专为家族办公室设计，根据范围和复杂性单独制定。"
+    },
+    "q2": {
+      "question": "申请流程如何运作？",
+      "answer": "会员资格仅限邀请或申请。提交初始询问后，我们的审查团队会进行谨慎的背景调查。合格候选人将被邀请参加私人咨询——可以亲临我们日内瓦总部或通过安全视频。整个过程通常需要2-3周。"
+    },
+    "q3": {
+      "question": "会员资格包含哪些服务？",
+      "answer": "我们的服务涵盖豪华旅行和航空、房地产收购、艺术品和收藏品采购、独家活动入场、私人安保协调以及定制生活方式管理。每个请求都由您的专属联络团队以绝对保密的方式处理。"
+    },
+    "q4": {
+      "question": "如何确保隐私和安全？",
+      "answer": "安全是 Aurelia 的基础。我们对所有通信采用256位AES加密，数据存储采用零知识架构，敏感交易采用生物识别认证。我们的瑞士数据驻留确保您的信息不受管辖范围影响。"
+    },
+    "q5": {
+      "question": "请求的响应时间是多少？",
+      "answer": "标准请求在60秒内收到确认，全年24/7。复杂的收购或旅行安排通常在4-6小时内看到初始选项。对于紧急情况，我们的优先协议确保立即升级到高级联络员。"
+    },
+    "q6": {
+      "question": "我可以在全球使用 Aurelia 服务吗？",
+      "answer": "当然可以。我们的网络覆盖六大洲120多个城市。无论您需要在东京的最后一刻预订、摩纳哥的房产参观还是圣保罗的私人航空，我们的本地合作伙伴确保在全球范围内无缝执行。"
+    }
+  },
+  "membership": {
+    "title": "会员资格需",
+    "titleHighlight": "申请",
+    "subtitle": "Aurelia 服务有限的全球客户群。为保持我们超个性化服务的标准，我们每年仅接受50名新会员。",
+    "beginApplication": "开始申请",
+    "contactLiaison": "联系联络员",
+    "deposit": "录取后 $50k 初始押金",
+    "verification": "生物识别身份验证"
+  },
+  "metrics": {
+    "assets": "管理资产",
+    "coverage": "全球覆盖",
+    "response": "响应时间",
+    "retention": "客户留存",
+    "cities": "+ 城市",
+    "seconds": " 秒"
+  },
   "footer": {
     "navigate": "导航",
     "contact": "联系我们",

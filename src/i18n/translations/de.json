@@ -13,6 +13,117 @@
     "joinButton": "Aurelia Beitreten",
     "discoverButton": "Erlebnisse Entdecken"
   },
+  "features": {
+    "label": "Unsere Dienste",
+    "title": "Souveräne",
+    "titleHighlight": "Standards",
+    "subtitle": "Wir verbinden modernste kryptografische Sicherheit mit der Wärme eines hyper-personalisierten Services.",
+    "viewAll": "Alle Spezifikationen Anzeigen",
+    "encryption": {
+      "title": "Ende-zu-Ende-Verschlüsselung",
+      "description": "Alle Kommunikationen sind mit souveräner Verschlüsselung gesichert. Ihre Anfragen, Reiserouten und Finanzdaten sind nur für Sie und Ihren dedizierten privaten Liaison sichtbar."
+    },
+    "curation": {
+      "title": "Maßgeschneiderte Kuration",
+      "description": "Unsere Spezialisten antizipieren Ihre Bedürfnisse, bevor Sie sie artikulieren, und kuratieren Optionen basierend auf Ihren Präferenzen und historischen Mustern."
+    },
+    "liquidity": {
+      "title": "Globale Liquidität",
+      "description": "Multi-Währungs-globale Zahlungslösungen. Sichere Sofortüberweisungen für Kunstauktionen, Immobilien oder Chartereinlagen ohne Bankreibung."
+    },
+    "biometric": {
+      "title": "Biometrischer Zero-Trust-Zugang",
+      "description": "Passwortlose Authentifizierung. Spracherkennung und biometrische Verifizierung stellen sicher, dass nur Sie hochwertige Transaktionen autorisieren können."
+    }
+  },
+  "security": {
+    "label": "Souveräne Sicherheit",
+    "title": "Ihre Privatsphäre,",
+    "titleHighlight": "Kompromisslos.",
+    "subtitle": "In einer Welt von Datenverletzungen und Überwachung operiert Aurelia nach dem Prinzip absoluter Diskretion. Unsere Sicherheitsarchitektur ist für diejenigen konzipiert, die nichts weniger als undurchdringliche Privatsphäre fordern.",
+    "uptimeSla": "Verfügbarkeits-SLA",
+    "dataBreaches": "Datenverletzungen",
+    "zero": "Null",
+    "aes": {
+      "title": "256-bit AES-Verschlüsselung",
+      "description": "Militärgrade Verschlüsselung schützt alle Kommunikationen und ruhende Daten."
+    },
+    "zeroKnowledge": {
+      "title": "Zero-Knowledge-Architektur",
+      "description": "Wir können nicht auf Ihre Daten zugreifen. Nur Sie halten die Entschlüsselungsschlüssel."
+    },
+    "swiss": {
+      "title": "Schweizer Datenresidenz",
+      "description": "Ihre Informationen werden in sicheren Schweizer Rechenzentren gespeichert, außerhalb der Gerichtsbarkeit."
+    },
+    "privacy": {
+      "title": "Ende-zu-Ende-Privatsphäre",
+      "description": "Von der Anfrage bis zur Erfüllung bleiben Ihre Aktivitäten vollständig vertraulich."
+    }
+  },
+  "experiences": {
+    "label": "Privater Zugang",
+    "title": "Das Unerreichbare,",
+    "titleHighlight": "Erworben.",
+    "subtitle": "Aurelia sichert, was andere nicht können. Von Geboten auf seltene Vintage-Uhren bis zum Last-Minute-Zugang zu Galas in Monaco. Unser Netzwerk umgeht Wartelisten und öffnet geschlossene Türen.",
+    "viewAcquisitions": "Aktuelle Akquisitionen Anzeigen",
+    "benefit1": "Direkte Verhandlung für Off-Market-Immobilien.",
+    "benefit2": "Privatflugzeug-Management mit Rollfeld-Transfers.",
+    "benefit3": "Kuratierte Kunstakquisition und sichere Lagerung."
+  },
+  "testimonials": {
+    "label": "Testimonials",
+    "title": "Vertraut von den",
+    "titleHighlight": "Außergewöhnlichen"
+  },
+  "faq": {
+    "label": "Fragen & Antworten",
+    "title": "Häufig",
+    "titleHighlight": "Gestellte",
+    "moreQuestions": "Weitere Fragen?",
+    "contactLiaison": "Kontaktieren Sie Ihren Liaison",
+    "q1": {
+      "question": "Wie ist die Mitgliedschaftsgebührenstruktur?",
+      "answer": "Aurelia arbeitet auf einem jährlichen Retainer-Modell. Die Sovereign-Stufe beginnt bei $150.000 jährlich, was unbegrenzte Concierge-Anfragen, einen dedizierten privaten Liaison und Zugang zu unserem globalen Netzwerk beinhaltet. Die Legacy-Stufe, für Family Offices konzipiert, wird individuell nach Umfang und Komplexität strukturiert."
+    },
+    "q2": {
+      "question": "Wie funktioniert der Bewerbungsprozess?",
+      "answer": "Die Mitgliedschaft erfolgt nur auf Einladung oder Bewerbung. Nach Einreichung Ihrer ersten Anfrage führt unser Prüfteam eine diskrete Hintergrundprüfung durch. Qualifizierte Kandidaten werden zu einer privaten Beratung eingeladen—entweder persönlich in unserem Genfer Hauptsitz oder per sicherer Videokonferenz. Der gesamte Prozess dauert typischerweise 2-3 Wochen."
+    },
+    "q3": {
+      "question": "Welche Dienste sind in der Mitgliedschaft enthalten?",
+      "answer": "Unsere Dienste umfassen Luxusreisen und Luftfahrt, Immobilienerwerb, Kunst- und Sammlerbeschaffung, exklusiven Eventzugang, private Sicherheitskoordination und maßgeschneidertes Lifestyle-Management. Jede Anfrage wird mit absoluter Diskretion von Ihrem dedizierten Liaison-Team bearbeitet."
+    },
+    "q4": {
+      "question": "Wie gewährleisten Sie Privatsphäre und Sicherheit?",
+      "answer": "Sicherheit ist grundlegend für Aurelia. Wir verwenden 256-bit AES-Verschlüsselung für alle Kommunikationen, Zero-Knowledge-Architektur für Datenspeicherung und biometrische Authentifizierung für sensible Transaktionen. Unsere Schweizer Datenresidenz stellt sicher, dass Ihre Informationen außerhalb der Gerichtsbarkeit bleiben."
+    },
+    "q5": {
+      "question": "Was ist Ihre Antwortzeit für Anfragen?",
+      "answer": "Standardanfragen erhalten Bestätigung innerhalb von 60 Sekunden, 24/7/365. Komplexe Akquisitionen oder Reisearrangements sehen typischerweise erste Optionen innerhalb von 4-6 Stunden. Für zeitkritische Situationen sorgt unser Prioritätsprotokoll für sofortige Eskalation an Senior-Liaisons."
+    },
+    "q6": {
+      "question": "Kann ich Aurelia-Dienste weltweit nutzen?",
+      "answer": "Absolut. Unser Netzwerk umfasst über 120 Städte auf sechs Kontinenten. Ob Sie eine Last-Minute-Reservierung in Tokio, eine Immobilienbesichtigung in Monaco oder Privatluftfahrt in São Paulo benötigen, unsere lokalen Partner sorgen für nahtlose Ausführung weltweit."
+    }
+  },
+  "membership": {
+    "title": "Mitgliedschaft auf",
+    "titleHighlight": "Bewerbung",
+    "subtitle": "Aurelia bedient eine begrenzte globale Klientel. Um unseren Standard des hyper-personalisierten Service aufrechtzuerhalten, akzeptieren wir nur 50 neue Mitglieder jährlich.",
+    "beginApplication": "Bewerbung Starten",
+    "contactLiaison": "Liaison Kontaktieren",
+    "deposit": "$50k Ersteinzahlung bei Annahme",
+    "verification": "Biometrische Identitätsverifizierung"
+  },
+  "metrics": {
+    "assets": "Verwaltetes Vermögen",
+    "coverage": "Globale Abdeckung",
+    "response": "Antwortzeit",
+    "retention": "Kundenbindung",
+    "cities": "+ Städte",
+    "seconds": " Sekunden"
+  },
   "footer": {
     "navigate": "Navigation",
     "contact": "Kontakt",

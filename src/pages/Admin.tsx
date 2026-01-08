@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Shield, Users, Mail, Phone, Send, Search, Download, Trash2, Check, X, RefreshCw } from "lucide-react";
+import { Shield, Users, Mail, Phone, Send, Search, Download, Trash2, Check, X, RefreshCw, Settings } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -42,6 +42,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
 import { Logo } from "@/components/brand";
+import ZapierSettings from "@/components/admin/ZapierSettings";
 import { format } from "date-fns";
 
 interface LaunchSignup {
@@ -350,6 +351,22 @@ const Admin = () => {
                 <p className="text-sm text-muted-foreground">Pending</p>
               </div>
             </div>
+          </div>
+        </motion.div>
+
+        {/* Integrations Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="mb-8"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <Settings className="w-5 h-5 text-primary" />
+            <h2 className="font-serif text-xl text-foreground">Integrations</h2>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            <ZapierSettings />
           </div>
         </motion.div>
 

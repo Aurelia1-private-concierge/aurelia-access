@@ -389,6 +389,93 @@ export type Database = {
           },
         ]
       }
+      travel_dna_profile: {
+        Row: {
+          accommodation_tier: string | null
+          activity_preferences: Json | null
+          budget_comfort_zone: Json | null
+          created_at: string | null
+          cuisine_affinities: string[] | null
+          id: string
+          last_computed_at: string | null
+          onboarding_completed: boolean | null
+          pace_preference: string | null
+          seasonal_patterns: Json | null
+          special_requirements: string[] | null
+          traveler_archetype: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          accommodation_tier?: string | null
+          activity_preferences?: Json | null
+          budget_comfort_zone?: Json | null
+          created_at?: string | null
+          cuisine_affinities?: string[] | null
+          id?: string
+          last_computed_at?: string | null
+          onboarding_completed?: boolean | null
+          pace_preference?: string | null
+          seasonal_patterns?: Json | null
+          special_requirements?: string[] | null
+          traveler_archetype?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          accommodation_tier?: string | null
+          activity_preferences?: Json | null
+          budget_comfort_zone?: Json | null
+          created_at?: string | null
+          cuisine_affinities?: string[] | null
+          id?: string
+          last_computed_at?: string | null
+          onboarding_completed?: boolean | null
+          pace_preference?: string | null
+          seasonal_patterns?: Json | null
+          special_requirements?: string[] | null
+          traveler_archetype?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          category: string
+          confidence_score: number | null
+          created_at: string | null
+          id: string
+          preference_key: string
+          preference_value: Json
+          source: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          category: string
+          confidence_score?: number | null
+          created_at?: string | null
+          id?: string
+          preference_key: string
+          preference_value: Json
+          source?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          category?: string
+          confidence_score?: number | null
+          created_at?: string | null
+          id?: string
+          preference_key?: string
+          preference_value?: Json
+          source?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string

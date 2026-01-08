@@ -300,6 +300,17 @@ const Orla = () => {
   }, []);
 
   const startConversation = useCallback(async () => {
+    // Check authentication first
+    if (!user) {
+      toast.error("Please sign in to speak with Orla", {
+        action: {
+          label: "Sign In",
+          onClick: () => navigate("/auth"),
+        },
+      });
+      return;
+    }
+
     setIsConnecting(true);
     setTranscript([]);
     try {
@@ -311,7 +322,8 @@ const Orla = () => {
       });
 
       if (error || !data?.signed_url) {
-        throw new Error(error?.message || "Failed to get conversation token");
+        console.error("Token error:", error, data);
+        throw new Error(error?.message || data?.error || "Failed to get conversation token");
       }
 
       await conversation.startSession({
@@ -328,7 +340,7 @@ const Orla = () => {
     } finally {
       setIsConnecting(false);
     }
-  }, [conversation]);
+  }, [conversation, user, navigate]);
 
   const endConversation = useCallback(async () => {
     await conversation.endSession();

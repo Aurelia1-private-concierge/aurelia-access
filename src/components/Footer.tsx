@@ -1,6 +1,7 @@
 import { Instagram, Twitter, Linkedin, ArrowUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { Logo, BRAND } from "@/components/brand";
 
 const Footer = () => {
   const scrollToTop = () => {
@@ -22,11 +23,11 @@ const Footer = () => {
               viewport={{ once: true }}
               className="md:col-span-2"
             >
-              <a href="#" className="font-serif text-2xl tracking-widest text-foreground hover:text-primary transition-colors duration-300">
-                AURELIA
-              </a>
+              <Link to="/">
+                <Logo variant="wordmark" size="lg" />
+              </Link>
               <p className="text-sm text-muted-foreground/70 mt-4 leading-relaxed max-w-sm">
-                The world's most exclusive concierge service. Engineered for sovereignty, curated for legacy.
+                {BRAND.description} {BRAND.tagline}
               </p>
               <div className="flex items-center gap-3 mt-6">
                 {[
@@ -114,7 +115,7 @@ const Footer = () => {
         <div className="border-t border-border/10">
           <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-xs text-muted-foreground/40 font-light">
-              © 2024 Aurelia Holdings Ltd. All rights reserved.
+              © {BRAND.year} {BRAND.entity}. All rights reserved.
             </p>
             <div className="flex items-center gap-6 text-xs text-muted-foreground/40 font-light">
               <a href="#" className="hover:text-muted-foreground transition-colors">Privacy Policy</a>

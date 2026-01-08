@@ -9,6 +9,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Logo } from "@/components/brand";
 
 const navLinks = [
   { href: "#services", label: "Services" },
@@ -61,13 +62,9 @@ const Navigation = () => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <motion.a 
-          href="#" 
-          whileHover={{ scale: 1.02 }}
-          className="font-serif text-xl tracking-widest text-foreground hover:text-primary transition-colors duration-300"
-        >
-          AURELIA
-        </motion.a>
+        <Link to="/">
+          <Logo variant="wordmark" size="md" />
+        </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-10 text-sm font-light tracking-wide">
@@ -113,8 +110,8 @@ const Navigation = () => {
             </SheetTrigger>
             <SheetContent side="right" className="w-80 bg-background border-border/30">
               <SheetHeader className="text-left pb-6 border-b border-border/30">
-                <SheetTitle className="font-serif text-xl tracking-widest text-foreground">
-                  AURELIA
+                <SheetTitle>
+                  <Logo variant="wordmark" size="md" animated={false} />
                 </SheetTitle>
               </SheetHeader>
               

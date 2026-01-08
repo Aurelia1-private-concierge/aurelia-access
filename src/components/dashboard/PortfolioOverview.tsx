@@ -19,9 +19,13 @@ import SurpriseMeCard from "./SurpriseMeCard";
 import RecommendationsFeed from "./RecommendationsFeed";
 import SubscriptionCard from "./SubscriptionCard";
 import ExclusivePerks from "./ExclusivePerks";
+import ReferralProgram from "./ReferralProgram";
 import UpgradeCelebration from "./UpgradeCelebration";
+import WelcomeBanner from "./WelcomeBanner";
 import TravelDNAOnboarding from "@/components/TravelDNAOnboarding";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useDashboardTour } from "@/hooks/useDashboardTour";
+import { useAuth } from "@/contexts/AuthContext";
 
 const portfolioStats = [
   { label: "Total Assets", value: "$47.8M", change: "+12.4%", trending: "up" },
@@ -45,22 +49,39 @@ const recentActivity = [
   { action: "Dividend Received", item: "Private Equity Fund III", date: "Jan 3, 2026", value: "$156,000" },
 ];
 
+const TOUR_COMPLETED_KEY = "aurelia_tour_completed";
+
 const PortfolioOverview = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const { tier, tierDetails } = useSubscription();
+  const { user } = useAuth();
   const previousTierRef = useRef<string | null>(null);
+
+  const handleTourComplete = () => {
+    localStorage.setItem(TOUR_COMPLETED_KEY, "true");
+    setShowWelcome(false);
+  };
+
+  const { startTour } = useDashboardTour({ onComplete: handleTourComplete });
+
+  // Check if new user (show welcome banner)
+  useEffect(() => {
+    const tourCompleted = localStorage.getItem(TOUR_COMPLETED_KEY);
+    if (!tourCompleted && user) {
+      setShowWelcome(true);
+    }
+  }, [user]);
 
   // Check for successful checkout redirect
   useEffect(() => {
     const checkoutSuccess = searchParams.get("checkout_success");
     if (checkoutSuccess === "true") {
-      // Small delay to let subscription state update
       setTimeout(() => {
         setShowCelebration(true);
       }, 500);
-      // Clean up URL
       searchParams.delete("checkout_success");
       setSearchParams(searchParams, { replace: true });
     }
@@ -73,6 +94,11 @@ const PortfolioOverview = () => {
     }
     previousTierRef.current = tier;
   }, [tier]);
+
+  const handleStartTour = () => {
+    setShowWelcome(false);
+    startTour();
+  };
 
   return (
     <div className="space-y-6">
@@ -92,19 +118,44 @@ const PortfolioOverview = () => {
         />
       )}
 
+      {/* Welcome Banner for New Users */}
+      <WelcomeBanner
+        isVisible={showWelcome}
+        onDismiss={handleTourComplete}
+        onStartTour={handleStartTour}
+        userName={user?.email}
+      />
+
       {/* Subscription + Perks Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <SubscriptionCard />
-        <ExclusivePerks />
+        <div data-tour="subscription-card">
+          <SubscriptionCard />
+        </div>
+        <div data-tour="exclusive-perks">
+          <ExclusivePerks />
+        </div>
       </div>
+
+      {/* Travel DNA + Orla + Surprise Me Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <TravelDNACard onEditClick={() => setShowOnboarding(true)} />
-        <OrlaCompanion />
-        <SurpriseMeCard />
+        <div data-tour="travel-dna">
+          <TravelDNACard onEditClick={() => setShowOnboarding(true)} />
+        </div>
+        <div data-tour="orla-companion">
+          <OrlaCompanion />
+        </div>
+        <div data-tour="surprise-me">
+          <SurpriseMeCard />
+        </div>
       </div>
 
       {/* Personalized Recommendations */}
-      <RecommendationsFeed />
+      <div data-tour="recommendations">
+        <RecommendationsFeed />
+      </div>
+
+      {/* Referral Program */}
+      <ReferralProgram />
       
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

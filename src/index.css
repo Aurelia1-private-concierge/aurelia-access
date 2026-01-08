@@ -248,4 +248,60 @@
     mask-composite: exclude;
     pointer-events: none;
   }
+
+  /* Driver.js Tour Styling */
+  .driver-popover {
+    background: hsl(var(--card)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 20px 40px hsl(var(--background) / 0.5) !important;
+  }
+
+  .driver-popover-title {
+    font-family: 'Playfair Display', serif !important;
+    font-size: 1.125rem !important;
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .driver-popover-description {
+    color: hsl(var(--muted-foreground)) !important;
+    font-size: 0.875rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .driver-popover-progress-text {
+    color: hsl(var(--muted-foreground)) !important;
+    font-size: 0.75rem !important;
+  }
+
+  .driver-popover-prev-btn,
+  .driver-popover-next-btn {
+    background: hsl(var(--muted)) !important;
+    color: hsl(var(--foreground)) !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+    transition: all 0.2s !important;
+  }
+
+  .driver-popover-next-btn {
+    background: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+  }
+
+  .driver-popover-next-btn:hover {
+    background: hsl(var(--primary) / 0.9) !important;
+  }
+
+  .driver-popover-close-btn {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+
+  .driver-popover-arrow-side-left,
+  .driver-popover-arrow-side-right,
+  .driver-popover-arrow-side-top,
+  .driver-popover-arrow-side-bottom {
+    border-color: hsl(var(--card)) !important;
+  }
 }

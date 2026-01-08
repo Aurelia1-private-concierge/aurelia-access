@@ -2,6 +2,7 @@ import { ArrowRight, ChevronDown } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import heroImage from "@/assets/hero-luxury-abstract.jpg";
 import { AnimatedLogo } from "@/components/brand";
 
@@ -10,6 +11,7 @@ interface HeroSectionProps {
 }
 
 const HeroSection = ({ videoSrc }: HeroSectionProps) => {
+  const { t } = useTranslation();
   const ref = useRef<HTMLElement>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const { scrollYProgress } = useScroll({
@@ -87,7 +89,7 @@ const HeroSection = ({ videoSrc }: HeroSectionProps) => {
         >
           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
           <span className="text-xs uppercase tracking-[0.2em] text-primary font-medium">
-            By Invitation Only
+            {t("hero.badge")}
           </span>
         </motion.div>
 
@@ -97,7 +99,7 @@ const HeroSection = ({ videoSrc }: HeroSectionProps) => {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-5xl md:text-7xl lg:text-8xl text-foreground font-medium font-serif tracking-tight leading-tight"
         >
-          Beyond <span className="text-primary italic pr-2">Concierge.</span>
+          {t("hero.title")}
         </motion.h1>
 
         <motion.p
@@ -106,7 +108,7 @@ const HeroSection = ({ videoSrc }: HeroSectionProps) => {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="text-base md:text-lg text-muted-foreground font-light tracking-wide max-w-2xl mx-auto leading-relaxed"
         >
-          Experience the world's most exclusive service. Engineered for sovereignty, curated for legacy, and powered by intelligent discretion.
+          {t("hero.subtitle")}
         </motion.p>
 
         <motion.div
@@ -119,14 +121,14 @@ const HeroSection = ({ videoSrc }: HeroSectionProps) => {
             to="/auth" 
             className="group relative px-8 py-3 bg-primary text-primary-foreground text-sm font-medium tracking-widest uppercase transition-all duration-300 hover:bg-primary/90 gold-glow-hover"
           >
-            <span className="relative z-10">Join Aurelia</span>
+            <span className="relative z-10">{t("hero.joinButton")}</span>
           </Link>
 
           <a 
             href="#experiences" 
             className="group px-8 py-3 border border-border/40 text-foreground text-sm font-medium tracking-widest uppercase hover:bg-secondary/50 transition-all duration-300 flex items-center space-x-3"
           >
-            <span>Discover Experiences</span>
+            <span>{t("hero.discoverButton")}</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
           </a>
         </motion.div>

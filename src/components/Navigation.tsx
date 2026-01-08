@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { Lock, Menu } from "lucide-react";
+import { Lock, Menu, Compass } from "lucide-react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   Sheet,
@@ -20,8 +20,13 @@ const navLinks = [
   { href: "#membership", labelKey: "nav.membership" },
 ];
 
+const pageLinks = [
+  { href: "/discover", label: "Discover", icon: Compass },
+];
+
 const Navigation = () => {
   const { t } = useTranslation();
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
@@ -71,7 +76,34 @@ const Navigation = () => {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-10 text-sm font-light tracking-wide">
-          {navLinks.map((link) => (
+          {/* Page Links */}
+          {pageLinks.map((link) => {
+            const Icon = link.icon;
+            return (
+              <Link
+                key={link.href}
+                to={link.href}
+                className={`relative py-2 transition-colors duration-300 flex items-center gap-1.5 ${
+                  location.pathname === link.href
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                {link.label}
+                {location.pathname === link.href && (
+                  <motion.span
+                    layoutId="activeNav"
+                    className="absolute -bottom-1 left-0 right-0 h-px bg-primary"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+              </Link>
+            );
+          })}
+          
+          {/* Section Links (homepage only) */}
+          {location.pathname === "/" && navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
@@ -121,6 +153,27 @@ const Navigation = () => {
               </SheetHeader>
               
               <nav className="flex flex-col space-y-1 mt-8">
+                {/* Page Links for Mobile */}
+                {pageLinks.map((link, index) => {
+                  const Icon = link.icon;
+                  return (
+                    <Link
+                      key={link.href}
+                      to={link.href}
+                      onClick={() => setIsOpen(false)}
+                      className={`py-4 px-4 text-lg font-light transition-all duration-300 border-b border-border/20 flex items-center gap-3 ${
+                        location.pathname === link.href
+                          ? "text-foreground bg-secondary/30 border-l-2 border-l-primary"
+                          : "text-muted-foreground hover:text-foreground hover:bg-secondary/30"
+                      }`}
+                    >
+                      <Icon className="w-5 h-5" />
+                      {link.label}
+                    </Link>
+                  );
+                })}
+                
+                {/* Section Links for Mobile */}
                 {navLinks.map((link, index) => (
                   <motion.a
                     key={link.href}

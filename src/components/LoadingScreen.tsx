@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import { AnimatedLogo } from "@/components/brand";
 
 const LoadingScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -68,81 +69,12 @@ const LoadingScreen = () => {
           />
 
           <div className="relative flex flex-col items-center">
-            {/* Animated rings */}
-            <div className="relative w-40 h-40 flex items-center justify-center">
-              {/* Outer ring */}
-              <motion.div
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.6 }}
-                className="absolute w-40 h-40 rounded-full border border-border/30"
-              />
-              
-              {/* Spinning ring */}
-              <motion.div
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1, rotate: 360 }}
-                transition={{ 
-                  scale: { duration: 0.6 },
-                  rotate: { duration: 3, repeat: Infinity, ease: "linear" }
-                }}
-                className="absolute w-36 h-36 rounded-full border-t-2 border-primary"
-              />
-              
-              {/* Inner spinning ring (opposite direction) */}
-              <motion.div
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 0.5, rotate: -360 }}
-                transition={{ 
-                  scale: { duration: 0.6 },
-                  rotate: { duration: 4, repeat: Infinity, ease: "linear" }
-                }}
-                className="absolute w-28 h-28 rounded-full border-b border-primary/50"
-              />
-
-              {/* Center diamond */}
-              <motion.div
-                initial={{ scale: 0, rotate: 45, opacity: 0 }}
-                animate={{ scale: 1, rotate: 45, opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.5, type: "spring" }}
-                className="relative w-12 h-12"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/60 rotate-0 transform" />
-                <motion.div
-                  animate={{ opacity: [0.5, 1, 0.5] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="absolute inset-0 bg-primary/30 blur-md"
-                />
-              </motion.div>
-            </div>
-
-            {/* Logo */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="mt-8 relative"
-            >
-              <h1 className="font-serif text-4xl tracking-[0.4em] text-foreground">
-                AURELIA
-              </h1>
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ delay: 0.8, duration: 0.6 }}
-                className="absolute -bottom-2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent origin-center"
-              />
-            </motion.div>
-
-            {/* Tagline */}
-            <motion.p
-              initial={{ opacity: 0, letterSpacing: "0.1em" }}
-              animate={{ opacity: 1, letterSpacing: "0.25em" }}
-              transition={{ delay: 1, duration: 0.8 }}
-              className="mt-6 text-xs text-muted-foreground uppercase font-light"
-            >
-              Beyond Concierge
-            </motion.p>
+            {/* Animated Logo with gold shimmer */}
+            <AnimatedLogo 
+              size="xl" 
+              showWordmark={true} 
+              showTagline={true} 
+            />
 
             {/* Loading progress */}
             <motion.div

@@ -2,6 +2,7 @@
 // Centralized exports for consistent branding across the app
 
 export { Logo, LogoIcon, LogoWordmark, default as BrandLogo } from "./Logo";
+export { default as AnimatedLogo } from "./AnimatedLogo";
 
 // Brand Constants
 export const BRAND = {

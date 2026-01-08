@@ -50,6 +50,7 @@ const HeroSection = ({ videoSrc }: HeroSectionProps) => {
               <img
                 src={heroImage}
                 alt="Luxury Experience"
+                fetchPriority="high"
                 className="absolute inset-0 w-full h-full object-cover opacity-70"
               />
             )}
@@ -58,6 +59,7 @@ const HeroSection = ({ videoSrc }: HeroSectionProps) => {
           <img
             src={heroImage}
             alt="Luxury Experience"
+            fetchPriority="high"
             className="w-full h-full object-cover opacity-70"
           />
         )}

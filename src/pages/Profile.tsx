@@ -13,6 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { logger } from "@/lib/logger";
+import AvatarCropModal from "@/components/profile/AvatarCropModal";
 
 interface Profile {
   display_name: string | null;
@@ -49,6 +50,8 @@ const Profile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [selectedImageSrc, setSelectedImageSrc] = useState<string | null>(null);
   const [profile, setProfile] = useState<Profile>({
     display_name: "",
     phone: "",
@@ -154,7 +157,7 @@ const Profile = () => {
     }));
   };
 
-  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
@@ -168,42 +171,68 @@ const Profile = () => {
       return;
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    // Validate file size (max 10MB for cropping, final will be smaller)
+    if (file.size > 10 * 1024 * 1024) {
       toast({
         title: "File too large",
-        description: "Please select an image under 5MB",
+        description: "Please select an image under 10MB",
         variant: "destructive",
       });
       return;
     }
 
-    setIsUploadingAvatar(true);
-    try {
-      const fileExt = file.name.split(".").pop();
-      const filePath = `${user.id}/avatar.${fileExt}`;
+    // Create object URL for the cropper
+    const imageUrl = URL.createObjectURL(file);
+    setSelectedImageSrc(imageUrl);
+    setCropModalOpen(true);
+    
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
-      // Upload file to storage
+  const handleCropComplete = async (croppedBlob: Blob) => {
+    if (!user) return;
+    
+    setCropModalOpen(false);
+    setIsUploadingAvatar(true);
+    
+    // Cleanup the object URL
+    if (selectedImageSrc) {
+      URL.revokeObjectURL(selectedImageSrc);
+      setSelectedImageSrc(null);
+    }
+
+    try {
+      const filePath = `${user.id}/avatar.jpg`;
+
+      // Upload cropped file to storage
       const { error: uploadError } = await supabase.storage
         .from("avatars")
-        .upload(filePath, file, { upsert: true });
+        .upload(filePath, croppedBlob, { 
+          upsert: true,
+          contentType: "image/jpeg"
+        });
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
+      // Get public URL with cache buster
       const { data: { publicUrl } } = supabase.storage
         .from("avatars")
         .getPublicUrl(filePath);
+      
+      const urlWithCacheBuster = `${publicUrl}?t=${Date.now()}`;
 
       // Update profile with new avatar URL
       const { error: updateError } = await supabase
         .from("profiles")
-        .update({ avatar_url: publicUrl })
+        .update({ avatar_url: urlWithCacheBuster })
         .eq("user_id", user.id);
 
       if (updateError) throw updateError;
 
-      setProfile((prev) => ({ ...prev, avatar_url: publicUrl }));
+      setProfile((prev) => ({ ...prev, avatar_url: urlWithCacheBuster }));
       toast({
         title: "Success",
         description: "Avatar updated successfully",
@@ -217,6 +246,14 @@ const Profile = () => {
       });
     } finally {
       setIsUploadingAvatar(false);
+    }
+  };
+
+  const handleCropModalClose = () => {
+    setCropModalOpen(false);
+    if (selectedImageSrc) {
+      URL.revokeObjectURL(selectedImageSrc);
+      setSelectedImageSrc(null);
     }
   };
 
@@ -339,12 +376,12 @@ const Profile = () => {
                       </Button>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground">JPG, PNG or GIF. Max 5MB.</p>
+                  <p className="text-xs text-muted-foreground">JPG, PNG or GIF. Max 10MB.</p>
                   <input
                     ref={fileInputRef}
                     type="file"
                     accept="image/*"
-                    onChange={handleAvatarUpload}
+                    onChange={handleFileSelect}
                     className="hidden"
                   />
                 </div>
@@ -520,6 +557,16 @@ const Profile = () => {
           </Button>
         </motion.div>
       </main>
+
+      {/* Avatar Crop Modal */}
+      {selectedImageSrc && (
+        <AvatarCropModal
+          isOpen={cropModalOpen}
+          onClose={handleCropModalClose}
+          imageSrc={selectedImageSrc}
+          onCropComplete={handleCropComplete}
+        />
+      )}
     </div>
   );
 };

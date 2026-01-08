@@ -2,7 +2,7 @@ import { ArrowRight, ChevronDown } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useRef } from "react";
-import heroImage from "@/assets/hero-gallery.jpg";
+import heroImage from "@/assets/hero-penthouse.jpg";
 
 const HeroSection = () => {
   const ref = useRef<HTMLElement>(null);

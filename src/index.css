@@ -4,6 +4,12 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap');
 
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap");
+
 /* Aurelia Design System - Ultra Luxury Aesthetic */
 
 @layer base {
@@ -46,6 +52,12 @@
     --navy-deep: 220 60% 2%;
     --navy-light: 220 50% 6%;
     --slate-soft: 215 15% 50%;
+    --font-sans: "Open Sans", ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+    --font-mono: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+    --shadow-sm: 0px 1px 1px 0px hsla(0, 0%, 0%, 0.1);
+    --shadow: 0px 1px 2px 0px hsla(0, 0%, 0%, 0.1);
+    --shadow-md: 0px 1px 3px 0px hsla(0, 0%, 0%, 0.1);
+    --shadow-lg: 0px 1px 5px 0px hsla(0, 0%, 0%, 0.1);
   }
 
   .dark {
@@ -69,6 +81,12 @@
     --input: 220 20% 12%;
     --ring: 43 70% 52%;
     --radius: 2.125rem;
+    --font-sans: "Open Sans", ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+    --font-mono: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+    --shadow-sm: 0px 1px 1px 0px hsla(0, 0%, 0%, 0.1);
+    --shadow: 0px 1px 2px 0px hsla(0, 0%, 0%, 0.1);
+    --shadow-md: 0px 1px 3px 0px hsla(0, 0%, 0%, 0.1);
+    --shadow-lg: 0px 1px 5px 0px hsla(0, 0%, 0%, 0.1);
   }
 }
 
@@ -177,7 +195,7 @@
   .card-hover {
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  
+
   .card-hover:hover {
     transform: translateY(-4px);
     box-shadow: 0 20px 40px hsl(var(--background) / 0.5);
@@ -217,7 +235,7 @@
   .gradient-border {
     position: relative;
   }
-  
+
   .gradient-border::before {
     content: '';
     position: absolute;

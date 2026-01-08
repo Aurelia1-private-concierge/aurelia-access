@@ -5,11 +5,15 @@ import {
   FolderLock, 
   Crown,
   LogOut,
-  Settings
+  Settings,
+  Shield,
+  Sparkles
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { AnimatedLogo } from "@/components/brand";
+import { useTierTheme } from "@/contexts/TierThemeContext";
+import { cn } from "@/lib/utils";
 
 type ActiveView = "portfolio" | "messaging" | "documents";
 
@@ -24,9 +28,17 @@ const menuItems = [
   { id: "documents" as const, label: "Document Vault", icon: FolderLock },
 ];
 
+const tierIcons = {
+  default: Crown,
+  silver: Shield,
+  gold: Crown,
+  platinum: Sparkles,
+};
+
 const DashboardSidebar = ({ activeView, setActiveView }: DashboardSidebarProps) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { tier, colors, subscribed } = useTierTheme();
 
   const handleSignOut = async () => {
     await signOut();
@@ -36,6 +48,7 @@ const DashboardSidebar = ({ activeView, setActiveView }: DashboardSidebarProps) 
   // Get user display info
   const userEmail = user?.email || "Guest";
   const userInitial = userEmail.charAt(0).toUpperCase();
+  const TierIcon = tierIcons[tier] || Crown;
 
   return (
     <motion.aside
@@ -61,18 +74,19 @@ const DashboardSidebar = ({ activeView, setActiveView }: DashboardSidebarProps) 
               <button
                 key={item.id}
                 onClick={() => setActiveView(item.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-light tracking-wide transition-all duration-300 ${
+                className={cn(
+                  "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-light tracking-wide transition-all duration-300",
                   isActive
-                    ? "bg-primary/10 text-primary border border-primary/20"
+                    ? cn(colors.accentBg, colors.accent, colors.accentBorder, "border")
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                }`}
+                )}
               >
-                <item.icon className={`w-4 h-4 ${isActive ? "text-primary" : ""}`} />
+                <item.icon className={cn("w-4 h-4", isActive && colors.accent)} />
                 <span>{item.label}</span>
                 {isActive && (
                   <motion.div
                     layoutId="activeIndicator"
-                    className="ml-auto w-1.5 h-1.5 rounded-full bg-primary"
+                    className={cn("ml-auto w-1.5 h-1.5 rounded-full", colors.accent.replace("text-", "bg-"))}
                   />
                 )}
               </button>
@@ -86,6 +100,16 @@ const DashboardSidebar = ({ activeView, setActiveView }: DashboardSidebarProps) 
         {/* Secondary nav */}
         <div className="space-y-1">
           <Link
+            to="/membership"
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-light tracking-wide transition-all duration-300",
+              "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            )}
+          >
+            <TierIcon className={cn("w-4 h-4", colors.accent)} />
+            <span>Membership</span>
+          </Link>
+          <Link
             to="/profile"
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-light tracking-wide text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all duration-300"
           >
@@ -97,19 +121,25 @@ const DashboardSidebar = ({ activeView, setActiveView }: DashboardSidebarProps) 
 
       {/* User section */}
       <div className="p-4 border-t border-border/30">
-        <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-          <div className="w-10 h-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
+        <div className={cn("flex items-center gap-3 p-3 rounded-lg", colors.accentBg)}>
+          <div className={cn(
+            "w-10 h-10 rounded-full flex items-center justify-center border",
+            colors.accentBg,
+            colors.accentBorder
+          )}>
             {user ? (
-              <span className="text-sm font-medium text-primary">{userInitial}</span>
+              <span className={cn("text-sm font-medium", colors.accent)}>{userInitial}</span>
             ) : (
-              <Crown className="w-4 h-4 text-primary" />
+              <TierIcon className={cn("w-4 h-4", colors.accent)} />
             )}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-foreground truncate">
               {userEmail}
             </p>
-            <p className="text-xs text-primary tracking-wider">SOVEREIGN</p>
+            <p className={cn("text-xs tracking-wider uppercase", colors.accent)}>
+              {subscribed ? colors.tierLabel : "Guest"}
+            </p>
           </div>
         </div>
         <button

@@ -92,13 +92,8 @@ const PartnerApply = () => {
 
       if (error) throw error;
 
-      // Add partner role
-      await supabase.from("user_roles").insert({
-        user_id: user.id,
-        role: "partner" as const,
-      });
-
-      toast.success("Application submitted successfully");
+      // Note: Partner role is automatically granted via database trigger when admin approves
+      toast.success("Application submitted successfully! You'll be notified when approved.");
       navigate("/partner");
     } catch (error: any) {
       console.error("Application error:", error);

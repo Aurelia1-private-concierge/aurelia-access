@@ -1,10 +1,23 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+// Input validation schemas
+const messageSchema = z.object({
+  role: z.enum(["user", "assistant", "system"]),
+  content: z.string().min(1, "Message cannot be empty").max(10000, "Message too long"),
+});
+
+const requestSchema = z.object({
+  messages: z.array(messageSchema).min(1, "At least one message required").max(100, "Too many messages"),
+  conversationId: z.string().uuid().optional().nullable(),
+  channel: z.enum(["chat", "voice", "email"]).default("chat"),
+});
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -17,7 +30,19 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, conversationId, channel = "chat" } = await req.json();
+    // Parse and validate request body
+    const body = await req.json();
+    const validation = requestSchema.safeParse(body);
+    
+    if (!validation.success) {
+      console.error("Validation error:", validation.error.errors);
+      return new Response(
+        JSON.stringify({ error: "Invalid request format. Please check your input." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    const { messages, conversationId, channel } = validation.data;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");

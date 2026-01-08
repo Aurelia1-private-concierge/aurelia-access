@@ -91,6 +91,39 @@ export type Database = {
         }
         Relationships: []
       }
+      discovery_service_analytics: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          match_score: number | null
+          service_id: string
+          service_title: string
+          traveler_archetype: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          match_score?: number | null
+          service_id: string
+          service_title: string
+          traveler_archetype?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          match_score?: number | null
+          service_id?: string
+          service_title?: string
+          traveler_archetype?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           action_url: string | null

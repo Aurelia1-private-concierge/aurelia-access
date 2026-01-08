@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Sparkles, 
@@ -17,6 +17,8 @@ import {
   RefreshCw
 } from "lucide-react";
 import { useTravelDNA, TravelDNAProfile } from "@/hooks/useTravelDNA";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -195,12 +197,36 @@ const getMatchReason = (service: DiscoveryService, profile: TravelDNAProfile | n
 
 const SurpriseMeCard = () => {
   const { profile, isLoading } = useTravelDNA();
+  const { user } = useAuth();
   const [suggestedService, setSuggestedService] = useState<DiscoveryService | null>(null);
   const [matchReason, setMatchReason] = useState<string>("");
+  const [matchScore, setMatchScore] = useState<number>(0);
   const [isRevealing, setIsRevealing] = useState(false);
   const [hasRevealed, setHasRevealed] = useState(false);
 
-  const selectNewService = () => {
+  // Track analytics event
+  const trackEvent = useCallback(async (
+    service: DiscoveryService, 
+    eventType: 'reveal' | 'click' | 'save',
+    score?: number
+  ) => {
+    if (!user) return;
+    
+    try {
+      await supabase.from('discovery_service_analytics').insert({
+        user_id: user.id,
+        service_id: service.id,
+        service_title: service.title,
+        event_type: eventType,
+        match_score: score ?? null,
+        traveler_archetype: profile?.traveler_archetype ?? null
+      });
+    } catch (error) {
+      console.error('Failed to track analytics:', error);
+    }
+  }, [user, profile?.traveler_archetype]);
+
+  const selectNewService = useCallback(() => {
     // Score all services based on profile
     const scoredServices = discoveryServices.map(service => ({
       service,
@@ -213,8 +239,12 @@ const SurpriseMeCard = () => {
     const selected = topServices[Math.floor(Math.random() * topServices.length)];
     
     setSuggestedService(selected.service);
+    setMatchScore(selected.score);
     setMatchReason(getMatchReason(selected.service, profile));
-  };
+    
+    // Track reveal event
+    trackEvent(selected.service, 'reveal', selected.score);
+  }, [profile, trackEvent]);
 
   const handleReveal = () => {
     setIsRevealing(true);
@@ -233,6 +263,12 @@ const SurpriseMeCard = () => {
     setTimeout(() => {
       handleReveal();
     }, 100);
+  };
+
+  const handleExploreClick = () => {
+    if (suggestedService) {
+      trackEvent(suggestedService, 'click', matchScore);
+    }
   };
 
   if (isLoading) {
@@ -388,7 +424,7 @@ const SurpriseMeCard = () => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.7 }}
               >
-                <Link to="/services" className="block">
+                <Link to="/services" className="block" onClick={handleExploreClick}>
                   <Button 
                     variant="outline" 
                     className="w-full border-primary/30 hover:bg-primary/10 hover:border-primary/50 group"

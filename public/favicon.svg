@@ -1,0 +1,37 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C9A227"/>
+      <stop offset="50%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#E8C547"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="48" height="48" rx="8" fill="#050810"/>
+  
+  <!-- Outer diamond frame -->
+  <path
+    d="M24 6L42 24L24 42L6 24L24 6Z"
+    stroke="url(#goldGradient)"
+    stroke-width="1.5"
+    fill="none"
+  />
+  
+  <!-- Inner diamond - filled -->
+  <path
+    d="M24 14L34 24L24 34L14 24L24 14Z"
+    fill="url(#goldGradient)"
+  />
+  
+  <!-- Crown accent lines -->
+  <path
+    d="M14 24L24 34M34 24L24 34"
+    stroke="url(#goldGradient)"
+    stroke-width="1"
+    opacity="0.6"
+  />
+  
+  <!-- Center highlight -->
+  <circle cx="24" cy="24" r="3" fill="#F5E6A3"/>
+</svg>

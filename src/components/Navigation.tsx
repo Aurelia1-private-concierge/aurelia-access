@@ -1,5 +1,6 @@
 import { Lock, Menu } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const Navigation = () => {
   return (
@@ -30,10 +31,13 @@ const Navigation = () => {
         </div>
 
         <div className="flex items-center space-x-6">
-          <button className="hidden md:flex items-center space-x-2 text-xs font-medium tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors">
+          <Link 
+            to="/dashboard" 
+            className="hidden md:flex items-center space-x-2 text-xs font-medium tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors"
+          >
             <Lock className="w-3.5 h-3.5 text-primary" />
             <span>Client Login</span>
-          </button>
+          </Link>
           <button className="text-foreground md:hidden">
             <Menu className="w-6 h-6" />
           </button>

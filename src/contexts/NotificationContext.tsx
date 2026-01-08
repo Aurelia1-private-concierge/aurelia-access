@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
 export type NotificationType = "portfolio" | "message" | "document" | "system";
@@ -96,7 +97,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
         .limit(50);
 
       if (error) {
-        console.error("Error fetching notifications:", error);
+        logger.error("Error fetching notifications", error);
         return;
       }
 
@@ -104,7 +105,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
         setNotifications(data.map(mapDbToNotification));
       }
     } catch (err) {
-      console.error("Failed to fetch notifications:", err);
+      logger.error("Failed to fetch notifications", err);
     } finally {
       setIsLoading(false);
     }
@@ -234,7 +235,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (error) {
-        console.error("Error adding notification:", error);
+        logger.error("Error adding notification", error);
         toast({
           title: "Error",
           description: "Failed to save notification",
@@ -260,7 +261,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
         .eq("id", id);
 
       if (error) {
-        console.error("Error marking notification as read:", error);
+        logger.error("Error marking notification as read", error);
       }
     },
     [userId]
@@ -279,7 +280,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
       .eq("read", false);
 
     if (error) {
-      console.error("Error marking all notifications as read:", error);
+      logger.error("Error marking all notifications as read", error);
     }
   }, [userId]);
 
@@ -296,7 +297,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
         .eq("id", id);
 
       if (error) {
-        console.error("Error deleting notification:", error);
+        logger.error("Error deleting notification", error);
       }
     },
     [userId]
@@ -314,7 +315,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
       .eq("user_id", userId);
 
     if (error) {
-      console.error("Error clearing all notifications:", error);
+      logger.error("Error clearing all notifications", error);
     }
   }, [userId]);
 

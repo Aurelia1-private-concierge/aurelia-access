@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { logger } from "@/lib/logger";
 
 interface Profile {
   display_name: string | null;
@@ -95,7 +96,7 @@ const Profile = () => {
           });
         }
       } catch (error) {
-        console.error("Error fetching profile:", error);
+        logger.error("Error fetching profile", error);
         toast({
           title: "Error",
           description: "Failed to load profile data",
@@ -132,7 +133,7 @@ const Profile = () => {
         description: "Your profile has been updated",
       });
     } catch (error) {
-      console.error("Error saving profile:", error);
+      logger.error("Error saving profile", error);
       toast({
         title: "Error",
         description: "Failed to save profile changes",
@@ -208,7 +209,7 @@ const Profile = () => {
         description: "Avatar updated successfully",
       });
     } catch (error) {
-      console.error("Error uploading avatar:", error);
+      logger.error("Error uploading avatar", error);
       toast({
         title: "Error",
         description: "Failed to upload avatar",
@@ -245,7 +246,7 @@ const Profile = () => {
         description: "Avatar removed",
       });
     } catch (error) {
-      console.error("Error removing avatar:", error);
+      logger.error("Error removing avatar", error);
       toast({
         title: "Error",
         description: "Failed to remove avatar",

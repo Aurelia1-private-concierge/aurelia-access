@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import ResetPassword from "./pages/ResetPassword";
+import Services from "./pages/Services";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -44,6 +45,14 @@ const AnimatedRoutes = () => {
           element={
             <PageTransition>
               <ResetPassword />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/services"
+          element={
+            <PageTransition>
+              <Services />
             </PageTransition>
           }
         />

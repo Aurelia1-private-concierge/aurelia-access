@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { User, Phone, Building2, Globe, Bell, Save, Loader2, ArrowLeft, Camera, Trash2 } from "lucide-react";
+import { User, Phone, Building2, Globe, Bell, Save, Loader2, ArrowLeft, Camera, Trash2, Upload } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,6 +52,7 @@ const Profile = () => {
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [selectedImageSrc, setSelectedImageSrc] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const [profile, setProfile] = useState<Profile>({
     display_name: "",
     phone: "",
@@ -157,9 +158,8 @@ const Profile = () => {
     }));
   };
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file || !user) return;
+  const processFile = (file: File) => {
+    if (!user) return;
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
@@ -185,10 +185,40 @@ const Profile = () => {
     const imageUrl = URL.createObjectURL(file);
     setSelectedImageSrc(imageUrl);
     setCropModalOpen(true);
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    processFile(file);
     
     // Reset file input
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      processFile(file);
     }
   };
 
@@ -336,8 +366,27 @@ const Profile = () => {
               <CardDescription>Update your personal details</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Avatar Upload */}
-              <div className="flex items-center gap-6">
+              {/* Avatar Upload with Drag & Drop */}
+              <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`relative flex items-center gap-6 p-4 -m-4 rounded-xl transition-all ${
+                  isDragging 
+                    ? "bg-primary/10 border-2 border-dashed border-primary" 
+                    : "border-2 border-dashed border-transparent"
+                }`}
+              >
+                {/* Drag Overlay */}
+                {isDragging && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-primary/5 rounded-xl z-10">
+                    <div className="text-center">
+                      <Upload className="w-8 h-8 text-primary mx-auto mb-2" />
+                      <p className="text-sm font-medium text-primary">Drop image here</p>
+                    </div>
+                  </div>
+                )}
+
                 <div className="relative">
                   <Avatar className="w-20 h-20 border-2 border-border">
                     <AvatarImage src={profile.avatar_url || undefined} alt="Profile avatar" />
@@ -376,7 +425,9 @@ const Profile = () => {
                       </Button>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground">JPG, PNG or GIF. Max 10MB.</p>
+                  <p className="text-xs text-muted-foreground">
+                    Drag & drop or click to upload • JPG, PNG or GIF • Max 10MB
+                  </p>
                   <input
                     ref={fileInputRef}
                     type="file"

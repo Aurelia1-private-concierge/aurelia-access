@@ -13,6 +13,8 @@ import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import ResetPassword from "./pages/ResetPassword";
 import Services from "./pages/Services";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 import PartnerApply from "./pages/PartnerApply";
 import PartnerPortal from "./pages/PartnerPortal";
 import PartnerServiceForm from "./pages/PartnerServiceForm";
@@ -59,6 +61,22 @@ const AnimatedRoutes = () => {
           element={
             <PageTransition>
               <Services />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/terms"
+          element={
+            <PageTransition>
+              <Terms />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/privacy"
+          element={
+            <PageTransition>
+              <Privacy />
             </PageTransition>
           }
         />

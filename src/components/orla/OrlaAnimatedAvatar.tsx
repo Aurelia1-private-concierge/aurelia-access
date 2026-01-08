@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import orlaAvatar from "@/assets/orla-avatar.png";
 
 interface OrlaAnimatedAvatarProps {
@@ -18,7 +18,57 @@ const OrlaAnimatedAvatar = ({
   const [mouthOpenness, setMouthOpenness] = useState(0);
   const [blinkState, setBlinkState] = useState(false);
   const [eyePosition, setEyePosition] = useState({ x: 0, y: 0 });
+  const [targetEyePosition, setTargetEyePosition] = useState({ x: 0, y: 0 });
   const animationRef = useRef<number>();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const eyeAnimationRef = useRef<number>();
+  
+  // Smooth eye following with lerp
+  useEffect(() => {
+    const animateEyes = () => {
+      setEyePosition(prev => ({
+        x: prev.x + (targetEyePosition.x - prev.x) * 0.15,
+        y: prev.y + (targetEyePosition.y - prev.y) * 0.15,
+      }));
+      eyeAnimationRef.current = requestAnimationFrame(animateEyes);
+    };
+    
+    eyeAnimationRef.current = requestAnimationFrame(animateEyes);
+    return () => {
+      if (eyeAnimationRef.current) {
+        cancelAnimationFrame(eyeAnimationRef.current);
+      }
+    };
+  }, [targetEyePosition]);
+  
+  // Mouse tracking for eyes
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!containerRef.current) return;
+    
+    const rect = containerRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    // Calculate angle and distance from center
+    const deltaX = e.clientX - centerX;
+    const deltaY = e.clientY - centerY;
+    
+    // Normalize and clamp the movement (max 6px movement)
+    const maxMove = 6;
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    const normalizedDistance = Math.min(distance / 300, 1); // 300px = full movement
+    
+    const moveX = (deltaX / (distance || 1)) * normalizedDistance * maxMove;
+    const moveY = (deltaY / (distance || 1)) * normalizedDistance * maxMove * 0.6; // Less vertical movement
+    
+    setTargetEyePosition({ x: moveX, y: moveY });
+  }, []);
+  
+  // Add global mouse listener
+  useEffect(() => {
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [handleMouseMove]);
   
   // Lip sync based on audio volume
   useEffect(() => {
@@ -62,28 +112,10 @@ const OrlaAnimatedAvatar = ({
     const timeoutId = scheduleNextBlink();
     return () => clearTimeout(timeoutId);
   }, []);
-  
-  // Subtle eye movement when connected
-  useEffect(() => {
-    if (!isConnected) {
-      setEyePosition({ x: 0, y: 0 });
-      return;
-    }
-    
-    const moveEyes = () => {
-      // Small random movement
-      setEyePosition({
-        x: (Math.random() - 0.5) * 4,
-        y: (Math.random() - 0.5) * 2,
-      });
-    };
-    
-    const interval = setInterval(moveEyes, 2000 + Math.random() * 2000);
-    return () => clearInterval(interval);
-  }, [isConnected]);
 
   return (
     <div 
+      ref={containerRef}
       className="relative overflow-hidden rounded-full"
       style={{ width: size, height: size }}
     >

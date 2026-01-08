@@ -1,11 +1,26 @@
 import { ArrowRight, ChevronDown } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useRef } from "react";
+
 const HeroSection = () => {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+
+  const videoY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
   return (
-    <header className="relative w-full h-screen overflow-hidden flex items-center justify-center">
-      {/* Background Image with subtle animation */}
-      <div className="absolute inset-0 w-full h-full z-0">
+    <header ref={ref} className="relative w-full h-screen overflow-hidden flex items-center justify-center">
+      {/* Background Video with parallax */}
+      <motion.div 
+        style={{ y: videoY }}
+        className="absolute inset-0 w-full h-[120%] z-0"
+      >
         <video
           autoPlay
           muted
@@ -19,13 +34,16 @@ const HeroSection = () => {
             type="video/mp4"
           />
         </video>
-      </div>
+      </motion.div>
 
       {/* Overlay */}
       <div className="absolute inset-0 hero-overlay z-10" />
 
-      {/* Content */}
-      <div className="relative z-20 text-center px-6 max-w-4xl mx-auto space-y-8">
+      {/* Content with parallax */}
+      <motion.div 
+        style={{ y: contentY, opacity }}
+        className="relative z-20 text-center px-6 max-w-4xl mx-auto space-y-8"
+      >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -77,7 +95,7 @@ const HeroSection = () => {
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
           </a>
         </motion.div>
-      </div>
+      </motion.div>
 
       {/* Scroll Indicator */}
       <motion.div

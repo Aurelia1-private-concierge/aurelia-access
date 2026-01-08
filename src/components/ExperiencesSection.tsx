@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 const benefits = [
   "Direct negotiation for off-market real estate.",
@@ -31,10 +32,22 @@ const images = [
 ];
 
 const ExperiencesSection = () => {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  const glowY = useTransform(scrollYProgress, [0, 1], ["-30%", "30%"]);
+  const imagesY = useTransform(scrollYProgress, [0, 1], ["5%", "-5%"]);
+
   return (
-    <section id="experiences" className="py-24 bg-secondary/20 relative overflow-hidden">
-      {/* Decorative Glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
+    <section ref={ref} id="experiences" className="py-24 bg-secondary/20 relative overflow-hidden">
+      {/* Parallax Decorative Glow */}
+      <motion.div 
+        style={{ y: glowY }}
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 blur-[100px] rounded-full pointer-events-none" 
+      />
 
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <motion.div
@@ -84,6 +97,7 @@ const ExperiencesSection = () => {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
+          style={{ y: imagesY }}
           className="relative order-1 lg:order-2"
         >
           <div className="grid grid-cols-2 gap-4">

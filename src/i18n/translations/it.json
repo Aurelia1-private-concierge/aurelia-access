@@ -13,6 +13,117 @@
     "joinButton": "Unisciti ad Aurelia",
     "discoverButton": "Scopri le Esperienze"
   },
+  "features": {
+    "label": "I Nostri Servizi",
+    "title": "Standard",
+    "titleHighlight": "Sovrani",
+    "subtitle": "Uniamo sicurezza crittografica all'avanguardia con il calore di un servizio iper-personalizzato.",
+    "viewAll": "Vedi Tutte le Specifiche",
+    "encryption": {
+      "title": "Crittografia End-to-End",
+      "description": "Tutte le comunicazioni sono protette con crittografia di livello sovrano. Le tue richieste, itinerari e dati finanziari sono visibili solo a te e al tuo liaison privato dedicato."
+    },
+    "curation": {
+      "title": "Curatela Su Misura",
+      "description": "I nostri specialisti anticipano le tue esigenze prima che tu le esprima, curando opzioni basate sulle tue preferenze e pattern storici."
+    },
+    "liquidity": {
+      "title": "Liquidità Globale",
+      "description": "Soluzioni di pagamento globali multi-valuta. Trasferimenti istantanei sicuri per aste d'arte, immobili o depositi charter senza frizioni bancarie."
+    },
+    "biometric": {
+      "title": "Accesso Biometrico Zero-Trust",
+      "description": "Autenticazione senza password. Il riconoscimento vocale e la verifica biometrica assicurano che solo tu possa autorizzare transazioni di alto valore."
+    }
+  },
+  "security": {
+    "label": "Sicurezza Sovrana",
+    "title": "La Tua Privacy,",
+    "titleHighlight": "Senza Compromessi.",
+    "subtitle": "In un mondo di violazioni dei dati e sorveglianza, Aurelia opera sul principio della discrezione assoluta. La nostra architettura di sicurezza è progettata per chi non richiede nulla di meno che privacy impenetrabile.",
+    "uptimeSla": "SLA di Disponibilità",
+    "dataBreaches": "Violazioni Dati",
+    "zero": "Zero",
+    "aes": {
+      "title": "Crittografia AES a 256 bit",
+      "description": "La crittografia di livello militare protegge tutte le comunicazioni e i dati a riposo."
+    },
+    "zeroKnowledge": {
+      "title": "Architettura Zero-Knowledge",
+      "description": "Non possiamo accedere ai tuoi dati. Solo tu detieni le chiavi di decrittazione."
+    },
+    "swiss": {
+      "title": "Residenza Dati in Svizzera",
+      "description": "Le tue informazioni sono conservate in data center svizzeri sicuri, oltre la portata giurisdizionale."
+    },
+    "privacy": {
+      "title": "Privacy End-to-End",
+      "description": "Dalla richiesta all'adempimento, le tue attività rimangono completamente confidenziali."
+    }
+  },
+  "experiences": {
+    "label": "Accesso Privato",
+    "title": "L'Irraggiungibile,",
+    "titleHighlight": "Acquisito.",
+    "subtitle": "Aurelia ottiene ciò che altri non possono. Dalle offerte su orologi vintage rari all'accesso last-minute ai gala di Monaco. La nostra rete bypassa le liste d'attesa e apre porte chiuse.",
+    "viewAcquisitions": "Vedi Acquisizioni Recenti",
+    "benefit1": "Negoziazione diretta per immobili fuori mercato.",
+    "benefit2": "Gestione aviazione privata con trasferimenti in pista.",
+    "benefit3": "Acquisizione d'arte curata e stoccaggio sicuro."
+  },
+  "testimonials": {
+    "label": "Testimonianze",
+    "title": "Fidato dagli",
+    "titleHighlight": "Eccezionali"
+  },
+  "faq": {
+    "label": "Domande e Risposte",
+    "title": "Domande",
+    "titleHighlight": "Frequenti",
+    "moreQuestions": "Altre domande?",
+    "contactLiaison": "Contatta il tuo liaison",
+    "q1": {
+      "question": "Qual è la struttura delle quote di iscrizione?",
+      "answer": "Aurelia opera su un modello di retainer annuale. Il livello Sovereign inizia a $150.000 annuali, che include richieste di concierge illimitate, un liaison privato dedicato e accesso alla nostra rete globale. Il livello Legacy, progettato per family office, è strutturato individualmente in base a portata e complessità."
+    },
+    "q2": {
+      "question": "Come funziona il processo di candidatura?",
+      "answer": "L'iscrizione è solo su invito o candidatura. Dopo aver inviato la tua richiesta iniziale, il nostro team di verifica conduce una revisione discreta dei precedenti. I candidati qualificati sono invitati a una consultazione privata—di persona presso la nostra sede di Ginevra o tramite video sicuro. L'intero processo richiede tipicamente 2-3 settimane."
+    },
+    "q3": {
+      "question": "Quali servizi sono inclusi nell'iscrizione?",
+      "answer": "I nostri servizi coprono viaggi di lusso e aviazione, acquisizione immobiliare, acquisto di arte e collezionismo, accesso esclusivo agli eventi, coordinamento della sicurezza privata e gestione dello stile di vita su misura. Ogni richiesta è gestita con assoluta discrezione dal tuo team di liaison dedicato."
+    },
+    "q4": {
+      "question": "Come garantite privacy e sicurezza?",
+      "answer": "La sicurezza è fondamentale per Aurelia. Impieghiamo crittografia AES a 256 bit per tutte le comunicazioni, architettura zero-knowledge per lo storage dei dati e autenticazione biometrica per transazioni sensibili. La nostra residenza dati in Svizzera assicura che le tue informazioni rimangano oltre la portata giurisdizionale."
+    },
+    "q5": {
+      "question": "Qual è il vostro tempo di risposta per le richieste?",
+      "answer": "Le richieste standard ricevono conferma entro 60 secondi, 24/7/365. Acquisizioni complesse o arrangiamenti di viaggio vedono tipicamente opzioni iniziali entro 4-6 ore. Per situazioni urgenti, il nostro protocollo prioritario assicura escalation immediata ai liaison senior."
+    },
+    "q6": {
+      "question": "Posso usare i servizi Aurelia globalmente?",
+      "answer": "Assolutamente. La nostra rete copre oltre 120 città in sei continenti. Che tu abbia bisogno di una prenotazione last-minute a Tokyo, una visita immobiliare a Monaco o aviazione privata a São Paulo, i nostri partner locali assicurano esecuzione impeccabile in tutto il mondo."
+    }
+  },
+  "membership": {
+    "title": "Iscrizione su",
+    "titleHighlight": "Candidatura",
+    "subtitle": "Aurelia serve una clientela globale limitata. Per mantenere il nostro standard di servizio iper-personalizzato, accettiamo solo 50 nuovi membri all'anno.",
+    "beginApplication": "Inizia Candidatura",
+    "contactLiaison": "Contatta Liaison",
+    "deposit": "$50k deposito iniziale all'accettazione",
+    "verification": "Verifica identità biometrica"
+  },
+  "metrics": {
+    "assets": "Asset Sotto Consulenza",
+    "coverage": "Copertura Globale",
+    "response": "Tempo di Risposta",
+    "retention": "Fidelizzazione Clienti",
+    "cities": "+ Città",
+    "seconds": " Secondi"
+  },
   "footer": {
     "navigate": "Navigazione",
     "contact": "Contatti",

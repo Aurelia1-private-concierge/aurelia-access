@@ -1,37 +1,10 @@
 import { Shield, Sparkles, Globe, Fingerprint, ArrowUpRight } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-
-const features = [
-  {
-    icon: Shield,
-    title: "End-to-End Encryption",
-    description: "All communications are secured with sovereign-grade encryption. Your requests, itinerary, and financial data remain visible only to you and your dedicated private liaison.",
-    large: true,
-    decorative: true,
-  },
-  {
-    icon: Sparkles,
-    title: "Bespoke Curation",
-    description: "Our specialists anticipate your needs before you articulate them, curating options based on your preferences and historical patterns.",
-    large: false,
-  },
-  {
-    icon: Globe,
-    title: "Global Liquidity",
-    description: "Multi-currency global payment solutions. Secure instant transfers for art auctions, real estate, or charter deposits without banking friction.",
-    large: false,
-  },
-  {
-    icon: Fingerprint,
-    title: "Biometric Zero-Trust Access",
-    description: "Passwordless authentication. Voice recognition and biometric verification ensure that only you can authorize high-value transactions or access sensitive itinerary details.",
-    large: true,
-    hasBackground: true,
-  },
-];
+import { useTranslation } from "react-i18next";
 
 const FeaturesSection = () => {
+  const { t } = useTranslation();
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -40,9 +13,37 @@ const FeaturesSection = () => {
 
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
 
+  const features = [
+    {
+      icon: Shield,
+      titleKey: "features.encryption.title",
+      descriptionKey: "features.encryption.description",
+      large: true,
+      decorative: true,
+    },
+    {
+      icon: Sparkles,
+      titleKey: "features.curation.title",
+      descriptionKey: "features.curation.description",
+      large: false,
+    },
+    {
+      icon: Globe,
+      titleKey: "features.liquidity.title",
+      descriptionKey: "features.liquidity.description",
+      large: false,
+    },
+    {
+      icon: Fingerprint,
+      titleKey: "features.biometric.title",
+      descriptionKey: "features.biometric.description",
+      large: true,
+      hasBackground: true,
+    },
+  ];
+
   return (
     <section ref={ref} id="services" className="py-24 marble-bg relative overflow-hidden">
-      {/* Floating decorative elements */}
       <motion.div
         style={{ y: backgroundY }}
         className="absolute top-20 right-10 w-[400px] h-[400px] bg-primary/3 blur-[150px] rounded-full pointer-events-none"
@@ -57,13 +58,13 @@ const FeaturesSection = () => {
             className="max-w-xl"
           >
             <p className="text-primary text-xs font-medium tracking-[0.2em] uppercase mb-4">
-              Our Services
+              {t("features.label")}
             </p>
             <h2 className="font-serif text-4xl md:text-5xl text-foreground tracking-tight mb-4">
-              Sovereign <span className="italic text-muted-foreground">Standards</span>
+              {t("features.title")} <span className="italic text-muted-foreground">{t("features.titleHighlight")}</span>
             </h2>
             <p className="font-light text-muted-foreground leading-relaxed">
-              We blend state-of-the-art cryptographic security with the warmth of hyper-personalized service.
+              {t("features.subtitle")}
             </p>
           </motion.div>
           <motion.div
@@ -74,7 +75,7 @@ const FeaturesSection = () => {
             className="mt-6 md:mt-0"
           >
             <a href="#" className="group inline-flex items-center text-primary text-sm tracking-widest uppercase hover:opacity-80 transition-opacity">
-              View All Specifications 
+              {t("features.viewAll")}
               <ArrowUpRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
             </a>
           </motion.div>
@@ -83,7 +84,7 @@ const FeaturesSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {features.map((feature, index) => (
             <motion.div
-              key={feature.title}
+              key={feature.titleKey}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -123,15 +124,14 @@ const FeaturesSection = () => {
                 </div>
                 <div>
                   <h3 className={`font-serif ${feature.large ? "text-2xl" : "text-xl"} text-foreground mb-3 tracking-tight group-hover:text-primary transition-colors duration-300`}>
-                    {feature.title}
+                    {t(feature.titleKey)}
                   </h3>
                   <p className="text-sm text-muted-foreground leading-relaxed font-light max-w-md">
-                    {feature.description}
+                    {t(feature.descriptionKey)}
                   </p>
                 </div>
               </div>
 
-              {/* Gradient border effect */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none gradient-border" />
             </motion.div>
           ))}

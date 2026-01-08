@@ -43,6 +43,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { Logo } from "@/components/brand";
 import ZapierSettings from "@/components/admin/ZapierSettings";
+import BroadcastNotifications from "@/components/admin/BroadcastNotifications";
 import { format } from "date-fns";
 
 interface LaunchSignup {
@@ -367,6 +368,7 @@ const Admin = () => {
           </div>
           <div className="grid md:grid-cols-2 gap-6">
             <ZapierSettings />
+            <BroadcastNotifications />
           </div>
         </motion.div>
 

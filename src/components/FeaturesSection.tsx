@@ -69,7 +69,7 @@ const FeaturesSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className={`group relative p-8 bg-secondary/30 border border-border/30 backdrop-blur-sm hover:border-primary/30 transition-all duration-500 overflow-hidden ${
+              className={`group relative p-8 bg-secondary/20 border border-border/20 backdrop-blur-sm hover:border-primary/40 hover:bg-secondary/40 transition-all duration-500 card-hover overflow-hidden ${
                 feature.large ? "md:col-span-2" : ""
               }`}
             >

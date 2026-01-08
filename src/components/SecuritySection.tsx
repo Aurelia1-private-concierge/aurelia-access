@@ -88,7 +88,7 @@ const SecuritySection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="group p-6 bg-secondary/20 border border-border/30 backdrop-blur-sm hover:border-primary/30 hover:bg-secondary/40 transition-all duration-500"
+                className="group p-6 bg-secondary/20 border border-border/20 backdrop-blur-sm hover:border-primary/40 hover:bg-secondary/40 transition-all duration-500 card-hover"
               >
                 <div className="w-10 h-10 rounded-full bg-background border border-border/30 flex items-center justify-center mb-4 group-hover:border-primary/50 transition-colors duration-300">
                   <feature.icon className="w-4 h-4 text-primary" strokeWidth={1.5} />

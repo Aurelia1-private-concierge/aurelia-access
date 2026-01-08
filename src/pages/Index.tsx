@@ -22,12 +22,12 @@ const Index = () => {
       <ScrollProgress />
       <Navigation />
       <HeroSection videoSrc={heroVideo} />
-      
+
       {/* Luxury Clock Section */}
       <section className="py-16 flex justify-center items-center">
         <RolexClock />
       </section>
-      
+
       <MetricsStrip />
       <TrustStrip />
       <FeaturesSection />

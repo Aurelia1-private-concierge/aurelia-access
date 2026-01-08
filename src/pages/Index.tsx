@@ -9,7 +9,7 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import FAQSection from "@/components/FAQSection";
 import MembershipCTA from "@/components/MembershipCTA";
 import Footer from "@/components/Footer";
-import ChatWidget from "@/components/ChatWidget";
+import OrlaFAB from "@/components/OrlaFAB";
 import heroVideo from "@/assets/hero-video.mp4";
 import LoadingScreen from "@/components/LoadingScreen";
 import ScrollProgress from "@/components/ScrollProgress";
@@ -30,7 +30,7 @@ const Index = () => {
       <FAQSection />
       <MembershipCTA />
       <Footer />
-      <ChatWidget />
+      <OrlaFAB />
     </div>
   );
 };

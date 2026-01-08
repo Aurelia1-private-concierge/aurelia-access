@@ -16,6 +16,7 @@ import Services from "./pages/Services";
 import PartnerApply from "./pages/PartnerApply";
 import PartnerPortal from "./pages/PartnerPortal";
 import PartnerServiceForm from "./pages/PartnerServiceForm";
+import Orla from "./pages/Orla";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -107,6 +108,14 @@ const AnimatedRoutes = () => {
                 <Profile />
               </PageTransition>
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orla"
+          element={
+            <PageTransition>
+              <Orla />
+            </PageTransition>
           }
         />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

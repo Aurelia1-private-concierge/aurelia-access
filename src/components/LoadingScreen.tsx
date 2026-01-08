@@ -33,9 +33,10 @@ const LoadingScreen = () => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
           className="fixed inset-0 z-[100] bg-background flex items-center justify-center overflow-hidden"
+          style={{ contain: 'layout' }}
         >
-          {/* Animated background particles - using CSS percentages to avoid forced reflows */}
-          <div className="absolute inset-0 overflow-hidden">
+          {/* Animated background particles - using CSS percentages and transform to avoid layout shifts */}
+          <div className="absolute inset-0 overflow-hidden" style={{ contain: 'strict' }}>
             {[...Array(20)].map((_, i) => {
               const leftPos = (i * 5) % 100;
               const topPos = (i * 7) % 100;
@@ -44,10 +45,10 @@ const LoadingScreen = () => {
               return (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0 }}
+                  initial={{ opacity: 0, y: 0 }}
                   animate={{ 
                     opacity: [0, 0.3, 0],
-                    y: [0, -200],
+                    y: -200,
                   }}
                   transition={{ 
                     duration, 
@@ -55,7 +56,7 @@ const LoadingScreen = () => {
                     delay,
                     ease: "easeOut"
                   }}
-                  className="absolute w-1 h-1 bg-primary rounded-full"
+                  className="absolute w-1 h-1 bg-primary rounded-full will-change-transform"
                   style={{ left: `${leftPos}%`, top: `${topPos}%` }}
                 />
               );
@@ -67,10 +68,10 @@ const LoadingScreen = () => {
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: [0.8, 1.2, 1], opacity: [0, 0.3, 0.15] }}
             transition={{ duration: 1.5, ease: "easeOut" }}
-            className="absolute w-64 h-64 rounded-full bg-gradient-radial from-primary/20 to-transparent blur-2xl"
+            className="absolute w-64 h-64 rounded-full bg-gradient-radial from-primary/20 to-transparent blur-2xl will-change-transform"
           />
 
-          <div className="relative flex flex-col items-center">
+          <div className="relative flex flex-col items-center" style={{ contain: 'layout' }}>
             {/* Animated Logo with gold shimmer */}
             <AnimatedLogo 
               size="xl" 
@@ -78,20 +79,15 @@ const LoadingScreen = () => {
               showTagline={true} 
             />
 
-            {/* Loading progress */}
-            <motion.div
-              initial={{ opacity: 0, width: 0 }}
-              animate={{ opacity: 1, width: 160 }}
-              transition={{ delay: 0.6, duration: 0.4 }}
-              className="mt-10 h-px bg-border/30 rounded-full overflow-hidden"
-            >
+            {/* Loading progress - fixed width container to prevent layout shifts */}
+            <div className="mt-10 w-40 h-px bg-border/30 rounded-full overflow-hidden">
               <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${Math.min(progress, 100)}%` }}
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: Math.min(progress, 100) / 100 }}
                 transition={{ duration: 0.3 }}
-                className="h-full bg-gradient-to-r from-primary/60 via-primary to-primary/60"
+                className="h-full w-full bg-gradient-to-r from-primary/60 via-primary to-primary/60 origin-left will-change-transform"
               />
-            </motion.div>
+            </div>
 
             {/* Status text */}
             <motion.p

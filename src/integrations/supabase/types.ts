@@ -47,6 +47,160 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_messages: {
+        Row: {
+          attachments: string[] | null
+          created_at: string
+          id: string
+          message: string
+          read: boolean
+          recipient_id: string
+          request_id: string | null
+          sender_id: string
+        }
+        Insert: {
+          attachments?: string[] | null
+          created_at?: string
+          id?: string
+          message: string
+          read?: boolean
+          recipient_id: string
+          request_id?: string | null
+          sender_id: string
+        }
+        Update: {
+          attachments?: string[] | null
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean
+          recipient_id?: string
+          request_id?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_messages_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      partner_services: {
+        Row: {
+          availability_notes: string | null
+          category: Database["public"]["Enums"]["service_category"]
+          created_at: string
+          currency: string | null
+          description: string | null
+          highlights: string[] | null
+          id: string
+          images: string[] | null
+          is_active: boolean
+          max_price: number | null
+          min_price: number | null
+          partner_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          availability_notes?: string | null
+          category: Database["public"]["Enums"]["service_category"]
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          highlights?: string[] | null
+          id?: string
+          images?: string[] | null
+          is_active?: boolean
+          max_price?: number | null
+          min_price?: number | null
+          partner_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          availability_notes?: string | null
+          category?: Database["public"]["Enums"]["service_category"]
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          highlights?: string[] | null
+          id?: string
+          images?: string[] | null
+          is_active?: boolean
+          max_price?: number | null
+          min_price?: number | null
+          partner_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_services_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      partners: {
+        Row: {
+          categories: Database["public"]["Enums"]["service_category"][]
+          company_name: string
+          contact_name: string
+          created_at: string
+          description: string | null
+          email: string
+          id: string
+          logo_url: string | null
+          notes: string | null
+          phone: string | null
+          status: Database["public"]["Enums"]["partner_status"]
+          updated_at: string
+          user_id: string
+          verification_documents: string[] | null
+          website: string | null
+        }
+        Insert: {
+          categories?: Database["public"]["Enums"]["service_category"][]
+          company_name: string
+          contact_name: string
+          created_at?: string
+          description?: string | null
+          email: string
+          id?: string
+          logo_url?: string | null
+          notes?: string | null
+          phone?: string | null
+          status?: Database["public"]["Enums"]["partner_status"]
+          updated_at?: string
+          user_id: string
+          verification_documents?: string[] | null
+          website?: string | null
+        }
+        Update: {
+          categories?: Database["public"]["Enums"]["service_category"][]
+          company_name?: string
+          contact_name?: string
+          created_at?: string
+          description?: string | null
+          email?: string
+          id?: string
+          logo_url?: string | null
+          notes?: string | null
+          phone?: string | null
+          status?: Database["public"]["Enums"]["partner_status"]
+          updated_at?: string
+          user_id?: string
+          verification_documents?: string[] | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -86,15 +240,132 @@ export type Database = {
         }
         Relationships: []
       }
+      service_requests: {
+        Row: {
+          budget_max: number | null
+          budget_min: number | null
+          category: Database["public"]["Enums"]["service_category"]
+          client_id: string
+          created_at: string
+          description: string
+          id: string
+          internal_notes: string | null
+          partner_id: string | null
+          partner_response: string | null
+          preferred_date: string | null
+          requirements: Json | null
+          service_id: string | null
+          status: Database["public"]["Enums"]["request_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          budget_max?: number | null
+          budget_min?: number | null
+          category: Database["public"]["Enums"]["service_category"]
+          client_id: string
+          created_at?: string
+          description: string
+          id?: string
+          internal_notes?: string | null
+          partner_id?: string | null
+          partner_response?: string | null
+          preferred_date?: string | null
+          requirements?: Json | null
+          service_id?: string | null
+          status?: Database["public"]["Enums"]["request_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          budget_max?: number | null
+          budget_min?: number | null
+          category?: Database["public"]["Enums"]["service_category"]
+          client_id?: string
+          created_at?: string
+          description?: string
+          id?: string
+          internal_notes?: string | null
+          partner_id?: string | null
+          partner_response?: string | null
+          preferred_date?: string | null
+          requirements?: Json | null
+          service_id?: string | null
+          status?: Database["public"]["Enums"]["request_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_requests_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "partner_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "partner" | "member"
+      partner_status: "pending" | "approved" | "suspended" | "rejected"
+      request_status:
+        | "pending"
+        | "accepted"
+        | "in_progress"
+        | "completed"
+        | "cancelled"
+      service_category:
+        | "private_aviation"
+        | "yacht_charter"
+        | "real_estate"
+        | "collectibles"
+        | "events_access"
+        | "security"
+        | "dining"
+        | "travel"
+        | "wellness"
+        | "shopping"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -221,6 +492,28 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "partner", "member"],
+      partner_status: ["pending", "approved", "suspended", "rejected"],
+      request_status: [
+        "pending",
+        "accepted",
+        "in_progress",
+        "completed",
+        "cancelled",
+      ],
+      service_category: [
+        "private_aviation",
+        "yacht_charter",
+        "real_estate",
+        "collectibles",
+        "events_access",
+        "security",
+        "dining",
+        "travel",
+        "wellness",
+        "shopping",
+      ],
+    },
   },
 } as const

@@ -13,6 +13,9 @@ import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import ResetPassword from "./pages/ResetPassword";
 import Services from "./pages/Services";
+import PartnerApply from "./pages/PartnerApply";
+import PartnerPortal from "./pages/PartnerPortal";
+import PartnerServiceForm from "./pages/PartnerServiceForm";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -54,6 +57,36 @@ const AnimatedRoutes = () => {
             <PageTransition>
               <Services />
             </PageTransition>
+          }
+        />
+        <Route
+          path="/partner/apply"
+          element={
+            <ProtectedRoute>
+              <PageTransition>
+                <PartnerApply />
+              </PageTransition>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/partner"
+          element={
+            <ProtectedRoute>
+              <PageTransition>
+                <PartnerPortal />
+              </PageTransition>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/partner/services/new"
+          element={
+            <ProtectedRoute>
+              <PageTransition>
+                <PartnerServiceForm />
+              </PageTransition>
+            </ProtectedRoute>
           }
         />
         <Route

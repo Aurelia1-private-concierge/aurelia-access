@@ -5,7 +5,7 @@ import { Mic, MicOff, Phone, PhoneOff, ArrowLeft, Sparkles, Volume2 } from "luci
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import AudioWaveform from "@/components/AudioWaveform";
+import CircularWaveform from "@/components/CircularWaveform";
 import orlaAvatar from "@/assets/orla-avatar.png";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -102,56 +102,89 @@ const Orla = () => {
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col items-center justify-center px-6 pt-24 pb-32">
-        {/* Orla Avatar */}
+        {/* Orla Avatar with Circular Waveform */}
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="relative mb-8"
+          className="relative mb-8 flex items-center justify-center"
+          style={{ width: 320, height: 320 }}
         >
-          {/* Animated rings */}
+          {/* Circular Waveform - Output (Orla speaking) */}
+          <AnimatePresence>
+            {isConnected && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <CircularWaveform
+                  getFrequencyData={conversation.getOutputByteFrequencyData}
+                  getVolume={conversation.getOutputVolume}
+                  isActive={isSpeaking}
+                  size={320}
+                  barCount={72}
+                  type="output"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Circular Waveform - Input (User speaking) */}
+          <AnimatePresence>
+            {isConnected && !isSpeaking && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 0.6, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <CircularWaveform
+                  getFrequencyData={conversation.getInputByteFrequencyData}
+                  getVolume={conversation.getInputVolume}
+                  isActive={!isSpeaking}
+                  size={320}
+                  barCount={72}
+                  type="input"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Ambient glow rings */}
           <AnimatePresence>
             {isConnected && (
               <>
                 <motion.div
-                  initial={{ scale: 0.8, opacity: 0 }}
+                  initial={{ scale: 0.6, opacity: 0 }}
                   animate={{ 
-                    scale: isSpeaking ? [1, 1.4, 1] : 1.2,
-                    opacity: isSpeaking ? [0.4, 0, 0.4] : 0.2,
+                    scale: isSpeaking ? [0.7, 0.85, 0.7] : 0.75,
+                    opacity: isSpeaking ? [0.3, 0.1, 0.3] : 0.15,
                   }}
-                  exit={{ scale: 0.8, opacity: 0 }}
-                  transition={{ duration: isSpeaking ? 1 : 0.3, repeat: isSpeaking ? Infinity : 0 }}
-                  className="absolute inset-0 rounded-full bg-primary/30"
-                  style={{ transform: "scale(1.3)" }}
-                />
-                <motion.div
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ 
-                    scale: isSpeaking ? [1, 1.2, 1] : 1.1,
-                    opacity: isSpeaking ? [0.6, 0.2, 0.6] : 0.3,
-                  }}
-                  exit={{ scale: 0.9, opacity: 0 }}
-                  transition={{ duration: isSpeaking ? 0.8 : 0.3, repeat: isSpeaking ? Infinity : 0, delay: 0.1 }}
-                  className="absolute inset-0 rounded-full bg-primary/40"
-                  style={{ transform: "scale(1.15)" }}
+                  exit={{ scale: 0.6, opacity: 0 }}
+                  transition={{ duration: isSpeaking ? 1.5 : 0.3, repeat: isSpeaking ? Infinity : 0 }}
+                  className="absolute rounded-full bg-primary/20"
+                  style={{ width: 280, height: 280 }}
                 />
               </>
             )}
           </AnimatePresence>
 
+          {/* Avatar container */}
           <motion.div
             animate={{
               boxShadow: isConnected
                 ? isSpeaking
                   ? [
-                      "0 0 30px rgba(212, 175, 55, 0.3)",
-                      "0 0 60px rgba(212, 175, 55, 0.5)",
-                      "0 0 30px rgba(212, 175, 55, 0.3)",
+                      "0 0 40px rgba(212, 175, 55, 0.4)",
+                      "0 0 80px rgba(212, 175, 55, 0.6)",
+                      "0 0 40px rgba(212, 175, 55, 0.4)",
                     ]
-                  : "0 0 40px rgba(212, 175, 55, 0.3)"
-                : "0 0 20px rgba(212, 175, 55, 0.1)",
+                  : "0 0 50px rgba(212, 175, 55, 0.3)"
+                : "0 0 25px rgba(212, 175, 55, 0.15)",
             }}
             transition={{ duration: 1.5, repeat: isSpeaking ? Infinity : 0 }}
-            className="w-40 h-40 md:w-56 md:h-56 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border-2 border-primary/50 overflow-hidden relative"
+            className="w-44 h-44 md:w-52 md:h-52 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border-2 border-primary/50 overflow-hidden relative z-10"
           >
             <img
               src={orlaAvatar}
@@ -160,73 +193,29 @@ const Orla = () => {
             />
           </motion.div>
 
-          {/* Speaking indicator */}
+          {/* Speaking/Listening indicator badge */}
           <AnimatePresence>
-            {isConnected && isSpeaking && (
+            {isConnected && (
               <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-primary/90 text-primary-foreground px-3 py-1 rounded-full flex items-center gap-2"
+                initial={{ scale: 0, opacity: 0, y: 10 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0, opacity: 0, y: 10 }}
+                className={`absolute -bottom-4 left-1/2 -translate-x-1/2 ${
+                  isSpeaking ? "bg-primary/90" : "bg-emerald-500/90"
+                } text-primary-foreground px-4 py-1.5 rounded-full flex items-center gap-2 z-20 shadow-lg`}
               >
-                <Volume2 className="w-3 h-3" />
-                <span className="text-[10px] font-medium uppercase tracking-wider">Speaking</span>
+                {isSpeaking ? (
+                  <Volume2 className="w-3.5 h-3.5" />
+                ) : (
+                  <Mic className="w-3.5 h-3.5" />
+                )}
+                <span className="text-[10px] font-medium uppercase tracking-wider">
+                  {isSpeaking ? "Speaking" : "Listening"}
+                </span>
               </motion.div>
             )}
           </AnimatePresence>
         </motion.div>
-
-        {/* Audio Waveform Visualizer */}
-        <AnimatePresence>
-          {isConnected && (
-            <motion.div
-              initial={{ opacity: 0, y: 20, scaleX: 0.8 }}
-              animate={{ opacity: 1, y: 0, scaleX: 1 }}
-              exit={{ opacity: 0, y: 20, scaleX: 0.8 }}
-              transition={{ duration: 0.3 }}
-              className="w-full max-w-md mb-6"
-            >
-              <div className="bg-secondary/20 border border-border/20 rounded-2xl p-4 backdrop-blur-sm">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${isSpeaking ? "bg-primary animate-pulse" : "bg-emerald-500 animate-pulse"}`} />
-                    <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
-                      {isSpeaking ? "Orla Speaking" : "Listening"}
-                    </span>
-                  </div>
-                  <Volume2 className={`w-4 h-4 ${isSpeaking ? "text-primary" : "text-emerald-500"}`} />
-                </div>
-                
-                {/* Output waveform (Orla speaking) */}
-                <div className={`transition-opacity duration-200 ${isSpeaking ? "opacity-100" : "opacity-30"}`}>
-                  <AudioWaveform
-                    getFrequencyData={conversation.getOutputByteFrequencyData}
-                    getVolume={conversation.getOutputVolume}
-                    isActive={isSpeaking}
-                    barCount={40}
-                    type="output"
-                  />
-                </div>
-                
-                {/* Input waveform (User speaking) */}
-                <div className={`transition-opacity duration-200 mt-2 ${!isSpeaking ? "opacity-100" : "opacity-30"}`}>
-                  <AudioWaveform
-                    getFrequencyData={conversation.getInputByteFrequencyData}
-                    getVolume={conversation.getInputVolume}
-                    isActive={!isSpeaking}
-                    barCount={40}
-                    type="input"
-                  />
-                </div>
-                
-                <div className="flex justify-between mt-3 text-[9px] text-muted-foreground/60">
-                  <span>Gold: Orla</span>
-                  <span>Green: You</span>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* Name and Status */}
         <motion.div

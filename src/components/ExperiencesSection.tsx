@@ -88,18 +88,21 @@ const ExperiencesSection = () => {
         >
           <div className="grid grid-cols-2 gap-4">
             {images.map((image, index) => (
-              <motion.img
+              <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                src={image.src}
-                className={`rounded-sm w-full h-64 object-cover opacity-90 hover:opacity-100 transition-opacity duration-500 ${
-                  image.offset ? "translate-y-8" : ""
-                }`}
-                alt={image.alt}
-              />
+                className={`relative overflow-hidden group ${image.offset ? "translate-y-8" : ""}`}
+              >
+                <img
+                  src={image.src}
+                  className="w-full h-64 object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                  alt={image.alt}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              </motion.div>
             ))}
           </div>
         </motion.div>

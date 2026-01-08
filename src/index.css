@@ -203,6 +203,16 @@
     animation: subtle-pulse 3s ease-in-out infinite;
   }
 
+  /* Shimmer animation */
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 3s infinite;
+  }
+
   /* Gradient border */
   .gradient-border {
     position: relative;

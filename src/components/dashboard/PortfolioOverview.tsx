@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import OrlaCompanion from "./OrlaCompanion";
 import TravelDNACard from "./TravelDNACard";
+import SurpriseMeCard from "./SurpriseMeCard";
 import TravelDNAOnboarding from "@/components/TravelDNAOnboarding";
 
 const portfolioStats = [
@@ -51,10 +52,11 @@ const PortfolioOverview = () => {
         />
       )}
 
-      {/* Travel DNA + Orla Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Travel DNA + Orla + Surprise Me Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <TravelDNACard onEditClick={() => setShowOnboarding(true)} />
         <OrlaCompanion />
+        <SurpriseMeCard />
       </div>
       
       {/* Stats Grid */}

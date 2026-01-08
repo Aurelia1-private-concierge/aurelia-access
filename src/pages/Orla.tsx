@@ -1,12 +1,13 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useConversation } from "@elevenlabs/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, MicOff, Phone, PhoneOff, ArrowLeft, Sparkles, Volume2, Wifi, WifiOff, Clock, MessageSquare, CheckCircle2 } from "lucide-react";
+import { Mic, MicOff, Phone, PhoneOff, ArrowLeft, Sparkles, Volume2, Wifi, WifiOff, Clock, MessageSquare, CheckCircle2, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CircularWaveform from "@/components/CircularWaveform";
+import GuestPreview from "@/components/orla/GuestPreview";
 import orlaAvatar from "@/assets/orla-avatar.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -403,8 +404,22 @@ const Orla = () => {
             <span className="text-sm font-light">Back to Aurelia</span>
           </Link>
           
-          {/* Connection Status Indicator */}
+          {/* Connection Status & User Indicator */}
           <div className="flex items-center gap-4">
+            {/* Authenticated User Badge */}
+            {user && (
+              <motion.div
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full"
+              >
+                <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
+                  <User className="w-3 h-3 text-primary" />
+                </div>
+                <span className="text-xs text-foreground/80 hidden sm:inline">Member</span>
+              </motion.div>
+            )}
+            
             {isConnected && (
               <motion.div
                 initial={{ opacity: 0, x: 10 }}
@@ -444,8 +459,13 @@ const Orla = () => {
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col lg:flex-row items-center justify-center px-6 pt-24 pb-32 gap-8">
-        {/* Left Side - Avatar and Controls */}
-        <div className="flex flex-col items-center">
+        {/* Guest Preview Mode */}
+        {!user ? (
+          <GuestPreview onSignIn={() => navigate("/auth")} />
+        ) : (
+          <>
+            {/* Left Side - Avatar and Controls */}
+            <div className="flex flex-col items-center">
           {/* Orla Avatar with Circular Waveform */}
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
@@ -756,6 +776,8 @@ const Orla = () => {
             </motion.div>
           )}
         </AnimatePresence>
+          </>
+        )}
       </main>
 
       {/* Footer */}

@@ -22,6 +22,10 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [resetEmailSent, setResetEmailSent] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string }>({});
+  const [lastResetRequest, setLastResetRequest] = useState<number>(0);
+  const [cooldownRemaining, setCooldownRemaining] = useState(0);
+
+  const RESET_COOLDOWN_MS = 60000; // 60 seconds
 
   // Redirect if already logged in - use useEffect to avoid calling navigate during render
   useEffect(() => {
@@ -29,6 +33,16 @@ const Auth = () => {
       navigate("/dashboard", { replace: true });
     }
   }, [user, authLoading, navigate]);
+
+  // Countdown timer for password reset cooldown
+  useEffect(() => {
+    if (cooldownRemaining > 0) {
+      const timer = setTimeout(() => {
+        setCooldownRemaining((prev) => Math.max(0, prev - 1));
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [cooldownRemaining]);
 
   // Show loading while checking auth
   if (authLoading) {
@@ -74,6 +88,18 @@ const Auth = () => {
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Check cooldown to prevent email bombing
+    const now = Date.now();
+    if (now - lastResetRequest < RESET_COOLDOWN_MS) {
+      const remaining = Math.ceil((RESET_COOLDOWN_MS - (now - lastResetRequest)) / 1000);
+      toast({
+        title: "Please Wait",
+        description: `You can request another reset link in ${remaining} seconds.`,
+        variant: "destructive",
+      });
+      return;
+    }
+    
     const emailResult = emailSchema.safeParse(email);
     if (!emailResult.success) {
       setErrors({ email: emailResult.error.errors[0].message });
@@ -94,6 +120,9 @@ const Auth = () => {
           variant: "destructive",
         });
       } else {
+        // Set cooldown after successful request
+        setLastResetRequest(now);
+        setCooldownRemaining(60);
         setResetEmailSent(true);
         toast({
           title: "Email Sent",
@@ -270,7 +299,7 @@ const Auth = () => {
               {/* Submit button */}
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || cooldownRemaining > 0}
                 className="w-full py-3 bg-primary text-primary-foreground font-medium text-sm tracking-widest uppercase rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isLoading ? (
@@ -278,10 +307,19 @@ const Auth = () => {
                     <Loader2 className="w-4 h-4 animate-spin" />
                     Sending...
                   </>
+                ) : cooldownRemaining > 0 ? (
+                  `Wait ${cooldownRemaining}s`
                 ) : (
                   "Send Reset Link"
                 )}
               </button>
+
+              {/* Cooldown notice */}
+              {cooldownRemaining > 0 && (
+                <p className="text-xs text-muted-foreground text-center">
+                  Please wait {cooldownRemaining} seconds before requesting another reset
+                </p>
+              )}
 
               {/* Back to login */}
               <p className="text-center">

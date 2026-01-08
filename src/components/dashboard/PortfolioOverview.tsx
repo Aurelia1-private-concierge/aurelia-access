@@ -17,6 +17,7 @@ import TravelDNACard from "./TravelDNACard";
 import SurpriseMeCard from "./SurpriseMeCard";
 import RecommendationsFeed from "./RecommendationsFeed";
 import SubscriptionCard from "./SubscriptionCard";
+import ExclusivePerks from "./ExclusivePerks";
 import TravelDNAOnboarding from "@/components/TravelDNAOnboarding";
 
 const portfolioStats = [
@@ -54,10 +55,11 @@ const PortfolioOverview = () => {
         />
       )}
 
-      {/* Subscription Card */}
-      <SubscriptionCard />
-
-      {/* Travel DNA + Orla + Surprise Me Row */}
+      {/* Subscription + Perks Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <SubscriptionCard />
+        <ExclusivePerks />
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <TravelDNACard onEditClick={() => setShowOnboarding(true)} />
         <OrlaCompanion />

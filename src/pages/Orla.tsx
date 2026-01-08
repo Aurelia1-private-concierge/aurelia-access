@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CircularWaveform from "@/components/CircularWaveform";
 import GuestPreview from "@/components/orla/GuestPreview";
-import orlaAvatar from "@/assets/orla-avatar.png";
+import OrlaAnimatedAvatar from "@/components/orla/OrlaAnimatedAvatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -583,10 +583,11 @@ const Orla = () => {
               transition={{ duration: 1.5, repeat: isSpeaking ? Infinity : 0 }}
               className="w-44 h-44 md:w-52 md:h-52 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border-2 border-primary/50 overflow-hidden relative z-10"
             >
-              <img
-                src={orlaAvatar}
-                alt="Orla"
-                className="w-full h-full object-cover"
+              <OrlaAnimatedAvatar
+                isSpeaking={isSpeaking}
+                isConnected={isConnected}
+                getVolume={conversation.getOutputVolume}
+                size={208}
               />
             </motion.div>
 

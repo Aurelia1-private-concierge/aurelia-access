@@ -5,6 +5,7 @@ import { Mic, MicOff, Phone, PhoneOff, ArrowLeft, Sparkles, Volume2 } from "luci
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import AudioWaveform from "@/components/AudioWaveform";
 import orlaAvatar from "@/assets/orla-avatar.png";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -174,6 +175,58 @@ const Orla = () => {
             )}
           </AnimatePresence>
         </motion.div>
+
+        {/* Audio Waveform Visualizer */}
+        <AnimatePresence>
+          {isConnected && (
+            <motion.div
+              initial={{ opacity: 0, y: 20, scaleX: 0.8 }}
+              animate={{ opacity: 1, y: 0, scaleX: 1 }}
+              exit={{ opacity: 0, y: 20, scaleX: 0.8 }}
+              transition={{ duration: 0.3 }}
+              className="w-full max-w-md mb-6"
+            >
+              <div className="bg-secondary/20 border border-border/20 rounded-2xl p-4 backdrop-blur-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${isSpeaking ? "bg-primary animate-pulse" : "bg-emerald-500 animate-pulse"}`} />
+                    <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                      {isSpeaking ? "Orla Speaking" : "Listening"}
+                    </span>
+                  </div>
+                  <Volume2 className={`w-4 h-4 ${isSpeaking ? "text-primary" : "text-emerald-500"}`} />
+                </div>
+                
+                {/* Output waveform (Orla speaking) */}
+                <div className={`transition-opacity duration-200 ${isSpeaking ? "opacity-100" : "opacity-30"}`}>
+                  <AudioWaveform
+                    getFrequencyData={conversation.getOutputByteFrequencyData}
+                    getVolume={conversation.getOutputVolume}
+                    isActive={isSpeaking}
+                    barCount={40}
+                    type="output"
+                  />
+                </div>
+                
+                {/* Input waveform (User speaking) */}
+                <div className={`transition-opacity duration-200 mt-2 ${!isSpeaking ? "opacity-100" : "opacity-30"}`}>
+                  <AudioWaveform
+                    getFrequencyData={conversation.getInputByteFrequencyData}
+                    getVolume={conversation.getInputVolume}
+                    isActive={!isSpeaking}
+                    barCount={40}
+                    type="input"
+                  />
+                </div>
+                
+                <div className="flex justify-between mt-3 text-[9px] text-muted-foreground/60">
+                  <span>Gold: Orla</span>
+                  <span>Green: You</span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Name and Status */}
         <motion.div

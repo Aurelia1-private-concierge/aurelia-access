@@ -1,23 +1,28 @@
-import { useState, useRef, useEffect } from "react";
-import { MessageSquare, X, Minus, Lock, ArrowRight, Sparkles } from "lucide-react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { X, Minus, Lock, ArrowRight, Sparkles, RotateCcw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import orlaAvatar from "@/assets/orla-avatar.png";
 
 type Message = { role: "user" | "assistant"; content: string };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
+const INITIAL_MESSAGE: Message = {
+  role: "assistant",
+  content: "Good evening. Welcome to Aurelia. I'm Orla, your Private Liaison. I'm here to orchestrate the extraordinary—from private aviation to rare acquisitions. How may I be of service?"
+};
+
 const ChatWidget = () => {
+  const { user, session } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "assistant",
-      content: "Good evening. Welcome to Aurelia. I'm Orla, your Private Liaison. I'm here to orchestrate the extraordinary—from private aviation to rare acquisitions. How may I be of service?"
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -27,6 +32,70 @@ const ChatWidget = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Load recent conversation when user is authenticated and widget opens
+  const loadConversationHistory = useCallback(async () => {
+    if (!user || !isOpen) return;
+
+    setIsLoadingHistory(true);
+    try {
+      // Find most recent active conversation
+      const { data: recentConv } = await supabase
+        .from("conversations")
+        .select("id, title, summary")
+        .eq("user_id", user.id)
+        .eq("channel", "chat")
+        .is("ended_at", null)
+        .gte("last_message_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
+        .order("last_message_at", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (recentConv) {
+        setConversationId(recentConv.id);
+
+        // Load recent messages
+        const { data: recentMessages } = await supabase
+          .from("conversation_messages")
+          .select("role, content")
+          .eq("conversation_id", recentConv.id)
+          .order("created_at", { ascending: true })
+          .limit(20);
+
+        if (recentMessages && recentMessages.length > 0) {
+          const typedMessages = recentMessages.map(m => ({
+            role: m.role as "user" | "assistant",
+            content: m.content
+          }));
+          setMessages([INITIAL_MESSAGE, ...typedMessages]);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to load conversation history:", error);
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  }, [user, isOpen]);
+
+  useEffect(() => {
+    if (isOpen && user && !conversationId) {
+      loadConversationHistory();
+    }
+  }, [isOpen, user, conversationId, loadConversationHistory]);
+
+  // Reset conversation state when user logs out
+  useEffect(() => {
+    if (!user) {
+      setConversationId(null);
+      setMessages([INITIAL_MESSAGE]);
+    }
+  }, [user]);
+
+  const startNewConversation = async () => {
+    setConversationId(null);
+    setMessages([INITIAL_MESSAGE]);
+    toast.success("Started a new conversation");
+  };
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -50,14 +119,32 @@ const ChatWidget = () => {
     };
 
     try {
+      // Get auth token for authenticated requests
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+
+      if (session?.access_token) {
+        headers.Authorization = `Bearer ${session.access_token}`;
+      } else {
+        headers.Authorization = `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`;
+      }
+
       const resp = await fetch(CHAT_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
-        body: JSON.stringify({ messages: [...messages, userMessage] }),
+        headers,
+        body: JSON.stringify({ 
+          messages: [...messages.slice(1), userMessage], // Skip initial greeting
+          conversationId,
+          channel: "chat"
+        }),
       });
+
+      // Capture conversation ID from response header
+      const respConvId = resp.headers.get("X-Conversation-Id");
+      if (respConvId && !conversationId) {
+        setConversationId(respConvId);
+      }
 
       if (!resp.ok) {
         const errorData = await resp.json().catch(() => ({}));
@@ -121,7 +208,6 @@ const ChatWidget = () => {
     } catch (error) {
       console.error("Chat error:", error);
       toast.error(error instanceof Error ? error.message : "Connection error");
-      // Remove the failed user message or add error response
       setMessages(prev => [
         ...prev,
         { role: "assistant", content: "I apologize, but I'm momentarily unable to connect. Please try again, or call our private line for immediate assistance." }
@@ -174,66 +260,98 @@ const ChatWidget = () => {
                   <h4 className="font-serif text-foreground text-base tracking-wide">Orla</h4>
                   <p className="text-[10px] text-primary uppercase tracking-[0.2em] font-medium flex items-center gap-1.5">
                     <Sparkles className="w-2.5 h-2.5" />
-                    {isLoading ? "Composing..." : "Private Liaison"}
+                    {isLoadingHistory ? "Loading history..." : isLoading ? "Composing..." : "Private Liaison"}
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="w-8 h-8 rounded-full hover:bg-primary/10 flex items-center justify-center text-muted-foreground hover:text-primary transition-all"
-              >
-                <Minus className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-1">
+                {user && (
+                  <button
+                    onClick={startNewConversation}
+                    className="w-8 h-8 rounded-full hover:bg-primary/10 flex items-center justify-center text-muted-foreground hover:text-primary transition-all"
+                    title="Start new conversation"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                  </button>
+                )}
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="w-8 h-8 rounded-full hover:bg-primary/10 flex items-center justify-center text-muted-foreground hover:text-primary transition-all"
+                >
+                  <Minus className="w-4 h-4" />
+                </button>
+              </div>
             </div>
+
+            {/* Conversation indicator for authenticated users */}
+            {user && conversationId && (
+              <div className="px-4 py-2 bg-primary/5 border-b border-primary/10">
+                <p className="text-[10px] text-primary/70 text-center">
+                  Continuing your conversation • Memory enabled
+                </p>
+              </div>
+            )}
 
             {/* Chat Messages */}
             <div className="flex-1 p-5 space-y-4 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20">
-              {messages.map((message, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: message.role === "user" ? 10 : -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className={`flex ${message.role === "user" ? "justify-end" : "items-start space-x-3"}`}
-                >
-                  {message.role === "assistant" && (
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/40 flex-shrink-0 overflow-hidden mt-0.5 shadow-sm shadow-primary/20">
-                      <img src={orlaAvatar} alt="Orla" className="w-full h-full object-cover" />
-                    </div>
-                  )}
-                  <div className={`${
-                    message.role === "user" 
-                      ? "bg-primary/15 border border-primary/25 rounded-2xl rounded-tr-none" 
-                      : "bg-secondary/40 border border-border/20 rounded-2xl rounded-tl-none backdrop-blur-sm"
-                  } p-4 max-w-[85%]`}>
-                    <p className={`text-xs font-light leading-relaxed whitespace-pre-wrap ${
-                      message.role === "user" ? "text-primary" : "text-foreground/90"
-                    }`}>
-                      {message.content}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
+              {isLoadingHistory ? (
+                <div className="flex items-center justify-center h-full">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full"
+                  />
+                </div>
+              ) : (
+                <>
+                  {messages.map((message, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: message.role === "user" ? 10 : -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className={`flex ${message.role === "user" ? "justify-end" : "items-start space-x-3"}`}
+                    >
+                      {message.role === "assistant" && (
+                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/40 flex-shrink-0 overflow-hidden mt-0.5 shadow-sm shadow-primary/20">
+                          <img src={orlaAvatar} alt="Orla" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      <div className={`${
+                        message.role === "user" 
+                          ? "bg-primary/15 border border-primary/25 rounded-2xl rounded-tr-none" 
+                          : "bg-secondary/40 border border-border/20 rounded-2xl rounded-tl-none backdrop-blur-sm"
+                      } p-4 max-w-[85%]`}>
+                        <p className={`text-xs font-light leading-relaxed whitespace-pre-wrap ${
+                          message.role === "user" ? "text-primary" : "text-foreground/90"
+                        }`}>
+                          {message.content}
+                        </p>
+                      </div>
+                    </motion.div>
+                  ))}
 
-              {/* Typing indicator */}
-              <AnimatePresence>
-                {isLoading && messages[messages.length - 1]?.role === "user" && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="flex items-start space-x-3"
-                  >
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/40 flex-shrink-0 overflow-hidden mt-0.5 shadow-sm shadow-primary/20">
-                      <img src={orlaAvatar} alt="Orla" className="w-full h-full object-cover" />
-                    </div>
-                    <div className="bg-secondary/40 border border-primary/20 px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
-                      <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.2, repeat: Infinity, delay: 0 }} className="w-1.5 h-1.5 rounded-full bg-primary" />
-                      <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.2, repeat: Infinity, delay: 0.2 }} className="w-1.5 h-1.5 rounded-full bg-primary" />
-                      <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.2, repeat: Infinity, delay: 0.4 }} className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                  {/* Typing indicator */}
+                  <AnimatePresence>
+                    {isLoading && messages[messages.length - 1]?.role === "user" && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="flex items-start space-x-3"
+                      >
+                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/40 flex-shrink-0 overflow-hidden mt-0.5 shadow-sm shadow-primary/20">
+                          <img src={orlaAvatar} alt="Orla" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="bg-secondary/40 border border-primary/20 px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
+                          <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.2, repeat: Infinity, delay: 0 }} className="w-1.5 h-1.5 rounded-full bg-primary" />
+                          <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.2, repeat: Infinity, delay: 0.2 }} className="w-1.5 h-1.5 rounded-full bg-primary" />
+                          <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.2, repeat: Infinity, delay: 0.4 }} className="w-1.5 h-1.5 rounded-full bg-primary" />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </>
+              )}
               <div ref={messagesEndRef} />
             </div>
 
@@ -247,13 +365,13 @@ const ChatWidget = () => {
                   placeholder="Type your request securely..."
                   className="w-full bg-secondary/40 border border-border/30 rounded-xl py-3.5 pl-4 pr-12 text-xs text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/40 focus:bg-secondary/60 transition-all font-light"
                   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
-                  disabled={isLoading}
+                  disabled={isLoading || isLoadingHistory}
                 />
                 <motion.button 
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={handleSend}
-                  disabled={isLoading || !input.trim()}
+                  disabled={isLoading || !input.trim() || isLoadingHistory}
                   className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-primary text-primary-foreground rounded-lg transition-all disabled:opacity-50"
                 >
                   <ArrowRight className="w-4 h-4" />
@@ -262,7 +380,7 @@ const ChatWidget = () => {
               <div className="flex justify-between items-center mt-3 px-1">
                 <p className="text-[9px] text-muted-foreground/60 flex items-center">
                   <Lock className="w-2.5 h-2.5 mr-1 text-emerald-500/70" />
-                  End-to-End Encrypted
+                  {user ? "Memory enabled" : "End-to-End Encrypted"}
                 </p>
                 <p className="text-[9px] text-primary/70 font-medium tracking-wide">Powered by Orla AI</p>
               </div>

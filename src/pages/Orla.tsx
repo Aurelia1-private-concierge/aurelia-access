@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useConversation } from "@elevenlabs/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, MicOff, Phone, PhoneOff, ArrowLeft, Sparkles, Volume2, Wifi, WifiOff, Clock, MessageSquare, CheckCircle2, User } from "lucide-react";
+import { Mic, MicOff, Phone, PhoneOff, ArrowLeft, Sparkles, Volume2, Wifi, WifiOff, Clock, MessageSquare, CheckCircle2, User, History } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -9,8 +9,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import CircularWaveform from "@/components/CircularWaveform";
 import GuestPreview from "@/components/orla/GuestPreview";
 import OrlaAnimatedAvatar from "@/components/orla/OrlaAnimatedAvatar";
+import VoiceSessionHistory from "@/components/orla/VoiceSessionHistory";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useVoiceSession } from "@/hooks/useVoiceSession";
 
 const ELEVENLABS_AGENT_ID = "agent_01jx7t3mjgeqzsjh5qxbvdsxey";
 
@@ -38,7 +40,11 @@ const Orla = () => {
   const [connectionStartTime, setConnectionStartTime] = useState<Date | null>(null);
   const [actionNotifications, setActionNotifications] = useState<ActionNotification[]>([]);
   const [userProfile, setUserProfile] = useState<{ display_name: string | null; avatar_url: string | null } | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
   const transcriptEndRef = useRef<HTMLDivElement>(null);
+  
+  // Voice session persistence
+  const { startSession, addMessage, endSession } = useVoiceSession(user?.id);
 
   // Fetch user profile for avatar display
   useEffect(() => {
@@ -96,6 +102,8 @@ const Orla = () => {
         timestamp: new Date(),
       };
       setTranscript(prev => [...prev, entry]);
+      // Persist message to database
+      addMessage(entry);
     },
     onError: (message) => {
       console.error("Conversation error:", message);
@@ -341,6 +349,9 @@ const Orla = () => {
       await navigator.mediaDevices.getUserMedia({ audio: true });
       setMicPermission("granted");
 
+      // Start voice session for persistence
+      await startSession();
+
       const { data, error } = await supabase.functions.invoke("elevenlabs-conversation-token", {
         body: { agentId: ELEVENLABS_AGENT_ID },
       });
@@ -364,11 +375,13 @@ const Orla = () => {
     } finally {
       setIsConnecting(false);
     }
-  }, [conversation, user, navigate]);
+  }, [conversation, user, navigate, startSession]);
 
   const endConversation = useCallback(async () => {
     await conversation.endSession();
-  }, [conversation]);
+    // End the voice session with title generation
+    await endSession(true);
+  }, [conversation, endSession]);
 
   const isConnected = conversation.status === "connected";
   const isSpeaking = conversation.isSpeaking;
@@ -429,6 +442,19 @@ const Orla = () => {
           
           {/* Connection Status & User Indicator */}
           <div className="flex items-center gap-4">
+            {/* History Button */}
+            {user && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowHistory(!showHistory)}
+                className={`gap-2 ${showHistory ? 'bg-primary/10 text-primary' : ''}`}
+              >
+                <History className="w-4 h-4" />
+                <span className="hidden sm:inline">History</span>
+              </Button>
+            )}
+            
             {/* Authenticated User Badge with Avatar */}
             {user && (
               <motion.div
@@ -490,8 +516,23 @@ const Orla = () => {
         </div>
       </header>
 
+      {/* Voice Session History Panel */}
+      <AnimatePresence>
+        {showHistory && user && (
+          <motion.div
+            initial={{ x: "100%", opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: "100%", opacity: 0 }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="fixed right-0 top-0 bottom-0 w-full sm:w-96 bg-card/95 backdrop-blur-xl border-l border-border/30 z-40 pt-20"
+          >
+            <VoiceSessionHistory userId={user.id} onClose={() => setShowHistory(false)} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Main Content */}
-      <main className="flex-1 flex flex-col lg:flex-row items-center justify-center px-6 pt-24 pb-32 gap-8">
+      <main className={`flex-1 flex flex-col lg:flex-row items-center justify-center px-6 pt-24 pb-32 gap-8 transition-all ${showHistory ? 'lg:mr-96' : ''}`}>
         {/* Guest Preview Mode */}
         {!user ? (
           <GuestPreview onSignIn={() => navigate("/auth")} />

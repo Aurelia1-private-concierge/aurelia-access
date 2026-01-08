@@ -1,0 +1,52 @@
+{
+  "nav": {
+    "services": "Services",
+    "security": "Security",
+    "experiences": "Experiences",
+    "membership": "Membership",
+    "clientLogin": "Client Login"
+  },
+  "hero": {
+    "badge": "By Invitation Only",
+    "title": "Beyond Service. Beyond Expectation.",
+    "subtitle": "The world's most exclusive concierge service for those who expect nothing less than extraordinary.",
+    "joinButton": "Join Aurelia",
+    "discoverButton": "Discover Experiences"
+  },
+  "footer": {
+    "navigate": "Navigate",
+    "contact": "Contact",
+    "becomePartner": "Become a Partner",
+    "privateLine": "24/7 Private Line",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "legal": "Legal Inquiries"
+  },
+  "common": {
+    "loading": "Loading...",
+    "viewDetails": "View Details",
+    "learnMore": "Learn More",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "back": "Back",
+    "next": "Next"
+  },
+  "dashboard": {
+    "welcome": "Welcome back",
+    "recommendations": "Curated For You",
+    "recommendationsDesc": "Personalized experiences based on your preferences",
+    "viewAll": "View All",
+    "matchScore": "Match Score"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?"
+  }
+}

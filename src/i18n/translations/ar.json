@@ -1,0 +1,52 @@
+{
+  "nav": {
+    "services": "الخدمات",
+    "security": "الأمان",
+    "experiences": "التجارب",
+    "membership": "العضوية",
+    "clientLogin": "دخول العميل"
+  },
+  "hero": {
+    "badge": "بالدعوة فقط",
+    "title": "ما وراء الخدمة. ما وراء التوقعات.",
+    "subtitle": "خدمة الكونسيرج الأكثر حصرية في العالم لأولئك الذين لا يتوقعون أقل من الاستثنائي.",
+    "joinButton": "انضم إلى أوريليا",
+    "discoverButton": "اكتشف التجارب"
+  },
+  "footer": {
+    "navigate": "التنقل",
+    "contact": "اتصل بنا",
+    "becomePartner": "كن شريكاً",
+    "privateLine": "خط خاص 24/7",
+    "privacy": "سياسة الخصوصية",
+    "terms": "شروط الخدمة",
+    "legal": "الاستفسارات القانونية"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "viewDetails": "عرض التفاصيل",
+    "learnMore": "اعرف المزيد",
+    "submit": "إرسال",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "back": "رجوع",
+    "next": "التالي"
+  },
+  "dashboard": {
+    "welcome": "مرحباً بعودتك",
+    "recommendations": "مختار لك",
+    "recommendationsDesc": "تجارب مخصصة بناءً على تفضيلاتك",
+    "viewAll": "عرض الكل",
+    "matchScore": "درجة التوافق"
+  },
+  "auth": {
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "noAccount": "ليس لديك حساب؟",
+    "hasAccount": "لديك حساب بالفعل؟"
+  }
+}

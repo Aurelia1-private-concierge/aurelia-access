@@ -1,5 +1,6 @@
 import { Shield, Lock, Eye, Server, KeyRound, Fingerprint } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 const securityFeatures = [
   {
@@ -25,11 +26,26 @@ const securityFeatures = [
 ];
 
 const SecuritySection = () => {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  const leftGlowY = useTransform(scrollYProgress, [0, 1], ["-20%", "20%"]);
+  const rightGlowY = useTransform(scrollYProgress, [0, 1], ["20%", "-20%"]);
+
   return (
-    <section id="security" className="py-24 bg-background relative overflow-hidden">
-      {/* Decorative elements */}
-      <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-primary/5 blur-[150px] rounded-full -translate-y-1/2 pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-primary/3 blur-[100px] rounded-full pointer-events-none" />
+    <section ref={ref} id="security" className="py-24 bg-background relative overflow-hidden">
+      {/* Parallax decorative elements */}
+      <motion.div 
+        style={{ y: leftGlowY }}
+        className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-primary/5 blur-[150px] rounded-full -translate-y-1/2 pointer-events-none" 
+      />
+      <motion.div 
+        style={{ y: rightGlowY }}
+        className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-primary/3 blur-[100px] rounded-full pointer-events-none" 
+      />
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">

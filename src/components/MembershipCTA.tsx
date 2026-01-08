@@ -1,15 +1,35 @@
 import { Crown, ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useRef } from "react";
 
 const MembershipCTA = () => {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  const leftGlowY = useTransform(scrollYProgress, [0, 1], ["30%", "-30%"]);
+  const rightGlowY = useTransform(scrollYProgress, [0, 1], ["-20%", "20%"]);
+  const centerGlowScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1, 0.8]);
+
   return (
-    <section id="membership" className="py-32 relative overflow-hidden">
+    <section ref={ref} id="membership" className="py-32 relative overflow-hidden">
       {/* Background layers */}
       <div className="absolute inset-0 bg-background" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--gold)/0.1),transparent_60%)]" />
-      <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 blur-[150px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-primary/3 blur-[120px] rounded-full pointer-events-none" />
+      <motion.div 
+        style={{ scale: centerGlowScale }}
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--gold)/0.1),transparent_60%)]" 
+      />
+      <motion.div 
+        style={{ y: leftGlowY }}
+        className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 blur-[150px] rounded-full pointer-events-none" 
+      />
+      <motion.div 
+        style={{ y: rightGlowY }}
+        className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-primary/3 blur-[120px] rounded-full pointer-events-none" 
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}

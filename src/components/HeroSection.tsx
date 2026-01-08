@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useRef, useState } from "react";
 import heroImage from "@/assets/hero-luxury-abstract.jpg";
+import { AnimatedLogo } from "@/components/brand";
 
 interface HeroSectionProps {
   videoSrc?: string;
@@ -68,6 +69,16 @@ const HeroSection = ({ videoSrc }: HeroSectionProps) => {
         style={{ y: contentY, opacity }}
         className="relative z-20 text-center px-6 max-w-4xl mx-auto space-y-8"
       >
+        {/* Animated Logo Icon */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.1 }}
+          className="mb-6"
+        >
+          <AnimatedLogo size="sm" showWordmark={false} />
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

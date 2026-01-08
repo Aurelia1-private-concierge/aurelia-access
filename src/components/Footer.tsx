@@ -1,9 +1,12 @@
 import { Instagram, Twitter, Linkedin, ArrowUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Logo, BRAND } from "@/components/brand";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const Footer = () => {
+  const { t } = useTranslation();
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -56,32 +59,32 @@ const Footer = () => {
               transition={{ delay: 0.1 }}
             >
               <h4 className="text-xs font-medium tracking-[0.2em] uppercase text-foreground mb-6">
-                Navigate
+                {t("footer.navigate")}
               </h4>
               <ul className="space-y-3">
                 <li>
                   <Link to="/services" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
-                    Services
+                    {t("nav.services")}
                   </Link>
                 </li>
                 <li>
                   <a href="#security" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
-                    Security
+                    {t("nav.security")}
                   </a>
                 </li>
                 <li>
                   <a href="#experiences" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
-                    Experiences
+                    {t("nav.experiences")}
                   </a>
                 </li>
                 <li>
                   <Link to="/auth" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
-                    Membership
+                    {t("nav.membership")}
                   </Link>
                 </li>
                 <li>
                   <Link to="/partner/apply" className="text-sm text-primary hover:text-primary/80 transition-colors duration-300">
-                    Become a Partner
+                    {t("footer.becomePartner")}
                   </Link>
                 </li>
               </ul>
@@ -95,7 +98,7 @@ const Footer = () => {
               transition={{ delay: 0.2 }}
             >
               <h4 className="text-xs font-medium tracking-[0.2em] uppercase text-foreground mb-6">
-                Contact
+                {t("footer.contact")}
               </h4>
               <ul className="space-y-3 text-sm text-muted-foreground">
                 <li>
@@ -105,7 +108,10 @@ const Footer = () => {
                 </li>
                 <li>Geneva • London • Singapore</li>
                 <li className="pt-2">
-                  <span className="text-xs tracking-wide text-primary">24/7 Private Line</span>
+                  <span className="text-xs tracking-wide text-primary">{t("footer.privateLine")}</span>
+                </li>
+                <li className="pt-4">
+                  <LanguageSwitcher variant="footer" />
                 </li>
               </ul>
             </motion.div>
@@ -128,9 +134,9 @@ const Footer = () => {
               © {BRAND.year} {BRAND.entity}. {BRAND.legal.copyright}
             </p>
             <div className="flex items-center gap-6 text-xs text-muted-foreground/40 font-light">
-              <Link to="/privacy" className="hover:text-muted-foreground transition-colors">Privacy Policy</Link>
-              <Link to="/terms" className="hover:text-muted-foreground transition-colors">Terms of Service</Link>
-              <a href="mailto:legal@aurelia.com" className="hover:text-muted-foreground transition-colors">Legal Inquiries</a>
+              <Link to="/privacy" className="hover:text-muted-foreground transition-colors">{t("footer.privacy")}</Link>
+              <Link to="/terms" className="hover:text-muted-foreground transition-colors">{t("footer.terms")}</Link>
+              <a href="mailto:legal@aurelia.com" className="hover:text-muted-foreground transition-colors">{t("footer.legal")}</a>
             </div>
             <motion.button
               onClick={scrollToTop}

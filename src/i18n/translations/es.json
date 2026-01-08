@@ -1,0 +1,52 @@
+{
+  "nav": {
+    "services": "Servicios",
+    "security": "Seguridad",
+    "experiences": "Experiencias",
+    "membership": "Membresía",
+    "clientLogin": "Acceso Cliente"
+  },
+  "hero": {
+    "badge": "Solo por Invitación",
+    "title": "Más Allá del Servicio. Más Allá de las Expectativas.",
+    "subtitle": "El servicio de conserjería más exclusivo del mundo para quienes no esperan nada menos que lo extraordinario.",
+    "joinButton": "Únete a Aurelia",
+    "discoverButton": "Descubre Experiencias"
+  },
+  "footer": {
+    "navigate": "Navegación",
+    "contact": "Contacto",
+    "becomePartner": "Ser Socio",
+    "privateLine": "Línea Privada 24/7",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio",
+    "legal": "Consultas Legales"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "viewDetails": "Ver Detalles",
+    "learnMore": "Saber Más",
+    "submit": "Enviar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "back": "Atrás",
+    "next": "Siguiente"
+  },
+  "dashboard": {
+    "welcome": "Bienvenido de nuevo",
+    "recommendations": "Seleccionado Para Ti",
+    "recommendationsDesc": "Experiencias personalizadas según tus preferencias",
+    "viewAll": "Ver Todo",
+    "matchScore": "Puntuación"
+  },
+  "auth": {
+    "signIn": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "forgotPassword": "¿Olvidaste tu Contraseña?",
+    "noAccount": "¿No tienes cuenta?",
+    "hasAccount": "¿Ya tienes cuenta?"
+  }
+}

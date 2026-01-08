@@ -1,0 +1,52 @@
+{
+  "nav": {
+    "services": "Servizi",
+    "security": "Sicurezza",
+    "experiences": "Esperienze",
+    "membership": "Iscrizione",
+    "clientLogin": "Accesso Cliente"
+  },
+  "hero": {
+    "badge": "Solo su Invito",
+    "title": "Oltre il Servizio. Oltre le Aspettative.",
+    "subtitle": "Il servizio di concierge più esclusivo al mondo per chi non si aspetta nulla di meno che lo straordinario.",
+    "joinButton": "Unisciti ad Aurelia",
+    "discoverButton": "Scopri le Esperienze"
+  },
+  "footer": {
+    "navigate": "Navigazione",
+    "contact": "Contatti",
+    "becomePartner": "Diventa Partner",
+    "privateLine": "Linea Privata 24/7",
+    "privacy": "Privacy Policy",
+    "terms": "Termini di Servizio",
+    "legal": "Richieste Legali"
+  },
+  "common": {
+    "loading": "Caricamento...",
+    "viewDetails": "Vedi Dettagli",
+    "learnMore": "Scopri di Più",
+    "submit": "Invia",
+    "cancel": "Annulla",
+    "save": "Salva",
+    "back": "Indietro",
+    "next": "Avanti"
+  },
+  "dashboard": {
+    "welcome": "Bentornato",
+    "recommendations": "Selezionato Per Te",
+    "recommendationsDesc": "Esperienze personalizzate in base alle tue preferenze",
+    "viewAll": "Vedi Tutto",
+    "matchScore": "Compatibilità"
+  },
+  "auth": {
+    "signIn": "Accedi",
+    "signUp": "Registrati",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Conferma Password",
+    "forgotPassword": "Password Dimenticata?",
+    "noAccount": "Non hai un account?",
+    "hasAccount": "Hai già un account?"
+  }
+}

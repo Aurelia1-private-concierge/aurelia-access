@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Lock, Menu } from "lucide-react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Sheet,
   SheetContent,
@@ -10,15 +11,17 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Logo } from "@/components/brand";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const navLinks = [
-  { href: "#services", label: "Services" },
-  { href: "#security", label: "Security" },
-  { href: "#experiences", label: "Experiences" },
-  { href: "#membership", label: "Membership" },
+  { href: "#services", labelKey: "nav.services" },
+  { href: "#security", labelKey: "nav.security" },
+  { href: "#experiences", labelKey: "nav.experiences" },
+  { href: "#membership", labelKey: "nav.membership" },
 ];
 
 const Navigation = () => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
@@ -78,7 +81,7 @@ const Navigation = () => {
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {link.label}
+              {t(link.labelKey)}
               {activeSection === link.href.replace('#', '') && (
                 <motion.span
                   layoutId="activeSection"
@@ -90,7 +93,9 @@ const Navigation = () => {
           ))}
         </div>
 
-        <div className="flex items-center space-x-6">
+        <div className="flex items-center space-x-4">
+          <LanguageSwitcher variant="nav" className="hidden md:flex" />
+          
           <Link 
             to="/auth" 
             className="hidden md:flex items-center space-x-2 text-xs font-medium tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors group"
@@ -98,7 +103,7 @@ const Navigation = () => {
             <span className="w-8 h-8 rounded-full border border-border/30 flex items-center justify-center group-hover:border-primary/50 group-hover:bg-primary/10 transition-all duration-300">
               <Lock className="w-3.5 h-3.5 text-primary" />
             </span>
-            <span>Client Login</span>
+            <span>{t("nav.clientLogin")}</span>
           </Link>
 
           {/* Mobile Menu */}
@@ -130,10 +135,14 @@ const Navigation = () => {
                         : "text-muted-foreground hover:text-foreground hover:bg-secondary/30"
                     }`}
                   >
-                    {link.label}
+                    {t(link.labelKey)}
                   </motion.a>
                 ))}
               </nav>
+
+              <div className="absolute bottom-20 left-6 right-6">
+                <LanguageSwitcher variant="nav" className="justify-center" />
+              </div>
 
               <div className="absolute bottom-8 left-6 right-6">
                 <Link 
@@ -142,7 +151,7 @@ const Navigation = () => {
                   className="flex items-center justify-center space-x-3 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-widest uppercase w-full gold-glow-hover transition-all duration-300"
                 >
                   <Lock className="w-4 h-4" />
-                  <span>Client Login</span>
+                  <span>{t("nav.clientLogin")}</span>
                 </Link>
               </div>
             </SheetContent>

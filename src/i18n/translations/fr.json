@@ -1,0 +1,52 @@
+{
+  "nav": {
+    "services": "Services",
+    "security": "Sécurité",
+    "experiences": "Expériences",
+    "membership": "Adhésion",
+    "clientLogin": "Connexion Client"
+  },
+  "hero": {
+    "badge": "Sur Invitation Uniquement",
+    "title": "Au-delà du Service. Au-delà des Attentes.",
+    "subtitle": "Le service de conciergerie le plus exclusif au monde pour ceux qui n'attendent rien de moins qu'extraordinaire.",
+    "joinButton": "Rejoindre Aurelia",
+    "discoverButton": "Découvrir les Expériences"
+  },
+  "footer": {
+    "navigate": "Navigation",
+    "contact": "Contact",
+    "becomePartner": "Devenir Partenaire",
+    "privateLine": "Ligne Privée 24/7",
+    "privacy": "Politique de Confidentialité",
+    "terms": "Conditions d'Utilisation",
+    "legal": "Questions Juridiques"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "viewDetails": "Voir les Détails",
+    "learnMore": "En Savoir Plus",
+    "submit": "Soumettre",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "back": "Retour",
+    "next": "Suivant"
+  },
+  "dashboard": {
+    "welcome": "Bienvenue",
+    "recommendations": "Sélectionné Pour Vous",
+    "recommendationsDesc": "Expériences personnalisées selon vos préférences",
+    "viewAll": "Voir Tout",
+    "matchScore": "Score de Compatibilité"
+  },
+  "auth": {
+    "signIn": "Se Connecter",
+    "signUp": "S'inscrire",
+    "email": "Email",
+    "password": "Mot de Passe",
+    "confirmPassword": "Confirmer le Mot de Passe",
+    "forgotPassword": "Mot de Passe Oublié?",
+    "noAccount": "Pas encore de compte?",
+    "hasAccount": "Déjà un compte?"
+  }
+}

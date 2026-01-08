@@ -1,0 +1,52 @@
+{
+  "nav": {
+    "services": "Dienstleistungen",
+    "security": "Sicherheit",
+    "experiences": "Erlebnisse",
+    "membership": "Mitgliedschaft",
+    "clientLogin": "Kundenlogin"
+  },
+  "hero": {
+    "badge": "Nur auf Einladung",
+    "title": "Jenseits von Service. Jenseits der Erwartungen.",
+    "subtitle": "Der exklusivste Concierge-Service der Welt für diejenigen, die nichts weniger als Außergewöhnliches erwarten.",
+    "joinButton": "Aurelia Beitreten",
+    "discoverButton": "Erlebnisse Entdecken"
+  },
+  "footer": {
+    "navigate": "Navigation",
+    "contact": "Kontakt",
+    "becomePartner": "Partner Werden",
+    "privateLine": "24/7 Private Leitung",
+    "privacy": "Datenschutz",
+    "terms": "Nutzungsbedingungen",
+    "legal": "Rechtliche Anfragen"
+  },
+  "common": {
+    "loading": "Laden...",
+    "viewDetails": "Details Anzeigen",
+    "learnMore": "Mehr Erfahren",
+    "submit": "Absenden",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "back": "Zurück",
+    "next": "Weiter"
+  },
+  "dashboard": {
+    "welcome": "Willkommen zurück",
+    "recommendations": "Für Sie Kuratiert",
+    "recommendationsDesc": "Personalisierte Erlebnisse basierend auf Ihren Präferenzen",
+    "viewAll": "Alle Anzeigen",
+    "matchScore": "Übereinstimmung"
+  },
+  "auth": {
+    "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "confirmPassword": "Passwort Bestätigen",
+    "forgotPassword": "Passwort Vergessen?",
+    "noAccount": "Noch kein Konto?",
+    "hasAccount": "Bereits ein Konto?"
+  }
+}

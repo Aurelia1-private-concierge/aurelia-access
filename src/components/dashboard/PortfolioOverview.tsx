@@ -15,6 +15,7 @@ import {
 import OrlaCompanion from "./OrlaCompanion";
 import TravelDNACard from "./TravelDNACard";
 import SurpriseMeCard from "./SurpriseMeCard";
+import RecommendationsFeed from "./RecommendationsFeed";
 import TravelDNAOnboarding from "@/components/TravelDNAOnboarding";
 
 const portfolioStats = [
@@ -58,6 +59,9 @@ const PortfolioOverview = () => {
         <OrlaCompanion />
         <SurpriseMeCard />
       </div>
+
+      {/* Personalized Recommendations */}
+      <RecommendationsFeed />
       
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

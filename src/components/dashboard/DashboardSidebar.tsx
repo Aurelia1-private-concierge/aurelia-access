@@ -7,7 +7,8 @@ import {
   LogOut,
   Settings
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 type ActiveView = "portfolio" | "messaging" | "documents";
 
@@ -23,6 +24,18 @@ const menuItems = [
 ];
 
 const DashboardSidebar = ({ activeView, setActiveView }: DashboardSidebarProps) => {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
+
+  // Get user display info
+  const userEmail = user?.email || "Guest";
+  const userInitial = userEmail.charAt(0).toUpperCase();
+
   return (
     <motion.aside
       initial={{ x: -20, opacity: 0 }}
@@ -81,20 +94,26 @@ const DashboardSidebar = ({ activeView, setActiveView }: DashboardSidebarProps) 
       <div className="p-4 border-t border-border/30">
         <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
           <div className="w-10 h-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
-            <Crown className="w-4 h-4 text-primary" />
+            {user ? (
+              <span className="text-sm font-medium text-primary">{userInitial}</span>
+            ) : (
+              <Crown className="w-4 h-4 text-primary" />
+            )}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-foreground truncate">J. Anderson</p>
+            <p className="text-sm font-medium text-foreground truncate">
+              {userEmail}
+            </p>
             <p className="text-xs text-primary tracking-wider">SOVEREIGN</p>
           </div>
         </div>
-        <Link
-          to="/"
+        <button
+          onClick={handleSignOut}
           className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
         >
           <LogOut className="w-3.5 h-3.5" />
-          <span>Exit Dashboard</span>
-        </Link>
+          <span>Sign Out</span>
+        </button>
       </div>
     </motion.aside>
   );

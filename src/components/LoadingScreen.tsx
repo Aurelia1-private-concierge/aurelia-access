@@ -34,30 +34,32 @@ const LoadingScreen = () => {
           transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
           className="fixed inset-0 z-[100] bg-background flex items-center justify-center overflow-hidden"
         >
-          {/* Animated background particles */}
+          {/* Animated background particles - using CSS percentages to avoid forced reflows */}
           <div className="absolute inset-0 overflow-hidden">
-            {[...Array(20)].map((_, i) => (
-              <motion.div
-                key={i}
-                initial={{ 
-                  opacity: 0, 
-                  x: Math.random() * window.innerWidth, 
-                  y: Math.random() * window.innerHeight 
-                }}
-                animate={{ 
-                  opacity: [0, 0.3, 0],
-                  y: [null, Math.random() * -200],
-                }}
-                transition={{ 
-                  duration: 3 + Math.random() * 2, 
-                  repeat: Infinity, 
-                  delay: Math.random() * 2,
-                  ease: "easeOut"
-                }}
-                className="absolute w-1 h-1 bg-primary rounded-full"
-                style={{ left: `${Math.random() * 100}%` }}
-              />
-            ))}
+            {[...Array(20)].map((_, i) => {
+              const leftPos = (i * 5) % 100;
+              const topPos = (i * 7) % 100;
+              const delay = (i * 0.1) % 2;
+              const duration = 3 + (i % 3);
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0 }}
+                  animate={{ 
+                    opacity: [0, 0.3, 0],
+                    y: [0, -200],
+                  }}
+                  transition={{ 
+                    duration, 
+                    repeat: Infinity, 
+                    delay,
+                    ease: "easeOut"
+                  }}
+                  className="absolute w-1 h-1 bg-primary rounded-full"
+                  style={{ left: `${leftPos}%`, top: `${topPos}%` }}
+                />
+              );
+            })}
           </div>
 
           {/* Outer glow ring */}

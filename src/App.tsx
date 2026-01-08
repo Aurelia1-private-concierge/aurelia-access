@@ -17,8 +17,10 @@ import PartnerApply from "./pages/PartnerApply";
 import PartnerPortal from "./pages/PartnerPortal";
 import PartnerServiceForm from "./pages/PartnerServiceForm";
 import Orla from "./pages/Orla";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 
 const queryClient = new QueryClient();
 
@@ -116,6 +118,16 @@ const AnimatedRoutes = () => {
             <PageTransition>
               <Orla />
             </PageTransition>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <PageTransition>
+                <Admin />
+              </PageTransition>
+            </AdminRoute>
           }
         />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

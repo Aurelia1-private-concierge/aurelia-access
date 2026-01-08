@@ -124,6 +124,45 @@ export type Database = {
         }
         Relationships: []
       }
+      launch_signups: {
+        Row: {
+          country_code: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          notification_preference: string | null
+          notification_sent_at: string | null
+          phone: string | null
+          source: string | null
+          updated_at: string | null
+          verified: boolean | null
+        }
+        Insert: {
+          country_code?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          notification_preference?: string | null
+          notification_sent_at?: string | null
+          phone?: string | null
+          source?: string | null
+          updated_at?: string | null
+          verified?: boolean | null
+        }
+        Update: {
+          country_code?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          notification_preference?: string | null
+          notification_sent_at?: string | null
+          phone?: string | null
+          source?: string | null
+          updated_at?: string | null
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           action_url: string | null

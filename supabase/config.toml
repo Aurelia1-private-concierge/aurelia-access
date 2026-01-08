@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.partner-api]
 verify_jwt = false
+
+[functions.send-launch-notifications]
+verify_jwt = false

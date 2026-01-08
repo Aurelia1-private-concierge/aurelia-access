@@ -22,6 +22,7 @@ import PartnerServiceForm from "./pages/PartnerServiceForm";
 import Orla from "./pages/Orla";
 import Admin from "./pages/Admin";
 import Membership from "./pages/Membership";
+import Discover from "./pages/Discover";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
@@ -56,6 +57,16 @@ const AnimatedRoutes = () => {
             <PageTransition>
               <ResetPassword />
             </PageTransition>
+          }
+        />
+        <Route
+          path="/discover"
+          element={
+            <ProtectedRoute>
+              <PageTransition>
+                <Discover />
+              </PageTransition>
+            </ProtectedRoute>
           }
         />
         <Route

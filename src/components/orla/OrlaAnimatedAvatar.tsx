@@ -113,11 +113,18 @@ const OrlaAnimatedAvatar = ({
     return () => clearTimeout(timeoutId);
   }, []);
 
+  // Calculate head tilt based on state
+  const headTilt = isSpeaking ? 0 : isConnected ? 3 : 0;
+
   return (
-    <div 
+    <motion.div 
       ref={containerRef}
       className="relative overflow-hidden rounded-full"
       style={{ width: size, height: size }}
+      animate={{
+        rotate: headTilt,
+      }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
     >
       {/* Base avatar image */}
       <img
@@ -282,7 +289,7 @@ const OrlaAnimatedAvatar = ({
         }}
         transition={{ duration: 0.3 }}
       />
-    </div>
+    </motion.div>
   );
 };
 

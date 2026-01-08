@@ -77,7 +77,7 @@ const PartnerApply = () => {
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase
+      const { data: partner, error } = await supabase
         .from("partners")
         .insert({
           user_id: user.id,
@@ -88,9 +88,34 @@ const PartnerApply = () => {
           website: formData.website || null,
           description: formData.description || null,
           categories: formData.categories,
-        });
+        })
+        .select()
+        .single();
 
       if (error) throw error;
+
+      // Trigger Zapier webhook for partner application
+      try {
+        await supabase.functions.invoke("zapier-webhook", {
+          body: {
+            event: "partner_application_submitted",
+            data: {
+              partner_id: partner.id,
+              company_name: formData.companyName,
+              contact_name: formData.contactName,
+              email: formData.email,
+              phone: formData.phone,
+              website: formData.website,
+              categories: formData.categories,
+              description: formData.description,
+            },
+          },
+        });
+        console.log("Zapier webhook triggered for partner application");
+      } catch (webhookError) {
+        console.log("Zapier webhook not configured or failed:", webhookError);
+        // Don't fail the application if webhook fails
+      }
 
       // Note: Partner role is automatically granted via database trigger when admin approves
       toast.success("Application submitted successfully! You'll be notified when approved.");

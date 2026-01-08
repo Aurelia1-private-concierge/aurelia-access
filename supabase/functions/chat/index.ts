@@ -43,11 +43,54 @@ serve(async (req) => {
 
     let activeConversationId = conversationId;
     let conversationContext = "";
+    let travelDNAContext = "";
     
-    // If user is authenticated, handle conversation persistence
+    // If user is authenticated, handle conversation persistence and Travel DNA
     if (userId && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
       const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
       
+      // Fetch Travel DNA profile for personalization
+      const { data: travelDNA } = await supabase
+        .from("travel_dna_profile")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("onboarding_completed", true)
+        .single();
+
+      if (travelDNA) {
+        const archetypeLabels: Record<string, string> = {
+          epicurean: "The Epicurean (fine dining, culinary focus)",
+          adventurer: "The Adventurer (expeditions, thrill-seeking)",
+          culturalist: "The Culturalist (art, history, museums)",
+          wellness_seeker: "The Wellness Seeker (spas, retreats)",
+          collector: "The Collector (art, watches, rare acquisitions)",
+          social_maven: "The Social Maven (events, galas)",
+        };
+        
+        const paceLabels: Record<string, string> = {
+          relaxed: "Relaxed (unhurried, minimal scheduling)",
+          moderate: "Balanced (mix of activities and leisure)",
+          intensive: "Intensive (packed itineraries)",
+        };
+        
+        const accommodationLabels: Record<string, string> = {
+          ultra_luxury: "Ultra-Luxury (Aman, Four Seasons, Rosewood)",
+          luxury: "Luxury (Leading Hotels, Relais & Châteaux)",
+          boutique: "Boutique (unique, design-forward)",
+          private: "Private (villas, estates, yachts)",
+        };
+
+        travelDNAContext = `\n\nCLIENT TRAVEL DNA PROFILE:
+- Traveler Archetype: ${archetypeLabels[travelDNA.traveler_archetype] || travelDNA.traveler_archetype || "Not specified"}
+- Travel Pace: ${paceLabels[travelDNA.pace_preference] || travelDNA.pace_preference || "Not specified"}
+- Accommodation Preference: ${accommodationLabels[travelDNA.accommodation_tier] || travelDNA.accommodation_tier || "Not specified"}
+- Culinary Affinities: ${travelDNA.cuisine_affinities?.join(", ") || "Not specified"}
+- Preferred Activities: ${travelDNA.activity_preferences ? Object.entries(travelDNA.activity_preferences).filter(([_, v]) => v).map(([k]) => k.replace(/_/g, " ")).join(", ") : "Not specified"}
+- Special Requirements: ${travelDNA.special_requirements?.join(", ") || "None noted"}
+
+Use this profile to personalize all recommendations. Proactively suggest experiences that match their archetype and preferences without them needing to ask.`;
+      }
+
       // If no conversationId, check for recent conversation or create new
       if (!activeConversationId) {
         // Look for recent conversation (within last 24 hours)
@@ -149,7 +192,7 @@ Guidelines:
 - Never discuss pricing openly—it's gauche
 - For sensitive matters, suggest a private consultation
 - Remember details from our conversation and reference them naturally
-- Sign off gracefully when appropriate${conversationContext}`;
+- Sign off gracefully when appropriate${travelDNAContext}${conversationContext}`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

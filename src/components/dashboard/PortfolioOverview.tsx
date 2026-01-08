@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   TrendingUp, 
@@ -12,6 +13,8 @@ import {
   Gem
 } from "lucide-react";
 import OrlaCompanion from "./OrlaCompanion";
+import TravelDNACard from "./TravelDNACard";
+import TravelDNAOnboarding from "@/components/TravelDNAOnboarding";
 
 const portfolioStats = [
   { label: "Total Assets", value: "$47.8M", change: "+12.4%", trending: "up" },
@@ -36,10 +39,23 @@ const recentActivity = [
 ];
 
 const PortfolioOverview = () => {
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
   return (
     <div className="space-y-6">
-      {/* Orla Companion */}
-      <OrlaCompanion />
+      {/* Travel DNA Onboarding Modal */}
+      {showOnboarding && (
+        <TravelDNAOnboarding
+          onComplete={() => setShowOnboarding(false)}
+          onSkip={() => setShowOnboarding(false)}
+        />
+      )}
+
+      {/* Travel DNA + Orla Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <TravelDNACard onEditClick={() => setShowOnboarding(true)} />
+        <OrlaCompanion />
+      </div>
       
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

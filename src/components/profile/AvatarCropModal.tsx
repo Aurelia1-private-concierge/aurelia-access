@@ -1,8 +1,8 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import ReactCrop, { type Crop, type PixelCrop, centerCrop, makeAspectCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { motion } from "framer-motion";
-import { X, RotateCcw, ZoomIn, ZoomOut, Check } from "lucide-react";
+import { X, RotateCcw, ZoomIn, ZoomOut, Check, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import {
@@ -46,6 +46,7 @@ const AvatarCropModal = ({
   onCropComplete,
 }: AvatarCropModalProps) => {
   const imgRef = useRef<HTMLImageElement>(null);
+  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [scale, setScale] = useState(1);
@@ -55,6 +56,53 @@ const AvatarCropModal = ({
     const { width, height } = e.currentTarget;
     setCrop(centerAspectCrop(width, height, 1));
   }, []);
+
+  // Update preview canvas when crop changes
+  useEffect(() => {
+    if (!completedCrop || !imgRef.current || !previewCanvasRef.current) return;
+
+    const image = imgRef.current;
+    const canvas = previewCanvasRef.current;
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) return;
+
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
+
+    // Preview size
+    const previewSize = 80;
+    canvas.width = previewSize;
+    canvas.height = previewSize;
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
+    // Clear and draw circular clip
+    ctx.clearRect(0, 0, previewSize, previewSize);
+    ctx.beginPath();
+    ctx.arc(previewSize / 2, previewSize / 2, previewSize / 2, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+
+    // Calculate source coordinates
+    const sourceX = completedCrop.x * scaleX;
+    const sourceY = completedCrop.y * scaleY;
+    const sourceWidth = completedCrop.width * scaleX;
+    const sourceHeight = completedCrop.height * scaleY;
+
+    ctx.drawImage(
+      image,
+      sourceX,
+      sourceY,
+      sourceWidth,
+      sourceHeight,
+      0,
+      0,
+      previewSize,
+      previewSize
+    );
+  }, [completedCrop]);
 
   const getCroppedImage = useCallback(async (): Promise<Blob | null> => {
     if (!imgRef.current || !completedCrop) return null;
@@ -127,35 +175,100 @@ const AvatarCropModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-lg bg-card border-border/50">
+      <DialogContent className="sm:max-w-xl bg-card border-border/50">
         <DialogHeader>
           <DialogTitle className="font-serif text-xl">Crop Your Photo</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Crop Area */}
-          <div className="relative bg-muted/30 rounded-lg overflow-hidden flex items-center justify-center min-h-[300px]">
-            <ReactCrop
-              crop={crop}
-              onChange={(_, percentCrop) => setCrop(percentCrop)}
-              onComplete={(c) => setCompletedCrop(c)}
-              aspect={1}
-              circularCrop
-              className="max-h-[400px]"
-            >
-              <img
-                ref={imgRef}
-                src={imageSrc}
-                alt="Crop preview"
-                onLoad={onImageLoad}
-                style={{
-                  transform: `scale(${scale})`,
-                  maxHeight: "400px",
-                  width: "auto",
-                }}
-                className="transition-transform"
-              />
-            </ReactCrop>
+          <div className="flex gap-6">
+            {/* Crop Area */}
+            <div className="flex-1 relative bg-muted/30 rounded-lg overflow-hidden flex items-center justify-center min-h-[280px]">
+              <ReactCrop
+                crop={crop}
+                onChange={(_, percentCrop) => setCrop(percentCrop)}
+                onComplete={(c) => setCompletedCrop(c)}
+                aspect={1}
+                circularCrop
+                className="max-h-[350px]"
+              >
+                <img
+                  ref={imgRef}
+                  src={imageSrc}
+                  alt="Crop preview"
+                  onLoad={onImageLoad}
+                  style={{
+                    transform: `scale(${scale})`,
+                    maxHeight: "350px",
+                    width: "auto",
+                  }}
+                  className="transition-transform"
+                />
+              </ReactCrop>
+            </div>
+
+            {/* Live Preview Panel */}
+            <div className="flex flex-col items-center justify-center w-32 shrink-0">
+              <div className="text-center mb-3">
+                <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground mb-2">
+                  <Eye className="w-3 h-3" />
+                  Preview
+                </div>
+              </div>
+              
+              {/* Large Preview */}
+              <div className="relative mb-4">
+                <div className="w-20 h-20 rounded-full border-2 border-primary/30 shadow-lg shadow-primary/10 overflow-hidden bg-muted/50">
+                  <canvas
+                    ref={previewCanvasRef}
+                    className="w-full h-full"
+                  />
+                </div>
+                <motion.div
+                  animate={{
+                    boxShadow: [
+                      "0 0 0 0 rgba(212, 175, 55, 0)",
+                      "0 0 0 4px rgba(212, 175, 55, 0.1)",
+                      "0 0 0 0 rgba(212, 175, 55, 0)",
+                    ],
+                  }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="absolute inset-0 rounded-full pointer-events-none"
+                />
+              </div>
+
+              {/* Size indicators */}
+              <div className="space-y-2 w-full">
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-10 h-10 rounded-full border border-border/50 overflow-hidden bg-muted/30">
+                    <canvas
+                      ref={previewCanvasRef}
+                      className="w-full h-full"
+                      style={{ display: "none" }}
+                    />
+                    {completedCrop && imgRef.current && (
+                      <SmallPreview
+                        image={imgRef.current}
+                        crop={completedCrop}
+                        size={40}
+                      />
+                    )}
+                  </div>
+                  <div className="w-6 h-6 rounded-full border border-border/50 overflow-hidden bg-muted/30">
+                    {completedCrop && imgRef.current && (
+                      <SmallPreview
+                        image={imgRef.current}
+                        crop={completedCrop}
+                        size={24}
+                      />
+                    )}
+                  </div>
+                </div>
+                <p className="text-[10px] text-muted-foreground text-center">
+                  How it will appear
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Zoom Control */}
@@ -209,12 +322,67 @@ const AvatarCropModal = ({
           </div>
 
           <p className="text-xs text-muted-foreground text-center">
-            Drag to reposition • Use slider to zoom • Circular crop for avatar
+            Drag to reposition • Use slider to zoom • See live preview on the right
           </p>
         </div>
       </DialogContent>
     </Dialog>
   );
+};
+
+// Small preview component for different sizes
+const SmallPreview = ({ 
+  image, 
+  crop, 
+  size 
+}: { 
+  image: HTMLImageElement; 
+  crop: PixelCrop; 
+  size: number;
+}) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
+
+    canvas.width = size;
+    canvas.height = size;
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
+    ctx.clearRect(0, 0, size, size);
+    ctx.beginPath();
+    ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+
+    const sourceX = crop.x * scaleX;
+    const sourceY = crop.y * scaleY;
+    const sourceWidth = crop.width * scaleX;
+    const sourceHeight = crop.height * scaleY;
+
+    ctx.drawImage(
+      image,
+      sourceX,
+      sourceY,
+      sourceWidth,
+      sourceHeight,
+      0,
+      0,
+      size,
+      size
+    );
+  }, [image, crop, size]);
+
+  return <canvas ref={canvasRef} className="w-full h-full" />;
 };
 
 export default AvatarCropModal;

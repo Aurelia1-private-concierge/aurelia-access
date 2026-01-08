@@ -13,6 +13,7 @@ import OrlaFAB from "@/components/OrlaFAB";
 import heroVideo from "@/assets/hero-video.mp4";
 import LoadingScreen from "@/components/LoadingScreen";
 import ScrollProgress from "@/components/ScrollProgress";
+import RolexClock from "@/components/RolexClock";
 
 const Index = () => {
   return (
@@ -21,6 +22,12 @@ const Index = () => {
       <ScrollProgress />
       <Navigation />
       <HeroSection videoSrc={heroVideo} />
+      
+      {/* Luxury Clock Section */}
+      <section className="py-16 flex justify-center items-center">
+        <RolexClock />
+      </section>
+      
       <MetricsStrip />
       <TrustStrip />
       <FeaturesSection />

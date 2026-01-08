@@ -16,6 +16,7 @@ import OrlaCompanion from "./OrlaCompanion";
 import TravelDNACard from "./TravelDNACard";
 import SurpriseMeCard from "./SurpriseMeCard";
 import RecommendationsFeed from "./RecommendationsFeed";
+import SubscriptionCard from "./SubscriptionCard";
 import TravelDNAOnboarding from "@/components/TravelDNAOnboarding";
 
 const portfolioStats = [
@@ -52,6 +53,9 @@ const PortfolioOverview = () => {
           onSkip={() => setShowOnboarding(false)}
         />
       )}
+
+      {/* Subscription Card */}
+      <SubscriptionCard />
 
       {/* Travel DNA + Orla + Surprise Me Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

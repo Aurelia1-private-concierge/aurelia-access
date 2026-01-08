@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Lock, Mail, Eye, EyeOff, Crown, ArrowLeft, Shield, Loader2 } from "lucide-react";
+import { Lock, Mail, Eye, EyeOff, ArrowLeft, Loader2, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { z } from "zod";
+import { AnimatedLogo } from "@/components/brand";
 
 const emailSchema = z.string().email("Please enter a valid email address");
 const passwordSchema = z.string()
@@ -220,10 +221,8 @@ const Auth = () => {
           </Link>
 
           {/* Logo */}
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-              <Crown className="w-6 h-6 text-primary" />
-            </div>
+          <div className="flex items-center gap-4 mb-8">
+            <AnimatedLogo size="sm" showWordmark={false} />
             <div>
               <h1 className="font-serif text-2xl text-foreground tracking-wider">AURELIA</h1>
               <p className="text-xs text-primary tracking-widest uppercase">Private Concierge</p>

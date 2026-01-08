@@ -232,14 +232,14 @@ const AnimatedLogo = ({
         </motion.div>
       )}
 
-      {/* Tagline */}
+      {/* Tagline - using fixed letter-spacing to avoid CLS */}
       {showTagline && (
         <motion.p
-          initial={{ opacity: 0, letterSpacing: "0.1em" }}
-          animate={{ opacity: 1, letterSpacing: "0.25em" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 0.8 }}
           className={cn(
-            "mt-4 text-muted-foreground uppercase font-light",
+            "mt-4 text-muted-foreground uppercase font-light tracking-[0.25em]",
             config.tagline
           )}
         >

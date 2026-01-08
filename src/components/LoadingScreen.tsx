@@ -71,7 +71,15 @@ const LoadingScreen = () => {
             className="absolute w-64 h-64 rounded-full bg-gradient-radial from-primary/20 to-transparent blur-2xl will-change-transform"
           />
 
-          <div className="relative flex flex-col items-center" style={{ contain: 'layout' }}>
+          {/* Fixed size container to prevent CLS - dimensions match AnimatedLogo xl size */}
+          <div 
+            className="relative flex flex-col items-center justify-center"
+            style={{ 
+              contain: 'strict',
+              width: '280px',
+              height: '280px'
+            }}
+          >
             {/* Animated Logo with gold shimmer */}
             <AnimatedLogo 
               size="xl" 
@@ -89,15 +97,17 @@ const LoadingScreen = () => {
               />
             </div>
 
-            {/* Status text */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
-              transition={{ delay: 1.2 }}
-              className="mt-4 text-[10px] text-muted-foreground/50 uppercase tracking-widest"
-            >
-              Initializing secure connection
-            </motion.p>
+            {/* Status text - fixed height to prevent CLS */}
+            <div className="mt-4 h-4 flex items-center justify-center">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.5 }}
+                transition={{ delay: 1.2 }}
+                className="text-[10px] text-muted-foreground/50 uppercase tracking-widest whitespace-nowrap"
+              >
+                Initializing secure connection
+              </motion.p>
+            </div>
           </div>
         </motion.div>
       )}

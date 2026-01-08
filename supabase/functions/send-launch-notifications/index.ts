@@ -6,6 +6,22 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// PII masking helpers to protect sensitive data in logs
+const maskPhone = (phone: string): string => {
+  if (!phone || phone.length < 4) return "***";
+  return phone.slice(0, -4).replace(/./g, "*") + phone.slice(-4);
+};
+
+const maskEmail = (email: string): string => {
+  if (!email) return "***@***";
+  const [local, domain] = email.split("@");
+  if (!domain) return "***@***";
+  const maskedLocal = local.length > 2 
+    ? local[0] + "*".repeat(local.length - 2) + local[local.length - 1]
+    : "**";
+  return `${maskedLocal}@${domain}`;
+};
+
 interface NotificationRequest {
   signupIds: string[];
   message: string;
@@ -136,17 +152,17 @@ serve(async (req: Request): Promise<Response> => {
 
             if (!twilioResponse.ok) {
               const errorData = await twilioResponse.json();
-              console.error("Twilio error:", errorData);
+              console.error("Twilio error for masked phone:", maskPhone(fullPhone));
               smsSuccess = false;
-              result.errors.push(`SMS to ${fullPhone}: ${errorData.message}`);
+              result.errors.push(`SMS delivery failed`);
             } else {
-              console.log(`SMS sent to ${fullPhone}`);
+              console.log(`SMS sent to ${maskPhone(fullPhone)}`);
             }
           } catch (smsError: unknown) {
             const errorMessage = smsError instanceof Error ? smsError.message : String(smsError);
-            console.error("SMS error:", smsError);
+            console.error("SMS error for masked phone:", maskPhone(fullPhone));
             smsSuccess = false;
-            result.errors.push(`SMS to ${fullPhone}: ${errorMessage}`);
+            result.errors.push(`SMS delivery failed`);
           }
         } else if (shouldSendSms && (!twilioSid || !twilioToken || !twilioPhone)) {
           console.log("Twilio credentials not configured, skipping SMS");
@@ -192,17 +208,17 @@ serve(async (req: Request): Promise<Response> => {
 
             if (!emailResponse.ok) {
               const errorData = await emailResponse.json();
-              console.error("Resend error:", errorData);
+              console.error("Resend error for masked email:", maskEmail(signup.email));
               emailSuccess = false;
-              result.errors.push(`Email to ${signup.email}: ${errorData.message}`);
+              result.errors.push(`Email delivery failed`);
             } else {
-              console.log(`Email sent to ${signup.email}`);
+              console.log(`Email sent to ${maskEmail(signup.email)}`);
             }
           } catch (emailError: unknown) {
             const errorMessage = emailError instanceof Error ? emailError.message : String(emailError);
-            console.error("Email error:", emailError);
+            console.error("Email error for masked email:", maskEmail(signup.email));
             emailSuccess = false;
-            result.errors.push(`Email to ${signup.email}: ${errorMessage}`);
+            result.errors.push(`Email delivery failed`);
           }
         } else if (shouldSendEmail && !resendApiKey) {
           console.log("Resend API key not configured, skipping email");

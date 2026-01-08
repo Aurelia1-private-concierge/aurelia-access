@@ -1,14 +1,133 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { MessageSquare, X, Minus, Crown, Lock, ArrowRight, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+
+type Message = { role: "user" | "assistant"; content: string };
+
+const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      role: "assistant",
+      content: "Good evening. Welcome to Aurelia. I'm your Private Liaison, here to assist with any request. How may I be of service today?"
+    }
+  ]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const handleSend = () => {
-    setIsTyping(true);
-    setTimeout(() => setIsTyping(false), 2000);
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
+
+    const userMessage: Message = { role: "user", content: input.trim() };
+    setMessages(prev => [...prev, userMessage]);
+    setInput("");
+    setIsLoading(true);
+
+    let assistantContent = "";
+
+    const updateAssistantMessage = (chunk: string) => {
+      assistantContent += chunk;
+      setMessages(prev => {
+        const last = prev[prev.length - 1];
+        if (last?.role === "assistant" && prev.length > 1 && prev[prev.length - 2].role === "user") {
+          return prev.map((m, i) => (i === prev.length - 1 ? { ...m, content: assistantContent } : m));
+        }
+        return [...prev, { role: "assistant", content: assistantContent }];
+      });
+    };
+
+    try {
+      const resp = await fetch(CHAT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ messages: [...messages, userMessage] }),
+      });
+
+      if (!resp.ok) {
+        const errorData = await resp.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to connect to concierge");
+      }
+
+      if (!resp.body) throw new Error("No response stream");
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let textBuffer = "";
+      let streamDone = false;
+
+      while (!streamDone) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        textBuffer += decoder.decode(value, { stream: true });
+
+        let newlineIndex: number;
+        while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
+          let line = textBuffer.slice(0, newlineIndex);
+          textBuffer = textBuffer.slice(newlineIndex + 1);
+
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") {
+            streamDone = true;
+            break;
+          }
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (content) updateAssistantMessage(content);
+          } catch {
+            textBuffer = line + "\n" + textBuffer;
+            break;
+          }
+        }
+      }
+
+      // Final flush
+      if (textBuffer.trim()) {
+        for (let raw of textBuffer.split("\n")) {
+          if (!raw) continue;
+          if (raw.endsWith("\r")) raw = raw.slice(0, -1);
+          if (raw.startsWith(":") || raw.trim() === "") continue;
+          if (!raw.startsWith("data: ")) continue;
+          const jsonStr = raw.slice(6).trim();
+          if (jsonStr === "[DONE]") continue;
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (content) updateAssistantMessage(content);
+          } catch { /* ignore */ }
+        }
+      }
+    } catch (error) {
+      console.error("Chat error:", error);
+      toast.error(error instanceof Error ? error.message : "Connection error");
+      // Remove the failed user message or add error response
+      setMessages(prev => [
+        ...prev,
+        { role: "assistant", content: "I apologize, but I'm momentarily unable to connect. Please try again, or call our private line for immediate assistance." }
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -44,7 +163,7 @@ const ChatWidget = () => {
                   <h4 className="font-serif text-foreground text-sm tracking-wide">Private Liaison</h4>
                   <p className="text-[10px] text-primary uppercase tracking-widest font-medium flex items-center gap-1">
                     <Sparkles className="w-2.5 h-2.5" />
-                    Concierge Active
+                    {isLoading ? "Composing..." : "Concierge Active"}
                   </p>
                 </div>
               </div>
@@ -57,64 +176,36 @@ const ChatWidget = () => {
             </div>
 
             {/* Chat Messages */}
-            <div className="flex-1 p-5 space-y-5 overflow-y-auto">
-              {/* Time separator */}
-              <div className="text-center">
-                <span className="text-[10px] text-muted-foreground/50 font-light uppercase tracking-widest bg-background/50 px-3 py-1 rounded-full">
-                  Today 9:41 AM
-                </span>
-              </div>
-
-              {/* Bot Message */}
-              <motion.div 
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="flex items-start space-x-3"
-              >
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary/20 to-background border border-border/30 flex-shrink-0 flex items-center justify-center mt-1">
-                  <Crown className="w-3 h-3 text-primary" strokeWidth={1.5} />
-                </div>
-                <div className="bg-secondary/40 border border-border/20 p-4 rounded-2xl rounded-tl-none max-w-[85%] backdrop-blur-sm">
-                  <p className="text-xs text-foreground/90 font-light leading-relaxed">
-                    Good morning, Mr. Anderson. I have confirmed your acquisition of the Patek Philippe reference. The item is being moved to the vault.
-                  </p>
-                </div>
-              </motion.div>
-
-              {/* Bot Message 2 */}
-              <motion.div 
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 }}
-                className="flex items-start space-x-3"
-              >
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary/20 to-background border border-border/30 flex-shrink-0 flex items-center justify-center mt-1">
-                  <Crown className="w-3 h-3 text-primary" strokeWidth={1.5} />
-                </div>
-                <div className="bg-secondary/40 border border-border/20 p-4 rounded-2xl rounded-tl-none max-w-[85%] backdrop-blur-sm">
-                  <p className="text-xs text-foreground/90 font-light leading-relaxed">
-                    Shall I arrange transport to the terminal for your 14:00 departure?
-                  </p>
-                </div>
-              </motion.div>
-
-              {/* User Reply */}
-              <motion.div 
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-                className="flex justify-end"
-              >
-                <div className="bg-primary/15 border border-primary/25 p-4 rounded-2xl rounded-tr-none max-w-[85%]">
-                  <p className="text-xs text-primary font-light leading-relaxed">
-                    Yes, please. Have the car ready in 20 minutes.
-                  </p>
-                </div>
-              </motion.div>
+            <div className="flex-1 p-5 space-y-4 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20">
+              {messages.map((message, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: message.role === "user" ? 10 : -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className={`flex ${message.role === "user" ? "justify-end" : "items-start space-x-3"}`}
+                >
+                  {message.role === "assistant" && (
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary/20 to-background border border-border/30 flex-shrink-0 flex items-center justify-center mt-1">
+                      <Crown className="w-3 h-3 text-primary" strokeWidth={1.5} />
+                    </div>
+                  )}
+                  <div className={`${
+                    message.role === "user" 
+                      ? "bg-primary/15 border border-primary/25 rounded-2xl rounded-tr-none" 
+                      : "bg-secondary/40 border border-border/20 rounded-2xl rounded-tl-none backdrop-blur-sm"
+                  } p-4 max-w-[85%]`}>
+                    <p className={`text-xs font-light leading-relaxed whitespace-pre-wrap ${
+                      message.role === "user" ? "text-primary" : "text-foreground/90"
+                    }`}>
+                      {message.content}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
 
               {/* Typing indicator */}
               <AnimatePresence>
-                {isTyping && (
+                {isLoading && messages[messages.length - 1]?.role === "user" && (
                   <motion.div 
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -132,6 +223,7 @@ const ChatWidget = () => {
                   </motion.div>
                 )}
               </AnimatePresence>
+              <div ref={messagesEndRef} />
             </div>
 
             {/* Chat Input */}
@@ -139,15 +231,19 @@ const ChatWidget = () => {
               <div className="relative">
                 <input
                   type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
                   placeholder="Type your request securely..."
                   className="w-full bg-secondary/40 border border-border/30 rounded-xl py-3.5 pl-4 pr-12 text-xs text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/40 focus:bg-secondary/60 transition-all font-light"
-                  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                  onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+                  disabled={isLoading}
                 />
                 <motion.button 
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={handleSend}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-primary text-primary-foreground rounded-lg transition-all"
+                  disabled={isLoading || !input.trim()}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-primary text-primary-foreground rounded-lg transition-all disabled:opacity-50"
                 >
                   <ArrowRight className="w-4 h-4" />
                 </motion.button>
@@ -182,13 +278,15 @@ const ChatWidget = () => {
         />
         
         {/* Notification Dot */}
-        <motion.span 
-          animate={{ scale: [1, 1.1, 1] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 border-2 border-background rounded-full z-10 flex items-center justify-center"
-        >
-          <span className="text-[8px] font-bold text-white">1</span>
-        </motion.span>
+        {!isOpen && (
+          <motion.span 
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 border-2 border-background rounded-full z-10 flex items-center justify-center"
+          >
+            <span className="text-[8px] font-bold text-white">1</span>
+          </motion.span>
+        )}
 
         <MessageSquare
           className={`w-6 h-6 absolute transition-all duration-300 ${

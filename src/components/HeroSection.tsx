@@ -6,11 +6,19 @@ const HeroSection = () => {
     <header className="relative w-full h-screen overflow-hidden flex items-center justify-center">
       {/* Background Image with subtle animation */}
       <div className="absolute inset-0 w-full h-full z-0">
-        <img
-          src="https://images.unsplash.com/photo-1540541338287-41700207dee6?q=80&w=3270&auto=format&fit=crop"
-          alt="Luxury Resort Evening"
-          className="w-full h-full object-cover opacity-60 scale-105 animate-subtle-pulse"
-        />
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="https://images.unsplash.com/photo-1540541338287-41700207dee6?q=80&w=3270&auto=format&fit=crop"
+          className="w-full h-full object-cover opacity-60"
+        >
+          <source
+            src="https://videos.pexels.com/video-files/4829117/4829117-hd_1920_1080_25fps.mp4"
+            type="video/mp4"
+          />
+        </video>
       </div>
 
       {/* Overlay */}

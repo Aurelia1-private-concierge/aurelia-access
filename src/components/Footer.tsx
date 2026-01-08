@@ -1,7 +1,11 @@
-import { Instagram, Twitter, Linkedin } from "lucide-react";
+import { Instagram, Twitter, Linkedin, ArrowUp } from "lucide-react";
 import { motion } from "framer-motion";
 
 const Footer = () => {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <footer className="bg-background border-t border-border/20 relative overflow-hidden">
       {/* Subtle glow */}
@@ -9,53 +13,106 @@ const Footer = () => {
       
       <div className="relative z-10">
         <div className="max-w-7xl mx-auto px-6 py-16">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8">
+            {/* Brand */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-center md:text-left"
+              className="md:col-span-2"
             >
               <a href="#" className="font-serif text-2xl tracking-widest text-foreground hover:text-primary transition-colors duration-300">
                 AURELIA
               </a>
-              <p className="text-xs text-muted-foreground/50 mt-3 tracking-wide">
-                Beyond Concierge. By Invitation Only.
+              <p className="text-sm text-muted-foreground/70 mt-4 leading-relaxed max-w-sm">
+                The world's most exclusive concierge service. Engineered for sovereignty, curated for legacy.
               </p>
+              <div className="flex items-center gap-3 mt-6">
+                {[
+                  { icon: Instagram, href: "#" },
+                  { icon: Twitter, href: "#" },
+                  { icon: Linkedin, href: "#" },
+                ].map(({ icon: Icon, href }, index) => (
+                  <motion.a
+                    key={index}
+                    href={href}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="w-10 h-10 rounded-full border border-border/30 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/5 transition-all duration-300"
+                  >
+                    <Icon className="w-4 h-4" />
+                  </motion.a>
+                ))}
+              </div>
             </motion.div>
 
+            {/* Quick Links */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="flex items-center gap-4"
             >
-              {[
-                { icon: Instagram, href: "#" },
-                { icon: Twitter, href: "#" },
-                { icon: Linkedin, href: "#" },
-              ].map(({ icon: Icon, href }, index) => (
-                <a
-                  key={index}
-                  href={href}
-                  className="w-10 h-10 rounded-full border border-border/30 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 transition-all duration-300"
-                >
-                  <Icon className="w-4 h-4" />
-                </a>
-              ))}
+              <h4 className="text-xs font-medium tracking-[0.2em] uppercase text-foreground mb-6">
+                Navigate
+              </h4>
+              <ul className="space-y-3">
+                {["Services", "Security", "Experiences", "Membership"].map((item) => (
+                  <li key={item}>
+                    <a
+                      href={`#${item.toLowerCase()}`}
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300"
+                    >
+                      {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            {/* Contact */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              <h4 className="text-xs font-medium tracking-[0.2em] uppercase text-foreground mb-6">
+                Contact
+              </h4>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li>
+                  <a href="mailto:liaison@aurelia.com" className="hover:text-foreground transition-colors duration-300">
+                    liaison@aurelia.com
+                  </a>
+                </li>
+                <li>Geneva • London • Singapore</li>
+                <li className="pt-2">
+                  <span className="text-xs tracking-wide text-primary">24/7 Private Line</span>
+                </li>
+              </ul>
             </motion.div>
           </div>
         </div>
         
         <div className="border-t border-border/10">
-          <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground/40 font-light">
-            <p>© 2024 Aurelia Holdings Ltd. All rights reserved.</p>
-            <div className="flex items-center gap-6">
+          <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-xs text-muted-foreground/40 font-light">
+              © 2024 Aurelia Holdings Ltd. All rights reserved.
+            </p>
+            <div className="flex items-center gap-6 text-xs text-muted-foreground/40 font-light">
               <a href="#" className="hover:text-muted-foreground transition-colors">Privacy Policy</a>
               <a href="#" className="hover:text-muted-foreground transition-colors">Terms of Service</a>
               <a href="#" className="hover:text-muted-foreground transition-colors">Sovereign Data Agreement</a>
             </div>
+            <motion.button
+              onClick={scrollToTop}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="w-10 h-10 rounded-full border border-border/30 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 transition-all duration-300"
+            >
+              <ArrowUp className="w-4 h-4" />
+            </motion.button>
           </div>
         </div>
       </div>

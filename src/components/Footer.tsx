@@ -112,15 +112,25 @@ const Footer = () => {
           </div>
         </div>
         
+        {/* Legal Text Strip */}
+        <div className="border-t border-border/10">
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            <p className="text-[10px] text-muted-foreground/30 text-center leading-relaxed">
+              {BRAND.legal.trademark} {BRAND.legal.jurisdiction}
+            </p>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
         <div className="border-t border-border/10">
           <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-xs text-muted-foreground/40 font-light">
-              © {BRAND.year} {BRAND.entity}. All rights reserved.
+              © {BRAND.year} {BRAND.entity}. {BRAND.legal.copyright}
             </p>
             <div className="flex items-center gap-6 text-xs text-muted-foreground/40 font-light">
-              <a href="#" className="hover:text-muted-foreground transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-muted-foreground transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-muted-foreground transition-colors">Sovereign Data Agreement</a>
+              <Link to="/privacy" className="hover:text-muted-foreground transition-colors">Privacy Policy</Link>
+              <Link to="/terms" className="hover:text-muted-foreground transition-colors">Terms of Service</Link>
+              <a href="mailto:legal@aurelia.com" className="hover:text-muted-foreground transition-colors">Legal Inquiries</a>
             </div>
             <motion.button
               onClick={scrollToTop}

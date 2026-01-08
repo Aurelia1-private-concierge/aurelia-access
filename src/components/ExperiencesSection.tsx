@@ -4,10 +4,10 @@ import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 const images = [
-  { src: "https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?q=80&w=1974&auto=format&fit=crop", alt: "Luxury Yacht", offset: false },
-  { src: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=1988&auto=format&fit=crop", alt: "Luxury Watch", offset: true },
-  { src: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2053&auto=format&fit=crop", alt: "Luxury Interiors", offset: false },
-  { src: "https://images.unsplash.com/photo-1540962351504-03099e0a754b?q=80&w=2070&auto=format&fit=crop", alt: "Private Jet", offset: true },
+  { src: "https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?q=80&w=600&auto=format&fit=crop", alt: "Luxury Yacht", offset: false },
+  { src: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600&auto=format&fit=crop", alt: "Luxury Watch", offset: true },
+  { src: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=600&auto=format&fit=crop", alt: "Luxury Interiors", offset: false },
+  { src: "https://images.unsplash.com/photo-1540962351504-03099e0a754b?q=80&w=600&auto=format&fit=crop", alt: "Private Jet", offset: true },
 ];
 
 const ExperiencesSection = () => {

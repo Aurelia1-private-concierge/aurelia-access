@@ -4,9 +4,9 @@ import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 const testimonials = [
-  { quote: "Aurelia secured a private viewing of a Basquiat before it went to auction. No other service could have made that happen.", author: "Alexandra M.", title: "Art Collector, Geneva", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop" },
-  { quote: "When my flight was cancelled in Tokyo, they had a private jet ready within 90 minutes. That level of response is unprecedented.", author: "James K.", title: "Tech Executive, Singapore", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop" },
-  { quote: "The discretion is absolute. In my position, that's not a luxury—it's a necessity. Aurelia understands this implicitly.", author: "Victoria S.", title: "Family Office Principal, London", image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&auto=format&fit=crop" },
+  { quote: "Aurelia secured a private viewing of a Basquiat before it went to auction. No other service could have made that happen.", author: "Alexandra M.", title: "Art Collector, Geneva", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format&fit=crop" },
+  { quote: "When my flight was cancelled in Tokyo, they had a private jet ready within 90 minutes. That level of response is unprecedented.", author: "James K.", title: "Tech Executive, Singapore", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop" },
+  { quote: "The discretion is absolute. In my position, that's not a luxury—it's a necessity. Aurelia understands this implicitly.", author: "Victoria S.", title: "Family Office Principal, London", image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=100&auto=format&fit=crop" },
 ];
 
 const TestimonialsSection = () => {

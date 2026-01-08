@@ -111,7 +111,7 @@ const FeaturesSection = () => {
                     initial={{ scale: 1 }}
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.7 }}
-                    src="https://images.unsplash.com/photo-1614028674026-a65e31bfd27c?q=80&w=2070&auto=format&fit=crop"
+                    src="https://images.unsplash.com/photo-1614028674026-a65e31bfd27c?q=80&w=800&auto=format&fit=crop"
                     className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-20 z-0"
                     alt="Biometrics"
                   />

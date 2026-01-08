@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Lock, Mail, Eye, EyeOff, Crown, ArrowLeft, Shield, Loader2 } from "lucide-react";
@@ -11,7 +11,7 @@ const passwordSchema = z.string().min(6, "Password must be at least 6 characters
 
 const Auth = () => {
   const navigate = useNavigate();
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, user, isLoading: authLoading } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,10 +20,29 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string }>({});
 
-  // Redirect if already logged in
+  // Redirect if already logged in - use useEffect to avoid calling navigate during render
+  useEffect(() => {
+    if (user && !authLoading) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [user, authLoading, navigate]);
+
+  // Show loading while checking auth
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
+  // Don't render the form if user is already logged in (redirect will happen via useEffect)
   if (user) {
-    navigate("/dashboard");
-    return null;
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    );
   }
 
   const validateForm = () => {

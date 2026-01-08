@@ -1,3 +1,8 @@
+# Aurelia Private Concierge - robots.txt
+# https://www.aurelia-privateconciege.com
+
+Sitemap: https://www.aurelia-privateconciege.com/sitemap.xml
+
 User-agent: Googlebot
 Allow: /
 
@@ -12,3 +17,9 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /partner
+Disallow: /partner/apply
+Disallow: /partner/services/new
+Disallow: /reset-password

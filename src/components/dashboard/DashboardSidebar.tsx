@@ -66,7 +66,7 @@ const DashboardSidebar = ({ activeView, setActiveView }: DashboardSidebarProps) 
       </Link>
 
       {/* Navigation */}
-      <nav className="flex-1 py-6 px-3">
+      <nav className="flex-1 py-6 px-3" data-tour="sidebar-nav">
         <div className="space-y-1">
           {menuItems.map((item) => {
             const isActive = activeView === item.id;

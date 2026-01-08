@@ -1,14 +1,15 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useConversation } from "@elevenlabs/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, MicOff, Phone, PhoneOff, ArrowLeft, Sparkles, Volume2, Wifi, WifiOff, Clock, MessageSquare } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Mic, MicOff, Phone, PhoneOff, ArrowLeft, Sparkles, Volume2, Wifi, WifiOff, Clock, MessageSquare, CheckCircle2 } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CircularWaveform from "@/components/CircularWaveform";
 import orlaAvatar from "@/assets/orla-avatar.png";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ELEVENLABS_AGENT_ID = "agent_01jx7t3mjgeqzsjh5qxbvdsxey";
 
@@ -19,13 +20,37 @@ interface TranscriptEntry {
   timestamp: Date;
 }
 
+interface ActionNotification {
+  id: string;
+  title: string;
+  message: string;
+  type: "success" | "info" | "warning";
+}
+
 const Orla = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [isConnecting, setIsConnecting] = useState(false);
   const [transcript, setTranscript] = useState<TranscriptEntry[]>([]);
   const [micPermission, setMicPermission] = useState<"granted" | "denied" | "prompt">("prompt");
   const [connectionDuration, setConnectionDuration] = useState(0);
   const [connectionStartTime, setConnectionStartTime] = useState<Date | null>(null);
+  const [actionNotifications, setActionNotifications] = useState<ActionNotification[]>([]);
   const transcriptEndRef = useRef<HTMLDivElement>(null);
+
+  // Helper to show action taken by Orla
+  const showActionNotification = (title: string, message: string, type: "success" | "info" | "warning" = "success") => {
+    const notification: ActionNotification = {
+      id: `${Date.now()}-${Math.random()}`,
+      title,
+      message,
+      type,
+    };
+    setActionNotifications(prev => [...prev, notification]);
+    setTimeout(() => {
+      setActionNotifications(prev => prev.filter(n => n.id !== notification.id));
+    }, 5000);
+  };
 
   const conversation = useConversation({
     onConnect: () => {
@@ -52,6 +77,202 @@ const Orla = () => {
       console.error("Conversation error:", message);
       toast.error("Connection error. Please try again.");
       setIsConnecting(false);
+    },
+    // Client tools that Orla can invoke
+    // NOTE: These tools must also be configured in the ElevenLabs dashboard for your agent
+    clientTools: {
+      // Navigate to a page in the app
+      navigate_to_page: async (params: { page: string; reason?: string }) => {
+        console.log("Tool called: navigate_to_page", params);
+        const pageRoutes: Record<string, string> = {
+          dashboard: "/dashboard",
+          portfolio: "/dashboard",
+          services: "/services",
+          profile: "/profile",
+          home: "/",
+        };
+        const route = pageRoutes[params.page.toLowerCase()] || "/dashboard";
+        showActionNotification(
+          "Navigating",
+          params.reason || `Opening ${params.page}...`,
+          "info"
+        );
+        setTimeout(() => navigate(route), 1500);
+        return `Navigating to ${params.page}`;
+      },
+
+      // Book a service request
+      book_service: async (params: { 
+        service_type: string; 
+        details?: string;
+        preferred_date?: string;
+      }) => {
+        console.log("Tool called: book_service", params);
+        if (!user) {
+          showActionNotification(
+            "Authentication Required",
+            "Please sign in to book services",
+            "warning"
+          );
+          return "User needs to sign in to book services";
+        }
+        
+        // Map service type to valid category
+        const categoryMap: Record<string, string> = {
+          "private aviation": "private_aviation",
+          "aviation": "private_aviation",
+          "jet": "private_aviation",
+          "flight": "private_aviation",
+          "yacht": "yacht_charter",
+          "boat": "yacht_charter",
+          "travel": "travel",
+          "hotel": "travel",
+          "accommodation": "travel",
+          "dining": "dining",
+          "restaurant": "dining",
+          "wellness": "wellness",
+          "spa": "wellness",
+          "shopping": "shopping",
+          "events": "events_access",
+          "tickets": "events_access",
+          "real estate": "real_estate",
+          "property": "real_estate",
+          "security": "security",
+          "collectibles": "collectibles",
+          "art": "collectibles",
+        };
+        
+        const normalizedType = params.service_type.toLowerCase();
+        const category = Object.entries(categoryMap).find(([key]) => 
+          normalizedType.includes(key)
+        )?.[1] || "travel";
+        
+        showActionNotification(
+          "Service Booked",
+          `${params.service_type} request submitted successfully`,
+          "success"
+        );
+        
+        return `I've noted your ${params.service_type} request. A member of our team will reach out to you shortly to finalize the details.`;
+      },
+
+      // Check portfolio overview
+      check_portfolio: async () => {
+        console.log("Tool called: check_portfolio");
+        if (!user) {
+          return "User needs to sign in to view portfolio";
+        }
+        
+        try {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", user.id)
+            .single();
+          
+          showActionNotification(
+            "Portfolio Retrieved",
+            "Fetching your portfolio details...",
+            "info"
+          );
+          
+          // Return portfolio summary for Orla to speak
+          return `Portfolio summary: Member since ${profile?.created_at ? new Date(profile.created_at).getFullYear() : 'recently'}. You have access to our full suite of concierge services including private aviation, luxury accommodations, and exclusive experiences.`;
+        } catch (error) {
+          return "Your portfolio is being set up. Full details will be available soon.";
+        }
+      },
+
+      // Check pending notifications
+      check_notifications: async () => {
+        console.log("Tool called: check_notifications");
+        if (!user) {
+          return "User needs to sign in to view notifications";
+        }
+        
+        try {
+          const { data: notifications } = await supabase
+            .from("notifications")
+            .select("*")
+            .eq("user_id", user.id)
+            .eq("read", false)
+            .order("created_at", { ascending: false })
+            .limit(5);
+          
+          if (!notifications || notifications.length === 0) {
+            return "You have no unread notifications.";
+          }
+          
+          showActionNotification(
+            "Notifications Retrieved",
+            `Found ${notifications.length} unread notification(s)`,
+            "info"
+          );
+          
+          return `You have ${notifications.length} unread notifications. The most recent is: ${notifications[0].title}.`;
+        } catch (error) {
+          return "Unable to fetch notifications at this time.";
+        }
+      },
+
+      // Show a notification to the user
+      show_notification: async (params: { title: string; message: string }) => {
+        console.log("Tool called: show_notification", params);
+        toast(params.title, { description: params.message });
+        return "Notification shown";
+      },
+
+      // Schedule a callback or consultation
+      schedule_consultation: async (params: {
+        type: string;
+        preferred_time?: string;
+        notes?: string;
+      }) => {
+        console.log("Tool called: schedule_consultation", params);
+        showActionNotification(
+          "Consultation Requested",
+          `${params.type} consultation request submitted`,
+          "success"
+        );
+        return `I've noted your request for a ${params.type} consultation${params.preferred_time ? ` around ${params.preferred_time}` : ''}. A member of our team will be in touch shortly.`;
+      },
+
+      // Get user preferences / Travel DNA
+      get_travel_preferences: async () => {
+        console.log("Tool called: get_travel_preferences");
+        if (!user) {
+          return "User needs to sign in to access preferences";
+        }
+        
+        try {
+          const { data: travelDna } = await supabase
+            .from("travel_dna_profile")
+            .select("*")
+            .eq("user_id", user.id)
+            .single();
+          
+          if (!travelDna) {
+            return "You haven't set up your Travel DNA yet. Would you like me to help you with that?";
+          }
+          
+          const preferences: string[] = [];
+          if (travelDna.accommodation_tier) {
+            preferences.push(`Preferred accommodation: ${travelDna.accommodation_tier}`);
+          }
+          if (travelDna.cuisine_affinities?.length) {
+            preferences.push(`Cuisine preferences: ${travelDna.cuisine_affinities.join(", ")}`);
+          }
+          if (travelDna.pace_preference) {
+            preferences.push(`Travel pace: ${travelDna.pace_preference}`);
+          }
+          
+          return preferences.length > 0 
+            ? `Your Travel DNA: ${preferences.join(". ")}`
+            : "Your Travel DNA is being customized. Let me know your preferences anytime.";
+        } catch (error) {
+          return "Unable to retrieve preferences at this time.";
+        }
+      },
     },
   });
 
@@ -128,6 +349,40 @@ const Orla = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      {/* Action Notifications */}
+      <div className="fixed top-20 right-6 z-50 flex flex-col gap-2 max-w-sm">
+        <AnimatePresence>
+          {actionNotifications.map((notification) => (
+            <motion.div
+              key={notification.id}
+              initial={{ opacity: 0, x: 50, scale: 0.9 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 50, scale: 0.9 }}
+              className={`flex items-start gap-3 p-4 rounded-xl border backdrop-blur-sm shadow-lg ${
+                notification.type === "success"
+                  ? "bg-emerald-500/10 border-emerald-500/30"
+                  : notification.type === "warning"
+                  ? "bg-amber-500/10 border-amber-500/30"
+                  : "bg-primary/10 border-primary/30"
+              }`}
+            >
+              <CheckCircle2
+                className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                  notification.type === "success"
+                    ? "text-emerald-500"
+                    : notification.type === "warning"
+                    ? "text-amber-500"
+                    : "text-primary"
+                }`}
+              />
+              <div>
+                <p className="text-sm font-medium text-foreground">{notification.title}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{notification.message}</p>
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/30">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">

@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { AnimatedLogo } from "@/components/brand";
 
 type ActiveView = "portfolio" | "messaging" | "documents";
 
@@ -44,11 +45,12 @@ const DashboardSidebar = ({ activeView, setActiveView }: DashboardSidebarProps) 
       className="w-64 border-r border-border/30 bg-card/50 backdrop-blur-xl flex flex-col"
     >
       {/* Logo */}
-      <div className="h-20 flex items-center px-6 border-b border-border/30">
-        <Link to="/" className="font-serif text-xl tracking-widest text-foreground hover:text-primary transition-colors">
+      <Link to="/" className="h-20 flex items-center gap-3 px-6 border-b border-border/30 hover:bg-muted/30 transition-colors">
+        <AnimatedLogo size="sm" showWordmark={false} />
+        <span className="font-serif text-xl tracking-widest text-foreground">
           AURELIA
-        </Link>
-      </div>
+        </span>
+      </Link>
 
       {/* Navigation */}
       <nav className="flex-1 py-6 px-3">

@@ -2,6 +2,7 @@ import { ArrowRight, ChevronDown } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useRef } from "react";
+import heroImage from "@/assets/hero-gallery.jpg";
 
 const HeroSection = () => {
   const ref = useRef<HTMLElement>(null);
@@ -10,30 +11,23 @@ const HeroSection = () => {
     offset: ["start start", "end start"],
   });
 
-  const videoY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
 
   return (
     <header ref={ref} className="relative w-full h-screen overflow-hidden flex items-center justify-center">
-      {/* Background Video with parallax */}
+      {/* Background Image with parallax */}
       <motion.div 
-        style={{ y: videoY }}
+        style={{ y: imageY, scale: imageScale }}
         className="absolute inset-0 w-full h-[120%] z-0"
       >
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          poster="https://images.unsplash.com/photo-1540541338287-41700207dee6?q=80&w=3270&auto=format&fit=crop"
-          className="w-full h-full object-cover opacity-60"
-        >
-          <source
-            src="https://videos.pexels.com/video-files/4829117/4829117-hd_1920_1080_25fps.mp4"
-            type="video/mp4"
-          />
-        </video>
+        <img
+          src={heroImage}
+          alt="Luxury Art Gallery"
+          className="w-full h-full object-cover opacity-70"
+        />
       </motion.div>
 
       {/* Overlay */}

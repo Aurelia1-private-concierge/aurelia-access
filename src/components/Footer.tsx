@@ -1,5 +1,6 @@
 import { Instagram, Twitter, Linkedin, ArrowUp } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const scrollToTop = () => {
@@ -57,16 +58,31 @@ const Footer = () => {
                 Navigate
               </h4>
               <ul className="space-y-3">
-                {["Services", "Security", "Experiences", "Membership"].map((item) => (
-                  <li key={item}>
-                    <a
-                      href={`#${item.toLowerCase()}`}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ))}
+                <li>
+                  <Link to="/services" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
+                    Services
+                  </Link>
+                </li>
+                <li>
+                  <a href="#security" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
+                    Security
+                  </a>
+                </li>
+                <li>
+                  <a href="#experiences" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
+                    Experiences
+                  </a>
+                </li>
+                <li>
+                  <Link to="/auth" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
+                    Membership
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/partner/apply" className="text-sm text-primary hover:text-primary/80 transition-colors duration-300">
+                    Become a Partner
+                  </Link>
+                </li>
               </ul>
             </motion.div>
 

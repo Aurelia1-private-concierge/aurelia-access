@@ -21,6 +21,7 @@ import PartnerPortal from "./pages/PartnerPortal";
 import PartnerServiceForm from "./pages/PartnerServiceForm";
 import Orla from "./pages/Orla";
 import Admin from "./pages/Admin";
+import Membership from "./pages/Membership";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
@@ -137,6 +138,16 @@ const AnimatedRoutes = () => {
             <PageTransition>
               <Orla />
             </PageTransition>
+          }
+        />
+        <Route
+          path="/membership"
+          element={
+            <ProtectedRoute>
+              <PageTransition>
+                <Membership />
+              </PageTransition>
+            </ProtectedRoute>
           }
         />
         <Route

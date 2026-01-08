@@ -1,6 +1,8 @@
-import { Shield, Search } from "lucide-react";
+import { Shield, Search, Crown, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import NotificationPanel from "./NotificationPanel";
+import { useTierTheme } from "@/contexts/TierThemeContext";
+import { cn } from "@/lib/utils";
 
 type ActiveView = "portfolio" | "messaging" | "documents";
 
@@ -14,7 +16,17 @@ const viewTitles = {
   documents: "Document Vault",
 };
 
+const tierIcons = {
+  default: null,
+  silver: Shield,
+  gold: Crown,
+  platinum: Sparkles,
+};
+
 const DashboardHeader = ({ activeView }: DashboardHeaderProps) => {
+  const { tier, colors, subscribed } = useTierTheme();
+  const TierIcon = tierIcons[tier];
+
   return (
     <motion.header
       initial={{ y: -10, opacity: 0 }}
@@ -23,9 +35,28 @@ const DashboardHeader = ({ activeView }: DashboardHeaderProps) => {
       className="h-20 border-b border-border/30 bg-card/30 backdrop-blur-md px-6 lg:px-8 flex items-center justify-between"
     >
       <div>
-        <h1 className="font-serif text-2xl text-foreground tracking-tight">
-          {viewTitles[activeView]}
-        </h1>
+        <div className="flex items-center gap-3">
+          <h1 className="font-serif text-2xl text-foreground tracking-tight">
+            {viewTitles[activeView]}
+          </h1>
+          {/* Tier Badge */}
+          {subscribed && TierIcon && (
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className={cn(
+                "flex items-center gap-1.5 px-2.5 py-1 rounded-full border",
+                colors.accentBg,
+                colors.accentBorder
+              )}
+            >
+              <TierIcon className={cn("w-3.5 h-3.5", colors.accent)} />
+              <span className={cn("text-xs font-medium uppercase tracking-wider", colors.accent)}>
+                {colors.tierLabel}
+              </span>
+            </motion.div>
+          )}
+        </div>
         <div className="flex items-center gap-2 mt-1">
           <Shield className="w-3 h-3 text-emerald-500" />
           <span className="text-xs text-emerald-500 tracking-wider uppercase font-medium">
@@ -36,7 +67,11 @@ const DashboardHeader = ({ activeView }: DashboardHeaderProps) => {
 
       <div className="flex items-center gap-4">
         {/* Search */}
-        <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-muted/30 border border-border/50 rounded-lg">
+        <div className={cn(
+          "hidden md:flex items-center gap-2 px-4 py-2 bg-muted/30 border rounded-lg",
+          "border-border/50 focus-within:border-opacity-100",
+          `focus-within:${colors.accentBorder}`
+        )}>
           <Search className="w-4 h-4 text-muted-foreground" />
           <input
             type="text"

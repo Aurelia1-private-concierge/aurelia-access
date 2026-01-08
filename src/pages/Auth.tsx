@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Lock, Mail, Eye, EyeOff, Crown, ArrowLeft, Shield, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { z } from "zod";
 
@@ -13,11 +14,13 @@ const Auth = () => {
   const navigate = useNavigate();
   const { signIn, signUp, user, isLoading: authLoading } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [resetEmailSent, setResetEmailSent] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string }>({});
 
   // Redirect if already logged in - use useEffect to avoid calling navigate during render
@@ -53,17 +56,53 @@ const Auth = () => {
       newErrors.email = emailResult.error.errors[0].message;
     }
 
-    const passwordResult = passwordSchema.safeParse(password);
-    if (!passwordResult.success) {
-      newErrors.password = passwordResult.error.errors[0].message;
-    }
+    if (!isForgotPassword) {
+      const passwordResult = passwordSchema.safeParse(password);
+      if (!passwordResult.success) {
+        newErrors.password = passwordResult.error.errors[0].message;
+      }
 
-    if (!isLogin && password !== confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+      if (!isLogin && password !== confirmPassword) {
+        newErrors.confirmPassword = "Passwords do not match";
+      }
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const emailResult = emailSchema.safeParse(email);
+    if (!emailResult.success) {
+      setErrors({ email: emailResult.error.errors[0].message });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        setResetEmailSent(true);
+        toast({
+          title: "Email Sent",
+          description: "Check your inbox for a password reset link.",
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -160,137 +199,245 @@ const Auth = () => {
           {/* Title */}
           <div className="mb-8">
             <h2 className="font-serif text-3xl text-foreground mb-2">
-              {isLogin ? "Welcome Back" : "Request Access"}
+              {isForgotPassword 
+                ? "Reset Password" 
+                : isLogin 
+                  ? "Welcome Back" 
+                  : "Request Access"}
             </h2>
             <p className="text-muted-foreground text-sm">
-              {isLogin
-                ? "Sign in to access your private dashboard"
-                : "Create your account to join our exclusive membership"}
+              {isForgotPassword
+                ? "Enter your email and we'll send you a reset link"
+                : isLogin
+                  ? "Sign in to access your private dashboard"
+                  : "Create your account to join our exclusive membership"}
             </p>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email */}
-            <div>
-              <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    setErrors((prev) => ({ ...prev, email: undefined }));
-                  }}
-                  placeholder="your@email.com"
-                  className={`w-full bg-muted/30 border ${
-                    errors.email ? "border-destructive" : "border-border/50"
-                  } rounded-lg py-3 pl-12 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors`}
-                />
+          {/* Reset Email Sent Success */}
+          {resetEmailSent && isForgotPassword ? (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center py-8"
+            >
+              <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-6">
+                <Mail className="w-8 h-8 text-emerald-500" />
               </div>
-              {errors.email && (
-                <p className="text-xs text-destructive mt-1">{errors.email}</p>
-              )}
-            </div>
-
-            {/* Password */}
-            <div>
-              <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    setErrors((prev) => ({ ...prev, password: undefined }));
-                  }}
-                  placeholder="••••••••"
-                  className={`w-full bg-muted/30 border ${
-                    errors.password ? "border-destructive" : "border-border/50"
-                  } rounded-lg py-3 pl-12 pr-12 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="text-xs text-destructive mt-1">{errors.password}</p>
-              )}
-            </div>
-
-            {/* Confirm Password (signup only) */}
-            {!isLogin && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
+              <h3 className="font-serif text-xl text-foreground mb-2">Check Your Email</h3>
+              <p className="text-muted-foreground text-sm mb-6">
+                We've sent a password reset link to <strong className="text-foreground">{email}</strong>
+              </p>
+              <button
+                onClick={() => {
+                  setIsForgotPassword(false);
+                  setResetEmailSent(false);
+                  setEmail("");
+                }}
+                className="text-primary hover:text-primary/80 transition-colors font-medium text-sm"
               >
+                Back to Sign In
+              </button>
+            </motion.div>
+          ) : isForgotPassword ? (
+            /* Forgot Password Form */
+            <form onSubmit={handleForgotPassword} className="space-y-5">
+              {/* Email */}
+              <div>
                 <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
-                  Confirm Password
+                  Email Address
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <input
-                    type={showPassword ? "text" : "password"}
-                    value={confirmPassword}
+                    type="email"
+                    value={email}
                     onChange={(e) => {
-                      setConfirmPassword(e.target.value);
-                      setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
+                      setEmail(e.target.value);
+                      setErrors((prev) => ({ ...prev, email: undefined }));
                     }}
-                    placeholder="••••••••"
+                    placeholder="your@email.com"
                     className={`w-full bg-muted/30 border ${
-                      errors.confirmPassword ? "border-destructive" : "border-border/50"
+                      errors.email ? "border-destructive" : "border-border/50"
                     } rounded-lg py-3 pl-12 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors`}
                   />
                 </div>
-                {errors.confirmPassword && (
-                  <p className="text-xs text-destructive mt-1">{errors.confirmPassword}</p>
+                {errors.email && (
+                  <p className="text-xs text-destructive mt-1">{errors.email}</p>
                 )}
-              </motion.div>
-            )}
+              </div>
 
-            {/* Submit button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-3 bg-primary text-primary-foreground font-medium text-sm tracking-widest uppercase rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  {isLogin ? "Signing In..." : "Creating Account..."}
-                </>
-              ) : (
-                <>
-                  {isLogin ? "Sign In" : "Create Account"}
-                </>
-              )}
-            </button>
-          </form>
+              {/* Submit button */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-3 bg-primary text-primary-foreground font-medium text-sm tracking-widest uppercase rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  "Send Reset Link"
+                )}
+              </button>
 
-          {/* Toggle */}
-          <p className="mt-6 text-center text-sm text-muted-foreground">
-            {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-            <button
-              onClick={() => {
-                setIsLogin(!isLogin);
-                setErrors({});
-              }}
-              className="text-primary hover:text-primary/80 transition-colors font-medium"
-            >
-              {isLogin ? "Request Access" : "Sign In"}
-            </button>
-          </p>
+              {/* Back to login */}
+              <p className="text-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsForgotPassword(false);
+                    setErrors({});
+                  }}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <ArrowLeft className="w-3 h-3 inline mr-1" />
+                  Back to Sign In
+                </button>
+              </p>
+            </form>
+          ) : (
+            /* Login/Signup Form */
+            <>
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Email */}
+                <div>
+                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setErrors((prev) => ({ ...prev, email: undefined }));
+                      }}
+                      placeholder="your@email.com"
+                      className={`w-full bg-muted/30 border ${
+                        errors.email ? "border-destructive" : "border-border/50"
+                      } rounded-lg py-3 pl-12 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors`}
+                    />
+                  </div>
+                  {errors.email && (
+                    <p className="text-xs text-destructive mt-1">{errors.email}</p>
+                  )}
+                </div>
+
+                {/* Password */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-xs uppercase tracking-widest text-muted-foreground">
+                      Password
+                    </label>
+                    {isLogin && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsForgotPassword(true);
+                          setErrors({});
+                        }}
+                        className="text-xs text-primary hover:text-primary/80 transition-colors"
+                      >
+                        Forgot Password?
+                      </button>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setErrors((prev) => ({ ...prev, password: undefined }));
+                      }}
+                      placeholder="••••••••"
+                      className={`w-full bg-muted/30 border ${
+                        errors.password ? "border-destructive" : "border-border/50"
+                      } rounded-lg py-3 pl-12 pr-12 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <p className="text-xs text-destructive mt-1">{errors.password}</p>
+                  )}
+                </div>
+
+                {/* Confirm Password (signup only) */}
+                {!isLogin && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                  >
+                    <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                      Confirm Password
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={confirmPassword}
+                        onChange={(e) => {
+                          setConfirmPassword(e.target.value);
+                          setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
+                        }}
+                        placeholder="••••••••"
+                        className={`w-full bg-muted/30 border ${
+                          errors.confirmPassword ? "border-destructive" : "border-border/50"
+                        } rounded-lg py-3 pl-12 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors`}
+                      />
+                    </div>
+                    {errors.confirmPassword && (
+                      <p className="text-xs text-destructive mt-1">{errors.confirmPassword}</p>
+                    )}
+                  </motion.div>
+                )}
+
+                {/* Submit button */}
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full py-3 bg-primary text-primary-foreground font-medium text-sm tracking-widest uppercase rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      {isLogin ? "Signing In..." : "Creating Account..."}
+                    </>
+                  ) : (
+                    <>
+                      {isLogin ? "Sign In" : "Create Account"}
+                    </>
+                  )}
+                </button>
+              </form>
+
+              {/* Toggle */}
+              <p className="mt-6 text-center text-sm text-muted-foreground">
+                {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+                <button
+                  onClick={() => {
+                    setIsLogin(!isLogin);
+                    setErrors({});
+                  }}
+                  className="text-primary hover:text-primary/80 transition-colors font-medium"
+                >
+                  {isLogin ? "Request Access" : "Sign In"}
+                </button>
+              </p>
+            </>
+          )}
 
           {/* Security note */}
           <div className="mt-8 flex items-center justify-center gap-2 text-xs text-muted-foreground">

@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Lock, Menu, X } from "lucide-react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { Lock, Menu } from "lucide-react";
+import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
   Sheet,
@@ -19,18 +19,55 @@ const navLinks = [
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setIsScrolled(latest > 50);
+  });
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = navLinks.map(link => link.href.replace('#', ''));
+      const scrollPosition = window.scrollY + 200;
+
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const offsetTop = element.offsetTop;
+          const offsetHeight = element.offsetHeight;
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            setActiveSection(section);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <motion.nav
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="fixed top-0 left-0 w-full z-50 border-b border-border/30 glass"
+      transition={{ duration: 0.6, delay: 2.2 }}
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
+        isScrolled 
+          ? "border-b border-border/30 glass shadow-lg shadow-background/20" 
+          : "border-b border-transparent bg-transparent"
+      }`}
     >
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <a href="#" className="font-serif text-xl tracking-widest text-foreground hover:text-primary transition-colors duration-300">
+        <motion.a 
+          href="#" 
+          whileHover={{ scale: 1.02 }}
+          className="font-serif text-xl tracking-widest text-foreground hover:text-primary transition-colors duration-300"
+        >
           AURELIA
-        </a>
+        </motion.a>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-10 text-sm font-light tracking-wide">
@@ -38,26 +75,39 @@ const Navigation = () => {
             <a
               key={link.href}
               href={link.href}
-              className="text-muted-foreground hover:text-foreground transition-colors duration-300"
+              className={`relative py-2 transition-colors duration-300 ${
+                activeSection === link.href.replace('#', '')
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
               {link.label}
+              {activeSection === link.href.replace('#', '') && (
+                <motion.span
+                  layoutId="activeSection"
+                  className="absolute -bottom-1 left-0 right-0 h-px bg-primary"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
             </a>
           ))}
         </div>
 
         <div className="flex items-center space-x-6">
           <Link 
-            to="/dashboard" 
-            className="hidden md:flex items-center space-x-2 text-xs font-medium tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors"
+            to="/auth" 
+            className="hidden md:flex items-center space-x-2 text-xs font-medium tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors group"
           >
-            <Lock className="w-3.5 h-3.5 text-primary" />
+            <span className="w-8 h-8 rounded-full border border-border/30 flex items-center justify-center group-hover:border-primary/50 group-hover:bg-primary/10 transition-all duration-300">
+              <Lock className="w-3.5 h-3.5 text-primary" />
+            </span>
             <span>Client Login</span>
           </Link>
 
           {/* Mobile Menu */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <button className="text-foreground md:hidden p-2">
+              <button className="text-foreground md:hidden p-2 hover:bg-secondary/30 rounded-full transition-colors">
                 <Menu className="w-6 h-6" />
               </button>
             </SheetTrigger>
@@ -77,7 +127,11 @@ const Navigation = () => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
                     onClick={() => setIsOpen(false)}
-                    className="py-4 px-2 text-lg font-light text-muted-foreground hover:text-foreground hover:bg-secondary/30 transition-all duration-300 border-b border-border/20"
+                    className={`py-4 px-4 text-lg font-light transition-all duration-300 border-b border-border/20 ${
+                      activeSection === link.href.replace('#', '')
+                        ? "text-foreground bg-secondary/30 border-l-2 border-l-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary/30"
+                    }`}
                   >
                     {link.label}
                   </motion.a>
@@ -86,9 +140,9 @@ const Navigation = () => {
 
               <div className="absolute bottom-8 left-6 right-6">
                 <Link 
-                  to="/dashboard"
+                  to="/auth"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center space-x-3 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-widest uppercase w-full"
+                  className="flex items-center justify-center space-x-3 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-widest uppercase w-full gold-glow-hover transition-all duration-300"
                 >
                   <Lock className="w-4 h-4" />
                   <span>Client Login</span>

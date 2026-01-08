@@ -1,33 +1,63 @@
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useRef } from "react";
-import heroImage from "@/assets/hero-jet.jpg";
+import { useRef, useState } from "react";
+import heroImage from "@/assets/hero-luxury-abstract.jpg";
 
-const HeroSection = () => {
+interface HeroSectionProps {
+  videoSrc?: string;
+}
+
+const HeroSection = ({ videoSrc }: HeroSectionProps) => {
   const ref = useRef<HTMLElement>(null);
+  const [videoLoaded, setVideoLoaded] = useState(false);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
 
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const mediaY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const mediaScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
 
   return (
     <header ref={ref} className="relative w-full h-screen overflow-hidden flex items-center justify-center">
-      {/* Background Image with parallax */}
+      {/* Background Video/Image with parallax */}
       <motion.div 
-        style={{ y: imageY, scale: imageScale }}
+        style={{ y: mediaY, scale: mediaScale }}
         className="absolute inset-0 w-full h-[120%] z-0"
       >
-        <img
-          src={heroImage}
-          alt="Luxury Art Gallery"
-          className="w-full h-full object-cover opacity-70"
-        />
+        {videoSrc ? (
+          <>
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              onLoadedData={() => setVideoLoaded(true)}
+              className={`w-full h-full object-cover opacity-70 transition-opacity duration-1000 ${
+                videoLoaded ? "opacity-70" : "opacity-0"
+              }`}
+            >
+              <source src={videoSrc} type="video/mp4" />
+            </video>
+            {/* Fallback image while video loads */}
+            {!videoLoaded && (
+              <img
+                src={heroImage}
+                alt="Luxury Experience"
+                className="absolute inset-0 w-full h-full object-cover opacity-70"
+              />
+            )}
+          </>
+        ) : (
+          <img
+            src={heroImage}
+            alt="Luxury Experience"
+            className="w-full h-full object-cover opacity-70"
+          />
+        )}
       </motion.div>
 
       {/* Overlay */}

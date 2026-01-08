@@ -9,6 +9,9 @@ import {
   Shield,
   Check,
   Trash2,
+  Loader2,
+  Cloud,
+  CloudOff,
 } from "lucide-react";
 import { useNotifications, NotificationType } from "@/contexts/NotificationContext";
 import { formatDistanceToNow } from "date-fns";
@@ -52,6 +55,8 @@ const NotificationPanel = () => {
     markAllAsRead,
     clearNotification,
     clearAll,
+    isLoading,
+    userId,
   } = useNotifications();
 
   return (
@@ -97,9 +102,20 @@ const NotificationPanel = () => {
               {/* Header */}
               <div className="p-4 border-b border-border/30 flex items-center justify-between">
                 <div>
-                  <h3 className="font-serif text-lg text-foreground">Notifications</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-serif text-lg text-foreground">Notifications</h3>
+                    {userId ? (
+                      <div className="flex items-center gap-1 text-emerald-500" title="Connected to Cloud">
+                        <Cloud className="w-3 h-3" />
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1 text-muted-foreground" title="Demo mode">
+                        <CloudOff className="w-3 h-3" />
+                      </div>
+                    )}
+                  </div>
                   <p className="text-xs text-muted-foreground">
-                    {unreadCount} unread
+                    {unreadCount} unread {!userId && "(demo)"}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -132,7 +148,12 @@ const NotificationPanel = () => {
 
               {/* Notifications List */}
               <div className="max-h-96 overflow-y-auto">
-                {notifications.length === 0 ? (
+                {isLoading ? (
+                  <div className="p-8 text-center">
+                    <Loader2 className="w-8 h-8 text-primary mx-auto mb-3 animate-spin" />
+                    <p className="text-sm text-muted-foreground">Loading notifications...</p>
+                  </div>
+                ) : notifications.length === 0 ? (
                   <div className="p-8 text-center">
                     <Bell className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
                     <p className="text-sm text-muted-foreground">No notifications</p>

@@ -1,8 +1,12 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Send, User, Mail, MessageSquare, Phone } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const ContactSection = () => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -15,10 +19,28 @@ const ContactSection = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setIsSubmitted(true);
+    
+    try {
+      const { error } = await supabase
+        .from("contact_submissions")
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || null,
+          message: formData.message,
+          source: "website",
+        });
+      
+      if (error) throw error;
+      
+      setIsSubmitted(true);
+      toast.success(t("contact.success"));
+    } catch (error) {
+      console.error("Contact form error:", error);
+      toast.error(t("common.error"));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

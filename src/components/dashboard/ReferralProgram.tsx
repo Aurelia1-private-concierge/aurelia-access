@@ -1,26 +1,51 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Gift, Copy, Check, Users, DollarSign, Share2 } from "lucide-react";
+import { Gift, Copy, Check, Users, DollarSign, Share2, Mail, MessageCircle, Linkedin, Twitter, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 const ReferralProgram = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
+  const [stats, setStats] = useState({ total: 0, pending: 0, earned: 0 });
 
-  // Generate referral code from user ID
-  const referralCode = user?.id 
-    ? `AURELIA-${user.id.slice(0, 8).toUpperCase()}`
-    : "AURELIA-MEMBER";
-  
-  const referralLink = `${window.location.origin}/auth?ref=${referralCode}`;
+  // Generate referral link using user ID
+  const referralLink = user?.id 
+    ? `${window.location.origin}/referral?ref=${user.id}`
+    : "";
 
-  const handleCopy = async (text: string) => {
-    await navigator.clipboard.writeText(text);
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!user) return;
+      
+      try {
+        const { data } = await supabase
+          .from("referrals")
+          .select("status")
+          .eq("referrer_id", user.id);
+        
+        if (data) {
+          const total = data.length;
+          const pending = data.filter(r => r.status === "pending").length;
+          const subscribed = data.filter(r => ["subscribed", "rewarded"].includes(r.status)).length;
+          setStats({ total, pending, earned: subscribed * 50 }); // $50 per subscribed referral
+        }
+      } catch {
+        // Silently fail
+      }
+    };
+
+    fetchStats();
+  }, [user]);
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(referralLink);
     setCopied(true);
     toast({
       title: "Copied to clipboard",
@@ -29,26 +54,37 @@ const ReferralProgram = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: "Join Aurelia",
-          text: "Get exclusive access to luxury concierge services with Aurelia. Use my referral link:",
-          url: referralLink,
-        });
-      } catch {
-        // User cancelled or share failed
-      }
-    } else {
-      handleCopy(referralLink);
+  const shareLinks = [
+    {
+      name: "WhatsApp",
+      icon: MessageCircle,
+      href: `https://wa.me/?text=${encodeURIComponent(`Join me on Aurelia, the world's most exclusive private concierge service: ${referralLink}`)}`,
+      color: "text-emerald-500"
+    },
+    {
+      name: "Email",
+      icon: Mail,
+      href: `mailto:?subject=${encodeURIComponent("You're Invited to Aurelia")}&body=${encodeURIComponent(`I'd like to invite you to Aurelia, the world's most exclusive private concierge service.\n\nJoin here: ${referralLink}`)}`,
+      color: "text-blue-500"
+    },
+    {
+      name: "Twitter",
+      icon: Twitter,
+      href: `https://twitter.com/intent/tweet?text=${encodeURIComponent("Join me on Aurelia, the world's most exclusive private concierge service")}&url=${encodeURIComponent(referralLink)}`,
+      color: "text-sky-500"
+    },
+    {
+      name: "LinkedIn",
+      icon: Linkedin,
+      href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(referralLink)}`,
+      color: "text-blue-600"
     }
-  };
+  ];
 
-  const stats = [
-    { label: "Referrals", value: "0", icon: Users },
-    { label: "Pending", value: "0", icon: Gift },
-    { label: "Earned", value: "$0", icon: DollarSign },
+  const statItems = [
+    { label: "Referrals", value: stats.total.toString(), icon: Users },
+    { label: "Pending", value: stats.pending.toString(), icon: Gift },
+    { label: "Earned", value: `$${stats.earned}`, icon: DollarSign },
   ];
 
   return (
@@ -60,14 +96,22 @@ const ReferralProgram = () => {
       data-tour="referral-program"
     >
       {/* Header */}
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
-          <Gift className="w-5 h-5 text-primary" />
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+            <Gift className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-serif text-lg text-foreground">Refer & Earn</h3>
+            <p className="text-xs text-muted-foreground">Invite friends, earn rewards</p>
+          </div>
         </div>
-        <div>
-          <h3 className="font-serif text-lg text-foreground">Refer & Earn</h3>
-          <p className="text-xs text-muted-foreground">Invite friends, earn rewards</p>
-        </div>
+        <Link to="/dashboard?tab=referrals">
+          <Button variant="ghost" size="sm" className="text-xs">
+            View All
+            <ExternalLink className="w-3 h-3 ml-1" />
+          </Button>
+        </Link>
       </div>
 
       {/* Reward Info */}
@@ -80,20 +124,20 @@ const ReferralProgram = () => {
         </p>
       </div>
 
-      {/* Referral Code */}
+      {/* Referral Link */}
       <div className="space-y-3 mb-4">
         <label className="text-xs text-muted-foreground uppercase tracking-wider">
-          Your Referral Code
+          Your Referral Link
         </label>
         <div className="flex gap-2">
           <div className="flex-1 relative">
             <Input
-              value={referralCode}
+              value={referralLink}
               readOnly
-              className="bg-muted/30 border-border/50 font-mono text-sm pr-10"
+              className="bg-muted/30 border-border/50 text-xs pr-10 truncate"
             />
             <button
-              onClick={() => handleCopy(referralCode)}
+              onClick={handleCopy}
               className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-muted rounded"
             >
               {copied ? (
@@ -106,18 +150,29 @@ const ReferralProgram = () => {
         </div>
       </div>
 
-      {/* Share Button */}
-      <Button
-        onClick={handleShare}
-        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground gold-glow-hover mb-4"
-      >
-        <Share2 className="w-4 h-4 mr-2" />
-        Share Referral Link
-      </Button>
+      {/* Quick Share Buttons */}
+      <div className="flex items-center gap-2 mb-4">
+        {shareLinks.map((link) => (
+          <a
+            key={link.name}
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              "flex-1 flex items-center justify-center p-2.5 rounded-lg border border-border/30",
+              "bg-card/30 hover:bg-muted/30 transition-colors",
+              link.color
+            )}
+            title={`Share on ${link.name}`}
+          >
+            <link.icon className="w-4 h-4" />
+          </a>
+        ))}
+      </div>
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3 pt-4 border-t border-border/30">
-        {stats.map((stat) => (
+        {statItems.map((stat) => (
           <div key={stat.label} className="text-center">
             <stat.icon className="w-4 h-4 text-muted-foreground mx-auto mb-1" />
             <p className="text-lg font-light text-foreground">{stat.value}</p>

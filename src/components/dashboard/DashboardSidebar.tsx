@@ -7,7 +7,8 @@ import {
   LogOut,
   Settings,
   Shield,
-  Sparkles
+  Sparkles,
+  Gift
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -15,7 +16,7 @@ import { AnimatedLogo } from "@/components/brand";
 import { useTierTheme } from "@/contexts/TierThemeContext";
 import { cn } from "@/lib/utils";
 
-type ActiveView = "portfolio" | "messaging" | "documents";
+type ActiveView = "portfolio" | "messaging" | "documents" | "referrals";
 
 interface DashboardSidebarProps {
   activeView: ActiveView;
@@ -26,6 +27,7 @@ const menuItems = [
   { id: "portfolio" as const, label: "Portfolio", icon: LayoutDashboard },
   { id: "messaging" as const, label: "Secure Messages", icon: MessageSquareLock },
   { id: "documents" as const, label: "Document Vault", icon: FolderLock },
+  { id: "referrals" as const, label: "Referrals", icon: Gift },
 ];
 
 const tierIcons = {

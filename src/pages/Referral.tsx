@@ -9,11 +9,13 @@ import {
   Star, 
   CheckCircle2,
   Loader2,
-  Users
+  Users,
+  Share2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnimatedLogo } from "@/components/brand";
 import { supabase } from "@/integrations/supabase/client";
+import SocialShareButtons from "@/components/referral/SocialShareButtons";
 
 const Referral = () => {
   const [searchParams] = useSearchParams();

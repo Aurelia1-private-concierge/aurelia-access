@@ -32,3 +32,9 @@ verify_jwt = false
 
 [functions.send-notifications]
 verify_jwt = false
+
+[functions.purchase-credits]
+verify_jwt = false
+
+[functions.fulfill-credits]
+verify_jwt = false

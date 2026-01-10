@@ -1,9 +1,10 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useConversation } from "@elevenlabs/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, MicOff, Phone, PhoneOff, ArrowLeft, Sparkles, Volume2, Wifi, WifiOff, Clock, MessageSquare, CheckCircle2, User, History } from "lucide-react";
+import { Mic, MicOff, Phone, PhoneOff, ArrowLeft, Sparkles, Volume2, Wifi, WifiOff, Clock, MessageSquare, CheckCircle2, User, History, Globe } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CircularWaveform from "@/components/CircularWaveform";
@@ -13,6 +14,7 @@ import VoiceSessionHistory from "@/components/orla/VoiceSessionHistory";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useVoiceSession } from "@/hooks/useVoiceSession";
+import { languages } from "@/i18n";
 
 const ELEVENLABS_AGENT_ID = "agent_01jx7t3mjgeqzsjh5qxbvdsxey";
 
@@ -33,6 +35,7 @@ interface ActionNotification {
 const Orla = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t, i18n } = useTranslation();
   const [isConnecting, setIsConnecting] = useState(false);
   const [transcript, setTranscript] = useState<TranscriptEntry[]>([]);
   const [micPermission, setMicPermission] = useState<"granted" | "denied" | "prompt">("prompt");
@@ -42,6 +45,9 @@ const Orla = () => {
   const [userProfile, setUserProfile] = useState<{ display_name: string | null; avatar_url: string | null } | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const transcriptEndRef = useRef<HTMLDivElement>(null);
+  
+  // Get current language info
+  const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
   
   // Voice session persistence
   const { startSession, addMessage, endSession } = useVoiceSession(user?.id);
@@ -334,9 +340,9 @@ const Orla = () => {
   const startConversation = useCallback(async () => {
     // Check authentication first
     if (!user) {
-      toast.error("Please sign in to speak with Orla", {
+      toast.error(t("orla.signInRequired") || "Please sign in to speak with Orla", {
         action: {
-          label: "Sign In",
+          label: t("auth.signIn"),
           onClick: () => navigate("/auth"),
         },
       });
@@ -352,8 +358,12 @@ const Orla = () => {
       // Start voice session for persistence
       await startSession();
 
+      // Pass language to edge function for multilingual Orla
       const { data, error } = await supabase.functions.invoke("elevenlabs-conversation-token", {
-        body: { agentId: ELEVENLABS_AGENT_ID },
+        body: { 
+          agentId: ELEVENLABS_AGENT_ID,
+          language: i18n.language,
+        },
       });
 
       if (error || !data?.signed_url) {

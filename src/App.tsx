@@ -6,11 +6,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { GlobalProvider } from "@/contexts/GlobalContext";
 import PageTransition from "@/components/PageTransition";
 import BackToTop from "@/components/BackToTop";
 import CookieConsent from "@/components/CookieConsent";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
+import "@/i18n";
 
 // Eagerly load the homepage for best LCP
 import Index from "./pages/Index";
@@ -201,17 +203,19 @@ const AnimatedRoutes = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <AnimatedRoutes />
-          <BackToTop />
-          <CookieConsent />
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
+    <GlobalProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AuthProvider>
+            <AnimatedRoutes />
+            <BackToTop />
+            <CookieConsent />
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </GlobalProvider>
   </QueryClientProvider>
 );
 

@@ -44,7 +44,9 @@ import { toast } from "@/hooks/use-toast";
 import { Logo } from "@/components/brand";
 import ZapierSettings from "@/components/admin/ZapierSettings";
 import BroadcastNotifications from "@/components/admin/BroadcastNotifications";
+import ContactSubmissionsPanel from "@/components/admin/ContactSubmissionsPanel";
 import { format } from "date-fns";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface LaunchSignup {
   id: string;
@@ -281,15 +283,22 @@ const Admin = () => {
       </header>
 
       <main className="container mx-auto px-6 py-8">
-        {/* Page Title */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <h1 className="font-serif text-3xl text-foreground mb-2">Launch Signups</h1>
-          <p className="text-muted-foreground">Manage email and SMS notification subscribers</p>
-        </motion.div>
+        <Tabs defaultValue="signups" className="space-y-6">
+          <TabsList className="bg-card border border-border/50">
+            <TabsTrigger value="signups">Launch Signups</TabsTrigger>
+            <TabsTrigger value="contacts">Contact Submissions</TabsTrigger>
+            <TabsTrigger value="integrations">Integrations</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="signups" className="space-y-6">
+            {/* Page Title */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <h1 className="font-serif text-3xl text-foreground mb-2">Launch Signups</h1>
+              <p className="text-muted-foreground">Manage email and SMS notification subscribers</p>
+            </motion.div>
 
         {/* Stats Cards */}
         <motion.div
@@ -355,22 +364,6 @@ const Admin = () => {
           </div>
         </motion.div>
 
-        {/* Integrations Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="mb-8"
-        >
-          <div className="flex items-center gap-2 mb-4">
-            <Settings className="w-5 h-5 text-primary" />
-            <h2 className="font-serif text-xl text-foreground">Integrations</h2>
-          </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            <ZapierSettings />
-            <BroadcastNotifications />
-          </div>
-        </motion.div>
 
         {/* Filters & Actions */}
         <motion.div
@@ -533,10 +526,30 @@ const Admin = () => {
           </Table>
         </motion.div>
 
-        {/* Pagination info */}
-        <div className="mt-4 text-sm text-muted-foreground">
-          Showing {filteredSignups.length} of {signups.length} signups
-        </div>
+            {/* Pagination info */}
+            <div className="mt-4 text-sm text-muted-foreground">
+              Showing {filteredSignups.length} of {signups.length} signups
+            </div>
+          </TabsContent>
+
+          <TabsContent value="contacts">
+            <ContactSubmissionsPanel />
+          </TabsContent>
+
+          <TabsContent value="integrations" className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <h1 className="font-serif text-3xl text-foreground mb-2">Integrations</h1>
+              <p className="text-muted-foreground">Manage external service connections</p>
+            </motion.div>
+            <div className="grid md:grid-cols-2 gap-6">
+              <ZapierSettings />
+              <BroadcastNotifications />
+            </div>
+          </TabsContent>
+        </Tabs>
       </main>
 
       {/* Send Notification Dialog */}

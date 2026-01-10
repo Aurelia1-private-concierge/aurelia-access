@@ -1,61 +1,78 @@
 import { motion } from "framer-motion";
 import { Check, Crown, Star, Gem } from "lucide-react";
 import { Link } from "react-router-dom";
-
-const tiers = [
-  {
-    name: "Silver",
-    price: "€2,500",
-    period: "/year",
-    description: "Essential luxury services",
-    icon: Star,
-    features: [
-      "24/7 concierge access",
-      "Travel planning assistance",
-      "Restaurant reservations",
-      "Event ticket procurement",
-      "5 priority requests/month",
-    ],
-    highlighted: false,
-  },
-  {
-    name: "Gold",
-    price: "€10,000",
-    period: "/year",
-    description: "Premium lifestyle management",
-    icon: Crown,
-    features: [
-      "Everything in Silver",
-      "Dedicated personal concierge",
-      "Private aviation booking",
-      "Luxury car rentals",
-      "Unlimited priority requests",
-      "Property management",
-      "Personal shopping services",
-    ],
-    highlighted: true,
-  },
-  {
-    name: "Platinum",
-    price: "By Invitation",
-    period: "",
-    description: "Ultimate bespoke experience",
-    icon: Gem,
-    features: [
-      "Everything in Gold",
-      "Family office integration",
-      "Yacht charter management",
-      "Art acquisition advisory",
-      "Security coordination",
-      "Global relocation services",
-      "24/7 dedicated team",
-      "Annual luxury retreat",
-    ],
-    highlighted: false,
-  },
-];
+import { useTranslation } from "react-i18next";
+import { useGlobal } from "@/contexts/GlobalContext";
 
 const MembershipTiersPreview = () => {
+  const { t } = useTranslation();
+  const { formatCurrency, currency } = useGlobal();
+  
+  // Base prices in EUR, convert based on locale
+  const conversionRates: Record<string, number> = {
+    EUR: 1,
+    USD: 1.08,
+    GBP: 0.86,
+    RUB: 98,
+    CNY: 7.8,
+    AED: 3.97,
+  };
+  
+  const rate = conversionRates[currency] || 1;
+  
+  const tiers = [
+    {
+      name: "Silver",
+      basePrice: 2500,
+      period: "/year",
+      description: t("membership.silverDesc") || "Essential luxury services",
+      icon: Star,
+      features: [
+        t("membership.feature24_7") || "24/7 concierge access",
+        t("membership.featureTravel") || "Travel planning assistance",
+        t("membership.featureRestaurant") || "Restaurant reservations",
+        t("membership.featureEvents") || "Event ticket procurement",
+        t("membership.featurePriority5") || "5 priority requests/month",
+      ],
+      highlighted: false,
+    },
+    {
+      name: "Gold",
+      basePrice: 10000,
+      period: "/year",
+      description: t("membership.goldDesc") || "Premium lifestyle management",
+      icon: Crown,
+      features: [
+        t("membership.featureEverythingSilver") || "Everything in Silver",
+        t("membership.featureDedicated") || "Dedicated personal concierge",
+        t("membership.featureAviation") || "Private aviation booking",
+        t("membership.featureCar") || "Luxury car rentals",
+        t("membership.featureUnlimited") || "Unlimited priority requests",
+        t("membership.featureProperty") || "Property management",
+        t("membership.featureShopping") || "Personal shopping services",
+      ],
+      highlighted: true,
+    },
+    {
+      name: "Platinum",
+      basePrice: 0,
+      period: "",
+      description: t("membership.platinumDesc") || "Ultimate bespoke experience",
+      icon: Gem,
+      features: [
+        t("membership.featureEverythingGold") || "Everything in Gold",
+        t("membership.featureFamily") || "Family office integration",
+        t("membership.featureYacht") || "Yacht charter management",
+        t("membership.featureArt") || "Art acquisition advisory",
+        t("membership.featureSecurity") || "Security coordination",
+        t("membership.featureRelocation") || "Global relocation services",
+        t("membership.featureTeam") || "24/7 dedicated team",
+        t("membership.featureRetreat") || "Annual luxury retreat",
+      ],
+      highlighted: false,
+    },
+  ];
+
   return (
     <section className="py-24 md:py-32 bg-background relative overflow-hidden">
       {/* Background effects */}
@@ -73,7 +90,7 @@ const MembershipTiersPreview = () => {
           <div className="inline-flex items-center gap-4 mb-6">
             <span className="w-12 h-px bg-primary/40" />
             <p className="text-[11px] uppercase tracking-[0.4em] text-primary/70 font-medium">
-              Membership Tiers
+              {t("membership.tiers") || "Membership Tiers"}
             </p>
             <span className="w-12 h-px bg-primary/40" />
           </div>
@@ -81,10 +98,10 @@ const MembershipTiersPreview = () => {
             className="text-4xl md:text-5xl text-foreground tracking-[-0.02em] mb-4"
             style={{ fontFamily: "'Cormorant Garamond', serif" }}
           >
-            Choose Your <span className="italic text-muted-foreground/70">Level</span>
+            {t("membership.chooseLevel") || "Choose Your"} <span className="italic text-muted-foreground/70">{t("membership.level") || "Level"}</span>
           </h2>
           <p className="text-muted-foreground font-light max-w-2xl mx-auto">
-            Select the tier that matches your lifestyle. Upgrade anytime as your needs evolve.
+            {t("membership.selectTier") || "Select the tier that matches your lifestyle. Upgrade anytime as your needs evolve."}
           </p>
         </motion.div>
 
@@ -107,7 +124,7 @@ const MembershipTiersPreview = () => {
               {tier.highlighted && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                   <span className="px-4 py-1 bg-primary text-primary-foreground text-[10px] uppercase tracking-[0.2em]">
-                    Most Popular
+                    {t("membership.mostPopular") || "Most Popular"}
                   </span>
                 </div>
               )}
@@ -136,7 +153,10 @@ const MembershipTiersPreview = () => {
                   className="text-3xl text-foreground"
                   style={{ fontFamily: "'Cormorant Garamond', serif" }}
                 >
-                  {tier.price}
+                  {tier.basePrice === 0 
+                    ? (t("membership.byInvitation") || "By Invitation")
+                    : formatCurrency(Math.round(tier.basePrice * rate))
+                  }
                 </span>
                 <span className="text-sm text-muted-foreground">{tier.period}</span>
               </div>
@@ -162,7 +182,7 @@ const MembershipTiersPreview = () => {
                     : 'border border-border/30 text-foreground hover:border-primary/40 hover:bg-primary/5'
                 }`}
               >
-                {tier.price === "By Invitation" ? "Request Access" : "Apply Now"}
+                {tier.basePrice === 0 ? (t("membership.requestAccess") || "Request Access") : (t("membership.applyNow") || "Apply Now")}
               </Link>
             </motion.div>
           ))}
@@ -176,7 +196,7 @@ const MembershipTiersPreview = () => {
           transition={{ delay: 0.5 }}
           className="text-center text-xs text-muted-foreground/50 mt-12"
         >
-          All memberships include a 30-day satisfaction guarantee
+          {t("membership.guarantee") || "All memberships include a 30-day satisfaction guarantee"}
         </motion.p>
       </div>
     </section>

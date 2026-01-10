@@ -199,14 +199,14 @@ const AnimatedLogo = ({
         >
           <h1 
             className={cn(
-              "font-serif tracking-[0.4em] text-foreground relative",
+              "font-serif tracking-[0.4em] text-foreground relative pl-1",
               config.wordmark
             )}
           >
             <span className="relative z-10">AURELIA</span>
             {/* Shimmer overlay on text */}
             <motion.span
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/30 to-transparent"
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/30 to-transparent overflow-visible"
               initial={{ x: "-100%" }}
               animate={{ x: "200%" }}
               transition={{ 

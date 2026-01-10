@@ -94,10 +94,9 @@ const LoadingScreen = () => {
 
           {/* Fixed size container to prevent CLS - dimensions match AnimatedLogo xl size */}
           <div 
-            className="relative flex flex-col items-center justify-center"
+            className="relative flex flex-col items-center justify-center overflow-visible"
             style={{ 
-              contain: 'strict',
-              width: '280px',
+              width: '320px',
               height: '280px'
             }}
           >

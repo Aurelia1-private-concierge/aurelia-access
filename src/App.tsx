@@ -36,6 +36,7 @@ const Referral = lazy(() => import("./pages/Referral"));
 const Waitlist = lazy(() => import("./pages/Waitlist"));
 const PartnerRecruitment = lazy(() => import("./pages/PartnerRecruitment"));
 const DemoServices = lazy(() => import("./pages/DemoServices"));
+const TrialApplication = lazy(() => import("./pages/TrialApplication"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Minimal loading fallback
@@ -210,6 +211,16 @@ const AnimatedRoutes = () => {
               <PageTransition>
                 <DemoServices />
               </PageTransition>
+            }
+          />
+          <Route
+            path="/trial"
+            element={
+              <ProtectedRoute>
+                <PageTransition>
+                  <TrialApplication />
+                </PageTransition>
+              </ProtectedRoute>
             }
           />
           <Route

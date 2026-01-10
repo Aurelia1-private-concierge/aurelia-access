@@ -51,6 +51,7 @@ import PartnerApplicationsPanel from "@/components/admin/PartnerApplicationsPane
 import AnalyticsDashboard from "@/components/admin/AnalyticsDashboard";
 import CRMPanel from "@/components/admin/CRMPanel";
 import CommissionTracker from "@/components/admin/CommissionTracker";
+import TrialApplicationsPanel from "@/components/admin/TrialApplicationsPanel";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -292,6 +293,7 @@ const Admin = () => {
         <Tabs defaultValue="analytics" className="space-y-6">
           <TabsList className="bg-card border border-border/50 flex-wrap h-auto gap-1 p-1">
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="trials">Trials</TabsTrigger>
             <TabsTrigger value="concierge">Concierge</TabsTrigger>
             <TabsTrigger value="crm">CRM</TabsTrigger>
             <TabsTrigger value="commissions">Commissions</TabsTrigger>
@@ -301,6 +303,14 @@ const Admin = () => {
             <TabsTrigger value="requests">Requests</TabsTrigger>
             <TabsTrigger value="integrations">Integrations</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="trials" className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-serif text-3xl text-foreground mb-2">Trial Applications</h1>
+              <p className="text-muted-foreground">Review and approve 7-day trial applications</p>
+            </motion.div>
+            <TrialApplicationsPanel />
+          </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6">
             <AnalyticsDashboard />

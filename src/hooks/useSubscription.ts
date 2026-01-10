@@ -11,6 +11,8 @@ interface SubscriptionState {
   subscriptionEnd: string | null;
   isLoading: boolean;
   error: string | null;
+  isTrial: boolean;
+  trialEndsAt: string | null;
 }
 
 export const useSubscription = () => {
@@ -23,6 +25,8 @@ export const useSubscription = () => {
     subscriptionEnd: null,
     isLoading: true,
     error: null,
+    isTrial: false,
+    trialEndsAt: null,
   });
 
   const checkSubscription = useCallback(async () => {
@@ -52,6 +56,8 @@ export const useSubscription = () => {
         subscriptionEnd: data.subscription_end,
         isLoading: false,
         error: null,
+        isTrial: data.is_trial || false,
+        trialEndsAt: data.trial_ends_at || null,
       });
     } catch (error) {
       console.error("Error checking subscription:", error);
@@ -75,6 +81,8 @@ export const useSubscription = () => {
         subscriptionEnd: null,
         isLoading: false,
         error: null,
+        isTrial: false,
+        trialEndsAt: null,
       });
     }
   }, [user, checkSubscription]);

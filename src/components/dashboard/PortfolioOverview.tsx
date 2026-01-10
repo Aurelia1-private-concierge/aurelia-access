@@ -22,6 +22,7 @@ import ExclusivePerks from "./ExclusivePerks";
 import ReferralProgram from "./ReferralProgram";
 import UpgradeCelebration from "./UpgradeCelebration";
 import WelcomeBanner from "./WelcomeBanner";
+import CreditsCard from "./CreditsCard";
 import TravelDNAOnboarding from "@/components/TravelDNAOnboarding";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useDashboardTour } from "@/hooks/useDashboardTour";
@@ -126,10 +127,13 @@ const PortfolioOverview = () => {
         userName={user?.email}
       />
 
-      {/* Subscription + Perks Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Subscription + Credits + Perks Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div data-tour="subscription-card">
           <SubscriptionCard />
+        </div>
+        <div data-tour="credits-card">
+          <CreditsCard />
         </div>
         <div data-tour="exclusive-perks">
           <ExclusivePerks />

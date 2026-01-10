@@ -15,7 +15,8 @@ import {
   Globe,
   Users,
   Star,
-  Zap
+  Zap,
+  Coins
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -296,6 +297,19 @@ const Membership = () => {
                       <h3 className="text-xl font-medium">{tier.name}</h3>
                       <p className="text-xs text-muted-foreground">Membership</p>
                     </div>
+                  </div>
+
+                  {/* Credits Badge */}
+                  <div className={cn(
+                    "inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4",
+                    tier.isUnlimited 
+                      ? "bg-primary/10 text-primary" 
+                      : "bg-muted text-muted-foreground"
+                  )}>
+                    <Coins className="w-4 h-4" />
+                    <span className="text-sm font-medium">
+                      {tier.isUnlimited ? "Unlimited Credits" : `${tier.monthlyCredits} Credits/month`}
+                    </span>
                   </div>
 
                   {/* Description */}

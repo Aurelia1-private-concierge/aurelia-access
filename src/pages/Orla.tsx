@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useConversation } from "@elevenlabs/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, MicOff, Phone, PhoneOff, ArrowLeft, Sparkles, Volume2, Wifi, WifiOff, Clock, MessageSquare, CheckCircle2, User, History, Globe } from "lucide-react";
+import { Mic, MicOff, Phone, PhoneOff, ArrowLeft, Sparkles, Volume2, Wifi, WifiOff, Clock, MessageSquare, CheckCircle2, User, History } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -11,6 +11,7 @@ import CircularWaveform from "@/components/CircularWaveform";
 import GuestPreview from "@/components/orla/GuestPreview";
 import OrlaAnimatedAvatar from "@/components/orla/OrlaAnimatedAvatar";
 import VoiceSessionHistory from "@/components/orla/VoiceSessionHistory";
+import LanguageSelector from "@/components/orla/LanguageSelector";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useVoiceSession } from "@/hooks/useVoiceSession";
@@ -451,7 +452,10 @@ const Orla = () => {
           </Link>
           
           {/* Connection Status & User Indicator */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            {/* Language Selector */}
+            <LanguageSelector />
+            
             {/* History Button */}
             {user && (
               <Button

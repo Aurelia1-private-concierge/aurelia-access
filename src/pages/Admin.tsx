@@ -45,6 +45,7 @@ import { Logo } from "@/components/brand";
 import ZapierSettings from "@/components/admin/ZapierSettings";
 import BroadcastNotifications from "@/components/admin/BroadcastNotifications";
 import ContactSubmissionsPanel from "@/components/admin/ContactSubmissionsPanel";
+import ServiceRequestsPanel from "@/components/admin/ServiceRequestsPanel";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -287,6 +288,7 @@ const Admin = () => {
           <TabsList className="bg-card border border-border/50">
             <TabsTrigger value="signups">Launch Signups</TabsTrigger>
             <TabsTrigger value="contacts">Contact Submissions</TabsTrigger>
+            <TabsTrigger value="requests">Service Requests</TabsTrigger>
             <TabsTrigger value="integrations">Integrations</TabsTrigger>
           </TabsList>
 
@@ -534,6 +536,17 @@ const Admin = () => {
 
           <TabsContent value="contacts">
             <ContactSubmissionsPanel />
+          </TabsContent>
+
+          <TabsContent value="requests" className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <h1 className="font-serif text-3xl text-foreground mb-2">Service Requests</h1>
+              <p className="text-muted-foreground">Manage client service requests and bookings</p>
+            </motion.div>
+            <ServiceRequestsPanel />
           </TabsContent>
 
           <TabsContent value="integrations" className="space-y-6">

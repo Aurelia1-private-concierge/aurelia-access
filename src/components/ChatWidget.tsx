@@ -397,7 +397,7 @@ const ChatWidget = () => {
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
-        className="fixed bottom-8 right-6 md:right-8 z-50 w-16 h-16 rounded-full bg-gradient-to-br from-primary/90 to-primary overflow-hidden border-2 border-primary/60 shadow-[0_0_40px_rgba(212,175,55,0.4)] flex items-center justify-center transition-all duration-300 group"
+        className="fixed bottom-44 right-6 md:right-8 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-primary/90 to-primary overflow-hidden border-2 border-primary/60 shadow-[0_0_40px_rgba(212,175,55,0.4)] flex items-center justify-center transition-all duration-300 group"
       >
         {/* Animated glow ring */}
         <motion.span 

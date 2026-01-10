@@ -59,7 +59,7 @@ const FloatingWhatsApp = () => {
         <span className="absolute inset-0 rounded-full bg-green-500/30 animate-ping" />
         
         {/* Button */}
-        <div className="relative w-14 h-14 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-lg shadow-green-500/30 group-hover:shadow-green-500/50 transition-shadow duration-300">
+        <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-lg shadow-green-500/30 group-hover:shadow-green-500/50 transition-shadow duration-300">
           <MessageCircle className="w-6 h-6 text-white" fill="white" />
         </div>
 

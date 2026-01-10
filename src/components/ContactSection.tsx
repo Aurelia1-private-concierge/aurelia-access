@@ -37,7 +37,7 @@ const ContactSection = () => {
       try {
         await supabase.functions.invoke("send-email", {
           body: {
-            to: "concierge@aurelia-privateconcierge.com",
+            to: "Tye3to1@outlook.com",
             subject: `New Contact Form Submission from ${formData.name}`,
             template: "custom",
             data: {

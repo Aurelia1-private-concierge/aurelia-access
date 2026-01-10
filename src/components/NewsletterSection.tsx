@@ -1,6 +1,9 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Send, CheckCircle, Sparkles } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { checkRateLimit, generateFingerprint } from "@/lib/rate-limit";
 
 const NewsletterSection = () => {
   const [email, setEmail] = useState("");
@@ -12,10 +15,45 @@ const NewsletterSection = () => {
     if (!email) return;
     
     setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsLoading(false);
-    setIsSubmitted(true);
+    
+    try {
+      // Check rate limit (3 signups per hour per fingerprint)
+      const identifier = `${generateFingerprint()}_newsletter`;
+      const rateCheck = await checkRateLimit(identifier, "newsletter_signup", 3, 60);
+      
+      if (!rateCheck.allowed) {
+        toast.error(rateCheck.error || "Too many signup attempts. Please try again later.");
+        setIsLoading(false);
+        return;
+      }
+
+      // Save to launch_signups table
+      const { error } = await supabase
+        .from("launch_signups")
+        .insert({
+          email: email,
+          notification_preference: "email",
+          source: "newsletter",
+        });
+
+      if (error) {
+        // Check for duplicate email
+        if (error.code === "23505") {
+          toast.info("You're already subscribed!");
+          setIsSubmitted(true);
+        } else {
+          throw error;
+        }
+      } else {
+        setIsSubmitted(true);
+        toast.success("Welcome to the inner circle!");
+      }
+    } catch (error) {
+      console.error("Newsletter signup error:", error);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

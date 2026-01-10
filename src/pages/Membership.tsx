@@ -12,7 +12,10 @@ import {
   Building2,
   Clock,
   Lock,
-  Globe
+  Globe,
+  Users,
+  Star,
+  Zap
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -63,10 +66,34 @@ const securityFeatures = [
   { icon: Globe, text: "Multi-currency support" },
 ];
 
+const referralRewards = [
+  {
+    icon: Gift,
+    title: "1 Free Month",
+    description: "For each friend who subscribes"
+  },
+  {
+    icon: Users,
+    title: "20% Off",
+    description: "Your referrals get first month discount"
+  },
+  {
+    icon: Star,
+    title: "Ambassador Status",
+    description: "Unlock VIP perks with 5+ referrals"
+  },
+];
+
+// Founding member deadline (set to a future date)
+const FOUNDING_MEMBER_DEADLINE = new Date("2026-03-31");
+
 const Membership = () => {
   const [isAnnual, setIsAnnual] = useState(true);
   const { createCheckout, isLoading, tier: currentTier, subscribed, isTrial } = useSubscription();
   const { user } = useAuth();
+  
+  const isFoundingPeriod = new Date() < FOUNDING_MEMBER_DEADLINE;
+  const daysRemaining = Math.max(0, Math.ceil((FOUNDING_MEMBER_DEADLINE.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
 
   const handleSubscribe = async (priceId: string) => {
     await createCheckout(priceId);
@@ -132,6 +159,40 @@ const Membership = () => {
                       Enjoying Gold-tier access. Subscribe now to continue after your trial ends.
                     </p>
                   </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Founding Member Banner */}
+          {isFoundingPeriod && !subscribed && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="mb-12 p-6 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent border border-emerald-500/20 relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-3xl rounded-full" />
+              <div className="relative flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                    <Zap className="w-6 h-6 text-emerald-500" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-lg font-medium text-foreground">Founding Member Rates</h3>
+                      <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-medium">
+                        {daysRemaining} days left
+                      </span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Lock in current pricing forever. Rates increase after founding period ends.
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right hidden md:block">
+                  <p className="text-xs text-muted-foreground">Price locked until</p>
+                  <p className="text-sm font-medium text-emerald-400">Forever</p>
                 </div>
               </div>
             </motion.div>
@@ -255,6 +316,15 @@ const Membership = () => {
                         {formatPrice(price)} billed annually
                       </p>
                     )}
+                    {/* Founding Member Tag */}
+                    {isFoundingPeriod && !subscribed && (
+                      <div className="flex items-center gap-1.5 mt-2">
+                        <Zap className="w-3 h-3 text-emerald-500" />
+                        <span className="text-xs text-emerald-400 font-medium">
+                          Founding rate locked forever
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   {/* CTA Button */}
@@ -287,6 +357,73 @@ const Membership = () => {
               );
             })}
           </div>
+
+          {/* Referral Rewards Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.35 }}
+            className="mb-24"
+          >
+            <div className="relative rounded-2xl p-8 md:p-12 bg-gradient-to-br from-primary/10 via-card to-card border border-primary/20 overflow-hidden">
+              {/* Background decoration */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-3xl rounded-full" />
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/5 blur-3xl rounded-full" />
+              
+              <div className="relative">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Users className="w-5 h-5 text-primary" />
+                      <span className="text-xs uppercase tracking-widest text-primary font-medium">
+                        Referral Program
+                      </span>
+                    </div>
+                    <h2 className="text-3xl font-light mb-4">
+                      Earn Rewards, <span className="text-gradient-gold">Share Excellence</span>
+                    </h2>
+                    <p className="text-muted-foreground mb-6 max-w-lg">
+                      Invite friends to Aurelia and both of you receive exclusive benefits. 
+                      The more you share, the more you earn.
+                    </p>
+                    
+                    <div className="grid sm:grid-cols-3 gap-4 mb-6">
+                      {referralRewards.map((reward, index) => (
+                        <div 
+                          key={index}
+                          className="flex items-start gap-3 p-3 rounded-lg bg-background/50 border border-border/30"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <reward.icon className="w-4 h-4 text-primary" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-foreground">{reward.title}</p>
+                            <p className="text-xs text-muted-foreground">{reward.description}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {user ? (
+                      <Link to="/dashboard">
+                        <Button className="group">
+                          Go to Referral Dashboard
+                          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                      </Link>
+                    ) : (
+                      <Link to="/auth">
+                        <Button className="group">
+                          Sign In to Start Referring
+                          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
 
           {/* Payment Methods Section */}
           <motion.div

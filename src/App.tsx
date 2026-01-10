@@ -33,6 +33,9 @@ const Admin = lazy(() => import("./pages/Admin"));
 const Membership = lazy(() => import("./pages/Membership"));
 const Discover = lazy(() => import("./pages/Discover"));
 const Referral = lazy(() => import("./pages/Referral"));
+const Waitlist = lazy(() => import("./pages/Waitlist"));
+const PartnerRecruitment = lazy(() => import("./pages/PartnerRecruitment"));
+const DemoServices = lazy(() => import("./pages/DemoServices"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Minimal loading fallback
@@ -182,6 +185,30 @@ const AnimatedRoutes = () => {
             element={
               <PageTransition>
                 <Referral />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/waitlist"
+            element={
+              <PageTransition>
+                <Waitlist />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/partners/join"
+            element={
+              <PageTransition>
+                <PartnerRecruitment />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/experiences"
+            element={
+              <PageTransition>
+                <DemoServices />
               </PageTransition>
             }
           />

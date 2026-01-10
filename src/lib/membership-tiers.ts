@@ -9,6 +9,8 @@ export interface MembershipTier {
   productIds: string[];
   features: string[];
   highlighted?: boolean;
+  monthlyCredits: number;
+  isUnlimited?: boolean;
 }
 
 export const MEMBERSHIP_TIERS: MembershipTier[] = [
@@ -21,7 +23,9 @@ export const MEMBERSHIP_TIERS: MembershipTier[] = [
     monthlyPriceId: "price_1SnP8AArqEFrL3mlSSDHZRBj",
     annualPriceId: "price_1SnP8QArqEFrL3mldq1NgplE",
     productIds: ["prod_TkuyLghfj6iAvD", "prod_TkuyMbYydw2D3z"],
+    monthlyCredits: 5,
     features: [
+      "5 Service Credits/month",
       "24/7 Concierge Support",
       "Travel Planning Assistance",
       "Restaurant Reservations",
@@ -38,7 +42,9 @@ export const MEMBERSHIP_TIERS: MembershipTier[] = [
     monthlyPriceId: "price_1SnP8gArqEFrL3mliI4kupIo",
     annualPriceId: "price_1SnP90ArqEFrL3ml1MWEs2Qt",
     productIds: ["prod_TkuyEsqqaYVkqj", "prod_Tkuy4Hr5m0YSCZ"],
+    monthlyCredits: 15,
     features: [
+      "15 Service Credits/month",
       "Everything in Silver, plus:",
       "Dedicated Account Manager",
       "Priority Response Times",
@@ -57,7 +63,10 @@ export const MEMBERSHIP_TIERS: MembershipTier[] = [
     monthlyPriceId: "price_1SnP9JArqEFrL3mlwquYSICP",
     annualPriceId: "price_1SnPBAArqEFrL3mlqNp6J9yf",
     productIds: ["prod_TkuzCZQ1Wyg24N", "prod_Tkv18can27J3JZ"],
+    monthlyCredits: 999,
+    isUnlimited: true,
     features: [
+      "Unlimited Service Credits",
       "Everything in Gold, plus:",
       "24/7 Personal Lifestyle Manager",
       "Unlimited Concierge Requests",
@@ -75,4 +84,14 @@ export const getTierByProductId = (productId: string): MembershipTier | undefine
 
 export const getTierById = (tierId: string): MembershipTier | undefined => {
   return MEMBERSHIP_TIERS.find((tier) => tier.id === tierId);
+};
+
+export const getCreditsByTier = (tierId: string): number => {
+  const tier = getTierById(tierId);
+  return tier?.monthlyCredits ?? 0;
+};
+
+export const isUnlimitedTier = (tierId: string): boolean => {
+  const tier = getTierById(tierId);
+  return tier?.isUnlimited ?? false;
 };

@@ -4,6 +4,7 @@ import { Send, User, Mail, MessageSquare, Phone } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { checkRateLimit, generateFingerprint } from "@/lib/rate-limit";
 
 const ContactSection = () => {
   const { t } = useTranslation();
@@ -21,6 +22,16 @@ const ContactSection = () => {
     setIsSubmitting(true);
     
     try {
+      // Check rate limit (5 submissions per hour per fingerprint + email combo)
+      const identifier = `${generateFingerprint()}_${formData.email}`;
+      const rateCheck = await checkRateLimit(identifier, "contact_form", 5, 60);
+      
+      if (!rateCheck.allowed) {
+        toast.error(rateCheck.error || "Too many requests. Please try again later.");
+        setIsSubmitting(false);
+        return;
+      }
+
       const { error } = await supabase
         .from("contact_submissions")
         .insert({

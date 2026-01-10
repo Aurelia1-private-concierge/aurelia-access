@@ -37,6 +37,7 @@ const Waitlist = lazy(() => import("./pages/Waitlist"));
 const PartnerRecruitment = lazy(() => import("./pages/PartnerRecruitment"));
 const DemoServices = lazy(() => import("./pages/DemoServices"));
 const TrialApplication = lazy(() => import("./pages/TrialApplication"));
+const CreditHistory = lazy(() => import("./pages/CreditHistory"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Minimal loading fallback
@@ -219,6 +220,16 @@ const AnimatedRoutes = () => {
               <ProtectedRoute>
                 <PageTransition>
                   <TrialApplication />
+                </PageTransition>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/credits"
+            element={
+              <ProtectedRoute>
+                <PageTransition>
+                  <CreditHistory />
                 </PageTransition>
               </ProtectedRoute>
             }

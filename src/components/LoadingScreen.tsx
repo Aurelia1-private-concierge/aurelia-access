@@ -1,10 +1,17 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { AnimatedLogo } from "@/components/brand";
 
 const LoadingScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [shouldRender, setShouldRender] = useState(true);
+
+  const handleAnimationComplete = useCallback(() => {
+    if (!isLoading) {
+      setShouldRender(false);
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     // Animate progress
@@ -18,15 +25,29 @@ const LoadingScreen = () => {
       });
     }, 200);
 
-    const timer = setTimeout(() => setIsLoading(false), 2500);
+    // Set loading to false after animation completes
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2500);
+
+    // Fallback: force unmount after 4 seconds if animation doesn't complete
+    const fallbackTimer = setTimeout(() => {
+      setShouldRender(false);
+    }, 4000);
+
     return () => {
       clearTimeout(timer);
+      clearTimeout(fallbackTimer);
       clearInterval(progressInterval);
     };
   }, []);
+  // Don't render at all if we've fully completed
+  if (!shouldRender) {
+    return null;
+  }
 
   return (
-    <AnimatePresence>
+    <AnimatePresence onExitComplete={handleAnimationComplete}>
       {isLoading && (
         <motion.div
           initial={{ opacity: 1 }}

@@ -110,6 +110,21 @@ const Footer = () => {
                 <li className="pt-2">
                   <span className="text-xs tracking-wide text-primary">{t("footer.privateLine")}</span>
                 </li>
+                <li className="pt-3">
+                  <a 
+                    href="https://wa.me/+447309935106" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors duration-300"
+                  >
+                    <img 
+                      src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" 
+                      alt="WhatsApp" 
+                      className="h-5 w-5"
+                    />
+                    Chat on WhatsApp
+                  </a>
+                </li>
                 <li className="pt-4">
                   <LanguageSwitcher variant="footer" />
                 </li>

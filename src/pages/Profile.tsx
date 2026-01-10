@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { User, Phone, Building2, Globe, Bell, Save, Loader2, ArrowLeft, Camera, Trash2, Upload } from "lucide-react";
+import { User, Phone, Building2, Globe, Bell, Save, Loader2, ArrowLeft, Camera, Trash2, Upload, Shield, ShieldCheck, ShieldOff } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,8 @@ import { useToast } from "@/hooks/use-toast";
 import { logger } from "@/lib/logger";
 import AvatarCropModal from "@/components/profile/AvatarCropModal";
 import NotificationSettings from "@/components/dashboard/NotificationSettings";
+import TwoFactorSetup from "@/components/auth/TwoFactorSetup";
+import { useMFA } from "@/hooks/useMFA";
 
 interface Profile {
   display_name: string | null;
@@ -54,6 +56,10 @@ const Profile = () => {
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [selectedImageSrc, setSelectedImageSrc] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [show2FASetup, setShow2FASetup] = useState(false);
+  const [isDisabling2FA, setIsDisabling2FA] = useState(false);
+  
+  const { isEnrolled, factors, checkMFAStatus, unenrollMFA, isLoading: mfaLoading } = useMFA();
   const [profile, setProfile] = useState<Profile>({
     display_name: "",
     phone: "",
@@ -538,6 +544,98 @@ const Profile = () => {
           </Card>
         </motion.div>
 
+        {/* Security - Two-Factor Authentication */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.15 }}
+        >
+          <Card className="border-border/30 bg-card/50 backdrop-blur-xl">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg font-medium">
+                <Shield className="w-5 h-5 text-primary" />
+                Two-Factor Authentication
+              </CardTitle>
+              <CardDescription>Add an extra layer of security to your account</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {mfaLoading ? (
+                <div className="flex items-center gap-3 py-4">
+                  <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Checking 2FA status...</span>
+                </div>
+              ) : isEnrolled ? (
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                      <ShieldCheck className="w-5 h-5 text-emerald-500" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">2FA is enabled</p>
+                      <p className="text-xs text-muted-foreground">
+                        {factors[0]?.friendlyName || "Authenticator App"}
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={async () => {
+                      if (factors[0]?.id) {
+                        setIsDisabling2FA(true);
+                        try {
+                          await unenrollMFA(factors[0].id);
+                          toast({
+                            title: "2FA Disabled",
+                            description: "Two-factor authentication has been removed from your account.",
+                          });
+                        } catch (err) {
+                          toast({
+                            title: "Error",
+                            description: "Failed to disable 2FA",
+                            variant: "destructive",
+                          });
+                        } finally {
+                          setIsDisabling2FA(false);
+                        }
+                      }
+                    }}
+                    disabled={isDisabling2FA}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    {isDisabling2FA ? (
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    ) : (
+                      <ShieldOff className="w-4 h-4 mr-2" />
+                    )}
+                    Disable
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-muted/50 flex items-center justify-center">
+                      <Shield className="w-5 h-5 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">2FA is not enabled</p>
+                      <p className="text-xs text-muted-foreground">Protect your account with an authenticator app</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShow2FASetup(true)}
+                  >
+                    <ShieldCheck className="w-4 h-4 mr-2" />
+                    Enable 2FA
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+
         {/* Save Button */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -567,6 +665,16 @@ const Profile = () => {
           onClose={handleCropModalClose}
           imageSrc={selectedImageSrc}
           onCropComplete={handleCropComplete}
+        />
+      )}
+      {/* 2FA Setup Modal */}
+      {show2FASetup && (
+        <TwoFactorSetup
+          onComplete={() => {
+            setShow2FASetup(false);
+            checkMFAStatus();
+          }}
+          onCancel={() => setShow2FASetup(false)}
         />
       )}
     </div>

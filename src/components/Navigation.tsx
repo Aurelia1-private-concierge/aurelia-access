@@ -14,14 +14,15 @@ import { Logo } from "@/components/brand";
 import LanguageSwitcher from "./LanguageSwitcher";
 
 const navLinks = [
-  { href: "#services", labelKey: "nav.services" },
-  { href: "#security", labelKey: "nav.security" },
-  { href: "#experiences", labelKey: "nav.experiences" },
-  { href: "#membership", labelKey: "nav.membership" },
+  { href: "#services", labelKey: "nav.services", id: "services" },
+  { href: "#security", labelKey: "nav.security", id: "security" },
+  { href: "#experiences", labelKey: "nav.experiences", id: "experiences" },
+  { href: "#membership", labelKey: "nav.membership", id: "membership" },
 ];
 
 const pageLinks = [
   { href: "/discover", label: "Discover", icon: Compass },
+  { href: "/services", label: "Services", icon: Compass },
 ];
 
 const Navigation = () => {

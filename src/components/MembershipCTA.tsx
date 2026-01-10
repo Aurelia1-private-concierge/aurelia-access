@@ -34,7 +34,10 @@ const MembershipCTA = () => {
             {t("membership.beginApplication")}
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
           </Link>
-          <a href="#" className="w-full sm:w-auto px-10 py-4 border border-border/30 text-foreground text-sm font-medium tracking-widest uppercase hover:bg-secondary/50 hover:border-primary/30 transition-all duration-300">
+          <a 
+            href="mailto:concierge@Aurelia-privateconcierge.com" 
+            className="w-full sm:w-auto px-10 py-4 border border-border/30 text-foreground text-sm font-medium tracking-widest uppercase hover:bg-secondary/50 hover:border-primary/30 transition-all duration-300"
+          >
             {t("membership.contactLiaison")}
           </a>
         </div>

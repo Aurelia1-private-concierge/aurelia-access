@@ -7,11 +7,13 @@ import SecureMessaging from "@/components/dashboard/SecureMessaging";
 import DocumentVault from "@/components/dashboard/DocumentVault";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import ReferralDashboard from "@/components/referral/ReferralDashboard";
+import LifestyleCalendar from "@/components/dashboard/LifestyleCalendar";
+import RealTimeChat from "@/components/dashboard/RealTimeChat";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { TierThemeProvider, useTierTheme } from "@/contexts/TierThemeContext";
 import { cn } from "@/lib/utils";
 
-type ActiveView = "portfolio" | "messaging" | "documents" | "referrals";
+type ActiveView = "portfolio" | "messaging" | "documents" | "referrals" | "calendar" | "chat";
 
 const DashboardContent = () => {
   const [searchParams] = useSearchParams();
@@ -22,7 +24,7 @@ const DashboardContent = () => {
   // Update view when URL params change
   useEffect(() => {
     const tab = searchParams.get("tab") as ActiveView | null;
-    if (tab && ["portfolio", "messaging", "documents", "referrals"].includes(tab)) {
+    if (tab && ["portfolio", "messaging", "documents", "referrals", "calendar", "chat"].includes(tab)) {
       setActiveView(tab);
     }
   }, [searchParams]);
@@ -37,6 +39,10 @@ const DashboardContent = () => {
         return <DocumentVault />;
       case "referrals":
         return <ReferralDashboard />;
+      case "calendar":
+        return <LifestyleCalendar />;
+      case "chat":
+        return <RealTimeChat />;
       default:
         return <PortfolioOverview />;
     }

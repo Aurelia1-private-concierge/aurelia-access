@@ -4,7 +4,7 @@ import NotificationPanel from "./NotificationPanel";
 import { useTierTheme } from "@/contexts/TierThemeContext";
 import { cn } from "@/lib/utils";
 
-type ActiveView = "portfolio" | "messaging" | "documents" | "referrals";
+type ActiveView = "portfolio" | "messaging" | "documents" | "referrals" | "calendar" | "chat";
 
 interface DashboardHeaderProps {
   activeView: ActiveView;
@@ -15,6 +15,8 @@ const viewTitles: Record<ActiveView, string> = {
   messaging: "Secure Messaging",
   documents: "Document Vault",
   referrals: "Referral Program",
+  calendar: "Lifestyle Calendar",
+  chat: "Concierge Chat",
 };
 
 const tierIcons = {

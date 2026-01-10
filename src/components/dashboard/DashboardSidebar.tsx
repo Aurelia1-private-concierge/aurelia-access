@@ -8,7 +8,9 @@ import {
   Settings,
   Shield,
   Sparkles,
-  Gift
+  Gift,
+  Calendar,
+  MessageCircle
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -16,7 +18,7 @@ import { AnimatedLogo } from "@/components/brand";
 import { useTierTheme } from "@/contexts/TierThemeContext";
 import { cn } from "@/lib/utils";
 
-type ActiveView = "portfolio" | "messaging" | "documents" | "referrals";
+type ActiveView = "portfolio" | "messaging" | "documents" | "referrals" | "calendar" | "chat";
 
 interface DashboardSidebarProps {
   activeView: ActiveView;
@@ -25,6 +27,8 @@ interface DashboardSidebarProps {
 
 const menuItems = [
   { id: "portfolio" as const, label: "Portfolio", icon: LayoutDashboard },
+  { id: "calendar" as const, label: "Calendar", icon: Calendar },
+  { id: "chat" as const, label: "Live Chat", icon: MessageCircle },
   { id: "messaging" as const, label: "Secure Messages", icon: MessageSquareLock },
   { id: "documents" as const, label: "Document Vault", icon: FolderLock },
   { id: "referrals" as const, label: "Referrals", icon: Gift },

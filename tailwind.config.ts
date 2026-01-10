@@ -15,33 +15,26 @@ export default {
   	extend: {
   		fontFamily: {
   			sans: [
-  				'Open Sans',
-  				'ui-sans-serif',
+  				'Inter',
+  				'-apple-system',
+  				'BlinkMacSystemFont',
   				'system-ui',
-  				'sans-serif',
-  				'Apple Color Emoji',
-  				'Segoe UI Emoji',
-  				'Segoe UI Symbol',
-  				'Noto Color Emoji'
+  				'sans-serif'
   			],
   			serif: [
+  				'Cormorant Garamond',
   				'Playfair Display',
-  				'ui-serif',
   				'Georgia',
-  				'Cambria',
-  				'Times New Roman',
-  				'Times',
+  				'serif'
+  			],
+  			display: [
+  				'Cormorant Garamond',
   				'serif'
   			],
   			mono: [
   				'Roboto Mono',
   				'ui-monospace',
   				'SFMono-Regular',
-  				'Menlo',
-  				'Monaco',
-  				'Consolas',
-  				'Liberation Mono',
-  				'Courier New',
   				'monospace'
   			]
   		},
@@ -53,12 +46,15 @@ export default {
   			foreground: 'hsl(var(--foreground))',
   			gold: {
   				DEFAULT: 'hsl(var(--gold))',
+  				light: 'hsl(var(--gold-light))',
   				muted: 'hsl(var(--gold-muted))'
   			},
   			navy: {
   				deep: 'hsl(var(--navy-deep))',
   				light: 'hsl(var(--navy-light))'
   			},
+  			ivory: 'hsl(var(--ivory))',
+  			champagne: 'hsl(var(--champagne))',
   			primary: {
   				DEFAULT: 'hsl(var(--primary))',
   				foreground: 'hsl(var(--primary-foreground))'
@@ -93,6 +89,15 @@ export default {
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
+  		spacing: {
+  			'18': '4.5rem',
+  			'22': '5.5rem',
+  			'30': '7.5rem'
+  		},
+  		letterSpacing: {
+  			'ultra-wide': '0.3em',
+  			'premium': '0.2em'
+  		},
   		keyframes: {
   			'accordion-down': {
   				from: {
@@ -113,7 +118,7 @@ export default {
   			'fade-in-up': {
   				'0%': {
   					opacity: '0',
-  					transform: 'translateY(20px)'
+  					transform: 'translateY(30px)'
   				},
   				'100%': {
   					opacity: '1',
@@ -127,13 +132,22 @@ export default {
   				'50%': {
   					opacity: '1'
   				}
+  			},
+  			'glow-pulse': {
+  				'0%, 100%': {
+  					boxShadow: '0 0 40px hsl(42 65% 55% / 0.15)'
+  				},
+  				'50%': {
+  					boxShadow: '0 0 60px hsl(42 65% 55% / 0.25)'
+  				}
   			}
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
-  			'fade-in-up': 'fade-in-up 0.8s ease-out forwards',
-  			'subtle-pulse': 'subtle-pulse 3s ease-in-out infinite'
+  			'fade-in-up': 'fade-in-up 1s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+  			'subtle-pulse': 'subtle-pulse 4s ease-in-out infinite',
+  			'glow-pulse': 'glow-pulse 3s ease-in-out infinite'
   		}
   	}
   },

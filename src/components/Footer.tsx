@@ -115,7 +115,7 @@ const Footer = () => {
                     href="https://wa.me/+447309935106" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors duration-300"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-serif font-semibold text-base text-background bg-gradient-to-r from-primary to-primary/60 hover:from-primary/60 hover:to-primary shadow-md hover:shadow-lg transition-all duration-300"
                   >
                     <img 
                       src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" 

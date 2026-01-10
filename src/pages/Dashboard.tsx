@@ -1,19 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import PortfolioOverview from "@/components/dashboard/PortfolioOverview";
 import SecureMessaging from "@/components/dashboard/SecureMessaging";
 import DocumentVault from "@/components/dashboard/DocumentVault";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import ReferralDashboard from "@/components/referral/ReferralDashboard";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { TierThemeProvider, useTierTheme } from "@/contexts/TierThemeContext";
 import { cn } from "@/lib/utils";
 
-type ActiveView = "portfolio" | "messaging" | "documents";
+type ActiveView = "portfolio" | "messaging" | "documents" | "referrals";
 
 const DashboardContent = () => {
-  const [activeView, setActiveView] = useState<ActiveView>("portfolio");
+  const [searchParams] = useSearchParams();
+  const initialTab = searchParams.get("tab") as ActiveView | null;
+  const [activeView, setActiveView] = useState<ActiveView>(initialTab || "portfolio");
   const { colors } = useTierTheme();
+
+  // Update view when URL params change
+  useEffect(() => {
+    const tab = searchParams.get("tab") as ActiveView | null;
+    if (tab && ["portfolio", "messaging", "documents", "referrals"].includes(tab)) {
+      setActiveView(tab);
+    }
+  }, [searchParams]);
 
   const renderView = () => {
     switch (activeView) {
@@ -23,6 +35,8 @@ const DashboardContent = () => {
         return <SecureMessaging />;
       case "documents":
         return <DocumentVault />;
+      case "referrals":
+        return <ReferralDashboard />;
       default:
         return <PortfolioOverview />;
     }

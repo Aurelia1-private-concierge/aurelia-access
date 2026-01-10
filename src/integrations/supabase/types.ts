@@ -518,6 +518,104 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_rewards: {
+        Row: {
+          applied_at: string | null
+          created_at: string
+          description: string | null
+          expires_at: string | null
+          id: string
+          referral_id: string | null
+          reward_type: string
+          reward_value: number | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          applied_at?: string | null
+          created_at?: string
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          referral_id?: string | null
+          reward_type: string
+          reward_value?: number | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          applied_at?: string | null
+          created_at?: string
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          referral_id?: string | null
+          reward_type?: string
+          reward_value?: number | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_rewards_referral_id_fkey"
+            columns: ["referral_id"]
+            isOneToOne: false
+            referencedRelation: "referrals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      referrals: {
+        Row: {
+          clicked_at: string | null
+          created_at: string
+          id: string
+          referral_code: string
+          referred_email: string
+          referred_user_id: string | null
+          referrer_id: string
+          reward_amount: number | null
+          reward_type: string | null
+          rewarded_at: string | null
+          signed_up_at: string | null
+          status: string
+          subscribed_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          clicked_at?: string | null
+          created_at?: string
+          id?: string
+          referral_code: string
+          referred_email: string
+          referred_user_id?: string | null
+          referrer_id: string
+          reward_amount?: number | null
+          reward_type?: string | null
+          rewarded_at?: string | null
+          signed_up_at?: string | null
+          status?: string
+          subscribed_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          clicked_at?: string | null
+          created_at?: string
+          id?: string
+          referral_code?: string
+          referred_email?: string
+          referred_user_id?: string | null
+          referrer_id?: string
+          reward_amount?: number | null
+          reward_type?: string | null
+          rewarded_at?: string | null
+          signed_up_at?: string | null
+          status?: string
+          subscribed_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       sent_notifications: {
         Row: {
           channel: string

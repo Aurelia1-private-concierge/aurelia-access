@@ -232,6 +232,45 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_settings: {
+        Row: {
+          alert_types: string[]
+          created_at: string
+          daily_digest_enabled: boolean
+          digest_time: string
+          email_enabled: boolean
+          id: string
+          phone_number: string | null
+          sms_enabled: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alert_types?: string[]
+          created_at?: string
+          daily_digest_enabled?: boolean
+          digest_time?: string
+          email_enabled?: boolean
+          id?: string
+          phone_number?: string | null
+          sms_enabled?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alert_types?: string[]
+          created_at?: string
+          daily_digest_enabled?: boolean
+          digest_time?: string
+          email_enabled?: boolean
+          id?: string
+          phone_number?: string | null
+          sms_enabled?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           action_url: string | null
@@ -454,6 +493,45 @@ export type Database = {
           phone?: string | null
           timezone?: string | null
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      sent_notifications: {
+        Row: {
+          channel: string
+          content: string
+          created_at: string
+          error_message: string | null
+          id: string
+          notification_type: string
+          sent_at: string | null
+          status: string
+          subject: string | null
+          user_id: string
+        }
+        Insert: {
+          channel: string
+          content: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          notification_type: string
+          sent_at?: string | null
+          status?: string
+          subject?: string | null
+          user_id: string
+        }
+        Update: {
+          channel?: string
+          content?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          notification_type?: string
+          sent_at?: string | null
+          status?: string
+          subject?: string | null
           user_id?: string
         }
         Relationships: []

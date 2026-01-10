@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { logger } from "@/lib/logger";
 import AvatarCropModal from "@/components/profile/AvatarCropModal";
+import NotificationSettings from "@/components/dashboard/NotificationSettings";
 
 interface Profile {
   display_name: string | null;
@@ -517,7 +518,7 @@ const Profile = () => {
           </Card>
         </motion.div>
 
-        {/* Notification Preferences */}
+        {/* Notification Preferences - Enhanced */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -531,58 +532,8 @@ const Profile = () => {
               </CardTitle>
               <CardDescription>Choose how you want to be notified</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between py-2">
-                <div>
-                  <p className="font-medium text-sm">Email Notifications</p>
-                  <p className="text-sm text-muted-foreground">Receive updates via email</p>
-                </div>
-                <Switch
-                  checked={profile.notification_preferences.email}
-                  onCheckedChange={(checked) => updateNotificationPreference("email", checked)}
-                />
-              </div>
-
-              <div className="flex items-center justify-between py-2">
-                <div>
-                  <p className="font-medium text-sm">Push Notifications</p>
-                  <p className="text-sm text-muted-foreground">Receive browser push notifications</p>
-                </div>
-                <Switch
-                  checked={profile.notification_preferences.push}
-                  onCheckedChange={(checked) => updateNotificationPreference("push", checked)}
-                />
-              </div>
-
-              <div className="border-t border-border/30 pt-4 mt-4">
-                <p className="text-sm font-medium mb-3 text-muted-foreground">Notify me about:</p>
-                
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between py-1">
-                    <p className="text-sm">Portfolio updates</p>
-                    <Switch
-                      checked={profile.notification_preferences.portfolio}
-                      onCheckedChange={(checked) => updateNotificationPreference("portfolio", checked)}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between py-1">
-                    <p className="text-sm">New messages</p>
-                    <Switch
-                      checked={profile.notification_preferences.messages}
-                      onCheckedChange={(checked) => updateNotificationPreference("messages", checked)}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between py-1">
-                    <p className="text-sm">Document updates</p>
-                    <Switch
-                      checked={profile.notification_preferences.documents}
-                      onCheckedChange={(checked) => updateNotificationPreference("documents", checked)}
-                    />
-                  </div>
-                </div>
-              </div>
+            <CardContent>
+              <NotificationSettings />
             </CardContent>
           </Card>
         </motion.div>

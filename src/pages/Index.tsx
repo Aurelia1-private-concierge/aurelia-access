@@ -18,6 +18,13 @@ import RolexClock from "@/components/RolexClock";
 import SectionDivider from "@/components/SectionDivider";
 import CustomCursor from "@/components/CustomCursor";
 import VideoModal from "@/components/VideoModal";
+import AwardsStrip from "@/components/AwardsStrip";
+import GlobalPresenceSection from "@/components/GlobalPresenceSection";
+import NewsletterSection from "@/components/NewsletterSection";
+import ContactSection from "@/components/ContactSection";
+import ServiceCategoriesSection from "@/components/ServiceCategoriesSection";
+import FloatingWhatsApp from "@/components/FloatingWhatsApp";
+import MembershipTiersPreview from "@/components/MembershipTiersPreview";
 
 const Index = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -28,6 +35,8 @@ const Index = () => {
       <LoadingScreen />
       <ScrollProgress />
       <Navigation />
+      
+      {/* Hero Section */}
       <HeroSection 
         videoSrc={heroVideo} 
         onPlayVideo={() => setIsVideoModalOpen(true)} 
@@ -42,37 +51,78 @@ const Index = () => {
 
       <SectionDivider variant="default" />
 
+      {/* Key Metrics */}
       <MetricsStrip />
       
       <SectionDivider variant="minimal" />
       
+      {/* Trust Indicators - Publications */}
       <TrustStrip />
+
+      {/* Awards & Certifications */}
+      <AwardsStrip />
       
       <SectionDivider variant="wide" />
       
-      <FeaturesSection />
-      
+      {/* Service Categories Quick Links */}
+      <ServiceCategoriesSection />
+
       <SectionDivider variant="ornate" />
       
-      <SecuritySection />
+      {/* Detailed Features */}
+      <FeaturesSection />
       
       <SectionDivider variant="default" />
       
-      <ExperiencesSection />
+      {/* Security & Privacy */}
+      <SecuritySection />
       
       <SectionDivider variant="wide" />
-      
-      <TestimonialsSection />
+
+      {/* Global Presence */}
+      <GlobalPresenceSection />
       
       <SectionDivider variant="ornate" />
       
+      {/* Experiences Showcase */}
+      <ExperiencesSection />
+      
+      <SectionDivider variant="default" />
+      
+      {/* Client Testimonials */}
+      <TestimonialsSection />
+
+      <SectionDivider variant="wide" />
+
+      {/* Membership Tiers */}
+      <MembershipTiersPreview />
+      
+      <SectionDivider variant="ornate" />
+      
+      {/* FAQ Section */}
       <FAQSection />
       
       <SectionDivider variant="minimal" />
+
+      {/* Newsletter / Exclusive Access */}
+      <NewsletterSection />
+
+      <SectionDivider variant="default" />
+
+      {/* Contact Section */}
+      <ContactSection />
       
+      <SectionDivider variant="ornate" />
+      
+      {/* Final CTA */}
       <MembershipCTA />
+
+      {/* Footer */}
       <Footer />
+
+      {/* Floating Elements */}
       <OrlaFAB />
+      <FloatingWhatsApp />
 
       {/* Video Modal */}
       <VideoModal

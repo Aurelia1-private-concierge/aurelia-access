@@ -46,6 +46,8 @@ import ZapierSettings from "@/components/admin/ZapierSettings";
 import BroadcastNotifications from "@/components/admin/BroadcastNotifications";
 import ContactSubmissionsPanel from "@/components/admin/ContactSubmissionsPanel";
 import ServiceRequestsPanel from "@/components/admin/ServiceRequestsPanel";
+import ConciergeRequestsPanel from "@/components/admin/ConciergeRequestsPanel";
+import PartnerApplicationsPanel from "@/components/admin/PartnerApplicationsPanel";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -285,12 +287,36 @@ const Admin = () => {
 
       <main className="container mx-auto px-6 py-8">
         <Tabs defaultValue="signups" className="space-y-6">
-          <TabsList className="bg-card border border-border/50">
+          <TabsList className="bg-card border border-border/50 flex-wrap h-auto gap-1 p-1">
+            <TabsTrigger value="concierge">Concierge Requests</TabsTrigger>
             <TabsTrigger value="signups">Launch Signups</TabsTrigger>
+            <TabsTrigger value="partners">Partner Applications</TabsTrigger>
             <TabsTrigger value="contacts">Contact Submissions</TabsTrigger>
             <TabsTrigger value="requests">Service Requests</TabsTrigger>
             <TabsTrigger value="integrations">Integrations</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="concierge" className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <h1 className="font-serif text-3xl text-foreground mb-2">Concierge Requests</h1>
+              <p className="text-muted-foreground">Handle client requests manually as the concierge</p>
+            </motion.div>
+            <ConciergeRequestsPanel />
+          </TabsContent>
+
+          <TabsContent value="partners" className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <h1 className="font-serif text-3xl text-foreground mb-2">Partner Applications</h1>
+              <p className="text-muted-foreground">Review and approve partner recruitment applications</p>
+            </motion.div>
+            <PartnerApplicationsPanel />
+          </TabsContent>
 
           <TabsContent value="signups" className="space-y-6">
             {/* Page Title */}

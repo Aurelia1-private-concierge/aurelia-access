@@ -21,8 +21,9 @@ const navLinks = [
 ];
 
 const pageLinks = [
+  { href: "/experiences", label: "Experiences", icon: Compass },
   { href: "/discover", label: "Discover", icon: Compass },
-  { href: "/services", label: "Services", icon: Compass },
+  { href: "/partners/join", label: "Become a Partner", icon: Compass },
 ];
 
 const Navigation = () => {

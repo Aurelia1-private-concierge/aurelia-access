@@ -1,6 +1,19 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Check, Crown, Sparkles, Shield, Gift, ArrowRight } from "lucide-react";
+import { 
+  Check, 
+  Crown, 
+  Sparkles, 
+  Shield, 
+  Gift, 
+  ArrowRight, 
+  CreditCard, 
+  Smartphone,
+  Building2,
+  Clock,
+  Lock,
+  Globe
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -16,6 +29,39 @@ const tierIcons = {
   gold: Crown,
   platinum: Sparkles,
 };
+
+const paymentMethods = [
+  {
+    id: "cards",
+    name: "Credit & Debit Cards",
+    description: "Visa, Mastercard, American Express",
+    icon: CreditCard,
+  },
+  {
+    id: "wallets",
+    name: "Digital Wallets",
+    description: "Apple Pay, Google Pay",
+    icon: Smartphone,
+  },
+  {
+    id: "bank",
+    name: "Bank Transfer",
+    description: "Direct ACH & Wire transfers",
+    icon: Building2,
+  },
+  {
+    id: "bnpl",
+    name: "Buy Now, Pay Later",
+    description: "Affirm & Klarna available",
+    icon: Clock,
+  },
+];
+
+const securityFeatures = [
+  { icon: Lock, text: "256-bit SSL encryption" },
+  { icon: Shield, text: "PCI DSS compliant" },
+  { icon: Globe, text: "Multi-currency support" },
+];
 
 const Membership = () => {
   const [isAnnual, setIsAnnual] = useState(true);
@@ -134,7 +180,7 @@ const Membership = () => {
           </motion.div>
 
           {/* Pricing Cards */}
-          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid md:grid-cols-3 gap-6 lg:gap-8 mb-24">
             {MEMBERSHIP_TIERS.map((tier, index) => {
               const Icon = tierIcons[tier.id as keyof typeof tierIcons];
               const isCurrentTier = subscribed && currentTier === tier.id;
@@ -242,12 +288,108 @@ const Membership = () => {
             })}
           </div>
 
+          {/* Payment Methods Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="mb-24"
+          >
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-light mb-4">
+                Flexible <span className="text-gradient-gold">Payment Options</span>
+              </h2>
+              <p className="text-muted-foreground max-w-xl mx-auto">
+                We accept a variety of payment methods for your convenience
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {paymentMethods.map((method, index) => (
+                <motion.div
+                  key={method.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
+                  className="group relative p-6 rounded-xl bg-card border border-border hover:border-primary/30 transition-all duration-300"
+                >
+                  <div className="flex flex-col items-center text-center">
+                    <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
+                      <method.icon className="w-7 h-7 text-muted-foreground group-hover:text-primary transition-colors" />
+                    </div>
+                    <h3 className="font-medium text-foreground mb-1">{method.name}</h3>
+                    <p className="text-sm text-muted-foreground">{method.description}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Security Features */}
+            <div className="flex flex-wrap items-center justify-center gap-6 mt-10 pt-10 border-t border-border">
+              {securityFeatures.map((feature, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
+                  className="flex items-center gap-2 text-sm text-muted-foreground"
+                >
+                  <feature.icon className="w-4 h-4 text-primary" />
+                  <span>{feature.text}</span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* FAQ Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="mb-16"
+          >
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-light mb-4">
+                Frequently Asked <span className="text-gradient-gold">Questions</span>
+              </h2>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+              {[
+                {
+                  q: "Can I change my plan later?",
+                  a: "Yes, you can upgrade or downgrade your membership at any time. Changes take effect at the start of your next billing cycle."
+                },
+                {
+                  q: "What payment methods do you accept?",
+                  a: "We accept all major credit cards, Apple Pay, Google Pay, bank transfers, and buy-now-pay-later options like Affirm and Klarna."
+                },
+                {
+                  q: "Is there a contract or commitment?",
+                  a: "No long-term commitment required. Monthly plans can be cancelled anytime. Annual plans offer significant savings with a 30-day satisfaction guarantee."
+                },
+                {
+                  q: "How does the 7-day trial work?",
+                  a: "Apply for our trial to experience Gold-tier access. After approval, you'll have 7 days to explore all features before deciding on a membership."
+                },
+              ].map((faq, index) => (
+                <div 
+                  key={index} 
+                  className="p-6 rounded-xl bg-card border border-border"
+                >
+                  <h3 className="font-medium text-foreground mb-2">{faq.q}</h3>
+                  <p className="text-sm text-muted-foreground">{faq.a}</p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
           {/* Bottom CTA */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="text-center mt-16"
+            transition={{ duration: 0.6, delay: 0.7 }}
+            className="text-center"
           >
             <p className="text-muted-foreground text-sm mb-4">
               All memberships include a 30-day satisfaction guarantee.

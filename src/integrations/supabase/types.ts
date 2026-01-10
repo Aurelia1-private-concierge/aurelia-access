@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_events: {
+        Row: {
+          created_at: string
+          event_category: string
+          event_data: Json | null
+          event_name: string
+          id: string
+          page_path: string | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_category: string
+          event_data?: Json | null
+          event_name: string
+          id?: string
+          page_path?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_category?: string
+          event_data?: Json | null
+          event_name?: string
+          id?: string
+          page_path?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       app_settings: {
         Row: {
           created_at: string
@@ -40,6 +73,154 @@ export type Database = {
           value?: string | null
         }
         Relationships: []
+      }
+      calendar_events: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_date: string | null
+          event_type: string | null
+          id: string
+          is_all_day: boolean | null
+          location: string | null
+          metadata: Json | null
+          reminder_minutes: number | null
+          service_request_id: string | null
+          start_date: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          event_type?: string | null
+          id?: string
+          is_all_day?: boolean | null
+          location?: string | null
+          metadata?: Json | null
+          reminder_minutes?: number | null
+          service_request_id?: string | null
+          start_date: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          event_type?: string | null
+          id?: string
+          is_all_day?: boolean | null
+          location?: string | null
+          metadata?: Json | null
+          reminder_minutes?: number | null
+          service_request_id?: string | null
+          start_date?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_events_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_notes: {
+        Row: {
+          client_id: string
+          content: string
+          created_at: string
+          created_by: string
+          follow_up_date: string | null
+          id: string
+          is_pinned: boolean | null
+          note_type: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          content: string
+          created_at?: string
+          created_by: string
+          follow_up_date?: string | null
+          id?: string
+          is_pinned?: boolean | null
+          note_type?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          content?: string
+          created_at?: string
+          created_by?: string
+          follow_up_date?: string | null
+          id?: string
+          is_pinned?: boolean | null
+          note_type?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      concierge_fees: {
+        Row: {
+          amount: number
+          client_id: string
+          created_at: string
+          description: string
+          fee_type: string | null
+          id: string
+          invoiced_at: string | null
+          paid_at: string | null
+          service_request_id: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          client_id: string
+          created_at?: string
+          description: string
+          fee_type?: string | null
+          id?: string
+          invoiced_at?: string | null
+          paid_at?: string | null
+          service_request_id?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          client_id?: string
+          created_at?: string
+          description?: string
+          fee_type?: string | null
+          id?: string
+          invoiced_at?: string | null
+          paid_at?: string | null
+          service_request_id?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "concierge_fees_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       contact_submissions: {
         Row: {
@@ -303,6 +484,69 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      partner_commissions: {
+        Row: {
+          booking_amount: number
+          client_id: string
+          commission_amount: number
+          commission_rate: number | null
+          created_at: string
+          id: string
+          notes: string | null
+          paid_at: string | null
+          partner_id: string
+          service_request_id: string | null
+          service_title: string
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          booking_amount: number
+          client_id: string
+          commission_amount: number
+          commission_rate?: number | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          partner_id: string
+          service_request_id?: string | null
+          service_title: string
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          booking_amount?: number
+          client_id?: string
+          commission_amount?: number
+          commission_rate?: number | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          partner_id?: string
+          service_request_id?: string | null
+          service_title?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_commissions_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "partner_commissions_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       partner_messages: {
         Row: {
@@ -613,6 +857,42 @@ export type Database = {
           status?: string
           subscribed_at?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      secure_messages: {
+        Row: {
+          attachments: string[] | null
+          conversation_type: string | null
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message: string
+          read_at: string | null
+          recipient_id: string | null
+          sender_id: string
+        }
+        Insert: {
+          attachments?: string[] | null
+          conversation_type?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message: string
+          read_at?: string | null
+          recipient_id?: string | null
+          sender_id: string
+        }
+        Update: {
+          attachments?: string[] | null
+          conversation_type?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          read_at?: string | null
+          recipient_id?: string | null
+          sender_id?: string
         }
         Relationships: []
       }

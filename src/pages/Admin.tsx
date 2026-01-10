@@ -48,6 +48,9 @@ import ContactSubmissionsPanel from "@/components/admin/ContactSubmissionsPanel"
 import ServiceRequestsPanel from "@/components/admin/ServiceRequestsPanel";
 import ConciergeRequestsPanel from "@/components/admin/ConciergeRequestsPanel";
 import PartnerApplicationsPanel from "@/components/admin/PartnerApplicationsPanel";
+import AnalyticsDashboard from "@/components/admin/AnalyticsDashboard";
+import CRMPanel from "@/components/admin/CRMPanel";
+import CommissionTracker from "@/components/admin/CommissionTracker";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -286,15 +289,38 @@ const Admin = () => {
       </header>
 
       <main className="container mx-auto px-6 py-8">
-        <Tabs defaultValue="signups" className="space-y-6">
+        <Tabs defaultValue="analytics" className="space-y-6">
           <TabsList className="bg-card border border-border/50 flex-wrap h-auto gap-1 p-1">
-            <TabsTrigger value="concierge">Concierge Requests</TabsTrigger>
-            <TabsTrigger value="signups">Launch Signups</TabsTrigger>
-            <TabsTrigger value="partners">Partner Applications</TabsTrigger>
-            <TabsTrigger value="contacts">Contact Submissions</TabsTrigger>
-            <TabsTrigger value="requests">Service Requests</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="concierge">Concierge</TabsTrigger>
+            <TabsTrigger value="crm">CRM</TabsTrigger>
+            <TabsTrigger value="commissions">Commissions</TabsTrigger>
+            <TabsTrigger value="partners">Partners</TabsTrigger>
+            <TabsTrigger value="signups">Signups</TabsTrigger>
+            <TabsTrigger value="contacts">Contacts</TabsTrigger>
+            <TabsTrigger value="requests">Requests</TabsTrigger>
             <TabsTrigger value="integrations">Integrations</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="analytics" className="space-y-6">
+            <AnalyticsDashboard />
+          </TabsContent>
+
+          <TabsContent value="crm" className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-serif text-3xl text-foreground mb-2">Client Relationship Management</h1>
+              <p className="text-muted-foreground">Track client preferences, notes, and interactions</p>
+            </motion.div>
+            <CRMPanel />
+          </TabsContent>
+
+          <TabsContent value="commissions" className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-serif text-3xl text-foreground mb-2">Commission Tracking</h1>
+              <p className="text-muted-foreground">Manage partner commissions and payouts</p>
+            </motion.div>
+            <CommissionTracker />
+          </TabsContent>
 
           <TabsContent value="concierge" className="space-y-6">
             <motion.div

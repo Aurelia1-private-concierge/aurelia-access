@@ -1058,6 +1058,72 @@ export type Database = {
         }
         Relationships: []
       }
+      trial_applications: {
+        Row: {
+          annual_income_range: string | null
+          company: string | null
+          converted_at: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          interests: string[] | null
+          phone: string | null
+          reason: string | null
+          referral_source: string | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          trial_ends_at: string | null
+          trial_starts_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          annual_income_range?: string | null
+          company?: string | null
+          converted_at?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          interests?: string[] | null
+          phone?: string | null
+          reason?: string | null
+          referral_source?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          trial_ends_at?: string | null
+          trial_starts_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          annual_income_range?: string | null
+          company?: string | null
+          converted_at?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          interests?: string[] | null
+          phone?: string | null
+          reason?: string | null
+          referral_source?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          trial_ends_at?: string | null
+          trial_starts_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_preferences: {
         Row: {
           category: string
@@ -1129,6 +1195,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      has_active_trial: { Args: { p_user_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

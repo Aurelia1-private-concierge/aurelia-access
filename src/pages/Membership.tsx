@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Check, Crown, Sparkles, Shield } from "lucide-react";
+import { Check, Crown, Sparkles, Shield, Gift, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { MEMBERSHIP_TIERS } from "@/lib/membership-tiers";
@@ -18,7 +19,7 @@ const tierIcons = {
 
 const Membership = () => {
   const [isAnnual, setIsAnnual] = useState(true);
-  const { createCheckout, isLoading, tier: currentTier, subscribed } = useSubscription();
+  const { createCheckout, isLoading, tier: currentTier, subscribed, isTrial } = useSubscription();
   const { user } = useAuth();
 
   const handleSubscribe = async (priceId: string) => {
@@ -39,6 +40,57 @@ const Membership = () => {
       
       <main className="pt-32 pb-24">
         <div className="container mx-auto px-4 max-w-7xl">
+          {/* Trial Banner */}
+          {!subscribed && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-12 p-6 rounded-2xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20"
+            >
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                    <Gift className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium text-foreground">Not ready to commit?</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Apply for a free 7-day trial with full Gold-tier access
+                    </p>
+                  </div>
+                </div>
+                <Link to="/trial">
+                  <Button variant="outline" className="border-primary/30 hover:bg-primary/10">
+                    Apply for Trial <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Trial Status Banner */}
+          {isTrial && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-12 p-6 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/20"
+            >
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center">
+                    <Sparkles className="w-6 h-6 text-amber-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium text-foreground">You're on a 7-day trial</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Enjoying Gold-tier access. Subscribe now to continue after your trial ends.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}

@@ -45,11 +45,37 @@ serve(async (req) => {
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
 
     if (customers.data.length === 0) {
-      logStep("No customer found, returning unsubscribed state");
+      logStep("No Stripe customer found, checking for active trial");
+      
+      // Check for active trial
+      const { data: trialData } = await supabaseClient
+        .from("trial_applications")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("status", "approved")
+        .gte("trial_ends_at", new Date().toISOString())
+        .single();
+
+      if (trialData) {
+        logStep("Active trial found", { trialEnds: trialData.trial_ends_at });
+        return new Response(JSON.stringify({ 
+          subscribed: true,
+          tier: "gold", // Trial gets Gold access
+          subscription_end: trialData.trial_ends_at,
+          is_trial: true,
+          trial_ends_at: trialData.trial_ends_at,
+        }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+
+      logStep("No trial found, returning unsubscribed state");
       return new Response(JSON.stringify({ 
         subscribed: false,
         tier: null,
-        subscription_end: null 
+        subscription_end: null,
+        is_trial: false,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
@@ -101,6 +127,7 @@ serve(async (req) => {
       tier,
       product_id: productId,
       subscription_end: subscriptionEnd,
+      is_trial: false,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

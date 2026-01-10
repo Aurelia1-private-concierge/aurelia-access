@@ -32,6 +32,7 @@ const Orla = lazy(() => import("./pages/Orla"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Membership = lazy(() => import("./pages/Membership"));
 const Discover = lazy(() => import("./pages/Discover"));
+const Referral = lazy(() => import("./pages/Referral"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Minimal loading fallback
@@ -174,6 +175,14 @@ const AnimatedRoutes = () => {
                   <Membership />
                 </PageTransition>
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/referral"
+            element={
+              <PageTransition>
+                <Referral />
+              </PageTransition>
             }
           />
           <Route

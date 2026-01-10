@@ -19,6 +19,21 @@ interface EmailRequest {
   };
 }
 
+// SECURITY: Validate service role authorization
+function validateServiceRoleAuth(req: Request): boolean {
+  const authHeader = req.headers.get("Authorization");
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  
+  if (!authHeader || !serviceRoleKey) {
+    console.log("Authorization header or service role key missing");
+    return false;
+  }
+  
+  // Accept both "Bearer <key>" format and direct key comparison
+  const token = authHeader.replace("Bearer ", "");
+  return token === serviceRoleKey;
+}
+
 const getEmailTemplate = (template: string, data: EmailRequest["data"]) => {
   const name = data?.name || "Valued Member";
   
@@ -110,6 +125,15 @@ const getEmailTemplate = (template: string, data: EmailRequest["data"]) => {
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  // SECURITY: Require service role authorization to prevent unauthorized email sending
+  if (!validateServiceRoleAuth(req)) {
+    console.log("Unauthorized email request rejected - invalid or missing service role key");
+    return new Response(
+      JSON.stringify({ error: "Unauthorized - service role authentication required" }),
+      { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+    );
   }
 
   try {

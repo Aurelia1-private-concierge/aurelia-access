@@ -1,11 +1,13 @@
-import { Shield, Sparkles, Globe, Fingerprint, ArrowUpRight } from "lucide-react";
+import { Shield, Sparkles, Globe, Fingerprint, ArrowUpRight, Clock, Users, Gem, Plane } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 const FeaturesSection = () => {
   const { t } = useTranslation();
   const ref = useRef<HTMLElement>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
@@ -18,52 +20,87 @@ const FeaturesSection = () => {
       icon: Shield,
       titleKey: "features.encryption.title",
       descriptionKey: "features.encryption.description",
-      large: true,
-      decorative: true,
+      stat: "256-bit",
+      statLabel: "Encryption",
+      accent: true,
     },
     {
-      icon: Sparkles,
+      icon: Clock,
       titleKey: "features.curation.title",
       descriptionKey: "features.curation.description",
-      large: false,
+      stat: "24/7",
+      statLabel: "Availability",
     },
     {
       icon: Globe,
       titleKey: "features.liquidity.title",
       descriptionKey: "features.liquidity.description",
-      large: false,
+      stat: "180+",
+      statLabel: "Countries",
     },
     {
       icon: Fingerprint,
       titleKey: "features.biometric.title",
       descriptionKey: "features.biometric.description",
-      large: true,
-      hasBackground: true,
+      stat: "100%",
+      statLabel: "Secure",
+      accent: true,
+    },
+    {
+      icon: Users,
+      title: "Dedicated Team",
+      description: "Your personal concierge team available around the clock for any request.",
+      stat: "1:10",
+      statLabel: "Staff Ratio",
+    },
+    {
+      icon: Plane,
+      title: "Global Access",
+      description: "Seamless arrangements across every continent with trusted partners worldwide.",
+      stat: "500+",
+      statLabel: "Partners",
     },
   ];
 
   return (
-    <section ref={ref} id="services" className="py-24 marble-bg relative overflow-hidden">
+    <section ref={ref} id="services" className="py-32 md:py-40 marble-bg relative overflow-hidden">
       <motion.div
         style={{ y: backgroundY }}
-        className="absolute top-20 right-10 w-[400px] h-[400px] bg-primary/3 blur-[150px] rounded-full pointer-events-none"
+        className="absolute top-20 right-10 w-[500px] h-[500px] bg-primary/[0.03] blur-[180px] rounded-full pointer-events-none"
+      />
+      
+      {/* Subtle grid pattern */}
+      <div className="absolute inset-0 opacity-[0.015] pointer-events-none"
+        style={{
+          backgroundImage: `linear-gradient(hsl(var(--primary) / 0.3) 1px, transparent 1px),
+                           linear-gradient(90deg, hsl(var(--primary) / 0.3) 1px, transparent 1px)`,
+          backgroundSize: '80px 80px'
+        }}
       />
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="mb-16 md:flex md:items-end md:justify-between">
+        {/* Section Header */}
+        <div className="mb-20 md:flex md:items-end md:justify-between">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="max-w-xl"
           >
-            <p className="text-primary text-xs font-medium tracking-[0.2em] uppercase mb-4">
-              {t("features.label")}
-            </p>
-            <h2 className="font-serif text-4xl md:text-5xl text-foreground tracking-tight mb-4">
-              {t("features.title")} <span className="italic text-muted-foreground">{t("features.titleHighlight")}</span>
+            <div className="inline-flex items-center gap-4 mb-6">
+              <span className="w-12 h-px bg-primary/40" />
+              <p className="text-[11px] uppercase tracking-[0.4em] text-primary/70 font-medium">
+                {t("features.label")}
+              </p>
+            </div>
+            <h2 
+              className="text-4xl md:text-5xl lg:text-6xl text-foreground tracking-[-0.02em] mb-5"
+              style={{ fontFamily: "'Cormorant Garamond', serif" }}
+            >
+              {t("features.title")}{" "}
+              <span className="italic text-muted-foreground/70">{t("features.titleHighlight")}</span>
             </h2>
-            <p className="font-light text-muted-foreground leading-relaxed">
+            <p className="font-light text-muted-foreground leading-relaxed text-lg">
               {t("features.subtitle")}
             </p>
           </motion.div>
@@ -72,70 +109,131 @@ const FeaturesSection = () => {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="mt-6 md:mt-0"
+            className="mt-8 md:mt-0"
           >
-            <a href="#" className="group inline-flex items-center text-primary text-sm tracking-widest uppercase hover:opacity-80 transition-opacity">
+            <Link 
+              to="/services" 
+              className="group inline-flex items-center text-primary text-sm tracking-[0.15em] uppercase hover:opacity-80 transition-opacity"
+            >
               {t("features.viewAll")}
               <ArrowUpRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
-            </a>
+            </Link>
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Features Grid - Editorial Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {features.map((feature, index) => (
             <motion.div
-              key={feature.titleKey}
-              initial={{ opacity: 0, y: 30 }}
+              key={feature.titleKey || feature.title}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className={`group relative p-8 bg-secondary/20 border border-border/20 backdrop-blur-sm hover:border-primary/40 hover:bg-secondary/40 transition-all duration-500 card-hover overflow-hidden ${
-                feature.large ? "md:col-span-2" : ""
+              transition={{ duration: 0.7, delay: index * 0.1 }}
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              className={`group relative p-8 lg:p-10 bg-card/30 border border-border/20 backdrop-blur-sm transition-all duration-700 overflow-hidden ${
+                feature.accent ? 'lg:col-span-1' : ''
+              } ${
+                hoveredIndex === index ? 'border-primary/40 bg-card/50' : 'hover:border-primary/20'
               }`}
             >
-              {feature.decorative && (
+              {/* Background glow on hover */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: hoveredIndex === index ? 1 : 0 }}
+                className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] to-transparent pointer-events-none"
+              />
+
+              {/* Large decorative icon */}
+              <motion.div 
+                initial={{ rotate: 0, scale: 1 }}
+                animate={{ 
+                  rotate: hoveredIndex === index ? 5 : 0,
+                  scale: hoveredIndex === index ? 1.1 : 1,
+                  opacity: hoveredIndex === index ? 0.15 : 0.05
+                }}
+                transition={{ duration: 0.5 }}
+                className="absolute -top-4 -right-4 pointer-events-none"
+              >
+                <feature.icon className="w-32 h-32 text-primary" strokeWidth={0.5} />
+              </motion.div>
+
+              <div className="relative z-10 h-full flex flex-col min-h-[280px]">
+                {/* Icon */}
                 <motion.div 
-                  initial={{ rotate: 0 }}
-                  whileHover={{ rotate: 5, scale: 1.1 }}
-                  transition={{ duration: 0.5 }}
-                  className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-15 transition-opacity duration-500"
+                  animate={{ 
+                    scale: hoveredIndex === index ? 1.1 : 1,
+                    borderColor: hoveredIndex === index ? 'hsl(var(--primary) / 0.5)' : 'hsl(var(--border) / 0.3)'
+                  }}
+                  className="w-14 h-14 rounded-full bg-background border border-border/30 flex items-center justify-center mb-8 transition-all duration-500"
                 >
-                  <feature.icon className="w-32 h-32 text-primary" strokeWidth={1} />
-                </motion.div>
-              )}
-
-              {feature.hasBackground && (
-                <>
-                  <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent z-0" />
-                  <motion.img
-                    initial={{ scale: 1 }}
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.7 }}
-                    src="https://images.unsplash.com/photo-1614028674026-a65e31bfd27c?q=80&w=800&auto=format&fit=crop"
-                    className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-20 z-0"
-                    alt="Biometrics"
+                  <feature.icon 
+                    className={`w-6 h-6 transition-colors duration-500 ${
+                      hoveredIndex === index ? 'text-primary' : 'text-foreground/60'
+                    }`} 
+                    strokeWidth={1.5} 
                   />
-                </>
-              )}
+                </motion.div>
 
-              <div className="relative z-10 h-full flex flex-col justify-between min-h-[200px]">
-                <div className="w-12 h-12 rounded-full bg-background border border-border/30 flex items-center justify-center mb-6 text-primary group-hover:border-primary/50 group-hover:shadow-lg group-hover:shadow-primary/10 transition-all duration-500">
-                  <feature.icon className="w-5 h-5" strokeWidth={1.5} />
-                </div>
-                <div>
-                  <h3 className={`font-serif ${feature.large ? "text-2xl" : "text-xl"} text-foreground mb-3 tracking-tight group-hover:text-primary transition-colors duration-300`}>
-                    {t(feature.titleKey)}
+                {/* Content */}
+                <div className="flex-1">
+                  <h3 
+                    className={`text-xl lg:text-2xl text-foreground mb-4 tracking-tight transition-colors duration-500 ${
+                      hoveredIndex === index ? 'text-primary' : ''
+                    }`}
+                    style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                  >
+                    {feature.titleKey ? t(feature.titleKey) : feature.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed font-light max-w-md">
-                    {t(feature.descriptionKey)}
+                  <p className="text-sm text-muted-foreground leading-relaxed font-light">
+                    {feature.descriptionKey ? t(feature.descriptionKey) : feature.description}
                   </p>
+                </div>
+
+                {/* Stat */}
+                <div className="mt-8 pt-6 border-t border-border/20">
+                  <div className="flex items-baseline gap-2">
+                    <span 
+                      className="text-2xl text-primary"
+                      style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                    >
+                      {feature.stat}
+                    </span>
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                      {feature.statLabel}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none gradient-border" />
+              {/* Gradient border on hover */}
+              <div className={`absolute inset-0 pointer-events-none transition-opacity duration-500 gradient-border ${
+                hoveredIndex === index ? 'opacity-100' : 'opacity-0'
+              }`} />
             </motion.div>
           ))}
         </div>
+
+        {/* Bottom CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+          className="mt-20 text-center"
+        >
+          <p className="text-muted-foreground/60 text-sm mb-6">
+            Discover how we can serve you
+          </p>
+          <Link
+            to="/services"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-primary/10 border border-primary/30 text-primary text-xs tracking-[0.2em] uppercase hover:bg-primary/20 transition-all duration-300"
+          >
+            <Gem className="w-4 h-4" />
+            Explore All Services
+          </Link>
+        </motion.div>
       </div>
     </section>
   );

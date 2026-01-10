@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import MetricsStrip from "@/components/MetricsStrip";
@@ -15,14 +16,22 @@ import LoadingScreen from "@/components/LoadingScreen";
 import ScrollProgress from "@/components/ScrollProgress";
 import RolexClock from "@/components/RolexClock";
 import SectionDivider from "@/components/SectionDivider";
+import CustomCursor from "@/components/CustomCursor";
+import VideoModal from "@/components/VideoModal";
 
 const Index = () => {
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
+      <CustomCursor />
       <LoadingScreen />
       <ScrollProgress />
       <Navigation />
-      <HeroSection videoSrc={heroVideo} />
+      <HeroSection 
+        videoSrc={heroVideo} 
+        onPlayVideo={() => setIsVideoModalOpen(true)} 
+      />
 
       <SectionDivider variant="ornate" />
 
@@ -64,6 +73,14 @@ const Index = () => {
       <MembershipCTA />
       <Footer />
       <OrlaFAB />
+
+      {/* Video Modal */}
+      <VideoModal
+        isOpen={isVideoModalOpen}
+        onClose={() => setIsVideoModalOpen(false)}
+        videoSrc={heroVideo}
+        title="Experience Aurelia"
+      />
     </div>
   );
 };

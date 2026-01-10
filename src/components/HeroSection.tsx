@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ArrowRight, ChevronDown, Play } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useRef, useState } from "react";
@@ -7,9 +7,10 @@ import heroImage from "@/assets/hero-luxury-abstract.jpg";
 
 interface HeroSectionProps {
   videoSrc?: string;
+  onPlayVideo?: () => void;
 }
 
-const HeroSection = ({ videoSrc }: HeroSectionProps) => {
+const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
   const { t } = useTranslation();
   const ref = useRef<HTMLElement>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
@@ -155,12 +156,34 @@ const HeroSection = ({ videoSrc }: HeroSectionProps) => {
           </a>
         </motion.div>
 
+        {/* Video Play Button */}
+        {onPlayVideo && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 1.1 }}
+            className="mt-10"
+          >
+            <motion.button
+              onClick={onPlayVideo}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="group inline-flex items-center gap-3 text-foreground/60 hover:text-foreground transition-colors duration-300"
+            >
+              <div className="w-12 h-12 rounded-full border border-foreground/20 group-hover:border-primary/50 group-hover:bg-primary/10 flex items-center justify-center transition-all duration-300">
+                <Play className="w-4 h-4 ml-0.5 text-foreground/60 group-hover:text-primary transition-colors" fill="currentColor" />
+              </div>
+              <span className="text-[11px] uppercase tracking-[0.2em] font-light">Watch Video</span>
+            </motion.button>
+          </motion.div>
+        )}
+
         {/* Bottom decorative line */}
         <motion.div
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
-          transition={{ duration: 1.2, delay: 1.1, ease: [0.4, 0, 0.2, 1] }}
-          className="w-24 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent mx-auto mt-16"
+          transition={{ duration: 1.2, delay: 1.3, ease: [0.4, 0, 0.2, 1] }}
+          className="w-24 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent mx-auto mt-12"
         />
       </motion.div>
 

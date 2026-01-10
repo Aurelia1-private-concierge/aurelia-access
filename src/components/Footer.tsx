@@ -102,8 +102,8 @@ const Footer = () => {
               </h4>
               <ul className="space-y-3 text-sm text-muted-foreground">
                 <li>
-                  <a href="mailto:liaison@aurelia.com" className="hover:text-foreground transition-colors duration-300">
-                    liaison@aurelia.com
+                  <a href="mailto:concierge@Aurelia-privateconcierge.com" className="hover:text-foreground transition-colors duration-300">
+                    concierge@Aurelia-privateconcierge.com
                   </a>
                 </li>
                 <li>Geneva • London • Singapore</li>
@@ -151,7 +151,7 @@ const Footer = () => {
             <div className="flex items-center gap-6 text-xs text-muted-foreground/40 font-light">
               <Link to="/privacy" className="hover:text-muted-foreground transition-colors">{t("footer.privacy")}</Link>
               <Link to="/terms" className="hover:text-muted-foreground transition-colors">{t("footer.terms")}</Link>
-              <a href="mailto:legal@aurelia.com" className="hover:text-muted-foreground transition-colors">{t("footer.legal")}</a>
+              <a href="mailto:concierge@Aurelia-privateconcierge.com" className="hover:text-muted-foreground transition-colors">{t("footer.legal")}</a>
             </div>
             <motion.button
               onClick={scrollToTop}

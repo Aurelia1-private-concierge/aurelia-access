@@ -16,10 +16,12 @@ import {
   Star,
   ArrowRight,
   Loader2,
-  Car
+  Car,
+  Coins
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCredits } from "@/hooks/useCredits";
 import { toast } from "@/hooks/use-toast";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -35,6 +37,21 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+
+// Credit cost per service category
+const SERVICE_CREDIT_COSTS: Record<string, number> = {
+  private_aviation: 3,
+  yacht_charter: 3,
+  real_estate: 2,
+  collectibles: 2,
+  events_access: 1,
+  security: 2,
+  dining: 1,
+  travel: 1,
+  wellness: 1,
+  shopping: 1,
+  chauffeur: 1,
+};
 
 type ServiceCategory = 
   | "private_aviation"
@@ -83,6 +100,7 @@ const categoryConfig: Record<ServiceCategory, { label: string; icon: React.Eleme
 
 const Discover = () => {
   const { user } = useAuth();
+  const { balance, isUnlimited, useCredit, refetch: refetchCredits } = useCredits();
   const [services, setServices] = useState<PartnerService[]>([]);
   const [filteredServices, setFilteredServices] = useState<PartnerService[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -151,9 +169,32 @@ const Discover = () => {
   const handleRequestService = async () => {
     if (!requestingService || !user) return;
 
+    const creditCost = SERVICE_CREDIT_COSTS[requestingService.category] || 1;
+
+    // Check if user has enough credits (unless unlimited)
+    if (!isUnlimited && balance < creditCost) {
+      toast({
+        title: "Insufficient Credits",
+        description: `This service requires ${creditCost} credit${creditCost > 1 ? "s" : ""}. Please purchase additional credits.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from("service_requests").insert({
+      // Deduct credits first
+      const creditResult = await useCredit(
+        creditCost,
+        `Service request: ${requestingService.title}`
+      );
+
+      if (!creditResult.success) {
+        throw new Error(creditResult.error || "Failed to deduct credits");
+      }
+
+      // Then create the service request
+      const { data: requestData, error } = await supabase.from("service_requests").insert({
         client_id: user.id,
         service_id: requestingService.id,
         partner_id: requestingService.partner_id,
@@ -161,22 +202,34 @@ const Discover = () => {
         title: `Request for ${requestingService.title}`,
         description: requestMessage || `I'm interested in ${requestingService.title}`,
         status: "pending",
-      });
+      }).select().single();
 
       if (error) throw error;
 
+      // Update the transaction with the service request ID
+      if (requestData) {
+        await supabase
+          .from("credit_transactions")
+          .update({ service_request_id: requestData.id })
+          .eq("user_id", user.id)
+          .eq("description", `Service request: ${requestingService.title}`)
+          .order("created_at", { ascending: false })
+          .limit(1);
+      }
+
       toast({
         title: "Request Sent",
-        description: "Your service request has been submitted. A partner will contact you soon.",
+        description: `Your service request has been submitted. ${creditCost} credit${creditCost > 1 ? "s" : ""} used.`,
       });
 
       setRequestingService(null);
       setRequestMessage("");
+      refetchCredits();
     } catch (error) {
       console.error("Error submitting request:", error);
       toast({
         title: "Error",
-        description: "Failed to submit request. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to submit request. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -388,6 +441,34 @@ const Discover = () => {
                               </DialogDescription>
                             </DialogHeader>
                             <div className="space-y-4 pt-4">
+                              {/* Credit Cost Display */}
+                              {requestingService && (
+                                <div className="flex items-center justify-between p-3 rounded-lg bg-primary/5 border border-primary/20">
+                                  <div className="flex items-center gap-2">
+                                    <Coins className="w-4 h-4 text-primary" />
+                                    <span className="text-sm text-foreground">Credit Cost</span>
+                                  </div>
+                                  <div className="text-right">
+                                    <span className="text-lg font-medium text-primary">
+                                      {SERVICE_CREDIT_COSTS[requestingService.category] || 1}
+                                    </span>
+                                    <span className="text-sm text-muted-foreground ml-1">
+                                      credit{(SERVICE_CREDIT_COSTS[requestingService.category] || 1) > 1 ? "s" : ""}
+                                    </span>
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {/* Balance Warning */}
+                              {requestingService && !isUnlimited && balance < (SERVICE_CREDIT_COSTS[requestingService.category] || 1) && (
+                                <div className="flex items-center gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive">
+                                  <Coins className="w-4 h-4" />
+                                  <span className="text-sm">
+                                    Insufficient credits. You have {balance} credit{balance !== 1 ? "s" : ""}.
+                                  </span>
+                                </div>
+                              )}
+
                               <div>
                                 <label className="text-sm font-medium text-foreground mb-2 block">
                                   Your Message (Optional)
@@ -402,7 +483,11 @@ const Discover = () => {
                               <Button
                                 className="w-full"
                                 onClick={handleRequestService}
-                                disabled={isSubmitting || !user}
+                                disabled={
+                                  isSubmitting || 
+                                  !user || 
+                                  (!isUnlimited && balance < (SERVICE_CREDIT_COSTS[requestingService?.category || ""] || 1))
+                                }
                               >
                                 {isSubmitting ? (
                                   <>
@@ -412,7 +497,10 @@ const Discover = () => {
                                 ) : !user ? (
                                   "Sign in to Request"
                                 ) : (
-                                  "Submit Request"
+                                  <>
+                                    <Coins className="w-4 h-4 mr-2" />
+                                    Submit Request
+                                  </>
                                 )}
                               </Button>
                             </div>

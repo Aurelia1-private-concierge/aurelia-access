@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Coins, TrendingUp, Clock, Sparkles, ArrowRight, Infinity } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,9 +9,11 @@ import { useCredits } from "@/hooks/useCredits";
 import { useSubscription } from "@/hooks/useSubscription";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import CreditPurchaseModal from "./CreditPurchaseModal";
 
 const CreditsCard = () => {
-  const { balance, monthlyAllocation, isUnlimited, isLoading, transactions } = useCredits();
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const { balance, monthlyAllocation, isUnlimited, isLoading, transactions, refetch } = useCredits();
   const { tier, subscribed } = useSubscription();
 
   const usagePercentage = monthlyAllocation > 0 
@@ -163,13 +166,25 @@ const CreditsCard = () => {
         {/* Buy More Credits */}
         {!isUnlimited && (
           <div className="mt-6 pt-4 border-t border-border/30">
-            <Button variant="outline" size="sm" className="w-full">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full"
+              onClick={() => setShowPurchaseModal(true)}
+            >
               <Coins className="w-4 h-4 mr-2" />
               Purchase Additional Credits
             </Button>
           </div>
         )}
       </CardContent>
+
+      {/* Purchase Modal */}
+      <CreditPurchaseModal
+        isOpen={showPurchaseModal}
+        onClose={() => setShowPurchaseModal(false)}
+        onSuccess={refetch}
+      />
     </Card>
   );
 };

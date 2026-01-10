@@ -15,7 +15,8 @@ import {
   ShoppingBag,
   Star,
   ArrowRight,
-  Loader2
+  Loader2,
+  Car
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -45,7 +46,8 @@ type ServiceCategory =
   | "dining"
   | "travel"
   | "wellness"
-  | "shopping";
+  | "shopping"
+  | "chauffeur";
 
 interface PartnerService {
   id: string;
@@ -71,11 +73,12 @@ const categoryConfig: Record<ServiceCategory, { label: string; icon: React.Eleme
   real_estate: { label: "Real Estate", icon: Home, gradient: "from-amber-500 to-orange-600" },
   collectibles: { label: "Collectibles", icon: Gem, gradient: "from-purple-500 to-violet-600" },
   events_access: { label: "Events Access", icon: Ticket, gradient: "from-pink-500 to-rose-600" },
-  security: { label: "Security", icon: Shield, gradient: "from-slate-500 to-gray-600" },
+  security: { label: "Security & Protection", icon: Shield, gradient: "from-slate-500 to-gray-600" },
   dining: { label: "Fine Dining", icon: UtensilsCrossed, gradient: "from-red-500 to-rose-600" },
   travel: { label: "Travel", icon: MapPin, gradient: "from-emerald-500 to-green-600" },
   wellness: { label: "Wellness", icon: Sparkles, gradient: "from-indigo-500 to-purple-600" },
   shopping: { label: "Shopping", icon: ShoppingBag, gradient: "from-fuchsia-500 to-pink-600" },
+  chauffeur: { label: "Chauffeur & Transport", icon: Car, gradient: "from-zinc-500 to-neutral-700" },
 };
 
 const Discover = () => {

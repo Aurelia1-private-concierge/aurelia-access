@@ -20,7 +20,9 @@ import {
   Cloud,
   Key,
   Home,
-  Flower2
+  Flower2,
+  Car,
+  ShieldCheck
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -59,10 +61,16 @@ const services = [
     features: ["Fashion week front rows", "Sports hospitality", "Cultural events", "Private concerts"]
   },
   {
-    icon: Shield,
-    title: "Security & Privacy",
-    description: "Comprehensive protection services and privacy solutions for individuals and families.",
-    features: ["Executive protection", "Cybersecurity", "Privacy audits", "Travel security"]
+    icon: ShieldCheck,
+    title: "Security & Protection",
+    description: "Comprehensive security services including personal bodyguards, home protection systems, and 24/7 family security details.",
+    features: ["Personal bodyguards", "Home protection", "Family security", "Threat assessment"]
+  },
+  {
+    icon: Car,
+    title: "Chauffeur & Ground Transport",
+    description: "Luxury ground transportation with vetted professional chauffeurs, armored vehicles, and seamless global mobility.",
+    features: ["Armored vehicles", "Global chauffeur network", "Airport transfers", "Event transport"]
   },
   {
     icon: Utensils,

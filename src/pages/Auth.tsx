@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Lock, Mail, Eye, EyeOff, ArrowLeft, Loader2, Shield } from "lucide-react";
+import { Lock, Mail, Eye, EyeOff, ArrowLeft, Loader2, Shield, AlertTriangle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { AnimatedLogo } from "@/components/brand";
+import { TwoFactorVerify } from "@/components/auth/TwoFactorVerify";
+import { useLoginRateLimit } from "@/hooks/useLoginRateLimit";
+import { useMFA } from "@/hooks/useMFA";
 
 const emailSchema = z.string().email("Please enter a valid email address");
 const passwordSchema = z.string()
@@ -21,6 +24,7 @@ const Auth = () => {
   const { signIn, signUp, user, isLoading: authLoading } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [showMFAVerify, setShowMFAVerify] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -30,15 +34,32 @@ const Auth = () => {
   const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string }>({});
   const [lastResetRequest, setLastResetRequest] = useState<number>(0);
   const [cooldownRemaining, setCooldownRemaining] = useState(0);
+  
+  const { 
+    isLimited, 
+    attemptsRemaining, 
+    cooldownSeconds, 
+    recordFailedAttempt, 
+    recordSuccessfulLogin,
+    formatCooldown 
+  } = useLoginRateLimit();
+  
+  const { needsVerification, checkMFAStatus } = useMFA();
 
   const RESET_COOLDOWN_MS = 60000; // 60 seconds
 
-  // Redirect if already logged in - use useEffect to avoid calling navigate during render
+  // Check for MFA verification needed and redirect if already logged in
   useEffect(() => {
     if (user && !authLoading) {
-      navigate("/dashboard", { replace: true });
+      // Check MFA status
+      checkMFAStatus();
+      if (needsVerification) {
+        setShowMFAVerify(true);
+      } else {
+        navigate("/dashboard", { replace: true });
+      }
     }
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading, navigate, needsVerification, checkMFAStatus]);
 
   // Countdown timer for password reset cooldown
   useEffect(() => {
@@ -165,6 +186,16 @@ const Auth = () => {
     e.preventDefault();
     
     if (!validateForm()) return;
+    
+    // Check rate limit before attempting login
+    if (isLogin && isLimited) {
+      toast({
+        title: "Too Many Attempts",
+        description: `Please wait ${formatCooldown(cooldownSeconds)} before trying again.`,
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsLoading(true);
 
@@ -172,10 +203,15 @@ const Auth = () => {
       if (isLogin) {
         const { error } = await signIn(email, password);
         if (error) {
+          // Record failed attempt for rate limiting
+          await recordFailedAttempt(email);
+          
           if (error.message.includes("Invalid login credentials")) {
             toast({
               title: "Invalid Credentials",
-              description: "The email or password you entered is incorrect.",
+              description: attemptsRemaining > 1 
+                ? `The email or password you entered is incorrect. ${attemptsRemaining - 1} attempts remaining.`
+                : "The email or password you entered is incorrect.",
               variant: "destructive",
             });
           } else {
@@ -186,11 +222,26 @@ const Auth = () => {
             });
           }
         } else {
-          toast({
-            title: "Welcome Back",
-            description: "You have successfully signed in.",
-          });
-          navigate("/dashboard");
+          // Record successful login
+          recordSuccessfulLogin();
+          
+          // Check if MFA verification is needed
+          await checkMFAStatus();
+          const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+          const { data: factorsData } = await supabase.auth.mfa.listFactors();
+          
+          const hasVerifiedFactors = factorsData?.totp?.some(f => f.status === "verified");
+          const needsMFA = hasVerifiedFactors && aalData?.currentLevel === "aal1";
+          
+          if (needsMFA) {
+            setShowMFAVerify(true);
+          } else {
+            toast({
+              title: "Welcome Back",
+              description: "You have successfully signed in.",
+            });
+            navigate("/dashboard");
+          }
         }
       } else {
         const { error } = await signUp(email, password);
@@ -221,6 +272,42 @@ const Auth = () => {
       setIsLoading(false);
     }
   };
+
+  // Handle MFA verification success
+  const handleMFASuccess = () => {
+    setShowMFAVerify(false);
+    toast({
+      title: "Welcome Back",
+      description: "You have successfully signed in with 2FA.",
+    });
+    navigate("/dashboard");
+  };
+
+  // Handle MFA verification cancel
+  const handleMFACancel = async () => {
+    setShowMFAVerify(false);
+    await supabase.auth.signOut();
+    setEmail("");
+    setPassword("");
+  };
+
+  // Show MFA verification screen
+  if (showMFAVerify) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-8">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md"
+        >
+          <TwoFactorVerify
+            onSuccess={handleMFASuccess}
+            onCancel={handleMFACancel}
+          />
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -467,10 +554,34 @@ const Auth = () => {
                   </motion.div>
                 )}
 
+              {/* Rate limit warning */}
+              {isLogin && isLimited && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-3 p-4 bg-destructive/10 border border-destructive/20 rounded-lg"
+                >
+                  <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-destructive">Too many failed attempts</p>
+                    <p className="text-xs text-destructive/80">
+                      Please wait {formatCooldown(cooldownSeconds)} before trying again
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Attempts warning */}
+              {isLogin && !isLimited && attemptsRemaining < 3 && attemptsRemaining > 0 && (
+                <p className="text-xs text-amber-500 text-center">
+                  {attemptsRemaining} login {attemptsRemaining === 1 ? "attempt" : "attempts"} remaining
+                </p>
+              )}
+
               {/* Submit button */}
                 <button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={isLoading || (isLogin && isLimited)}
                   className="w-full py-3 bg-primary text-primary-foreground font-medium text-sm tracking-widest uppercase rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isLoading ? (
@@ -478,6 +589,8 @@ const Auth = () => {
                       <Loader2 className="w-4 h-4 animate-spin" />
                       {isLogin ? "Signing In..." : "Creating Account..."}
                     </>
+                  ) : isLimited && isLogin ? (
+                    `Locked (${formatCooldown(cooldownSeconds)})`
                   ) : (
                     <>
                       {isLogin ? "Sign In" : "Create Account"}

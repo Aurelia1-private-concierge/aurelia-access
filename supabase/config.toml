@@ -38,3 +38,6 @@ verify_jwt = false
 
 [functions.fulfill-credits]
 verify_jwt = false
+
+[functions.stripe-credits-webhook]
+verify_jwt = false

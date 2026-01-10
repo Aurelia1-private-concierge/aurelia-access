@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Coins, TrendingUp, Clock, Sparkles, ArrowRight, Infinity } from "lucide-react";
+import { Coins, TrendingUp, Clock, Sparkles, ArrowRight, Infinity, History } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -12,6 +13,7 @@ import { cn } from "@/lib/utils";
 import CreditPurchaseModal from "./CreditPurchaseModal";
 
 const CreditsCard = () => {
+  const navigate = useNavigate();
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const { balance, monthlyAllocation, isUnlimited, isLoading, transactions, refetch } = useCredits();
   const { tier, subscribed } = useSubscription();
@@ -160,6 +162,15 @@ const CreditsCard = () => {
                 </motion.div>
               ))}
             </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => navigate("/credits")}
+              className="mt-3 w-full"
+            >
+              <History className="w-4 h-4 mr-2" />
+              View Full History
+            </Button>
           </div>
         )}
 

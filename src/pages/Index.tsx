@@ -54,7 +54,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden relative">
+    <div className="min-h-[100dvh] bg-background overflow-x-hidden relative">
       {/* Ambient Effects */}
       <AmbientParticles />
       <GlowingOrb className="top-1/4 -left-48" size="xl" color="gold" intensity="soft" />

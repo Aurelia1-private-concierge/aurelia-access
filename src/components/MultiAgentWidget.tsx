@@ -154,7 +154,7 @@ const MultiAgentWidget = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed bottom-28 right-6 md:right-8 z-50 w-80 sm:w-[420px] h-[600px] bg-card/95 backdrop-blur-xl border border-border/30 rounded-3xl shadow-[0_0_80px_rgba(0,0,0,0.5),0_0_40px_rgba(212,175,55,0.15)] flex flex-col overflow-hidden origin-bottom-right"
+            className="fixed inset-x-2 bottom-20 sm:inset-auto sm:bottom-28 sm:right-4 md:right-8 z-50 w-auto sm:w-80 md:w-[420px] h-[70vh] sm:h-[600px] max-h-[600px] bg-card/95 backdrop-blur-xl border border-border/30 rounded-3xl shadow-[0_0_80px_rgba(0,0,0,0.5),0_0_40px_rgba(212,175,55,0.15)] flex flex-col overflow-hidden origin-bottom-right"
           >
             {/* Ambient glow */}
             <div className="absolute -top-20 -right-20 w-40 h-40 bg-primary/20 rounded-full blur-[80px] pointer-events-none" />
@@ -462,7 +462,7 @@ const MultiAgentWidget = () => {
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
-        className="fixed bottom-6 right-6 md:right-8 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-primary/90 to-primary overflow-hidden border-2 border-primary/60 shadow-[0_0_40px_rgba(212,175,55,0.4)] flex items-center justify-center transition-all duration-300 group"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:right-8 z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-primary/90 to-primary overflow-hidden border-2 border-primary/60 shadow-[0_0_40px_rgba(212,175,55,0.4)] flex items-center justify-center transition-all duration-300 group"
       >
         <motion.span 
           animate={{ 

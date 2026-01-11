@@ -115,13 +115,13 @@ const PictureInPicture: React.FC<PictureInPictureProps> = ({ isEnabled = true, o
           drag
           dragMomentum={false}
           style={{
-            right: position.x === 0 ? 24 : 'auto',
-            bottom: position.y === 0 ? 24 : 'auto',
+            right: position.x === 0 ? 16 : 'auto',
+            bottom: position.y === 0 ? 80 : 'auto',
             left: position.x !== 0 ? position.x : 'auto',
             top: position.y !== 0 ? position.y : 'auto',
           }}
-          className={`fixed z-50 rounded-xl overflow-hidden shadow-2xl border border-primary/30 bg-card/95 backdrop-blur-xl cursor-move transition-all duration-300 ${
-            isMinimized ? 'w-[120px] h-[70px]' : 'w-[320px] h-[180px]'
+          className={`fixed z-40 rounded-xl overflow-hidden shadow-2xl border border-primary/30 bg-card/95 backdrop-blur-xl cursor-move transition-all duration-300 hidden sm:block ${
+            isMinimized ? 'w-[100px] h-[60px] sm:w-[120px] sm:h-[70px]' : 'w-[240px] h-[135px] sm:w-[320px] sm:h-[180px]'
           }`}
           onMouseDown={handleMouseDown}
         >

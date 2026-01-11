@@ -165,12 +165,12 @@ const MusicPlayer: React.FC = () => {
   }, []);
 
   return (
-    <div className="fixed bottom-6 left-6 z-50">
+    <div className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-50">
       {/* Compact Player */}
       <motion.div
         layout
         className={`bg-card/95 backdrop-blur-xl border border-primary/30 rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 ${
-          isExpanded ? 'w-[320px]' : 'w-auto'
+          isExpanded ? 'w-[280px] sm:w-[320px]' : 'w-auto'
         }`}
       >
         {/* Main Controls Bar */}

@@ -16,6 +16,7 @@ import { logger } from "@/lib/logger";
 import AvatarCropModal from "@/components/profile/AvatarCropModal";
 import NotificationSettings from "@/components/dashboard/NotificationSettings";
 import TwoFactorSetup from "@/components/auth/TwoFactorSetup";
+import AvatarSettingsPanel from "@/components/profile/AvatarSettingsPanel";
 import { useMFA } from "@/hooks/useMFA";
 
 interface Profile {
@@ -524,7 +525,16 @@ const Profile = () => {
           </Card>
         </motion.div>
 
-        {/* Notification Preferences - Enhanced */}
+        {/* Avatar Settings Panel */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.05 }}
+        >
+          <AvatarSettingsPanel />
+        </motion.div>
+
+
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

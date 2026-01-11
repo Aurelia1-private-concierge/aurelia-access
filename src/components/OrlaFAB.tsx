@@ -66,13 +66,20 @@ const OrlaFAB = () => {
       supabase.removeChannel(channel);
     };
   }, [user, controls]);
+
+  // Trigger initial entrance animation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      controls.start({ scale: 1 });
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, [controls]);
   
   return (
     <Link to="/orla">
       <motion.div
         initial={{ scale: 0 }}
         animate={controls}
-        transition={{ delay: 2.5, type: "spring", stiffness: 200 }}
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
         onHoverStart={() => setIsHovered(true)}

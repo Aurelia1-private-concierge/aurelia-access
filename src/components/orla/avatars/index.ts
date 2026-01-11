@@ -4,8 +4,10 @@ export { default as RoboticAvatar } from "./RoboticAvatar";
 export { default as FantasyElfAvatar } from "./FantasyElfAvatar";
 export { default as SteampunkAvatar } from "./SteampunkAvatar";
 export { default as MinimalistAvatar } from "./MinimalistAvatar";
+export { default as MasculineAvatar } from "./MasculineAvatar";
+export { default as AbstractEnergyAvatar } from "./AbstractEnergyAvatar";
 
-export type AvatarModelType = "classic" | "realistic" | "anime" | "robotic" | "elf" | "steampunk" | "minimalist";
+export type AvatarModelType = "classic" | "realistic" | "anime" | "robotic" | "elf" | "steampunk" | "minimalist" | "masculine" | "abstract";
 
 export const AVATAR_MODELS = [
   {
@@ -49,5 +51,17 @@ export const AVATAR_MODELS = [
     name: "Minimalist",
     description: "Clean geometric avatar with low-poly aesthetic",
     preview: "◆",
+  },
+  {
+    id: "masculine" as const,
+    name: "Masculine",
+    description: "Strong angular features with defined jawline and brow",
+    preview: "👨",
+  },
+  {
+    id: "abstract" as const,
+    name: "Abstract Energy",
+    description: "Pure energy orb with rotating rings and particles",
+    preview: "🔮",
   },
 ];

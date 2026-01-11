@@ -88,6 +88,9 @@ const OrlaInner = () => {
   // Avatar style for theming
   const { currentStyle } = useAvatarStyle();
   
+  // Avatar preferences (model selection)
+  const { model: avatarModel, setModel: setAvatarModel } = useAvatarPreferences();
+  
   // Toggle face tracking
   const toggleFaceTracking = useCallback(() => {
     const newState = !faceTrackingEnabled;
@@ -782,7 +785,7 @@ const OrlaInner = () => {
               transition={{ duration: 1.5, repeat: isSpeaking ? Infinity : 0 }}
               className="rounded-full overflow-hidden relative z-10"
             >
-              {/* Conditional rendering: Motion Tracked Avatar or Standard 3D Avatar */}
+              {/* Conditional rendering based on avatar model and face tracking */}
               {useMotionAvatar && faceTrackingEnabled ? (
                 <MotionTrackedAvatar
                   faceData={faceData}
@@ -791,6 +794,54 @@ const OrlaInner = () => {
                   audioLevel={audioLevel}
                   size={208}
                   style={{
+                    primary: currentStyle.colors.primary,
+                    secondary: currentStyle.colors.secondary,
+                    accent: currentStyle.colors.accent,
+                    glow: currentStyle.colors.glow,
+                  }}
+                />
+              ) : avatarModel === "realistic" ? (
+                <RealisticAvatar
+                  isSpeaking={isSpeaking}
+                  isConnected={isConnected}
+                  isListening={!isSpeaking && isConnected}
+                  getVolume={conversation.getOutputVolume}
+                  emotion={expressionState.emotion}
+                  faceData={faceTrackingEnabled ? faceData : undefined}
+                  size={208}
+                  colors={{
+                    primary: currentStyle.colors.primary,
+                    secondary: currentStyle.colors.secondary,
+                    accent: currentStyle.colors.accent,
+                    glow: currentStyle.colors.glow,
+                  }}
+                />
+              ) : avatarModel === "anime" ? (
+                <AnimeAvatar
+                  isSpeaking={isSpeaking}
+                  isConnected={isConnected}
+                  isListening={!isSpeaking && isConnected}
+                  getVolume={conversation.getOutputVolume}
+                  emotion={expressionState.emotion}
+                  faceData={faceTrackingEnabled ? faceData : undefined}
+                  size={208}
+                  colors={{
+                    primary: currentStyle.colors.primary,
+                    secondary: currentStyle.colors.secondary,
+                    accent: currentStyle.colors.accent,
+                    glow: currentStyle.colors.glow,
+                  }}
+                />
+              ) : avatarModel === "robotic" ? (
+                <RoboticAvatar
+                  isSpeaking={isSpeaking}
+                  isConnected={isConnected}
+                  isListening={!isSpeaking && isConnected}
+                  getVolume={conversation.getOutputVolume}
+                  emotion={expressionState.emotion}
+                  faceData={faceTrackingEnabled ? faceData : undefined}
+                  size={208}
+                  colors={{
                     primary: currentStyle.colors.primary,
                     secondary: currentStyle.colors.secondary,
                     accent: currentStyle.colors.accent,
@@ -841,7 +892,7 @@ const OrlaInner = () => {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="absolute -bottom-16 left-1/2 -translate-x-1/2 z-20"
+              className="absolute -bottom-16 left-1/2 -translate-x-1/2 z-20 flex gap-2"
             >
               <Button
                 variant={faceTrackingEnabled ? "default" : "outline"}
@@ -853,15 +904,29 @@ const OrlaInner = () => {
                 {faceTrackingEnabled ? (
                   <>
                     <Camera className="w-3.5 h-3.5" />
-                    Motion Tracking On
+                    Tracking On
                   </>
                 ) : (
                   <>
                     <CameraOff className="w-3.5 h-3.5" />
-                    Enable Motion Tracking
+                    Motion Track
                   </>
                 )}
               </Button>
+            </motion.div>
+
+            {/* Avatar Model Selector */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="absolute -bottom-28 left-1/2 -translate-x-1/2 z-20"
+            >
+              <AvatarModelSelector
+                currentModel={avatarModel}
+                onSelect={setAvatarModel}
+                compact
+              />
             </motion.div>
           </motion.div>
 

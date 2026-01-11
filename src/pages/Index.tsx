@@ -36,6 +36,7 @@ import VoiceCommands from "@/components/VoiceCommands";
 import ContextualSoundscapeIndicator from "@/components/ContextualSoundscapeIndicator";
 import useContextualSoundscapes from "@/hooks/useContextualSoundscapes";
 import MusicPlayer from "@/components/MusicPlayer";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 
 const Index = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -190,6 +191,9 @@ const Index = () => {
         description={soundscapes.getCurrentSoundscape().description}
         isPlaying={soundscapes.isPlaying}
       />
+      
+      {/* PWA Install Prompt */}
+      <PWAInstallPrompt />
 
       {/* Video Modal */}
       <VideoModal

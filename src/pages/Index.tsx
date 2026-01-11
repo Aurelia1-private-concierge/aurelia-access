@@ -27,6 +27,7 @@ import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import MembershipTiersPreview from "@/components/MembershipTiersPreview";
 import AmbientParticles from "@/components/AmbientParticles";
 import GlowingOrb from "@/components/GlowingOrb";
+import MetaverseEntryPoint from "@/components/MetaverseEntryPoint";
 
 const Index = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -87,10 +88,15 @@ const Index = () => {
       
       <SectionDivider variant="wide" />
 
+      {/* Metaverse & EQ Intelligence Section */}
+      <MetaverseEntryPoint />
+
+      <SectionDivider variant="ornate" />
+
       {/* Global Presence */}
       <GlobalPresenceSection />
       
-      <SectionDivider variant="ornate" />
+      <SectionDivider variant="default" />
       
       {/* Experiences Showcase */}
       <ExperiencesSection />

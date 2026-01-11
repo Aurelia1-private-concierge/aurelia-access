@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import orlaAvatar from "@/assets/orla-avatar.png";
 import { useAvatarPreferences } from "@/hooks/useAvatarPreferences";
 import { OrlaExpression } from "@/hooks/useOrlaExpression";
+import { useAvatarStyle } from "@/hooks/useAvatarStyle";
 import ExpressiveOrb from "./OrlaExpressions";
 
 interface OrlaMiniAvatarProps {
@@ -17,6 +18,8 @@ interface OrlaMiniAvatarProps {
   isBlinking?: boolean;
   isSpeaking?: boolean;
   isListening?: boolean;
+  mouthOpenness?: number; // 0-1 for voice reactive
+  audioLevel?: number; // 0-1 for audio visualization
 }
 
 // Simple error boundary wrapper
@@ -230,8 +233,11 @@ const OrlaMiniAvatar = ({
   isBlinking = false,
   isSpeaking = false,
   isListening = false,
+  mouthOpenness = 0,
+  audioLevel = 0,
 }: OrlaMiniAvatarProps) => {
-  const { shouldUse3D, reducedMotion, mode } = useAvatarPreferences();
+  const { shouldUse3D, reducedMotion } = useAvatarPreferences();
+  const { currentStyle } = useAvatarStyle();
   const [hasError, setHasError] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [currentMode, setCurrentMode] = useState<"3d" | "static">("static");
@@ -268,11 +274,18 @@ const OrlaMiniAvatar = ({
       return () => clearInterval(blinkInterval);
     }
   }, [currentMode]);
+
+  // Calculate voice-reactive glow intensity
+  const glowIntensity = Math.max(audioLevel, mouthOpenness, isSpeaking ? 0.5 : 0);
   
   return (
     <motion.div 
-      className="relative rounded-full overflow-hidden bg-gradient-to-br from-primary/20 to-primary/5"
-      style={{ width: size, height: size }}
+      className="relative rounded-full overflow-hidden"
+      style={{ 
+        width: size, 
+        height: size,
+        background: `linear-gradient(135deg, ${currentStyle.colors.glow}, transparent)`,
+      }}
       initial={{ scale: 0.9 }}
       animate={{ scale: 1 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
@@ -292,7 +305,7 @@ const OrlaMiniAvatar = ({
             <ErrorBoundaryWrapper onError={() => setHasError(true)}>
               <ThreeDAvatar 
                 isActive={isActive} 
-                showSparkles={showSparkles}
+                showSparkles={showSparkles && currentStyle.effects.sparkles}
                 reducedMotion={reducedMotion}
                 expression={currentExpression}
                 isBlinking={isBlinking}
@@ -318,22 +331,33 @@ const OrlaMiniAvatar = ({
         )}
       </AnimatePresence>
       
-      {/* Active ring indicator */}
+      {/* Voice-reactive glow ring */}
       <motion.div 
-        className={`absolute inset-0 rounded-full border-2 pointer-events-none transition-all duration-500 ${
-          isActive 
-            ? "border-primary/50 shadow-[0_0_15px_rgba(212,175,55,0.3)]" 
-            : "border-transparent"
-        }`}
-        animate={isListening ? {
-          boxShadow: [
-            "0 0 10px rgba(212,175,55,0.3)",
-            "0 0 25px rgba(212,175,55,0.6)",
-            "0 0 10px rgba(212,175,55,0.3)"
-          ]
-        } : {}}
-        transition={{ duration: 1, repeat: Infinity }}
+        className="absolute inset-0 rounded-full pointer-events-none"
+        style={{
+          boxShadow: `0 0 ${15 + glowIntensity * 25}px ${currentStyle.colors.glow}`,
+          border: `2px solid ${isActive ? currentStyle.colors.primary : "transparent"}`,
+        }}
+        animate={{
+          opacity: isActive ? 0.8 + glowIntensity * 0.2 : 0.3,
+        }}
+        transition={{ duration: 0.1 }}
       />
+      
+      {/* Audio level visualizer ring */}
+      {(audioLevel > 0 || mouthOpenness > 0) && (
+        <motion.div
+          className="absolute inset-0 rounded-full pointer-events-none"
+          style={{
+            border: `2px solid ${currentStyle.colors.primary}`,
+          }}
+          animate={{
+            scale: 1 + (audioLevel || mouthOpenness) * 0.1,
+            opacity: 0.6,
+          }}
+          transition={{ duration: 0.05 }}
+        />
+      )}
       
       {/* Speaking indicator */}
       <AnimatePresence>
@@ -367,6 +391,29 @@ const OrlaMiniAvatar = ({
               transition={{ duration: 0.4, repeat: Infinity }}
               className="w-1 bg-white rounded-full"
             />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Audio level bars (voice reactive visualization) */}
+      <AnimatePresence>
+        {(isListening || isSpeaking) && audioLevel > 0.05 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex gap-0.5"
+          >
+            {[0.3, 0.6, 1, 0.6, 0.3].map((multiplier, i) => (
+              <motion.div
+                key={i}
+                className="w-1 bg-primary rounded-full"
+                animate={{
+                  height: 4 + audioLevel * 8 * multiplier,
+                }}
+                transition={{ duration: 0.05 }}
+              />
+            ))}
           </motion.div>
         )}
       </AnimatePresence>

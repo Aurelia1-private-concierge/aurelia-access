@@ -42,18 +42,18 @@ class ErrorBoundaryWrapper extends React.Component<{
   }
 }
 
-// Static avatar fallback with expression support
-const StaticAvatar = memo(({ 
-  size, 
-  isActive,
-  expression = "neutral",
-  isSpeaking = false,
-}: { 
+// Static avatar fallback with expression support - using forwardRef for AnimatePresence compatibility
+const StaticAvatar = React.forwardRef<HTMLDivElement, { 
   size: number; 
   isActive: boolean;
   expression?: OrlaExpression;
   isSpeaking?: boolean;
-}) => {
+}>(({ 
+  size, 
+  isActive,
+  expression = "neutral",
+  isSpeaking = false,
+}, ref) => {
   // Expression-based styling
   const expressionStyles: Record<OrlaExpression, string> = {
     neutral: "",
@@ -67,6 +67,7 @@ const StaticAvatar = memo(({
 
   return (
     <motion.div
+      ref={ref}
       className="w-full h-full rounded-full overflow-hidden relative flex items-center justify-center"
       style={{ width: size, height: size }}
       initial={{ scale: 0.9, opacity: 0 }}
@@ -141,55 +142,57 @@ const StaticAvatar = memo(({
 
 StaticAvatar.displayName = "StaticAvatar";
 
-// 3D Avatar component with expressions
-const ThreeDAvatar = memo(({ 
-  isActive, 
-  showSparkles,
-  reducedMotion,
-  expression,
-  isBlinking,
-}: { 
+// 3D Avatar component with expressions - using forwardRef for AnimatePresence compatibility
+const ThreeDAvatar = React.forwardRef<HTMLDivElement, { 
   isActive: boolean; 
   showSparkles: boolean;
   reducedMotion: boolean;
   expression: OrlaExpression;
   isBlinking: boolean;
-}) => (
-  <Canvas
-    camera={{ position: [0, 0, 2.5], fov: 45 }}
-    dpr={reducedMotion ? 1 : [1, 2]}
-    gl={{ 
-      antialias: !reducedMotion,
-      alpha: true,
-      powerPreference: reducedMotion ? "low-power" : "default",
-    }}
-    style={{ background: "transparent" }}
-  >
-    <ambientLight intensity={0.5} />
-    <directionalLight position={[2, 2, 3]} intensity={0.8} color="#fff5e6" />
-    <pointLight position={[0, -1, 2]} intensity={0.2} color="#D4AF37" />
-    
-    <Float
-      speed={reducedMotion ? 1 : 2}
-      rotationIntensity={reducedMotion ? 0.05 : 0.1}
-      floatIntensity={reducedMotion ? 0.08 : 0.15}
-      floatingRange={[-0.03, 0.03]}
+}>(({ 
+  isActive, 
+  showSparkles,
+  reducedMotion,
+  expression,
+  isBlinking,
+}, ref) => (
+  <div ref={ref} className="w-full h-full">
+    <Canvas
+      camera={{ position: [0, 0, 2.5], fov: 45 }}
+      dpr={reducedMotion ? 1 : [1, 2]}
+      gl={{ 
+        antialias: !reducedMotion,
+        alpha: true,
+        powerPreference: reducedMotion ? "low-power" : "default",
+      }}
+      style={{ background: "transparent" }}
     >
-      <ExpressiveOrb 
-        expression={expression}
-        intensity={1}
-        isBlinking={isBlinking}
-        isActive={isActive}
-        reducedMotion={reducedMotion}
-      />
-    </Float>
-    
-    {showSparkles && isActive && !reducedMotion && (
-      <Sparkles count={6} scale={2} size={1.5} speed={0.3} opacity={0.5} color="#D4AF37" />
-    )}
-    
-    <Environment preset="city" />
-  </Canvas>
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[2, 2, 3]} intensity={0.8} color="#fff5e6" />
+      <pointLight position={[0, -1, 2]} intensity={0.2} color="#D4AF37" />
+      
+      <Float
+        speed={reducedMotion ? 1 : 2}
+        rotationIntensity={reducedMotion ? 0.05 : 0.1}
+        floatIntensity={reducedMotion ? 0.08 : 0.15}
+        floatingRange={[-0.03, 0.03]}
+      >
+        <ExpressiveOrb 
+          expression={expression}
+          intensity={1}
+          isBlinking={isBlinking}
+          isActive={isActive}
+          reducedMotion={reducedMotion}
+        />
+      </Float>
+      
+      {showSparkles && isActive && !reducedMotion && (
+        <Sparkles count={6} scale={2} size={1.5} speed={0.3} opacity={0.5} color="#D4AF37" />
+      )}
+      
+      <Environment preset="city" />
+    </Canvas>
+  </div>
 ));
 
 ThreeDAvatar.displayName = "ThreeDAvatar";

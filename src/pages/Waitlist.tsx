@@ -11,8 +11,12 @@ import Footer from "@/components/Footer";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import WaitlistShare from "@/components/waitlist/WaitlistShare";
+import { useUTMTracking, getStoredUTMParams } from "@/hooks/useUTMTracking";
 
 const Waitlist = () => {
+  // Track UTM parameters
+  useUTMTracking();
   const { user } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
   const [email, setEmail] = useState("");
@@ -103,6 +107,8 @@ const Waitlist = () => {
 
     setIsSubmitting(true);
     try {
+      const utmParams = getStoredUTMParams();
+      
       const insertData: {
         email?: string;
         phone?: string;
@@ -111,7 +117,7 @@ const Waitlist = () => {
         source: string;
       } = {
         notification_preference: signupMethod,
-        source: "waitlist_page",
+        source: utmParams?.utm_campaign || utmParams?.utm_source || "waitlist_page",
       };
 
       if (signupMethod === "email") {
@@ -372,12 +378,15 @@ const Waitlist = () => {
                 </div>
               )}
 
-              {/* Social Proof */}
-              <div className="flex items-center justify-center gap-2 mt-6 text-sm text-muted-foreground">
-                <Users className="w-4 h-4 text-primary" />
-                <span>
-                  <strong className="text-foreground">{waitlistCount.toLocaleString()}</strong> people already waiting
-                </span>
+              {/* Social Proof & Share */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Users className="w-4 h-4 text-primary" />
+                  <span>
+                    <strong className="text-foreground">{waitlistCount.toLocaleString()}</strong> people already waiting
+                  </span>
+                </div>
+                <WaitlistShare />
               </div>
             </motion.div>
           </div>

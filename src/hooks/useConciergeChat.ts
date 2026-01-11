@@ -111,7 +111,7 @@ export const useConciergeChat = () => {
             sender_role: "member",
             content: content.trim(),
             message_type: messageType,
-            metadata,
+            metadata: metadata as Record<string, string | number | boolean | null>,
           })
           .select()
           .single();

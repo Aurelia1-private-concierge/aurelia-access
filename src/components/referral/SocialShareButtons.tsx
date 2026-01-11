@@ -7,7 +7,8 @@ import {
   Mail, 
   MessageCircle,
   Linkedin,
-  Twitter
+  Twitter,
+  Facebook
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -43,6 +44,13 @@ const SocialShareButtons = ({
       bgColor: "bg-emerald-500"
     },
     {
+      name: "Facebook",
+      icon: Facebook,
+      href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedTitle}`,
+      color: "hover:bg-blue-600/10 hover:text-blue-600 hover:border-blue-600/30",
+      bgColor: "bg-blue-600"
+    },
+    {
       name: "Email",
       icon: Mail,
       href: `mailto:?subject=${encodedTitle}&body=${encodedDescription}%0A%0A${encodedUrl}`,
@@ -60,8 +68,8 @@ const SocialShareButtons = ({
       name: "LinkedIn",
       icon: Linkedin,
       href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
-      color: "hover:bg-blue-600/10 hover:text-blue-600 hover:border-blue-600/30",
-      bgColor: "bg-blue-600"
+      color: "hover:bg-blue-700/10 hover:text-blue-700 hover:border-blue-700/30",
+      bgColor: "bg-blue-700"
     }
   ];
 

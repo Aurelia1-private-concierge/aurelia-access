@@ -42,6 +42,7 @@ const CreditHistory = lazy(() => import("./pages/CreditHistory"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
+const Social = lazy(() => import("./pages/Social"));
 
 // Minimal loading fallback
 const PageLoader = () => (
@@ -255,6 +256,14 @@ const AnimatedRoutes = () => {
                   <Onboarding />
                 </PageTransition>
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/social"
+            element={
+              <PageTransition>
+                <Social />
+              </PageTransition>
             }
           />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

@@ -1,4 +1,4 @@
-import { Instagram, Twitter, Linkedin, ArrowUp } from "lucide-react";
+import { Instagram, Twitter, Linkedin, Facebook, ArrowUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -35,6 +35,7 @@ const Footer = () => {
               <div className="flex items-center gap-3 mt-6">
                 {[
                   { icon: Instagram, href: "https://instagram.com/aureliaprivateconcierge", label: "Instagram" },
+                  { icon: Facebook, href: "https://facebook.com/aureliaprivateconcierge", label: "Facebook" },
                   { icon: Twitter, href: "https://x.com/aureliaprivate", label: "X (Twitter)" },
                   { icon: Linkedin, href: "https://linkedin.com/company/aurelia-private-concierge", label: "LinkedIn" },
                 ].map(({ icon: Icon, href, label }) => (
@@ -83,6 +84,11 @@ const Footer = () => {
                 <li>
                   <Link to="/auth" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
                     {t("nav.membership")}
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/social" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
+                    Follow Us
                   </Link>
                 </li>
                 <li>

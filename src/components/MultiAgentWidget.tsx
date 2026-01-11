@@ -383,15 +383,28 @@ const MultiAgentWidget = () => {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input Area */}
-            {agent.mode === "chat" && (
+            {/* Input Area - Show for chat mode OR hybrid mode */}
+            {(agent.mode === "chat" || agent.mode === "hybrid") && (
               <div className="p-4 border-t border-border/30 bg-gradient-to-t from-background/80 to-transparent">
+                {agent.mode === "hybrid" && agent.isConnected && (
+                  <div className="flex items-center justify-center gap-2 mb-3 py-2 px-3 bg-gradient-to-r from-primary/10 to-emerald-500/10 rounded-lg border border-primary/20">
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className="w-2 h-2 rounded-full bg-emerald-500"
+                    />
+                    <p className="text-[10px] text-foreground/80 font-medium">
+                      Hybrid active • Speak or type below
+                    </p>
+                    <Mic className="w-3 h-3 text-emerald-400" />
+                  </div>
+                )}
                 <div className="relative">
                   <input
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Type your request..."
+                    placeholder={agent.mode === "hybrid" ? "Type while voice is active..." : "Type your request..."}
                     className="w-full bg-secondary/40 border border-border/30 rounded-xl py-3.5 pl-4 pr-12 text-xs text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/40 focus:bg-secondary/60 transition-all font-light"
                     onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
                     disabled={agent.isProcessing}
@@ -413,6 +426,15 @@ const MultiAgentWidget = () => {
                   </p>
                   <p className="text-[9px] text-primary/70 font-medium">Powered by Orla AI</p>
                 </div>
+                {agent.mode === "hybrid" && agent.isConnected && (
+                  <button
+                    onClick={handleHybridMode}
+                    className="w-full mt-3 py-2.5 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-[10px] font-medium flex items-center justify-center gap-2 hover:bg-red-500/20 transition-all"
+                  >
+                    <PhoneOff className="w-3 h-3" />
+                    End Hybrid Session
+                  </button>
+                )}
               </div>
             )}
 

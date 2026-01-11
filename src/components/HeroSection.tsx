@@ -43,23 +43,13 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
         style={{ y: mediaY, scale: mediaScale }}
         className="absolute inset-0 w-full h-[130%] z-0"
       >
-        {/* Fallback image - always present */}
-        <img
-          src={heroImage}
-          alt="Luxury Experience"
-          fetchPriority="high"
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-            videoSrc && videoLoaded && !videoError ? "opacity-0" : "opacity-60"
-          }`}
-        />
-        
-        {/* Video loading indicator */}
+        {/* Video loading indicator - only show if no video loaded yet */}
         {videoSrc && !videoLoaded && !videoError && (
-          <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+          <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none bg-background">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.3 }}
               className="flex flex-col items-center gap-3"
             >
               <div className="relative">

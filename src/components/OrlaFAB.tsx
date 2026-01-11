@@ -7,6 +7,7 @@ import { useAvatarStyle } from "@/hooks/useAvatarStyle";
 const OrlaFAB = () => {
   const [isHovered, setIsHovered] = useState(false);
   const { currentStyle } = useAvatarStyle();
+  const hasUnreadNotifications = true; // TODO: Connect to actual notification state
   
   return (
     <Link to="/orla">
@@ -24,6 +25,22 @@ const OrlaFAB = () => {
           boxShadow: `0 0 40px ${currentStyle.colors.glow}`,
         }}
       >
+        {/* Notification pulse ring effect */}
+        {hasUnreadNotifications && (
+          <>
+            <motion.span 
+              animate={{ scale: [1, 1.8, 1.8], opacity: [0.6, 0, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
+              className="absolute inset-0 rounded-full border-2 border-emerald-400"
+            />
+            <motion.span 
+              animate={{ scale: [1, 1.5, 1.5], opacity: [0.4, 0, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeOut", delay: 0.3 }}
+              className="absolute inset-0 rounded-full border-2 border-emerald-400"
+            />
+          </>
+        )}
+        
         {/* Animated glow ring */}
         <motion.span 
           animate={{ scale: [1, 1.4, 1], opacity: [0.4, 0, 0.4] }}
@@ -72,8 +89,13 @@ const OrlaFAB = () => {
           <span className="text-[9px] font-bold text-white">1</span>
         </motion.span>
 
-        {/* Mini Avatar */}
-        <OrlaMiniAvatar size={56} isActive={isHovered} showSparkles={true} forceStatic={true} />
+        {/* Mini Avatar with breathing animation */}
+        <motion.div
+          animate={{ scale: [1, 1.03, 1] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <OrlaMiniAvatar size={56} isActive={isHovered} showSparkles={true} forceStatic={true} />
+        </motion.div>
 
         {/* Tooltip on hover */}
         <motion.div

@@ -11,11 +11,11 @@ export const BRAND = {
   description: "The world's most exclusive concierge service.",
   entity: "Aurelia Holdings Ltd.",
   email: "concierge@aurelia-privateconcierge.com",
-  locations: ["Geneva", "London", "Singapore"],
+  locations: ["London", "Geneva", "Singapore"],
   year: 2026,
   legal: {
     copyright: "All rights reserved. Unauthorized reproduction prohibited.",
     trademark: "AURELIA® is a registered trademark of Aurelia Holdings Ltd.",
-    jurisdiction: "Registered in Switzerland. All disputes subject to Geneva jurisdiction.",
+    jurisdiction: "Registered in the United Kingdom. All disputes subject to London jurisdiction.",
   },
 } as const;

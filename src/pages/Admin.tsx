@@ -54,6 +54,7 @@ import ABTestingPanel from "@/components/admin/ABTestingPanel";
 import CRMPanel from "@/components/admin/CRMPanel";
 import CommissionTracker from "@/components/admin/CommissionTracker";
 import TrialApplicationsPanel from "@/components/admin/TrialApplicationsPanel";
+import SocialScheduler from "@/components/admin/SocialScheduler";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -305,8 +306,13 @@ const Admin = () => {
             <TabsTrigger value="signups">Signups</TabsTrigger>
             <TabsTrigger value="contacts">Contacts</TabsTrigger>
             <TabsTrigger value="requests">Requests</TabsTrigger>
+            <TabsTrigger value="scheduler">Scheduler</TabsTrigger>
             <TabsTrigger value="integrations">Integrations</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="scheduler" className="space-y-6">
+            <SocialScheduler />
+          </TabsContent>
 
           <TabsContent value="trials" className="space-y-6">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>

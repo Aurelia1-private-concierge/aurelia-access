@@ -2,12 +2,13 @@ import { Check } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
+import OptimizedImage from "./OptimizedImage";
 
 const images = [
-  { src: "https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?q=80&w=600&auto=format&fit=crop", alt: "Luxury Yacht", offset: false },
-  { src: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=600&auto=format&fit=crop", alt: "Luxury Watch", offset: true },
-  { src: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=600&auto=format&fit=crop", alt: "Luxury Interiors", offset: false },
-  { src: "https://images.unsplash.com/photo-1540962351504-03099e0a754b?q=80&w=600&auto=format&fit=crop", alt: "Private Jet", offset: true },
+  { src: "https://images.unsplash.com/photo-1577705998148-6da4f3963bc8", alt: "Luxury Yacht", offset: false },
+  { src: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3", alt: "Luxury Watch", offset: true },
+  { src: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c", alt: "Luxury Interiors", offset: false },
+  { src: "https://images.unsplash.com/photo-1540962351504-03099e0a754b", alt: "Private Jet", offset: true },
 ];
 
 const ExperiencesSection = () => {
@@ -45,7 +46,12 @@ const ExperiencesSection = () => {
           <div className="grid grid-cols-2 gap-4">
             {images.map((image, index) => (
               <motion.div key={index} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className={`relative overflow-hidden group ${image.offset ? "translate-y-8" : ""}`}>
-                <img src={image.src} className="w-full h-64 object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" alt={image.alt} />
+                <OptimizedImage 
+                  src={image.src} 
+                  alt={image.alt}
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                  className="w-full h-64 object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" 
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </motion.div>
             ))}

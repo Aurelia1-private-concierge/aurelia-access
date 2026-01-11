@@ -667,8 +667,13 @@ const Auth = () => {
       <div className="hidden lg:block lg:w-1/2 xl:w-2/5 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-background" />
         <img
-          src="https://images.unsplash.com/photo-1540541338287-41700207dee6?q=80&w=3270&auto=format&fit=crop"
+          src="https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1280&auto=format&fit=crop&q=75"
+          srcSet="https://images.unsplash.com/photo-1540541338287-41700207dee6?w=640&auto=format&fit=crop&q=75 640w, https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1024&auto=format&fit=crop&q=75 1024w, https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1536&auto=format&fit=crop&q=75 1536w"
+          sizes="50vw"
           alt="Luxury"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
           className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay"
         />
         <div className="absolute inset-0 flex items-center justify-center p-12">

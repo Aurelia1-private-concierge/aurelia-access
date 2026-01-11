@@ -11,7 +11,10 @@ import {
   Gift,
   Calendar,
   MessageCircle,
-  Watch
+  Watch,
+  Headphones,
+  ClipboardList,
+  ShieldCheck
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -19,7 +22,7 @@ import { AnimatedLogo } from "@/components/brand";
 import { useTierTheme } from "@/contexts/TierThemeContext";
 import { cn } from "@/lib/utils";
 
-export type ActiveView = "portfolio" | "messaging" | "documents" | "referrals" | "calendar" | "chat" | "devices";
+export type ActiveView = "portfolio" | "messaging" | "documents" | "referrals" | "calendar" | "chat" | "devices" | "concierge" | "requests" | "security";
 
 interface DashboardSidebarProps {
   activeView: ActiveView;
@@ -28,11 +31,14 @@ interface DashboardSidebarProps {
 
 const menuItems = [
   { id: "portfolio" as const, label: "Portfolio", icon: LayoutDashboard },
+  { id: "concierge" as const, label: "Concierge", icon: Headphones },
+  { id: "requests" as const, label: "Service Requests", icon: ClipboardList },
   { id: "calendar" as const, label: "Calendar", icon: Calendar },
   { id: "chat" as const, label: "Live Chat", icon: MessageCircle },
   { id: "messaging" as const, label: "Secure Messages", icon: MessageSquareLock },
   { id: "documents" as const, label: "Document Vault", icon: FolderLock },
   { id: "devices" as const, label: "Devices", icon: Watch },
+  { id: "security" as const, label: "Security", icon: ShieldCheck },
   { id: "referrals" as const, label: "Referrals", icon: Gift },
 ];
 

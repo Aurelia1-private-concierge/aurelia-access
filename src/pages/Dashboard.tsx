@@ -10,6 +10,9 @@ import ReferralDashboard from "@/components/referral/ReferralDashboard";
 import LifestyleCalendar from "@/components/dashboard/LifestyleCalendar";
 import RealTimeChat from "@/components/dashboard/RealTimeChat";
 import DeviceConnections from "@/components/dashboard/DeviceConnections";
+import ConciergeChat from "@/components/dashboard/ConciergeChat";
+import ServiceRequestsView from "@/components/dashboard/ServiceRequestsView";
+import LoginSecurityPanel from "@/components/dashboard/LoginSecurityPanel";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { TierThemeProvider, useTierTheme } from "@/contexts/TierThemeContext";
 import { cn } from "@/lib/utils";
@@ -23,7 +26,7 @@ const DashboardContent = () => {
   // Update view when URL params change
   useEffect(() => {
     const tab = searchParams.get("tab") as ActiveView | null;
-    if (tab && ["portfolio", "messaging", "documents", "referrals", "calendar", "chat", "devices"].includes(tab)) {
+    if (tab && ["portfolio", "messaging", "documents", "referrals", "calendar", "chat", "devices", "concierge", "requests", "security"].includes(tab)) {
       setActiveView(tab);
     }
   }, [searchParams]);
@@ -32,6 +35,10 @@ const DashboardContent = () => {
     switch (activeView) {
       case "portfolio":
         return <PortfolioOverview />;
+      case "concierge":
+        return <ConciergeChat />;
+      case "requests":
+        return <ServiceRequestsView />;
       case "messaging":
         return <SecureMessaging />;
       case "documents":
@@ -44,6 +51,8 @@ const DashboardContent = () => {
         return <RealTimeChat />;
       case "devices":
         return <DeviceConnections />;
+      case "security":
+        return <LoginSecurityPanel />;
       default:
         return <PortfolioOverview />;
     }

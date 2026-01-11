@@ -68,3 +68,21 @@ verify_jwt = false
 
 [functions.generate-ambient-sfx]
 verify_jwt = false
+
+[functions.stripe-connect-onboard]
+verify_jwt = false
+
+[functions.stripe-connect-status]
+verify_jwt = false
+
+[functions.stripe-connect-payout]
+verify_jwt = false
+
+[functions.wearable-oauth]
+verify_jwt = false
+
+[functions.wearable-sync]
+verify_jwt = false
+
+[functions.waitlist-notification]
+verify_jwt = false

@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import CircularWaveform from "@/components/CircularWaveform";
 import GuestPreview from "@/components/orla/GuestPreview";
 import Orla3DAvatar from "@/components/orla/Orla3DAvatar";
-import { RealisticAvatar, AnimeAvatar, RoboticAvatar } from "@/components/orla/avatars";
+import { RealisticAvatar, AnimeAvatar, RoboticAvatar, FantasyElfAvatar, SteampunkAvatar, MinimalistAvatar } from "@/components/orla/avatars";
 import AvatarModelSelector from "@/components/orla/avatars/AvatarModelSelector";
 import MotionTrackedAvatar from "@/components/orla/MotionTrackedAvatar";
 import CameraPreview from "@/components/orla/CameraPreview";
@@ -841,6 +841,39 @@ const OrlaInner = () => {
                   emotion={expressionState.emotion}
                   faceData={faceTrackingEnabled ? faceData : undefined}
                   size={208}
+                  colors={{
+                    primary: currentStyle.colors.primary,
+                    secondary: currentStyle.colors.secondary,
+                    accent: currentStyle.colors.accent,
+                    glow: currentStyle.colors.glow,
+                  }}
+                />
+              ) : avatarModel === "elf" ? (
+                <FantasyElfAvatar
+                  isSpeaking={isSpeaking}
+                  faceData={faceTrackingEnabled ? faceData : undefined}
+                  colors={{
+                    primary: currentStyle.colors.primary,
+                    secondary: currentStyle.colors.secondary,
+                    accent: currentStyle.colors.accent,
+                    glow: currentStyle.colors.glow,
+                  }}
+                />
+              ) : avatarModel === "steampunk" ? (
+                <SteampunkAvatar
+                  isSpeaking={isSpeaking}
+                  faceData={faceTrackingEnabled ? faceData : undefined}
+                  colors={{
+                    primary: currentStyle.colors.primary,
+                    secondary: currentStyle.colors.secondary,
+                    accent: currentStyle.colors.accent,
+                    glow: currentStyle.colors.glow,
+                  }}
+                />
+              ) : avatarModel === "minimalist" ? (
+                <MinimalistAvatar
+                  isSpeaking={isSpeaking}
+                  faceData={faceTrackingEnabled ? faceData : undefined}
                   colors={{
                     primary: currentStyle.colors.primary,
                     secondary: currentStyle.colors.secondary,

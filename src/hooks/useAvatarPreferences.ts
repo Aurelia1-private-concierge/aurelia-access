@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 
 export type AvatarMode = "3d" | "static" | "auto";
-export type AvatarModelType = "classic" | "realistic" | "anime" | "robotic" | "elf" | "steampunk" | "minimalist" | "masculine" | "abstract" | "cyberpunk";
+export type AvatarModelType = "classic" | "realistic" | "anime" | "robotic" | "elf" | "steampunk" | "minimalist" | "masculine" | "abstract" | "cyberpunk" | "tyrone";
 
 interface AvatarPreferences {
   mode: AvatarMode;

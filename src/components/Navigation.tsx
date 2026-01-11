@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Lock, Menu, Compass, Play } from "lucide-react";
+import { Lock, Menu, Compass } from "lucide-react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -21,9 +21,8 @@ const navLinks = [
 ];
 
 const pageLinks = [
-  { href: "/experiences", label: "Experiences", icon: Compass },
+  { href: "/services", label: "Services", icon: Compass },
   { href: "/discover", label: "Discover", icon: Compass },
-  { href: "/demo-services", label: "Demo", icon: Play, isDemo: true },
   { href: "/partners/join", label: "Become a Partner", icon: Compass },
 ];
 

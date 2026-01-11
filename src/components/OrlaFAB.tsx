@@ -1,19 +1,77 @@
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import OrlaMiniAvatar from "@/components/orla/OrlaMiniAvatar";
 import { useAvatarStyle } from "@/hooks/useAvatarStyle";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const OrlaFAB = () => {
   const [isHovered, setIsHovered] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const { currentStyle } = useAvatarStyle();
-  const hasUnreadNotifications = true; // TODO: Connect to actual notification state
+  const { user } = useAuth();
+  const controls = useAnimation();
+  const prevCountRef = useRef(0);
+  
+  const hasUnreadNotifications = unreadCount > 0;
+
+  // Fetch unread notifications
+  useEffect(() => {
+    if (!user) {
+      setUnreadCount(0);
+      return;
+    }
+
+    const fetchUnreadCount = async () => {
+      const { count, error } = await supabase
+        .from("notifications")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .eq("read", false);
+
+      if (!error && count !== null) {
+        // Trigger bounce if count increased
+        if (count > prevCountRef.current) {
+          controls.start({
+            y: [0, -12, 0, -6, 0],
+            transition: { duration: 0.5, ease: "easeOut" }
+          });
+        }
+        prevCountRef.current = count;
+        setUnreadCount(count);
+      }
+    };
+
+    fetchUnreadCount();
+
+    // Subscribe to realtime changes
+    const channel = supabase
+      .channel("notifications-fab")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "notifications",
+          filter: `user_id=eq.${user.id}`,
+        },
+        () => {
+          fetchUnreadCount();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, controls]);
   
   return (
     <Link to="/orla">
       <motion.div
         initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
+        animate={controls}
         transition={{ delay: 2.5, type: "spring", stiffness: 200 }}
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
@@ -81,13 +139,18 @@ const OrlaFAB = () => {
         )}
         
         {/* Notification Dot */}
-        <motion.span 
-          animate={{ scale: [1, 1.15, 1] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 border-2 border-background rounded-full z-10 flex items-center justify-center shadow-lg shadow-emerald-500/40"
-        >
-          <span className="text-[9px] font-bold text-white">1</span>
-        </motion.span>
+        {hasUnreadNotifications && (
+          <motion.span 
+            initial={{ scale: 0 }}
+            animate={{ scale: [1, 1.15, 1] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 border-2 border-background rounded-full z-10 flex items-center justify-center shadow-lg shadow-emerald-500/40"
+          >
+            <span className="text-[9px] font-bold text-white">
+              {unreadCount > 9 ? "9+" : unreadCount}
+            </span>
+          </motion.span>
+        )}
 
         {/* Mini Avatar with breathing animation */}
         <motion.div
@@ -107,7 +170,9 @@ const OrlaFAB = () => {
           }}
         >
           <p className="text-xs text-foreground font-medium">Speak with Orla</p>
-          <p className="text-[10px] text-muted-foreground">Voice conversation</p>
+          <p className="text-[10px] text-muted-foreground">
+            {hasUnreadNotifications ? `${unreadCount} unread` : "Voice conversation"}
+          </p>
         </motion.div>
       </motion.div>
     </Link>

@@ -125,10 +125,10 @@ const Terms = () => {
             </h3>
             <p className="text-muted-foreground leading-relaxed">
               For questions regarding these Terms of Service, please contact our legal department at{" "}
-              <a href={`mailto:legal@aurelia.com`} className="text-primary hover:underline">
-                legal@aurelia.com
+              <a href="mailto:concierge@aurelia-privateconcierge.com" className="text-primary hover:underline">
+                concierge@aurelia-privateconcierge.com
               </a>{" "}
-              or via post at our registered office in Geneva, Switzerland.
+              or via post at our registered office in London, United Kingdom.
             </p>
           </motion.div>
 

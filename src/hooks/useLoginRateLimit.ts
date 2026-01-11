@@ -186,6 +186,7 @@ export const useLoginRateLimit = () => {
     recordSuccessfulLogin,
     formatCooldown,
     checkRateLimit,
+    clearAttempts, // Expose manual clear function
   };
 };
 

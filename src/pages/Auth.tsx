@@ -47,7 +47,8 @@ const Auth = () => {
     cooldownSeconds, 
     recordFailedAttempt, 
     recordSuccessfulLogin,
-    formatCooldown 
+    formatCooldown,
+    clearAttempts 
   } = useLoginRateLimit();
   
   const { needsVerification, checkMFAStatus } = useMFA();
@@ -616,15 +617,24 @@ const Auth = () => {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center gap-3 p-4 bg-destructive/10 border border-destructive/20 rounded-lg"
+                  className="flex items-center justify-between gap-3 p-4 bg-destructive/10 border border-destructive/20 rounded-lg"
                 >
-                  <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium text-destructive">Too many failed attempts</p>
-                    <p className="text-xs text-destructive/80">
-                      Please wait {formatCooldown(cooldownSeconds)} before trying again
-                    </p>
+                  <div className="flex items-center gap-3">
+                    <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-destructive">Too many failed attempts</p>
+                      <p className="text-xs text-destructive/80">
+                        Please wait {formatCooldown(cooldownSeconds)} before trying again
+                      </p>
+                    </div>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => clearAttempts()}
+                    className="text-xs text-destructive/80 hover:text-destructive underline underline-offset-2 flex-shrink-0"
+                  >
+                    Reset
+                  </button>
                 </motion.div>
               )}
 

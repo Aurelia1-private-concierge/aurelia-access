@@ -40,6 +40,7 @@ const DemoServices = lazy(() => import("./pages/DemoServices"));
 const TrialApplication = lazy(() => import("./pages/TrialApplication"));
 const CreditHistory = lazy(() => import("./pages/CreditHistory"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const Contact = lazy(() => import("./pages/Contact"));
 
 // Minimal loading fallback
 const PageLoader = () => (
@@ -243,6 +244,14 @@ const AnimatedRoutes = () => {
                   <Admin />
                 </PageTransition>
               </AdminRoute>
+            }
+          />
+          <Route
+            path="/contact"
+            element={
+              <PageTransition>
+                <Contact />
+              </PageTransition>
             }
           />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

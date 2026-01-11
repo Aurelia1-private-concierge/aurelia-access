@@ -102,11 +102,15 @@ const Footer = () => {
               </h4>
               <ul className="space-y-3 text-sm text-muted-foreground">
                 <li>
-                  <a href="mailto:concierge@Aurelia-privateconcierge.com" className="hover:text-foreground transition-colors duration-300">
-                    concierge@Aurelia-privateconcierge.com
+                  <a href="mailto:concierge@aurelia-privateconcierge.com" className="hover:text-foreground transition-colors duration-300">
+                    concierge@aurelia-privateconcierge.com
                   </a>
                 </li>
-                <li>Geneva • London • Singapore</li>
+                <li>London • Geneva • Singapore</li>
+                <li className="text-xs text-muted-foreground/60">
+                  Aurelia Holdings Ltd.<br />
+                  London, United Kingdom
+                </li>
                 <li className="pt-2">
                   <span className="text-xs tracking-wide text-primary">{t("footer.privateLine")}</span>
                 </li>
@@ -124,6 +128,11 @@ const Footer = () => {
                     />
                     Chat on WhatsApp
                   </a>
+                </li>
+                <li className="pt-3">
+                  <Link to="/contact" className="text-primary hover:text-primary/80 transition-colors duration-300 text-sm">
+                    Contact Us →
+                  </Link>
                 </li>
                 <li className="pt-4">
                   <LanguageSwitcher variant="footer" />
@@ -151,7 +160,8 @@ const Footer = () => {
             <div className="flex items-center gap-6 text-xs text-muted-foreground/40 font-light">
               <Link to="/privacy" className="hover:text-muted-foreground transition-colors">{t("footer.privacy")}</Link>
               <Link to="/terms" className="hover:text-muted-foreground transition-colors">{t("footer.terms")}</Link>
-              <a href="mailto:concierge@Aurelia-privateconcierge.com" className="hover:text-muted-foreground transition-colors">{t("footer.legal")}</a>
+              <a href="mailto:concierge@aurelia-privateconcierge.com" className="hover:text-muted-foreground transition-colors">{t("footer.legal")}</a>
+              <Link to="/contact" className="hover:text-muted-foreground transition-colors">Contact</Link>
             </div>
             <motion.button
               onClick={scrollToTop}

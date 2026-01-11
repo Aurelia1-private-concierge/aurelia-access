@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Crown, Star, Clock, Gift, Shield, Users, Check, ArrowRight, Sparkles, Globe, Phone, Mail } from "lucide-react";
+import { Crown, Star, Clock, Gift, Shield, Users, Check, ArrowRight, Sparkles, Globe, Phone, Mail, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,17 +9,34 @@ import { Logo } from "@/components/brand";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Waitlist = () => {
+  const { user } = useAuth();
+  const [isAdmin, setIsAdmin] = useState(false);
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [countryCode, setCountryCode] = useState("+44");
   const [signupMethod, setSignupMethod] = useState<"email" | "phone">("email");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [launchDate, setLaunchDate] = useState<Date>(new Date("2026-02-01"));
+  const [launchDate, setLaunchDate] = useState<Date>(new Date("2026-02-15"));
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [waitlistCount, setWaitlistCount] = useState(0);
+
+  // Check if user is admin
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (!user) {
+        setIsAdmin(false);
+        return;
+      }
+      const { data } = await supabase.rpc('has_role', { _user_id: user.id, _role: 'admin' });
+      setIsAdmin(!!data);
+    };
+    checkAdmin();
+  }, [user]);
 
   const countryCodes = [
     { code: "+44", country: "UK" },
@@ -152,6 +169,25 @@ const Waitlist = () => {
     <div className="min-h-[100dvh] bg-background">
       <Navigation />
       
+      {/* Admin Preview Button - Fixed position */}
+      {isAdmin && (
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="fixed top-24 right-6 z-50"
+        >
+          <Link to="/home">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 bg-card/80 backdrop-blur-sm border-primary/30 hover:bg-primary/10 hover:border-primary"
+            >
+              <Eye className="w-4 h-4" />
+              Preview Full Site
+            </Button>
+          </Link>
+        </motion.div>
+      )}
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
         {/* Background */}

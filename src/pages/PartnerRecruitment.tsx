@@ -99,7 +99,7 @@ const PartnerRecruitment = () => {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-[100dvh] bg-background">
         <Navigation />
         <section className="min-h-screen flex items-center justify-center pt-20">
           <motion.div
@@ -126,7 +126,7 @@ const PartnerRecruitment = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-[100dvh] bg-background">
       <Navigation />
       
       {/* Hero Section */}

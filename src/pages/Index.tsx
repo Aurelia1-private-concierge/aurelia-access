@@ -23,20 +23,16 @@ import GlobalPresenceSection from "@/components/GlobalPresenceSection";
 import NewsletterSection from "@/components/NewsletterSection";
 import ContactSection from "@/components/ContactSection";
 import ServiceCategoriesSection from "@/components/ServiceCategoriesSection";
-import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import MembershipTiersPreview from "@/components/MembershipTiersPreview";
 import AmbientParticles from "@/components/AmbientParticles";
 import GlowingOrb from "@/components/GlowingOrb";
 import MetaverseEntryPoint from "@/components/MetaverseEntryPoint";
 import WearablesHub from "@/components/wearables/WearablesHub";
 import SmartIntegrationsHub from "@/components/SmartIntegrationsHub";
-import AmbientAudioControls from "@/components/AmbientAudioControls";
 import PictureInPicture from "@/components/PictureInPicture";
 import VoiceCommands from "@/components/VoiceCommands";
 import ContextualSoundscapeIndicator from "@/components/ContextualSoundscapeIndicator";
 import useContextualSoundscapes from "@/hooks/useContextualSoundscapes";
-import MusicPlayer from "@/components/MusicPlayer";
-import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 
 const Index = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -166,12 +162,8 @@ const Index = () => {
       {/* Footer */}
       <Footer />
 
-      {/* Floating Elements */}
+      {/* Page-specific Floating Elements */}
       <MultiAgentWidget />
-      <FloatingWhatsApp />
-      
-      {/* Music Player - Replaces AmbientAudioControls */}
-      <MusicPlayer />
       
       {/* Picture-in-Picture Video */}
       <PictureInPicture 
@@ -179,7 +171,7 @@ const Index = () => {
         onClose={() => setIsPipEnabled(false)} 
       />
       
-      {/* Voice Commands */}
+      {/* Voice Commands - Hidden on mobile via component */}
       <VoiceCommands 
         onToggleMusic={handleToggleMusic}
         onToggleNarrator={handleToggleNarrator}
@@ -191,9 +183,6 @@ const Index = () => {
         description={soundscapes.getCurrentSoundscape().description}
         isPlaying={soundscapes.isPlaying}
       />
-      
-      {/* PWA Install Prompt */}
-      <PWAInstallPrompt />
 
       {/* Video Modal */}
       <VideoModal

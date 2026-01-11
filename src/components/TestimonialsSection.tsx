@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Quote, Star } from "lucide-react";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import OptimizedImage from "./OptimizedImage";
 
 const testimonials = [
   { 
@@ -11,7 +12,7 @@ const testimonials = [
     location: "Geneva",
     netWorth: "$50M+",
     memberSince: "2021",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
     featured: true
   },
   { 
@@ -21,7 +22,7 @@ const testimonials = [
     location: "Singapore",
     netWorth: "$100M+",
     memberSince: "2020",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
     featured: false
   },
   { 
@@ -31,7 +32,7 @@ const testimonials = [
     location: "London",
     netWorth: "$200M+",
     memberSince: "2019",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=400&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
     featured: false
   },
   { 
@@ -41,7 +42,7 @@ const testimonials = [
     location: "New York",
     netWorth: "$500M+",
     memberSince: "2018",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
     featured: true
   },
 ];
@@ -109,16 +110,23 @@ const TestimonialsSection = () => {
             {/* Image Side */}
             <div className="relative group">
               <div className="relative aspect-[4/5] overflow-hidden">
-                <motion.img 
-                  key={featuredTestimonial.image}
-                  initial={{ opacity: 0, scale: 1.1 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.8 }}
+              <motion.div
+                key={featuredTestimonial.image}
+                initial={{ opacity: 0, scale: 1.1 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8 }}
+                className="w-full h-full"
+              >
+                <OptimizedImage 
                   src={featuredTestimonial.image} 
                   alt={featuredTestimonial.author}
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   className="w-full h-full object-cover"
+                  loading="eager"
+                  fetchPriority="high"
                 />
-                {/* Overlay gradient */}
+              </motion.div>
+              {/* Overlay gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
                 
                 {/* Corner accents */}
@@ -210,9 +218,10 @@ const TestimonialsSection = () => {
                   ? 'border-primary shadow-lg shadow-primary/20' 
                   : 'border-border/30 group-hover:border-primary/50'
               }`}>
-                <img 
+                <OptimizedImage 
                   src={testimonial.image} 
                   alt={testimonial.author}
+                  sizes="80px"
                   className="w-full h-full object-cover"
                 />
               </div>

@@ -11,12 +11,15 @@ interface DashboardHeaderProps {
 
 const viewTitles: Record<ActiveView, string> = {
   portfolio: "Portfolio Overview",
+  concierge: "Concierge Chat",
+  requests: "Service Requests",
   messaging: "Secure Messaging",
   documents: "Document Vault",
   referrals: "Referral Program",
   calendar: "Lifestyle Calendar",
-  chat: "Concierge Chat",
+  chat: "Live Chat",
   devices: "Connected Devices",
+  security: "Login Security",
 };
 
 const tierIcons = {

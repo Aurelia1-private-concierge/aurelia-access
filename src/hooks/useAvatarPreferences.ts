@@ -67,7 +67,7 @@ export const useAvatarPreferences = () => {
         const parsed = JSON.parse(stored);
         return {
           mode: parsed.mode || "auto",
-          model: parsed.model || "classic",
+          model: parsed.model || "tyrone",
           reducedMotion: parsed.reducedMotion ?? window.matchMedia("(prefers-reduced-motion: reduce)").matches,
           transitionSoundEnabled: parsed.transitionSoundEnabled ?? true,
           isLowEndDevice: isLowEnd,
@@ -79,7 +79,7 @@ export const useAvatarPreferences = () => {
     
     return {
       mode: "auto" as AvatarMode,
-      model: "classic" as AvatarModelType,
+      model: "tyrone" as AvatarModelType,
       reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
       transitionSoundEnabled: true,
       isLowEndDevice: isLowEnd,

@@ -7,8 +7,9 @@ export { default as MinimalistAvatar } from "./MinimalistAvatar";
 export { default as MasculineAvatar } from "./MasculineAvatar";
 export { default as AbstractEnergyAvatar } from "./AbstractEnergyAvatar";
 export { default as CyberpunkAvatar } from "./CyberpunkAvatar";
+export { default as TyroneAvatar } from "./TyroneAvatar";
 
-export type AvatarModelType = "classic" | "realistic" | "anime" | "robotic" | "elf" | "steampunk" | "minimalist" | "masculine" | "abstract" | "cyberpunk";
+export type AvatarModelType = "classic" | "realistic" | "anime" | "robotic" | "elf" | "steampunk" | "minimalist" | "masculine" | "abstract" | "cyberpunk" | "tyrone";
 
 export const AVATAR_MODELS = [
   {
@@ -70,5 +71,11 @@ export const AVATAR_MODELS = [
     name: "Cyberpunk",
     description: "Neon-lit cyber implants with holographic displays",
     preview: "🌃",
+  },
+  {
+    id: "tyrone" as const,
+    name: "Tyrone",
+    description: "Elegant sophisticated partner with refined features and golden accents",
+    preview: "👑",
   },
 ];

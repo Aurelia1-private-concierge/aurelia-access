@@ -47,6 +47,7 @@ const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Social = lazy(() => import("./pages/Social"));
 const Campaign = lazy(() => import("./pages/Campaign"));
 const MarketingHub = lazy(() => import("./pages/MarketingHub"));
+const LinkedInProfile = lazy(() => import("./pages/LinkedInProfile"));
 
 // Minimal loading fallback
 const PageLoader = () => (
@@ -286,6 +287,14 @@ const AnimatedRoutes = () => {
                   <MarketingHub />
                 </PageTransition>
               </AdminRoute>
+            }
+          />
+          <Route
+            path="/linkedin"
+            element={
+              <PageTransition>
+                <LinkedInProfile />
+              </PageTransition>
             }
           />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

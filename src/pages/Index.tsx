@@ -11,7 +11,7 @@ import FAQSection from "@/components/FAQSection";
 import MembershipCTA from "@/components/MembershipCTA";
 import Footer from "@/components/Footer";
 import MultiAgentWidget from "@/components/MultiAgentWidget";
-import heroVideo from "@/assets/hero-video-extended.mp4";
+import heroVideo from "@/assets/hero-luxury-holiday.mp4";
 import LoadingScreen from "@/components/LoadingScreen";
 import ScrollProgress from "@/components/ScrollProgress";
 import RolexClock from "@/components/RolexClock";

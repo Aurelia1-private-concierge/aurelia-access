@@ -1,4 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -9,36 +12,36 @@
 @layer base {
   :root {
     /* Refined palette - Deeper, richer, more sophisticated */
-    --background: 225 45% 3%;
-    --foreground: 45 10% 92%;
+    --background: 60 4% 95%;
+    --foreground: 24 9% 10%;
 
-    --card: 225 40% 5%;
-    --card-foreground: 45 10% 92%;
+    --card: 60 9% 97%;
+    --card-foreground: 24 9% 10%;
 
-    --popover: 225 40% 4%;
-    --popover-foreground: 45 10% 92%;
+    --popover: 20 5% 90%;
+    --popover-foreground: 24 9% 10%;
 
     /* Gold as primary - warmer, more refined champagne gold */
-    --primary: 42 65% 55%;
-    --primary-foreground: 225 45% 5%;
+    --primary: 37 92% 50%;
+    --primary-foreground: 47 100% 96%;
 
-    --secondary: 225 30% 8%;
-    --secondary-foreground: 45 10% 85%;
+    --secondary: 24 5% 44%;
+    --secondary-foreground: 60 9% 97%;
 
-    --muted: 225 20% 12%;
-    --muted-foreground: 220 15% 55%;
+    --muted: 23 5% 82%;
+    --muted-foreground: 24 9% 10%;
 
-    --accent: 225 25% 12%;
-    --accent-foreground: 42 65% 55%;
+    --accent: 47 100% 96%;
+    --accent-foreground: 37 92% 50%;
 
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 45 10% 98%;
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 85% 97%;
 
-    --border: 225 15% 15%;
-    --input: 225 20% 12%;
-    --ring: 42 65% 55%;
+    --border: 23 5% 82%;
+    --input: 23 5% 82%;
+    --ring: 37 92% 50%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
 
     /* Premium Aurelia tokens */
     --gold: 42 65% 55%;
@@ -48,33 +51,80 @@
     --navy-light: 225 35% 8%;
     --ivory: 45 30% 96%;
     --champagne: 40 25% 85%;
-    
+
     /* Premium shadows */
     --shadow-gold: 0 0 60px hsl(42 65% 55% / 0.15);
     --shadow-elegant: 0 25px 50px -12px hsl(225 45% 3% / 0.8);
+    --chart-1: 45 96% 64%;
+    --chart-2: 47 95% 53%;
+    --chart-3: 43 96% 56%;
+    --chart-4: 37 92% 50%;
+    --chart-5: 24 5% 44%;
+    --sidebar: 60 9% 97%;
+    --sidebar-foreground: 24 9% 10%;
+    --sidebar-primary: 37 92% 50%;
+    --sidebar-primary-foreground: 47 100% 96%;
+    --sidebar-accent: 24 5% 44%;
+    --sidebar-accent-foreground: 60 9% 97%;
+    --sidebar-border: 23 5% 82%;
+    --sidebar-ring: 37 92% 50%;
+    --font-sans: 'Source Sans Pro', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+    --font-serif: 'Source Serif Pro', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+    --font-mono: 'Source Code Pro', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
+    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
+    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
+    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+    --tracking-normal: 0em;
+    --spacing: 0.25rem;
   }
 
   .dark {
-    --background: 225 45% 3%;
-    --foreground: 45 10% 92%;
-    --card: 225 40% 5%;
-    --card-foreground: 45 10% 92%;
-    --popover: 225 40% 4%;
-    --popover-foreground: 45 10% 92%;
-    --primary: 42 65% 55%;
-    --primary-foreground: 225 45% 5%;
-    --secondary: 225 30% 8%;
-    --secondary-foreground: 45 10% 85%;
-    --muted: 225 20% 12%;
-    --muted-foreground: 220 15% 55%;
-    --accent: 225 25% 12%;
-    --accent-foreground: 42 65% 55%;
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 45 10% 98%;
-    --border: 225 15% 15%;
-    --input: 225 20% 12%;
-    --ring: 42 65% 55%;
+    --background: 24 9% 10%;
+    --foreground: 60 9% 97%;
+    --card: 12 6% 15%;
+    --card-foreground: 60 9% 97%;
+    --popover: 30 6% 25%;
+    --popover-foreground: 60 9% 97%;
+    --primary: 43 96% 56%;
+    --primary-foreground: 20 91% 14%;
+    --secondary: 24 5% 44%;
+    --secondary-foreground: 60 9% 97%;
+    --muted: 24 5% 44%;
+    --muted-foreground: 60 9% 97%;
+    --accent: 25 83% 14%;
+    --accent-foreground: 47 95% 53%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 85% 97%;
+    --border: 33 5% 32%;
+    --input: 33 5% 32%;
+    --ring: 43 96% 56%;
     --radius: 0.5rem;
+    --chart-1: 45 96% 64%;
+    --chart-2: 48 96% 76%;
+    --chart-3: 43 96% 56%;
+    --chart-4: 37 92% 50%;
+    --chart-5: 33 5% 32%;
+    --sidebar: 12 6% 15%;
+    --sidebar-foreground: 60 9% 97%;
+    --sidebar-primary: 43 96% 56%;
+    --sidebar-primary-foreground: 20 91% 14%;
+    --sidebar-accent: 47 95% 53%;
+    --sidebar-accent-foreground: 25 83% 14%;
+    --sidebar-border: 33 5% 32%;
+    --sidebar-ring: 43 96% 56%;
+    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
+    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
+    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
+    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
   }
 }
 

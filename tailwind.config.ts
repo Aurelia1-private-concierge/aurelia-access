@@ -15,16 +15,25 @@ export default {
   	extend: {
   		fontFamily: {
   			sans: [
-  				'Inter',
+  				'Source Sans Pro',
+  				'ui-sans-serif',
+  				'system-ui',
   				'-apple-system',
   				'BlinkMacSystemFont',
-  				'system-ui',
+  				'Segoe UI',
+  				'Roboto',
+  				'Helvetica Neue',
+  				'Arial',
+  				'Noto Sans',
   				'sans-serif'
   			],
   			serif: [
-  				'Cormorant Garamond',
-  				'Playfair Display',
+  				'Source Serif Pro',
+  				'ui-serif',
   				'Georgia',
+  				'Cambria',
+  				'Times New Roman',
+  				'Times',
   				'serif'
   			],
   			display: [
@@ -32,9 +41,14 @@ export default {
   				'serif'
   			],
   			mono: [
-  				'Roboto Mono',
+  				'Source Code Pro',
   				'ui-monospace',
   				'SFMono-Regular',
+  				'Menlo',
+  				'Monaco',
+  				'Consolas',
+  				'Liberation Mono',
+  				'Courier New',
   				'monospace'
   			]
   		},
@@ -96,7 +110,7 @@ export default {
   		},
   		letterSpacing: {
   			'ultra-wide': '0.3em',
-  			'premium': '0.2em'
+  			premium: '0.2em'
   		},
   		keyframes: {
   			'accordion-down': {
@@ -148,6 +162,15 @@ export default {
   			'fade-in-up': 'fade-in-up 1s cubic-bezier(0.4, 0, 0.2, 1) forwards',
   			'subtle-pulse': 'subtle-pulse 4s ease-in-out infinite',
   			'glow-pulse': 'glow-pulse 3s ease-in-out infinite'
+  		},
+  		boxShadow: {
+  			'2xs': 'var(--shadow-2xs)',
+  			xs: 'var(--shadow-xs)',
+  			sm: 'var(--shadow-sm)',
+  			md: 'var(--shadow-md)',
+  			lg: 'var(--shadow-lg)',
+  			xl: 'var(--shadow-xl)',
+  			'2xl': 'var(--shadow-2xl)'
   		}
   	}
   },

@@ -15,10 +15,11 @@ import AdminRoute from "./components/AdminRoute";
 import GlobalElements from "./components/GlobalElements";
 import "@/i18n";
 
-// Eagerly load the homepage for best LCP
-import Index from "./pages/Index";
+// Eagerly load the waitlist/under construction page for best LCP
+import Waitlist from "./pages/Waitlist";
 
 // Lazy load all other pages to reduce initial bundle
+const Index = lazy(() => import("./pages/Index"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -34,7 +35,6 @@ const Admin = lazy(() => import("./pages/Admin"));
 const Membership = lazy(() => import("./pages/Membership"));
 const Discover = lazy(() => import("./pages/Discover"));
 const Referral = lazy(() => import("./pages/Referral"));
-const Waitlist = lazy(() => import("./pages/Waitlist"));
 const PartnerRecruitment = lazy(() => import("./pages/PartnerRecruitment"));
 
 const TrialApplication = lazy(() => import("./pages/TrialApplication"));
@@ -62,6 +62,14 @@ const AnimatedRoutes = () => {
         <Routes location={location} key={location.pathname}>
           <Route
             path="/"
+            element={
+              <PageTransition>
+                <Waitlist />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/home"
             element={
               <PageTransition>
                 <Index />
@@ -191,14 +199,6 @@ const AnimatedRoutes = () => {
             element={
               <PageTransition>
                 <Referral />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/waitlist"
-            element={
-              <PageTransition>
-                <Waitlist />
               </PageTransition>
             }
           />

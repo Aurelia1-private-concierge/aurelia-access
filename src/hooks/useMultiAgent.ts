@@ -13,6 +13,7 @@ interface AgentMessage {
   timestamp: Date;
   mode: AgentMode;
   isStreaming?: boolean;
+  audioUrl?: string; // For hybrid mode - text with audio
 }
 
 interface MultiAgentState {

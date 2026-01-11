@@ -11,7 +11,7 @@ import FAQSection from "@/components/FAQSection";
 import MembershipCTA from "@/components/MembershipCTA";
 import Footer from "@/components/Footer";
 import MultiAgentWidget from "@/components/MultiAgentWidget";
-import heroVideo from "@/assets/hero-video.mp4";
+import heroVideo from "@/assets/hero-video-extended.mp4";
 import LoadingScreen from "@/components/LoadingScreen";
 import ScrollProgress from "@/components/ScrollProgress";
 import RolexClock from "@/components/RolexClock";
@@ -25,12 +25,20 @@ import ContactSection from "@/components/ContactSection";
 import ServiceCategoriesSection from "@/components/ServiceCategoriesSection";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import MembershipTiersPreview from "@/components/MembershipTiersPreview";
+import AmbientParticles from "@/components/AmbientParticles";
+import GlowingOrb from "@/components/GlowingOrb";
 
 const Index = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden relative">
+      {/* Ambient Effects */}
+      <AmbientParticles />
+      <GlowingOrb className="top-1/4 -left-48" size="xl" color="gold" intensity="soft" />
+      <GlowingOrb className="top-1/2 -right-32" size="lg" color="gold" intensity="soft" />
+      <GlowingOrb className="bottom-1/4 left-1/3" size="md" color="gold" intensity="soft" />
+      
       <CustomCursor />
       <LoadingScreen />
       <ScrollProgress />

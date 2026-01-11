@@ -11,6 +11,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import CircularWaveform from "@/components/CircularWaveform";
 import GuestPreview from "@/components/orla/GuestPreview";
 import Orla3DAvatar from "@/components/orla/Orla3DAvatar";
+import { RealisticAvatar, AnimeAvatar, RoboticAvatar } from "@/components/orla/avatars";
+import AvatarModelSelector from "@/components/orla/avatars/AvatarModelSelector";
 import MotionTrackedAvatar from "@/components/orla/MotionTrackedAvatar";
 import CameraPreview from "@/components/orla/CameraPreview";
 import { OrlaExpressionProvider, useOrlaExpression, OrlaEmotion } from "@/components/orla/OrlaExpressionController";
@@ -25,6 +27,7 @@ import { useVoiceReactive } from "@/hooks/useVoiceReactive";
 import { useTransitionSounds } from "@/hooks/useTransitionSounds";
 import { useFaceTracking } from "@/hooks/useFaceTracking";
 import { useAvatarStyle } from "@/hooks/useAvatarStyle";
+import { useAvatarPreferences } from "@/hooks/useAvatarPreferences";
 import { languages } from "@/i18n";
 
 const ELEVENLABS_AGENT_ID = "agent_01jx7t3mjgeqzsjh5qxbvdsxey";

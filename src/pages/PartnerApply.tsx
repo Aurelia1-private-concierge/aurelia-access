@@ -94,27 +94,26 @@ const PartnerApply = () => {
 
       if (error) throw error;
 
-      // Trigger Zapier webhook for partner application
+      // Send email notification to admin
       try {
-        await supabase.functions.invoke("zapier-webhook", {
+        await supabase.functions.invoke("notify-admin", {
           body: {
-            event: "partner_application_submitted",
+            type: "partner_application",
             data: {
-              partner_id: partner.id,
-              company_name: formData.companyName,
-              contact_name: formData.contactName,
+              companyName: formData.companyName,
+              contactName: formData.contactName,
               email: formData.email,
-              phone: formData.phone,
-              website: formData.website,
+              phone: formData.phone || undefined,
+              website: formData.website || undefined,
               categories: formData.categories,
-              description: formData.description,
+              description: formData.description || undefined,
             },
           },
         });
-        console.log("Zapier webhook triggered for partner application");
-      } catch (webhookError) {
-        console.log("Zapier webhook not configured or failed:", webhookError);
-        // Don't fail the application if webhook fails
+        console.log("Admin notification sent for partner application");
+      } catch (emailError) {
+        console.error("Admin notification failed:", emailError);
+        // Don't fail the application if notification fails
       }
 
       // Note: Partner role is automatically granted via database trigger when admin approves

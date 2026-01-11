@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CircularWaveform from "@/components/CircularWaveform";
 import GuestPreview from "@/components/orla/GuestPreview";
-import OrlaAnimatedAvatar from "@/components/orla/OrlaAnimatedAvatar";
+import Orla3DAvatar from "@/components/orla/Orla3DAvatar";
+import { OrlaExpressionProvider, useOrlaExpression, OrlaEmotion } from "@/components/orla/OrlaExpressionController";
 import VoiceSessionHistory from "@/components/orla/VoiceSessionHistory";
 import LanguageSelector from "@/components/orla/LanguageSelector";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,7 +35,8 @@ interface ActionNotification {
   type: "success" | "info" | "warning";
 }
 
-const Orla = () => {
+// Inner component that uses expression context
+const OrlaInner = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { t, i18n } = useTranslation();
@@ -47,6 +49,9 @@ const Orla = () => {
   const [userProfile, setUserProfile] = useState<{ display_name: string | null; avatar_url: string | null } | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const transcriptEndRef = useRef<HTMLDivElement>(null);
+  
+  // Expression controller for 3D avatar
+  const { state: expressionState, setSpeaking, setListening, setThinking, reactToContent, setEmotion, transitionTo } = useOrlaExpression();
   
   // Get current language info
   const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
@@ -95,11 +100,15 @@ const Orla = () => {
       console.log("Connected to Orla");
       toast.success("Connected to Orla");
       setConnectionStartTime(new Date());
+      transitionTo("warm", 500);
     },
     onDisconnect: () => {
       console.log("Disconnected from Orla");
       setConnectionStartTime(null);
       setConnectionDuration(0);
+      setEmotion("neutral");
+      setSpeaking(false);
+      setListening(false);
     },
     onMessage: (message) => {
       console.log("Message received:", message);
@@ -112,11 +121,19 @@ const Orla = () => {
       setTranscript(prev => [...prev, entry]);
       // Persist message to database
       addMessage(entry);
+      
+      // Analyze content for expression reactions
+      if (message.role === "agent" && message.message) {
+        reactToContent(message.message);
+      } else if (message.role === "user") {
+        setThinking(true);
+      }
     },
     onError: (message) => {
       console.error("Conversation error:", message);
       toast.error("Connection error. Please try again.");
       setIsConnecting(false);
+      setEmotion("neutral");
     },
     // Client tools that Orla can invoke
     // NOTE: These tools must also be configured in the ElevenLabs dashboard for your agent
@@ -398,6 +415,23 @@ const Orla = () => {
   const isConnected = conversation.status === "connected";
   const isSpeaking = conversation.isSpeaking;
 
+  // Sync speaking state with expression controller
+  useEffect(() => {
+    setSpeaking(isSpeaking);
+    if (isSpeaking) {
+      setThinking(false);
+    }
+  }, [isSpeaking, setSpeaking, setThinking]);
+
+  // Sync listening state with expression controller
+  useEffect(() => {
+    if (isConnected && !isSpeaking) {
+      setListening(true);
+    } else {
+      setListening(false);
+    }
+  }, [isConnected, isSpeaking, setListening]);
+
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -638,12 +672,14 @@ const Orla = () => {
                   : "0 0 25px rgba(212, 175, 55, 0.15)",
               }}
               transition={{ duration: 1.5, repeat: isSpeaking ? Infinity : 0 }}
-              className="w-44 h-44 md:w-52 md:h-52 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border-2 border-primary/50 overflow-hidden relative z-10"
+              className="rounded-full overflow-hidden relative z-10"
             >
-              <OrlaAnimatedAvatar
+              <Orla3DAvatar
                 isSpeaking={isSpeaking}
                 isConnected={isConnected}
+                isListening={!isSpeaking && isConnected}
                 getVolume={conversation.getOutputVolume}
+                emotion={expressionState.emotion}
                 size={208}
               />
             </motion.div>
@@ -880,6 +916,15 @@ const Orla = () => {
         </div>
       </footer>
     </div>
+  );
+};
+
+// Wrap with expression provider for 3D avatar state management
+const Orla = () => {
+  return (
+    <OrlaExpressionProvider>
+      <OrlaInner />
+    </OrlaExpressionProvider>
   );
 };
 

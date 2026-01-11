@@ -156,6 +156,23 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
           </a>
         </motion.div>
 
+        {/* Waitlist CTA for non-ready visitors */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 1.0 }}
+          className="mt-6"
+        >
+          <Link 
+            to="/waitlist" 
+            className="inline-flex items-center gap-2 text-xs text-foreground/50 hover:text-primary transition-colors duration-300 tracking-wide"
+          >
+            <span>Not ready to join?</span>
+            <span className="text-primary/80 hover:text-primary">Join the waitlist</span>
+            <ArrowRight className="w-3 h-3" />
+          </Link>
+        </motion.div>
+
         {/* Video Play Button */}
         {onPlayVideo && (
           <motion.div

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Crown, Star, Clock, Gift, Shield, Users, Check, ArrowRight, Sparkles, Globe } from "lucide-react";
+import { Crown, Star, Clock, Gift, Shield, Users, Check, ArrowRight, Sparkles, Globe, Phone, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,14 +8,31 @@ import { toast } from "@/hooks/use-toast";
 import { Logo } from "@/components/brand";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { cn } from "@/lib/utils";
 
 const Waitlist = () => {
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("+44");
+  const [signupMethod, setSignupMethod] = useState<"email" | "phone">("email");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [launchDate, setLaunchDate] = useState<Date>(new Date("2026-02-01"));
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [waitlistCount, setWaitlistCount] = useState(0);
+
+  const countryCodes = [
+    { code: "+44", country: "UK" },
+    { code: "+1", country: "US" },
+    { code: "+971", country: "UAE" },
+    { code: "+33", country: "FR" },
+    { code: "+49", country: "DE" },
+    { code: "+39", country: "IT" },
+    { code: "+41", country: "CH" },
+    { code: "+65", country: "SG" },
+    { code: "+852", country: "HK" },
+    { code: "+81", country: "JP" },
+  ];
 
   // Fetch launch date from settings
   useEffect(() => {
@@ -61,15 +78,33 @@ const Waitlist = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    
+    const hasEmail = signupMethod === "email" && email;
+    const hasPhone = signupMethod === "phone" && phone;
+    
+    if (!hasEmail && !hasPhone) return;
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from("launch_signups").insert({
-        email,
-        notification_preference: "email",
+      const insertData: {
+        email?: string;
+        phone?: string;
+        country_code?: string;
+        notification_preference: string;
+        source: string;
+      } = {
+        notification_preference: signupMethod,
         source: "waitlist_page",
-      });
+      };
+
+      if (signupMethod === "email") {
+        insertData.email = email;
+      } else {
+        insertData.phone = phone;
+        insertData.country_code = countryCode;
+      }
+
+      const { error } = await supabase.from("launch_signups").insert(insertData);
 
       if (error) {
         if (error.code === "23505") {
@@ -80,7 +115,12 @@ const Waitlist = () => {
       } else {
         setIsSubmitted(true);
         setWaitlistCount(prev => prev + 1);
-        toast({ title: "Welcome to the Waitlist", description: "You'll be notified when we launch." });
+        toast({ 
+          title: "Welcome to the Waitlist", 
+          description: signupMethod === "email" 
+            ? "You'll receive an email when we launch." 
+            : "You'll receive an SMS when we launch."
+        });
       }
     } catch (err) {
       console.error(err);
@@ -216,28 +256,84 @@ const Waitlist = () => {
                   </div>
                   <h3 className="font-serif text-2xl text-foreground mb-2">You're on the List</h3>
                   <p className="text-muted-foreground">
-                    Welcome to an exclusive circle. We'll notify you the moment Aurelia launches.
+                    Welcome to an exclusive circle. We'll notify you via {signupMethod === "email" ? "email" : "SMS"} the moment Aurelia launches.
                   </p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
-                  <Input
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="flex-1 h-14 bg-card border-border/50 text-foreground placeholder:text-muted-foreground"
-                    required
-                  />
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="h-14 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
-                  >
-                    {isSubmitting ? "Joining..." : "Join Waitlist"}
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </form>
+                <div className="space-y-4">
+                  {/* Toggle between Email and SMS */}
+                  <div className="flex justify-center gap-2 p-1 bg-card border border-border/50 rounded-lg">
+                    <button
+                      type="button"
+                      onClick={() => setSignupMethod("email")}
+                      className={cn(
+                        "flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-md text-sm font-medium transition-all",
+                        signupMethod === "email"
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <Mail className="w-4 h-4" />
+                      Email
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSignupMethod("phone")}
+                      className={cn(
+                        "flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-md text-sm font-medium transition-all",
+                        signupMethod === "phone"
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <Phone className="w-4 h-4" />
+                      SMS
+                    </button>
+                  </div>
+
+                  <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+                    {signupMethod === "email" ? (
+                      <Input
+                        type="email"
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="flex-1 h-14 bg-card border-border/50 text-foreground placeholder:text-muted-foreground"
+                        required
+                      />
+                    ) : (
+                      <div className="flex-1 flex gap-2">
+                        <select
+                          value={countryCode}
+                          onChange={(e) => setCountryCode(e.target.value)}
+                          className="h-14 px-3 bg-card border border-border/50 rounded-md text-foreground text-sm"
+                        >
+                          {countryCodes.map((cc) => (
+                            <option key={cc.code} value={cc.code}>
+                              {cc.code} {cc.country}
+                            </option>
+                          ))}
+                        </select>
+                        <Input
+                          type="tel"
+                          placeholder="Phone number"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className="flex-1 h-14 bg-card border-border/50 text-foreground placeholder:text-muted-foreground"
+                          required
+                        />
+                      </div>
+                    )}
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="h-14 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+                    >
+                      {isSubmitting ? "Joining..." : "Join Waitlist"}
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </form>
+                </div>
               )}
 
               {/* Social Proof */}
@@ -365,23 +461,79 @@ const Waitlist = () => {
               Founding member positions are limited. Secure your place among the elite.
             </p>
             {!isSubmitted && (
-              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 h-14 bg-card border-border/50"
-                  required
-                />
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="h-14 px-8 bg-primary hover:bg-primary/90"
-                >
-                  {isSubmitting ? "Joining..." : "Claim Your Spot"}
-                </Button>
-              </form>
+              <div className="max-w-md mx-auto space-y-4">
+                {/* Toggle between Email and SMS */}
+                <div className="flex justify-center gap-2 p-1 bg-card border border-border/50 rounded-lg">
+                  <button
+                    type="button"
+                    onClick={() => setSignupMethod("email")}
+                    className={cn(
+                      "flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium transition-all",
+                      signupMethod === "email"
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <Mail className="w-4 h-4" />
+                    Email
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSignupMethod("phone")}
+                    className={cn(
+                      "flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium transition-all",
+                      signupMethod === "phone"
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <Phone className="w-4 h-4" />
+                    SMS
+                  </button>
+                </div>
+
+                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+                  {signupMethod === "email" ? (
+                    <Input
+                      type="email"
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="flex-1 h-14 bg-card border-border/50"
+                      required
+                    />
+                  ) : (
+                    <div className="flex-1 flex gap-2">
+                      <select
+                        value={countryCode}
+                        onChange={(e) => setCountryCode(e.target.value)}
+                        className="h-14 px-3 bg-card border border-border/50 rounded-md text-foreground text-sm"
+                      >
+                        {countryCodes.map((cc) => (
+                          <option key={cc.code} value={cc.code}>
+                            {cc.code} {cc.country}
+                          </option>
+                        ))}
+                      </select>
+                      <Input
+                        type="tel"
+                        placeholder="Phone number"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="flex-1 h-14 bg-card border-border/50"
+                        required
+                      />
+                    </div>
+                  )}
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="h-14 px-8 bg-primary hover:bg-primary/90"
+                  >
+                    {isSubmitting ? "Joining..." : "Claim Your Spot"}
+                  </Button>
+                </form>
+              </div>
             )}
           </motion.div>
         </div>

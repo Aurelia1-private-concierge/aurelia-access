@@ -73,7 +73,7 @@ const OrlaFAB = () => {
         </motion.span>
 
         {/* Mini Avatar */}
-        <OrlaMiniAvatar size={56} isActive={isHovered} showSparkles={true} />
+        <OrlaMiniAvatar size={56} isActive={isHovered} showSparkles={true} forceStatic={true} />
 
         {/* Tooltip on hover */}
         <motion.div

@@ -317,43 +317,74 @@ const Membership = () => {
                     {tier.description}
                   </p>
 
-                  {/* Price */}
+                  {/* Price - Hidden for non-authenticated users */}
                   <div className="mb-6">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-4xl font-light text-foreground">
-                        {formatPrice(monthlyEquivalent)}
-                      </span>
-                      <span className="text-muted-foreground text-sm">/month</span>
-                    </div>
-                    {isAnnual && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {formatPrice(price)} billed annually
-                      </p>
-                    )}
-                    {/* Founding Member Tag */}
-                    {isFoundingPeriod && !subscribed && (
-                      <div className="flex items-center gap-1.5 mt-2">
-                        <Zap className="w-3 h-3 text-emerald-500" />
-                        <span className="text-xs text-emerald-400 font-medium">
-                          Founding rate locked forever
-                        </span>
+                    {user ? (
+                      <>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-4xl font-light text-foreground">
+                            {formatPrice(monthlyEquivalent)}
+                          </span>
+                          <span className="text-muted-foreground text-sm">/month</span>
+                        </div>
+                        {isAnnual && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {formatPrice(price)} billed annually
+                          </p>
+                        )}
+                        {/* Founding Member Tag */}
+                        {isFoundingPeriod && !subscribed && (
+                          <div className="flex items-center gap-1.5 mt-2">
+                            <Zap className="w-3 h-3 text-emerald-500" />
+                            <span className="text-xs text-emerald-400 font-medium">
+                              Founding rate locked forever
+                            </span>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="flex flex-col items-start gap-2">
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <Lock className="w-4 h-4" />
+                          <span className="text-sm italic">Exclusive pricing</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground/70">
+                          Sign in to view member rates
+                        </p>
                       </div>
                     )}
                   </div>
 
                   {/* CTA Button */}
-                  <Button
-                    onClick={() => handleSubscribe(priceId)}
-                    disabled={isLoading || isCurrentTier}
-                    className={cn(
-                      "w-full mb-8 transition-all",
-                      tier.highlighted
-                        ? "bg-primary hover:bg-primary/90 text-primary-foreground gold-glow-hover"
-                        : "bg-secondary hover:bg-secondary/80 text-foreground"
-                    )}
-                  >
-                    {isCurrentTier ? "Current Plan" : isLoading ? "Loading..." : "Select Plan"}
-                  </Button>
+                  {user ? (
+                    <Button
+                      onClick={() => handleSubscribe(priceId)}
+                      disabled={isLoading || isCurrentTier}
+                      className={cn(
+                        "w-full mb-8 transition-all",
+                        tier.highlighted
+                          ? "bg-primary hover:bg-primary/90 text-primary-foreground gold-glow-hover"
+                          : "bg-secondary hover:bg-secondary/80 text-foreground"
+                      )}
+                    >
+                      {isCurrentTier ? "Current Plan" : isLoading ? "Loading..." : "Select Plan"}
+                    </Button>
+                  ) : (
+                    <Link to="/auth" className="w-full block mb-8">
+                      <Button
+                        className={cn(
+                          "w-full transition-all group",
+                          tier.highlighted
+                            ? "bg-primary hover:bg-primary/90 text-primary-foreground gold-glow-hover"
+                            : "bg-secondary hover:bg-secondary/80 text-foreground"
+                        )}
+                      >
+                        <Lock className="w-4 h-4 mr-2" />
+                        Reveal Pricing
+                        <ArrowRight className="w-4 h-4 ml-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                      </Button>
+                    </Link>
+                  )}
 
                   {/* Features */}
                   <ul className="space-y-3">

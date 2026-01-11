@@ -20,13 +20,16 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useTravelDNA, TRAVELER_ARCHETYPES, PACE_PREFERENCES, ACCOMMODATION_TIERS, CUISINE_OPTIONS, ACTIVITY_OPTIONS } from "@/hooks/useTravelDNA";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useFunnelTracking } from "@/hooks/useFunnelTracking";
 
 const Onboarding = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { profile, saveProfile, isLoading: profileLoading } = useTravelDNA();
+  const { trackOnboardingStarted, trackOnboardingCompleted } = useFunnelTracking();
   const [step, setStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasTrackedStart, setHasTrackedStart] = useState(false);
   
   // Form state
   const [archetype, setArchetype] = useState<string | null>(null);
@@ -51,6 +54,14 @@ const Onboarding = () => {
       navigate("/auth");
     }
   }, [user, profileLoading, navigate]);
+
+  // Track onboarding start
+  useEffect(() => {
+    if (user && !hasTrackedStart && !profile?.onboarding_completed) {
+      trackOnboardingStarted();
+      setHasTrackedStart(true);
+    }
+  }, [user, hasTrackedStart, profile, trackOnboardingStarted]);
 
   // Redirect if onboarding already completed
   useEffect(() => {
@@ -166,6 +177,9 @@ const Onboarding = () => {
       });
 
       if (error) throw new Error(error);
+      
+      // Track onboarding completed
+      trackOnboardingCompleted({ archetype, pace, accommodation });
       
       setStep(steps.length - 1); // Go to completion step
       toast.success("Your preferences have been saved");

@@ -481,6 +481,48 @@ export type Database = {
         }
         Relationships: []
       }
+      funnel_events: {
+        Row: {
+          campaign: string | null
+          created_at: string
+          id: string
+          landing_page: string | null
+          medium: string | null
+          metadata: Json | null
+          referrer: string | null
+          session_id: string
+          source: string | null
+          stage: string
+          user_id: string | null
+        }
+        Insert: {
+          campaign?: string | null
+          created_at?: string
+          id?: string
+          landing_page?: string | null
+          medium?: string | null
+          metadata?: Json | null
+          referrer?: string | null
+          session_id: string
+          source?: string | null
+          stage: string
+          user_id?: string | null
+        }
+        Update: {
+          campaign?: string | null
+          created_at?: string
+          id?: string
+          landing_page?: string | null
+          medium?: string | null
+          metadata?: Json | null
+          referrer?: string | null
+          session_id?: string
+          source?: string | null
+          stage?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       launch_signups: {
         Row: {
           country_code: string | null
@@ -1470,6 +1512,23 @@ export type Database = {
       }
     }
     Views: {
+      funnel_summary: {
+        Row: {
+          campaign: string | null
+          converted_count: number | null
+          first_event_date: string | null
+          landing_count: number | null
+          last_event_date: string | null
+          medium: string | null
+          onboarding_completed_count: number | null
+          onboarding_started_count: number | null
+          signup_completed_count: number | null
+          signup_started_count: number | null
+          source: string | null
+          trial_started_count: number | null
+        }
+        Relationships: []
+      }
       page_heatmap_data: {
         Row: {
           click_count: number | null

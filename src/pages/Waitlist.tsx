@@ -13,10 +13,12 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import WaitlistShare from "@/components/waitlist/WaitlistShare";
 import { useUTMTracking, getStoredUTMParams } from "@/hooks/useUTMTracking";
+import { useFunnelTracking } from "@/hooks/useFunnelTracking";
 
 const Waitlist = () => {
-  // Track UTM parameters
+  // Track UTM parameters and funnel
   useUTMTracking();
+  useFunnelTracking(); // Auto-tracks landing
   const { user } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
   const [email, setEmail] = useState("");

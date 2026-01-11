@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, ChevronDown, ChevronUp } from "lucide-react";
+import { Sparkles, ChevronDown } from "lucide-react";
+import { Link } from "react-router-dom";
+import OrlaMiniAvatar from "@/components/orla/OrlaMiniAvatar";
 import orlaAvatar from "@/assets/orla-avatar.png";
 
 const OrlaCompanion = () => {
@@ -36,11 +38,15 @@ const OrlaCompanion = () => {
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             className="relative w-14 h-14 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border-2 border-primary/50 overflow-hidden"
           >
-            <img 
-              src={orlaAvatar} 
-              alt="Orla" 
-              className="w-full h-full object-cover"
-            />
+            <Suspense fallback={
+              <img 
+                src={orlaAvatar} 
+                alt="Orla" 
+                className="w-full h-full object-cover"
+              />
+            }>
+              <OrlaMiniAvatar size={56} isActive={isExpanded} showSparkles={false} />
+            </Suspense>
             <motion.div 
               animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
@@ -98,9 +104,12 @@ const OrlaCompanion = () => {
                 ))}
               </div>
               
-              <p className="text-xs text-muted-foreground/60 mt-4 text-center">
-                Or use the chat widget for personalized assistance
-              </p>
+              <Link 
+                to="/orla" 
+                className="block mt-4 text-center text-xs text-primary hover:text-primary/80 transition-colors"
+              >
+                Open full voice conversation →
+              </Link>
             </div>
           </motion.div>
         )}

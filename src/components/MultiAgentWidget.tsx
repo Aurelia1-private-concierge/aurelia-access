@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Mic, MicOff, X, Minus, Lock, ArrowRight, Sparkles, 
@@ -8,7 +8,7 @@ import {
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMultiAgent, AgentMessage, AgentMode } from "@/hooks/useMultiAgent";
-import OrlaAnimatedAvatar from "@/components/orla/OrlaAnimatedAvatar";
+import OrlaMiniAvatar from "@/components/orla/OrlaMiniAvatar";
 import orlaAvatar from "@/assets/orla-avatar.png";
 
 const INITIAL_MESSAGE: AgentMessage = {
@@ -169,12 +169,15 @@ const MultiAgentWidget = () => {
                   <div className="relative">
                     {(agent.mode === "voice" || agent.mode === "hybrid") && agent.isConnected ? (
                       <div className="w-14 h-14">
-                        <OrlaAnimatedAvatar 
-                          isSpeaking={agent.isSpeaking}
-                          isConnected={agent.isConnected}
-                          getVolume={agent.getOutputVolume}
-                          size={56}
-                        />
+                        <Suspense fallback={
+                          <img src={orlaAvatar} alt="Orla" className="w-full h-full object-cover rounded-full" />
+                        }>
+                          <OrlaMiniAvatar 
+                            size={56}
+                            isActive={agent.isSpeaking || agent.isListening}
+                            showSparkles={agent.isSpeaking}
+                          />
+                        </Suspense>
                       </div>
                     ) : (
                       <motion.div 

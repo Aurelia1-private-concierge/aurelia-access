@@ -562,6 +562,101 @@ export type Database = {
         }
         Relationships: []
       }
+      login_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string
+          device_id: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          metadata: Json | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string
+          device_id?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          metadata?: Json | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          device_id?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          metadata?: Json | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "login_alerts_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "login_devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      login_devices: {
+        Row: {
+          browser: string | null
+          created_at: string
+          device_fingerprint: string
+          device_name: string | null
+          first_seen_at: string
+          id: string
+          ip_address: string | null
+          is_trusted: boolean | null
+          last_login_at: string
+          location: string | null
+          login_count: number | null
+          os: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          browser?: string | null
+          created_at?: string
+          device_fingerprint: string
+          device_name?: string | null
+          first_seen_at?: string
+          id?: string
+          ip_address?: string | null
+          is_trusted?: boolean | null
+          last_login_at?: string
+          location?: string | null
+          login_count?: number | null
+          os?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          browser?: string | null
+          created_at?: string
+          device_fingerprint?: string
+          device_name?: string | null
+          first_seen_at?: string
+          id?: string
+          ip_address?: string | null
+          is_trusted?: boolean | null
+          last_login_at?: string
+          location?: string | null
+          login_count?: number | null
+          os?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notification_settings: {
         Row: {
           alert_types: string[]

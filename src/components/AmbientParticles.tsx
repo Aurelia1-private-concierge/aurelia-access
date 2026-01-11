@@ -24,6 +24,9 @@ const AmbientParticles = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    // Reduce particle count on mobile for performance
+    const isMobile = window.innerWidth < 768;
+
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -31,7 +34,9 @@ const AmbientParticles = () => {
 
     const createParticles = () => {
       const particles: Particle[] = [];
-      const count = Math.min(50, Math.floor(window.innerWidth / 30));
+      const count = isMobile 
+        ? Math.min(15, Math.floor(window.innerWidth / 50))
+        : Math.min(50, Math.floor(window.innerWidth / 30));
 
       for (let i = 0; i < count; i++) {
         particles.push({

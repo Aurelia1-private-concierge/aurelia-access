@@ -26,7 +26,7 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
   const overlayOpacity = useTransform(scrollYProgress, [0, 0.5], [0.6, 0.9]);
 
   return (
-    <header ref={ref} className="relative w-full min-h-screen overflow-hidden flex items-center justify-center">
+    <header ref={ref} className="relative w-full min-h-[100dvh] overflow-hidden flex items-center justify-center">
       {/* Background Video/Image with parallax */}
       <motion.div 
         style={{ y: mediaY, scale: mediaScale }}
@@ -88,7 +88,7 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
       {/* Content with parallax */}
       <motion.div 
         style={{ y: contentY, opacity }}
-        className="relative z-20 text-center px-6 max-w-5xl mx-auto"
+        className="relative z-20 text-center px-4 sm:px-6 max-w-5xl mx-auto w-full"
       >
         {/* Elegant top line */}
         <motion.div
@@ -117,7 +117,7 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.5, ease: [0.4, 0, 0.2, 1] }}
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl text-foreground font-normal tracking-[-0.03em] leading-[0.9] mb-8"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl text-foreground font-normal tracking-[-0.03em] leading-[0.95] mb-6 sm:mb-8 px-2"
           style={{ fontFamily: "'Cormorant Garamond', serif" }}
         >
           {t("hero.title")}
@@ -128,7 +128,7 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.7 }}
-          className="text-base md:text-lg lg:text-xl text-muted-foreground font-light tracking-wide max-w-2xl mx-auto leading-relaxed mb-12"
+          className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground font-light tracking-wide max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-12 px-4"
         >
           {t("hero.subtitle")}
         </motion.p>
@@ -138,18 +138,18 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.9 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6"
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 px-4"
         >
           <Link 
             to="/auth" 
-            className="group relative px-10 py-4 bg-primary text-primary-foreground text-xs font-medium tracking-[0.25em] uppercase transition-all duration-500 hover:bg-primary/90 btn-luxury gold-glow-hover overflow-hidden"
+            className="group relative w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 bg-primary text-primary-foreground text-xs font-medium tracking-[0.25em] uppercase transition-all duration-500 hover:bg-primary/90 btn-luxury gold-glow-hover overflow-hidden text-center"
           >
             <span className="relative z-10">{t("hero.joinButton")}</span>
           </Link>
 
           <a 
             href="#experiences" 
-            className="group px-10 py-4 border border-foreground/20 text-foreground text-xs font-medium tracking-[0.25em] uppercase hover:border-primary/40 hover:bg-primary/5 transition-all duration-500 flex items-center gap-3"
+            className="group w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 border border-foreground/20 text-foreground text-xs font-medium tracking-[0.25em] uppercase hover:border-primary/40 hover:bg-primary/5 transition-all duration-500 flex items-center justify-center gap-3"
           >
             <span>{t("hero.discoverButton")}</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-500" />

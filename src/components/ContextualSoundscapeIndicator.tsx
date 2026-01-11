@@ -21,7 +21,7 @@ const ContextualSoundscapeIndicator: React.FC<ContextualSoundscapeIndicatorProps
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
-        className="fixed top-24 left-1/2 -translate-x-1/2 z-40 bg-card/80 backdrop-blur-xl border border-primary/20 rounded-full px-4 py-2 shadow-lg"
+        className="fixed top-20 sm:top-24 left-1/2 -translate-x-1/2 z-40 bg-card/80 backdrop-blur-xl border border-primary/20 rounded-full px-3 py-1.5 sm:px-4 sm:py-2 shadow-lg max-w-[90vw]"
       >
         <div className="flex items-center gap-3">
           {/* Animated waveform */}
@@ -43,13 +43,13 @@ const ContextualSoundscapeIndicator: React.FC<ContextualSoundscapeIndicatorProps
           </div>
 
           {/* Section indicator */}
-          <div className="flex items-center gap-2">
-            <Waves className="w-3 h-3 text-primary/60" />
-            <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+            <Waves className="w-3 h-3 text-primary/60 flex-shrink-0" />
+            <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground truncate">
               {currentSection}
             </span>
-            <span className="text-[10px] text-primary/60">•</span>
-            <span className="text-[10px] text-muted-foreground">
+            <span className="text-[9px] sm:text-[10px] text-primary/60 hidden sm:inline">•</span>
+            <span className="text-[9px] sm:text-[10px] text-muted-foreground hidden sm:inline truncate max-w-[100px]">
               {description}
             </span>
           </div>

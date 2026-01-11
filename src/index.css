@@ -469,4 +469,52 @@
   .driver-popover-arrow-side-bottom {
     border-color: hsl(var(--card)) !important;
   }
+
+  /* Mobile-first utilities */
+  @media (max-width: 640px) {
+    .section-luxury {
+      @apply py-16;
+    }
+    
+    /* Ensure touch targets are 44px minimum */
+    button, a, [role="button"] {
+      min-height: 44px;
+      min-width: 44px;
+    }
+    
+    /* Optimize for notch/home indicator */
+    .safe-area-bottom {
+      padding-bottom: env(safe-area-inset-bottom, 20px);
+    }
+    
+    .safe-area-top {
+      padding-top: env(safe-area-inset-top, 20px);
+    }
+  }
+  
+  /* Touch feedback */
+  @media (hover: none) and (pointer: coarse) {
+    .gold-glow-hover:active {
+      box-shadow: 
+        0 0 100px hsl(var(--gold) / 0.25),
+        0 0 60px hsl(var(--gold) / 0.15);
+      transform: translateY(-1px);
+    }
+    
+    .card-hover:active {
+      transform: translateY(-4px);
+    }
+  }
+  
+  /* Prevent text selection on touch devices for interactive elements */
+  .touch-none {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  
+  /* Smooth momentum scrolling for iOS */
+  .scroll-smooth-touch {
+    -webkit-overflow-scrolling: touch;
+  }
 }

@@ -71,7 +71,7 @@ const Navigation = () => {
           : "border-b border-transparent bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
         <Link to="/">
           <Logo variant="wordmark" size="md" />
         </Link>

@@ -185,13 +185,13 @@ const VoiceCommands: React.FC<VoiceCommandsProps> = ({
 
   return (
     <>
-      {/* Voice Command Button */}
+      {/* Voice Command Button - Hidden on small mobile for cleaner UI */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={toggleListening}
         className={`
-          fixed bottom-6 right-24 z-50 p-4 rounded-full shadow-lg transition-all duration-300
+          fixed bottom-4 right-20 sm:bottom-6 sm:right-24 z-50 p-3 sm:p-4 rounded-full shadow-lg transition-all duration-300 hidden sm:flex items-center justify-center
           ${isListening
             ? 'bg-red-500 text-white animate-pulse'
             : 'bg-card/95 backdrop-blur-xl border border-primary/30 text-primary hover:bg-primary/10'
@@ -222,7 +222,7 @@ const VoiceCommands: React.FC<VoiceCommandsProps> = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-24 right-6 z-50 bg-card/95 backdrop-blur-xl border border-primary/30 rounded-xl px-4 py-3 shadow-xl max-w-xs"
+            className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-50 bg-card/95 backdrop-blur-xl border border-primary/30 rounded-xl px-3 py-2 sm:px-4 sm:py-3 shadow-xl max-w-[200px] sm:max-w-xs"
           >
             <div className="flex items-center gap-2">
               <Loader2 className="w-4 h-4 text-primary animate-spin" />
@@ -239,7 +239,7 @@ const VoiceCommands: React.FC<VoiceCommandsProps> = ({
             initial={{ opacity: 0, y: 20, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className={`fixed bottom-24 right-6 z-50 rounded-xl px-4 py-3 shadow-xl flex items-center gap-2 ${
+            className={`fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-50 rounded-xl px-3 py-2 sm:px-4 sm:py-3 shadow-xl flex items-center gap-2 text-sm ${
               feedbackType === 'success'
                 ? 'bg-green-500/90 text-white'
                 : 'bg-red-500/90 text-white'
@@ -262,7 +262,7 @@ const VoiceCommands: React.FC<VoiceCommandsProps> = ({
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="fixed bottom-24 right-6 z-50 bg-card/95 backdrop-blur-xl border border-primary/30 rounded-xl p-4 shadow-xl max-w-xs"
+            className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-50 bg-card/95 backdrop-blur-xl border border-primary/30 rounded-xl p-3 sm:p-4 shadow-xl max-w-[200px] sm:max-w-xs"
           >
             <div className="flex items-center gap-2 mb-3">
               <Command className="w-4 h-4 text-primary" />

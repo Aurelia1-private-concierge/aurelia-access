@@ -51,6 +51,9 @@ import PartnerApplicationsPanel from "@/components/admin/PartnerApplicationsPane
 import AnalyticsDashboard from "@/components/admin/AnalyticsDashboard";
 import CampaignAnalytics from "@/components/admin/CampaignAnalytics";
 import ABTestingPanel from "@/components/admin/ABTestingPanel";
+import MarketingPackagesPanel from "@/components/admin/MarketingPackagesPanel";
+import SEODashboard from "@/components/admin/SEODashboard";
+import AutomatedPosting from "@/components/admin/AutomatedPosting";
 import CRMPanel from "@/components/admin/CRMPanel";
 import CommissionTracker from "@/components/admin/CommissionTracker";
 import TrialApplicationsPanel from "@/components/admin/TrialApplicationsPanel";

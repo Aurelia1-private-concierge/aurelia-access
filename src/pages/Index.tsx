@@ -32,6 +32,7 @@ import PictureInPicture from "@/components/PictureInPicture";
 import VoiceCommands from "@/components/VoiceCommands";
 import ContextualSoundscapeIndicator from "@/components/ContextualSoundscapeIndicator";
 import useContextualSoundscapes from "@/hooks/useContextualSoundscapes";
+import GA4Script from "@/components/GA4Script";
 
 const Index = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -51,6 +52,9 @@ const Index = () => {
 
   return (
     <div className="min-h-[100dvh] bg-background overflow-x-hidden relative">
+      {/* GA4 Analytics */}
+      <GA4Script />
+      
       {/* Ambient Effects */}
       <AmbientParticles />
       <GlowingOrb className="top-1/4 -left-48" size="xl" color="gold" intensity="soft" />

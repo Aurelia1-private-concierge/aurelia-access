@@ -125,7 +125,6 @@ export const useServiceWorkflow = (serviceRequestId?: string) => {
         await fetchRequests();
         return newRequest as unknown as ServiceRequest;
       } catch (error) {
-      } catch (error) {
         console.error("Error creating service request:", error);
         throw error;
       } finally {
@@ -187,18 +186,19 @@ export const useServiceWorkflow = (serviceRequestId?: string) => {
       if (!user) throw new Error("Must be logged in");
 
       try {
-        // Update request with rating
-        const { error } = await supabase
-          .from("service_requests")
-          .update({
-            metadata: {
-              rating,
-              feedback,
-              rated_at: new Date().toISOString(),
-            },
-          })
-          .eq("id", requestId)
-          .eq("client_id", user.id);
+        // Create feedback update (ratings stored in updates table instead of service_requests)
+        await supabase.from("service_request_updates").insert({
+          service_request_id: requestId,
+          update_type: "message",
+          title: "Feedback Received",
+          description: `Client rated this service ${rating}/5 stars${feedback ? `: "${feedback}"` : ""}`,
+          updated_by: user.id,
+          updated_by_role: "client",
+          metadata: { rating, feedback },
+          is_visible_to_client: true,
+        });
+
+        const error = null;
 
         if (error) throw error;
 

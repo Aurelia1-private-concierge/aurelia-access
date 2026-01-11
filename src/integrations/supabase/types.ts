@@ -645,9 +645,11 @@ export type Database = {
           notes: string | null
           paid_at: string | null
           partner_id: string
+          payout_error: string | null
           service_request_id: string | null
           service_title: string
           status: string | null
+          stripe_transfer_id: string | null
           updated_at: string
         }
         Insert: {
@@ -660,9 +662,11 @@ export type Database = {
           notes?: string | null
           paid_at?: string | null
           partner_id: string
+          payout_error?: string | null
           service_request_id?: string | null
           service_title: string
           status?: string | null
+          stripe_transfer_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -675,9 +679,11 @@ export type Database = {
           notes?: string | null
           paid_at?: string | null
           partner_id?: string
+          payout_error?: string | null
           service_request_id?: string | null
           service_title?: string
           status?: string | null
+          stripe_transfer_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -810,6 +816,9 @@ export type Database = {
           notes: string | null
           phone: string | null
           status: Database["public"]["Enums"]["partner_status"]
+          stripe_account_id: string | null
+          stripe_onboarding_complete: boolean | null
+          stripe_payouts_enabled: boolean | null
           updated_at: string
           user_id: string
           verification_documents: string[] | null
@@ -827,6 +836,9 @@ export type Database = {
           notes?: string | null
           phone?: string | null
           status?: Database["public"]["Enums"]["partner_status"]
+          stripe_account_id?: string | null
+          stripe_onboarding_complete?: boolean | null
+          stripe_payouts_enabled?: boolean | null
           updated_at?: string
           user_id: string
           verification_documents?: string[] | null
@@ -844,6 +856,9 @@ export type Database = {
           notes?: string | null
           phone?: string | null
           status?: Database["public"]["Enums"]["partner_status"]
+          stripe_account_id?: string | null
+          stripe_onboarding_complete?: boolean | null
+          stripe_payouts_enabled?: boolean | null
           updated_at?: string
           user_id?: string
           verification_documents?: string[] | null

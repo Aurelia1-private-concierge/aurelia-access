@@ -272,9 +272,8 @@ const handler = async (req: Request): Promise<Response> => {
         throw new Error("Invalid email type");
     }
 
-    // Using Resend test sender until domain is fully verified
     emailResponse = await resend.emails.send({
-      from: "Aurelia <onboarding@resend.dev>",
+      from: "Aurelia Concierge <concierge@aurelia-privateconcierge.com>",
       to: [toEmail],
       subject,
       html,

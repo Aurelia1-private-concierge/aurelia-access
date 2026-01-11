@@ -62,7 +62,7 @@ const OrlaInner = () => {
       return;
     }
     
-    const emotions: OrlaEmotion[] = ["neutral", "happy", "thinking", "curious", "warm"];
+    const emotions: OrlaEmotion[] = ["neutral", "happy", "thinking", "curious", "warm", "concerned", "urgent"];
     let index = 0;
     
     const interval = setInterval(() => {

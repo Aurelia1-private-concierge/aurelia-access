@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Gift, Copy, Check, Users, DollarSign, Share2, Mail, MessageCircle, Linkedin, Twitter, ExternalLink } from "lucide-react";
+import { Gift, Copy, Check, Users, DollarSign, Share2, Mail, MessageCircle, Linkedin, Twitter, ExternalLink, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,6 +14,9 @@ const ReferralProgram = () => {
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
   const [stats, setStats] = useState({ total: 0, pending: 0, earned: 0 });
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [displayName, setDisplayName] = useState("A friend");
 
   // Generate referral link using user ID
   const referralLink = user?.id 
@@ -21,10 +24,11 @@ const ReferralProgram = () => {
     : "";
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchData = async () => {
       if (!user) return;
       
       try {
+        // Fetch stats
         const { data } = await supabase
           .from("referrals")
           .select("status")
@@ -34,15 +38,82 @@ const ReferralProgram = () => {
           const total = data.length;
           const pending = data.filter(r => r.status === "pending").length;
           const subscribed = data.filter(r => ["subscribed", "rewarded"].includes(r.status)).length;
-          setStats({ total, pending, earned: subscribed * 50 }); // $50 per subscribed referral
+          setStats({ total, pending, earned: subscribed * 50 });
+        }
+
+        // Fetch display name
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("display_name")
+          .eq("user_id", user.id)
+          .single();
+        
+        if (profile?.display_name) {
+          setDisplayName(profile.display_name);
         }
       } catch {
         // Silently fail
       }
     };
 
-    fetchStats();
+    fetchData();
   }, [user]);
+
+  const handleSendInvitation = async () => {
+    if (!inviteEmail || !user) return;
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(inviteEmail)) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSending(true);
+    try {
+      // Create referral record
+      const referralCode = `${user.id.slice(0, 8)}-${Date.now().toString(36)}`;
+      
+      await supabase.from("referrals").insert({
+        referrer_id: user.id,
+        referred_email: inviteEmail,
+        referral_code: referralCode,
+        status: "pending",
+      });
+
+      // Send invitation email
+      const { error } = await supabase.functions.invoke("referral-email", {
+        body: {
+          type: "invitation",
+          referredEmail: inviteEmail,
+          referrerName: displayName,
+          referralLink: `${referralLink}&code=${referralCode}`,
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Invitation sent",
+        description: `An invitation has been sent to ${inviteEmail}`,
+      });
+      
+      setInviteEmail("");
+      setStats(prev => ({ ...prev, total: prev.total + 1, pending: prev.pending + 1 }));
+    } catch (error: any) {
+      console.error("Error sending invitation:", error);
+      toast({
+        title: "Failed to send invitation",
+        description: error.message || "Please try again later",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(referralLink);
@@ -124,10 +195,39 @@ const ReferralProgram = () => {
         </p>
       </div>
 
+      {/* Send Invitation */}
+      <div className="space-y-3 mb-4">
+        <label className="text-xs text-muted-foreground uppercase tracking-wider">
+          Send Invitation
+        </label>
+        <div className="flex gap-2">
+          <Input
+            type="email"
+            value={inviteEmail}
+            onChange={(e) => setInviteEmail(e.target.value)}
+            placeholder="Enter email address"
+            className="bg-muted/30 border-border/50 text-sm"
+            onKeyDown={(e) => e.key === "Enter" && handleSendInvitation()}
+          />
+          <Button
+            onClick={handleSendInvitation}
+            disabled={isSending || !inviteEmail}
+            size="sm"
+            className="shrink-0"
+          >
+            {isSending ? (
+              <span className="animate-spin">⏳</span>
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
+          </Button>
+        </div>
+      </div>
+
       {/* Referral Link */}
       <div className="space-y-3 mb-4">
         <label className="text-xs text-muted-foreground uppercase tracking-wider">
-          Your Referral Link
+          Or Share Your Link
         </label>
         <div className="flex gap-2">
           <div className="flex-1 relative">

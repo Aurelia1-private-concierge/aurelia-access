@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { AnimatedLogo } from "@/components/brand";
 import { supabase } from "@/integrations/supabase/client";
 import SocialShareButtons from "@/components/referral/SocialShareButtons";
+import SEOHead from "@/components/SEOHead";
 
 const Referral = () => {
   const [searchParams] = useSearchParams();
@@ -85,6 +86,7 @@ const Referral = () => {
 
   return (
     <div className="min-h-[100dvh] bg-background">
+      <SEOHead pageType="referral" />
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Background */}

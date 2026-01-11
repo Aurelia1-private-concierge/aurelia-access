@@ -3,6 +3,7 @@ import { useConversation } from "@elevenlabs/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mic, MicOff, Phone, PhoneOff, ArrowLeft, Sparkles, Volume2, Wifi, WifiOff, Clock, MessageSquare, CheckCircle2, User, History } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import SEOHead from "@/components/SEOHead";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -409,6 +410,7 @@ const Orla = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEOHead pageType="orla" />
       {/* Action Notifications */}
       <div className="fixed top-20 right-6 z-50 flex flex-col gap-2 max-w-sm">
         <AnimatePresence>

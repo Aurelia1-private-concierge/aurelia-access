@@ -6,6 +6,7 @@ import { z } from "zod";
 import { Mail, Phone, MapPin, Clock, Send, MessageSquare } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 import { BRAND } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -122,6 +123,7 @@ const Contact = () => {
 
   return (
     <div className="min-h-[100dvh] bg-background">
+      <SEOHead pageType="contact" />
       <Navigation />
 
       {/* Hero Section */}

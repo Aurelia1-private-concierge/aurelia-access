@@ -1,0 +1,66 @@
+{
+  "name": "Aurelia Private Concierge",
+  "short_name": "Aurelia",
+  "description": "The world's most exclusive private concierge service for billionaires and UHNW families. 24/7 access to private jets, superyachts, off-market real estate, and impossible experiences.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050810",
+  "theme_color": "#050810",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["lifestyle", "business", "travel"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/og-image-new.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Aurelia Private Concierge Homepage"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Speak with Orla",
+      "short_name": "Orla",
+      "description": "Voice-enabled AI concierge",
+      "url": "/orla",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Services",
+      "short_name": "Services",
+      "description": "Explore our luxury services",
+      "url": "/services",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Member dashboard",
+      "url": "/dashboard",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

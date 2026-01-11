@@ -28,6 +28,7 @@ import {
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 
 const services = [
   {
@@ -188,6 +189,7 @@ const Services = () => {
 
   return (
     <div className="min-h-[100dvh] bg-background">
+      <SEOHead pageType="services" />
       <Navigation />
       
       {/* Hero Section */}

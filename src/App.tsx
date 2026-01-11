@@ -13,6 +13,7 @@ import CookieConsent from "@/components/CookieConsent";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import GlobalElements from "./components/GlobalElements";
+import ErrorBoundary from "./components/ErrorBoundary";
 import "@/i18n";
 
 // Eagerly load the waitlist/under construction page for best LCP
@@ -302,22 +303,24 @@ const AnimatedRoutes = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <GlobalProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
-            <AnimatedRoutes />
-            <GlobalElements />
-            <BackToTop />
-            <CookieConsent />
-          </AuthProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </GlobalProvider>
-  </QueryClientProvider>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <GlobalProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AuthProvider>
+              <AnimatedRoutes />
+              <GlobalElements />
+              <BackToTop />
+              <CookieConsent />
+            </AuthProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </GlobalProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;

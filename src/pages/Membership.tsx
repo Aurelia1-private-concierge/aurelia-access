@@ -26,6 +26,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { useAuth } from "@/contexts/AuthContext";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 import { cn } from "@/lib/utils";
 
 const tierIcons = {
@@ -110,6 +111,7 @@ const Membership = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead pageType="membership" />
       <Navigation />
       
       <main className="pt-32 pb-24">

@@ -6,6 +6,7 @@ import FloatingWhatsApp from "./FloatingWhatsApp";
 import OrlaFAB from "./OrlaFAB";
 import SystemHealthIndicator from "./SystemHealthIndicator";
 import OfflineBanner from "./OfflineBanner";
+import NotificationPermissionPrompt from "./NotificationPermissionPrompt";
 
 // Lazy load heavy components
 const AmbientParticles = lazy(() => import("./AmbientParticles"));
@@ -18,6 +19,7 @@ interface GlobalElementsProps {
   showWhatsApp?: boolean;
   showOrla?: boolean;
   showHealthIndicator?: boolean;
+  showNotificationPrompt?: boolean;
 }
 
 const GlobalElements = ({
@@ -27,6 +29,7 @@ const GlobalElements = ({
   showWhatsApp = true,
   showOrla = true,
   showHealthIndicator = true,
+  showNotificationPrompt = true,
 }: GlobalElementsProps) => {
   const location = useLocation();
   
@@ -45,6 +48,9 @@ const GlobalElements = ({
       
       {/* PWA Install Prompt - shown on all pages */}
       <PWAInstallPrompt />
+      
+      {/* Push Notification Permission Prompt */}
+      {showNotificationPrompt && <NotificationPermissionPrompt />}
       
       {/* System Health Indicator - AI Self-Healing */}
       {showHealthIndicator && <SystemHealthIndicator />}

@@ -41,8 +41,10 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2,jpg,jpeg,webp,mp4}"],
-        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10MB for video assets
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2,jpg,jpeg,webp}"],
+        // Exclude large video files from precaching - they'll use runtime caching
+        globIgnores: ["**/*.mp4"],
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -74,7 +76,7 @@ export default defineConfig(({ mode }) => ({
               cacheName: "api-cache",
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24, // 24 hours
+                maxAgeSeconds: 60 * 60 * 24,
               },
               networkTimeoutSeconds: 10,
             },
@@ -87,8 +89,21 @@ export default defineConfig(({ mode }) => ({
               cacheName: "image-cache",
               expiration: {
                 maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+                maxAgeSeconds: 60 * 60 * 24 * 30,
               },
+            },
+          },
+          {
+            // Cache videos with network-first (don't precache large files)
+            urlPattern: /\.(?:mp4|webm)$/i,
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "video-cache",
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 7,
+              },
+              networkTimeoutSeconds: 30,
             },
           },
           {
@@ -99,7 +114,7 @@ export default defineConfig(({ mode }) => ({
               cacheName: "page-cache",
               expiration: {
                 maxEntries: 20,
-                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+                maxAgeSeconds: 60 * 60 * 24 * 7,
               },
               networkTimeoutSeconds: 5,
             },

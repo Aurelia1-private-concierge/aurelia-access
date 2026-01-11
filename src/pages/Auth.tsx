@@ -263,9 +263,10 @@ const Auth = () => {
         } else {
           toast({
             title: "Account Created",
-            description: "Your account has been created successfully.",
+            description: "Welcome! Let's personalize your experience.",
           });
-          navigate("/dashboard");
+          // Redirect new signups to onboarding
+          navigate("/onboarding");
         }
       }
     } finally {

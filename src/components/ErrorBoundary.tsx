@@ -1,9 +1,7 @@
 import { Component, ErrorInfo, ReactNode } from "react";
 import { motion } from "framer-motion";
 import { AlertTriangle, RefreshCw, Home, MessageCircle } from "lucide-react";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import Logo from "@/components/brand/Logo";
 import { logger } from "@/lib/logger";
 
 interface Props {
@@ -55,15 +53,16 @@ class ErrorBoundary extends Component<Props, State> {
           </div>
 
           <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 py-12">
-            {/* Logo */}
-            <motion.div
+            {/* Logo - use plain anchor tag since Router may not be available */}
+            <motion.a
+              href="/"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="mb-12"
+              className="mb-12 inline-flex items-center gap-3"
             >
-              <Logo variant="full" size="lg" linkTo="/" />
-            </motion.div>
+              <span className="font-serif text-2xl tracking-wide text-primary">AURELIA</span>
+            </motion.a>
 
             {/* Error Display */}
             <motion.div
@@ -114,25 +113,21 @@ class ErrorBoundary extends Component<Props, State> {
               </Button>
               
               <Button
-                asChild
                 variant="outline"
                 className="border-primary/30 hover:border-primary hover:bg-primary/10 px-6 py-5"
+                onClick={() => window.location.href = '/'}
               >
-                <Link to="/">
-                  <Home className="w-4 h-4 mr-2" />
-                  Return Home
-                </Link>
+                <Home className="w-4 h-4 mr-2" />
+                Return Home
               </Button>
 
               <Button
-                asChild
                 variant="outline"
                 className="border-primary/30 hover:border-primary hover:bg-primary/10 px-6 py-5"
+                onClick={() => window.location.href = '/orla'}
               >
-                <Link to="/orla">
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  Contact Support
-                </Link>
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Contact Support
               </Button>
             </motion.div>
 

@@ -4,6 +4,8 @@ import PWAInstallPrompt from "./PWAInstallPrompt";
 import MusicPlayer from "./MusicPlayer";
 import FloatingWhatsApp from "./FloatingWhatsApp";
 import OrlaFAB from "./OrlaFAB";
+import SystemHealthIndicator from "./SystemHealthIndicator";
+import OfflineBanner from "./OfflineBanner";
 
 // Lazy load heavy components
 const AmbientParticles = lazy(() => import("./AmbientParticles"));
@@ -15,6 +17,7 @@ interface GlobalElementsProps {
   showMusic?: boolean;
   showWhatsApp?: boolean;
   showOrla?: boolean;
+  showHealthIndicator?: boolean;
 }
 
 const GlobalElements = ({
@@ -23,6 +26,7 @@ const GlobalElements = ({
   showMusic = true,
   showWhatsApp = true,
   showOrla = true,
+  showHealthIndicator = true,
 }: GlobalElementsProps) => {
   const location = useLocation();
   
@@ -36,8 +40,14 @@ const GlobalElements = ({
 
   return (
     <>
+      {/* Offline Banner - shown at top when offline */}
+      <OfflineBanner />
+      
       {/* PWA Install Prompt - shown on all pages */}
       <PWAInstallPrompt />
+      
+      {/* System Health Indicator - AI Self-Healing */}
+      {showHealthIndicator && <SystemHealthIndicator />}
       
       {/* Ambient Effects */}
       {showParticles && (

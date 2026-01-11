@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import React, { useState, useRef, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, User, Lock, Sparkles, Volume2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ interface GuestPreviewProps {
   onSignIn: () => void;
 }
 
-const GuestPreview = ({ onSignIn }: GuestPreviewProps) => {
+const GuestPreview = forwardRef<HTMLDivElement, GuestPreviewProps>(({ onSignIn }, ref) => {
   const navigate = useNavigate();
   const [isPlaying, setIsPlaying] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
@@ -45,7 +45,7 @@ const GuestPreview = ({ onSignIn }: GuestPreviewProps) => {
   ];
 
   return (
-    <div className="flex flex-col items-center">
+    <div ref={ref} className="flex flex-col items-center">
       {/* Guest Mode Banner */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -273,6 +273,8 @@ const GuestPreview = ({ onSignIn }: GuestPreviewProps) => {
       </AnimatePresence>
     </div>
   );
-};
+});
+
+GuestPreview.displayName = "GuestPreview";
 
 export default GuestPreview;

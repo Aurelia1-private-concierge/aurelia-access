@@ -24,7 +24,7 @@ const Terms = () => {
     {
       icon: Lock,
       title: "4. Confidentiality & Privacy",
-      content: `We maintain the strictest confidentiality regarding all member information and transactions. Your personal data is processed in accordance with Swiss data protection laws and our Privacy Policy. We employ bank-grade encryption and security protocols. Member information is never shared with third parties except as required to fulfill service requests or comply with legal obligations.`,
+      content: `We maintain the strictest confidentiality regarding all member information and transactions. Your personal data is processed in accordance with UK data protection laws (UK GDPR) and our Privacy Policy. We employ bank-grade encryption and security protocols. Member information is never shared with third parties except as required to fulfill service requests or comply with legal obligations.`,
     },
     {
       icon: Scale,
@@ -34,7 +34,7 @@ const Terms = () => {
     {
       icon: Globe,
       title: "6. Governing Law & Jurisdiction",
-      content: `These Terms of Service are governed by and construed in accordance with the laws of Switzerland. Any disputes arising from these terms or your use of our services shall be subject to the exclusive jurisdiction of the courts of Geneva, Switzerland. The United Nations Convention on Contracts for the International Sale of Goods does not apply to these terms.`,
+      content: `These Terms of Service are governed by and construed in accordance with the laws of England and Wales. Any disputes arising from these terms or your use of our services shall be subject to the exclusive jurisdiction of the courts of London, United Kingdom. The United Nations Convention on Contracts for the International Sale of Goods does not apply to these terms.`,
     },
   ];
 

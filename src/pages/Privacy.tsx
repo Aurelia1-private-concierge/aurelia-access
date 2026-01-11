@@ -9,7 +9,7 @@ const Privacy = () => {
     {
       icon: Eye,
       title: "1. Information We Collect",
-      content: `We collect information you provide directly, including name, contact details, travel preferences, and payment information. We also collect usage data, device information, and cookies to improve our services. All data collection is conducted with your consent and in compliance with Swiss data protection regulations.`,
+      content: `We collect information you provide directly, including name, contact details, travel preferences, and payment information. We also collect usage data, device information, and cookies to improve our services. All data collection is conducted with your consent and in compliance with UK data protection regulations including the UK GDPR.`,
     },
     {
       icon: Database,
@@ -19,22 +19,22 @@ const Privacy = () => {
     {
       icon: Shield,
       title: "3. Data Security",
-      content: `We employ bank-grade encryption (AES-256) for data at rest and TLS 1.3 for data in transit. Our infrastructure is hosted in Swiss data centers with SOC 2 Type II certification. Access to member data is strictly controlled and audited. We conduct regular security assessments and penetration testing.`,
+      content: `We employ bank-grade encryption (AES-256) for data at rest and TLS 1.3 for data in transit. Our infrastructure is hosted in secure UK and EU data centers with SOC 2 Type II certification. Access to member data is strictly controlled and audited. We conduct regular security assessments and penetration testing.`,
     },
     {
       icon: Clock,
       title: "4. Data Retention",
-      content: `We retain your personal data only as long as necessary to fulfill the purposes outlined in this policy or as required by law. Transaction records are kept for seven years per Swiss financial regulations. You may request deletion of your data at any time, subject to legal retention requirements.`,
+      content: `We retain your personal data only as long as necessary to fulfill the purposes outlined in this policy or as required by law. Transaction records are kept for seven years per UK financial regulations. You may request deletion of your data at any time, subject to legal retention requirements.`,
     },
     {
       icon: UserCheck,
       title: "5. Your Rights",
-      content: `You have the right to access, correct, or delete your personal data. You may request data portability or restrict processing. You can withdraw consent at any time without affecting prior processing. To exercise these rights, contact our Data Protection Officer at privacy@aurelia.com.`,
+      content: `Under UK GDPR, you have the right to access, correct, or delete your personal data. You may request data portability or restrict processing. You can withdraw consent at any time without affecting prior processing. To exercise these rights, contact our Data Protection Officer at concierge@aurelia-privateconcierge.com.`,
     },
     {
       icon: Globe,
       title: "6. International Transfers",
-      content: `When we transfer data outside Switzerland, we ensure adequate protection through standard contractual clauses approved by the Swiss Federal Data Protection and Information Commissioner. We only transfer data to jurisdictions with equivalent data protection standards or with appropriate safeguards in place.`,
+      content: `When we transfer data outside the United Kingdom, we ensure adequate protection through standard contractual clauses approved by the UK Information Commissioner's Office. We only transfer data to jurisdictions with equivalent data protection standards or with appropriate safeguards in place.`,
     },
   ];
 
@@ -60,7 +60,7 @@ const Privacy = () => {
               Privacy Policy
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Your privacy is paramount. We protect your data with Swiss precision.
+              Your privacy is paramount. We protect your data with the highest UK standards.
             </p>
             <p className="text-sm text-muted-foreground/60 mt-4">
               Last updated: January 2026
@@ -125,10 +125,10 @@ const Privacy = () => {
             </h3>
             <p className="text-muted-foreground leading-relaxed">
               For privacy inquiries or to exercise your rights, contact our Data Protection Officer at{" "}
-              <a href="mailto:privacy@aurelia.com" className="text-primary hover:underline">
-                privacy@aurelia.com
+              <a href="mailto:concierge@aurelia-privateconcierge.com" className="text-primary hover:underline">
+                concierge@aurelia-privateconcierge.com
               </a>{" "}
-              or write to: Data Protection Officer, {BRAND.entity}, Geneva, Switzerland.
+              or write to: Data Protection Officer, {BRAND.entity}, London, United Kingdom.
             </p>
           </motion.div>
 

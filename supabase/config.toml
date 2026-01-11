@@ -86,3 +86,6 @@ verify_jwt = false
 
 [functions.waitlist-notification]
 verify_jwt = false
+
+[functions.referral-email]
+verify_jwt = false

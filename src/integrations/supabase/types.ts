@@ -1282,6 +1282,96 @@ export type Database = {
         }
         Relationships: []
       }
+      wearable_connections: {
+        Row: {
+          access_token: string
+          created_at: string
+          device_name: string | null
+          expires_at: string | null
+          id: string
+          last_sync_at: string | null
+          provider: string
+          refresh_token: string | null
+          sync_enabled: boolean | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          created_at?: string
+          device_name?: string | null
+          expires_at?: string | null
+          id?: string
+          last_sync_at?: string | null
+          provider: string
+          refresh_token?: string | null
+          sync_enabled?: boolean | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          created_at?: string
+          device_name?: string | null
+          expires_at?: string | null
+          id?: string
+          last_sync_at?: string | null
+          provider?: string
+          refresh_token?: string | null
+          sync_enabled?: boolean | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wellness_data: {
+        Row: {
+          created_at: string
+          date: string
+          hrv_avg: number | null
+          id: string
+          provider: string
+          raw_data: Json | null
+          readiness_score: number | null
+          recovery_score: number | null
+          resting_hr: number | null
+          sleep_hours: number | null
+          sleep_score: number | null
+          strain_score: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          hrv_avg?: number | null
+          id?: string
+          provider: string
+          raw_data?: Json | null
+          readiness_score?: number | null
+          recovery_score?: number | null
+          resting_hr?: number | null
+          sleep_hours?: number | null
+          sleep_score?: number | null
+          strain_score?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          hrv_avg?: number | null
+          id?: string
+          provider?: string
+          raw_data?: Json | null
+          readiness_score?: number | null
+          recovery_score?: number | null
+          resting_hr?: number | null
+          sleep_hours?: number | null
+          sleep_score?: number | null
+          strain_score?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

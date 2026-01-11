@@ -10,7 +10,6 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import FAQSection from "@/components/FAQSection";
 import MembershipCTA from "@/components/MembershipCTA";
 import Footer from "@/components/Footer";
-import MultiAgentWidget from "@/components/MultiAgentWidget";
 import heroVideo from "@/assets/hero-luxury-holiday.mp4";
 import LoadingScreen from "@/components/LoadingScreen";
 import ScrollProgress from "@/components/ScrollProgress";
@@ -162,8 +161,7 @@ const Index = () => {
       {/* Footer */}
       <Footer />
 
-      {/* Page-specific Floating Elements */}
-      <MultiAgentWidget />
+      {/* Picture-in-Picture Video */}
       
       {/* Picture-in-Picture Video */}
       <PictureInPicture 

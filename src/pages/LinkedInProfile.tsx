@@ -113,12 +113,12 @@ const LinkedInProfile = () => {
                 <div className="flex gap-3">
                   <Button 
                     className="gap-2"
-                    onClick={() => window.open('https://linkedin.com/company/aurelia-concierge', '_blank')}
+                    onClick={() => window.open('https://www.linkedin.com/company/518708441', '_blank')}
                   >
                     <Linkedin className="w-4 h-4" />
                     Follow
                   </Button>
-                  <Button variant="outline" className="gap-2">
+                  <Button variant="outline" className="gap-2" onClick={() => window.open('https://aurelia-privateconcierge.com', '_blank')}>
                     <Globe className="w-4 h-4" />
                     Visit Website
                   </Button>

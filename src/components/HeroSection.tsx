@@ -3,7 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import heroImage from "@/assets/hero-luxury-abstract.jpg";
+
 
 interface HeroSectionProps {
   videoSrc?: string;

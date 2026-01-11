@@ -818,6 +818,45 @@ export type Database = {
         }
         Relationships: []
       }
+      outreach_templates: {
+        Row: {
+          body: string
+          category: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          subject: string
+          updated_at: string
+          variables: string[] | null
+        }
+        Insert: {
+          body: string
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          subject: string
+          updated_at?: string
+          variables?: string[] | null
+        }
+        Update: {
+          body?: string
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          subject?: string
+          updated_at?: string
+          variables?: string[] | null
+        }
+        Relationships: []
+      }
       partner_commissions: {
         Row: {
           booking_amount: number
@@ -927,6 +966,128 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      partner_outreach_logs: {
+        Row: {
+          content: string | null
+          created_at: string
+          id: string
+          outreach_type: string
+          prospect_id: string
+          response_at: string | null
+          response_notes: string | null
+          response_received: boolean | null
+          sent_at: string
+          sent_by: string | null
+          subject: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          outreach_type: string
+          prospect_id: string
+          response_at?: string | null
+          response_notes?: string | null
+          response_received?: boolean | null
+          sent_at?: string
+          sent_by?: string | null
+          subject?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          outreach_type?: string
+          prospect_id?: string
+          response_at?: string | null
+          response_notes?: string | null
+          response_received?: boolean | null
+          sent_at?: string
+          sent_by?: string | null
+          subject?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_outreach_logs_prospect_id_fkey"
+            columns: ["prospect_id"]
+            isOneToOne: false
+            referencedRelation: "partner_prospects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      partner_prospects: {
+        Row: {
+          assigned_to: string | null
+          category: string
+          company_name: string
+          contact_name: string | null
+          converted_partner_id: string | null
+          coverage_regions: string[] | null
+          created_at: string
+          description: string | null
+          email: string | null
+          follow_up_date: string | null
+          id: string
+          last_contacted_at: string | null
+          metadata: Json | null
+          notes: string | null
+          phone: string | null
+          priority: string | null
+          source: string | null
+          status: string
+          subcategory: string | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          category: string
+          company_name: string
+          contact_name?: string | null
+          converted_partner_id?: string | null
+          coverage_regions?: string[] | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          follow_up_date?: string | null
+          id?: string
+          last_contacted_at?: string | null
+          metadata?: Json | null
+          notes?: string | null
+          phone?: string | null
+          priority?: string | null
+          source?: string | null
+          status?: string
+          subcategory?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          category?: string
+          company_name?: string
+          contact_name?: string | null
+          converted_partner_id?: string | null
+          coverage_regions?: string[] | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          follow_up_date?: string | null
+          id?: string
+          last_contacted_at?: string | null
+          metadata?: Json | null
+          notes?: string | null
+          phone?: string | null
+          priority?: string | null
+          source?: string | null
+          status?: string
+          subcategory?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
       }
       partner_services: {
         Row: {

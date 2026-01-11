@@ -9,10 +9,13 @@ import { z } from "zod";
 import { AnimatedLogo } from "@/components/brand";
 import { TwoFactorVerify } from "@/components/auth/TwoFactorVerify";
 import { PasswordStrengthMeter } from "@/components/auth/PasswordStrengthMeter";
+import { PasswordBreachWarning } from "@/components/auth/PasswordBreachWarning";
 import { useLoginRateLimit } from "@/hooks/useLoginRateLimit";
 import { useMFA } from "@/hooks/useMFA";
 import { useAuthAuditLog } from "@/hooks/useAuthAuditLog";
 import { useFunnelTracking } from "@/hooks/useFunnelTracking";
+import { usePasswordBreachCheck } from "@/hooks/usePasswordBreachCheck";
+import { useLoginDeviceTracking } from "@/hooks/useLoginDeviceTracking";
 
 const emailSchema = z.string().email("Please enter a valid email address");
 const passwordSchema = z.string()
@@ -50,6 +53,9 @@ const Auth = () => {
   const { needsVerification, checkMFAStatus } = useMFA();
   const { logLogin, logLogout, logSignup, logPasswordReset, logMFAEvent, logOAuthLogin } = useAuthAuditLog();
   const { trackSignupStarted, trackSignupCompleted } = useFunnelTracking();
+  const { checkPasswordDebounced, isChecking: isCheckingBreach, lastResult: breachResult } = usePasswordBreachCheck();
+  const { recordDeviceLogin, createBreachAlert } = useLoginDeviceTracking();
+  const [breachChecked, setBreachChecked] = useState(false);
 
   const RESET_COOLDOWN_MS = 60000; // 60 seconds
 
@@ -110,6 +116,11 @@ const Auth = () => {
 
       if (!isLogin && password !== confirmPassword) {
         newErrors.confirmPassword = "Passwords do not match";
+      }
+
+      // Check if password is breached during signup
+      if (!isLogin && breachResult?.isBreached) {
+        newErrors.password = "This password has been found in a data breach. Please choose a different password.";
       }
     }
 
@@ -232,6 +243,15 @@ const Auth = () => {
           // Record successful login and audit log
           recordSuccessfulLogin();
           logLogin(true, email);
+          
+          // Record device login for security tracking
+          const { isNewDevice } = await recordDeviceLogin();
+          if (isNewDevice) {
+            toast({
+              title: "New Device Detected",
+              description: "We've recorded this new device for your security.",
+            });
+          }
           
           // Check if MFA verification is needed
           await checkMFAStatus();
@@ -517,8 +537,17 @@ const Auth = () => {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => {
-                        setPassword(e.target.value);
+                        const newPassword = e.target.value;
+                        setPassword(newPassword);
                         setErrors((prev) => ({ ...prev, password: undefined }));
+                        
+                        // Check password against breach database during signup
+                        if (!isLogin && newPassword.length >= 8) {
+                          setBreachChecked(true);
+                          checkPasswordDebounced(newPassword, () => {});
+                        } else {
+                          setBreachChecked(false);
+                        }
                       }}
                       placeholder="••••••••"
                       className={`w-full bg-muted/30 border ${
@@ -539,6 +568,16 @@ const Auth = () => {
                   
                   {/* Password strength meter (signup only) */}
                   {!isLogin && <PasswordStrengthMeter password={password} />}
+                  
+                  {/* Password breach warning (signup only) */}
+                  {!isLogin && breachChecked && (
+                    <PasswordBreachWarning
+                      isChecking={isCheckingBreach}
+                      isBreached={breachResult?.isBreached || false}
+                      occurrences={breachResult?.occurrences || 0}
+                      error={breachResult?.error}
+                    />
+                  )}
                 </div>
 
                 {/* Confirm Password (signup only) */}

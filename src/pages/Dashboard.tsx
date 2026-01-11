@@ -9,11 +9,12 @@ import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import ReferralDashboard from "@/components/referral/ReferralDashboard";
 import LifestyleCalendar from "@/components/dashboard/LifestyleCalendar";
 import RealTimeChat from "@/components/dashboard/RealTimeChat";
+import DeviceConnections from "@/components/dashboard/DeviceConnections";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { TierThemeProvider, useTierTheme } from "@/contexts/TierThemeContext";
 import { cn } from "@/lib/utils";
 
-type ActiveView = "portfolio" | "messaging" | "documents" | "referrals" | "calendar" | "chat";
+type ActiveView = "portfolio" | "messaging" | "documents" | "referrals" | "calendar" | "chat" | "devices";
 
 const DashboardContent = () => {
   const [searchParams] = useSearchParams();
@@ -24,7 +25,7 @@ const DashboardContent = () => {
   // Update view when URL params change
   useEffect(() => {
     const tab = searchParams.get("tab") as ActiveView | null;
-    if (tab && ["portfolio", "messaging", "documents", "referrals", "calendar", "chat"].includes(tab)) {
+    if (tab && ["portfolio", "messaging", "documents", "referrals", "calendar", "chat", "devices"].includes(tab)) {
       setActiveView(tab);
     }
   }, [searchParams]);
@@ -43,6 +44,8 @@ const DashboardContent = () => {
         return <LifestyleCalendar />;
       case "chat":
         return <RealTimeChat />;
+      case "devices":
+        return <DeviceConnections />;
       default:
         return <PortfolioOverview />;
     }

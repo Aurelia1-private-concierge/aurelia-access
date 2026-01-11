@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, createContext, useContext } from "react";
 
-export type OrlaEmotion = "neutral" | "happy" | "thinking" | "curious" | "warm";
+export type OrlaEmotion = "neutral" | "happy" | "thinking" | "curious" | "warm" | "concerned" | "urgent";
 
 interface OrlaExpressionState {
   emotion: OrlaEmotion;
@@ -76,6 +76,28 @@ const analyzeContentSentiment = (content: string): OrlaEmotion => {
   ];
   if (warmWords.some(word => lowerContent.includes(word))) {
     return "warm";
+  }
+  
+  // Concerned triggers - problems, issues, apologies
+  const concernedWords = [
+    "sorry", "apologize", "unfortunately", "regret", "unable to", "cannot", "issue",
+    "problem", "concerned", "worry", "difficult", "challenge", "complication",
+    "understand your frustration", "i see the issue", "let me fix", "troubleshoot",
+    "inconvenience", "mistake", "error", "failed", "unsuccessful", "delayed"
+  ];
+  if (concernedWords.some(word => lowerContent.includes(word))) {
+    return "concerned";
+  }
+  
+  // Urgent triggers - time-sensitive, critical actions
+  const urgentWords = [
+    "immediately", "urgent", "right away", "asap", "emergency", "critical",
+    "time-sensitive", "priority", "now", "quickly", "hurry", "rush",
+    "deadline", "expires", "limited time", "last minute", "don't wait",
+    "act fast", "important update", "breaking", "alert", "attention required"
+  ];
+  if (urgentWords.some(word => lowerContent.includes(word))) {
+    return "urgent";
   }
   
   return "neutral";
@@ -191,7 +213,7 @@ export const useOrlaEmotionDemo = () => {
   useEffect(() => {
     if (!isRunning) return;
 
-    const emotions: OrlaEmotion[] = ["neutral", "happy", "thinking", "curious", "warm"];
+    const emotions: OrlaEmotion[] = ["neutral", "happy", "thinking", "curious", "warm", "concerned", "urgent"];
     let index = 0;
 
     const interval = setInterval(() => {

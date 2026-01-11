@@ -15,7 +15,7 @@ interface Orla3DAvatarProps {
   isConnected: boolean;
   isListening: boolean;
   getVolume?: () => number;
-  emotion?: "neutral" | "happy" | "thinking" | "curious" | "warm";
+  emotion?: "neutral" | "happy" | "thinking" | "curious" | "warm" | "concerned" | "urgent";
   size?: number;
 }
 
@@ -88,8 +88,18 @@ const faceShaderMaterial = {
         // Happy - warmer tones
         sssColor = mix(sssColor, warmTint, 0.1);
       } else if (emotion > 1.5 && emotion < 2.5) {
-        // Thinking - cooler tones
-        sssColor = mix(sssColor, coolTint, 0.15);
+        // Thinking - cooler tones with pulse
+        float thinkPulse = sin(time * 2.5) * 0.5 + 0.5;
+        sssColor = mix(sssColor, coolTint, 0.15 + thinkPulse * 0.1);
+      } else if (emotion > 4.5 && emotion < 5.5) {
+        // Concerned - slightly muted warm
+        vec3 concernTint = vec3(0.9, 0.85, 0.8);
+        sssColor = mix(sssColor, concernTint, 0.12);
+      } else if (emotion > 5.5 && emotion < 6.5) {
+        // Urgent - subtle alert glow
+        float urgentPulse = sin(time * 4.0) * 0.5 + 0.5;
+        vec3 urgentGlow = vec3(1.0, 0.9, 0.7);
+        sssColor = mix(sssColor, urgentGlow, urgentPulse * 0.15);
       }
       
       // Soft edge fade for ethereal effect
@@ -167,6 +177,8 @@ function AnimatedFace({
       thinking: { mouthOpen: 0, smile: 0, eyebrowRaise: 0.4, eyeSquint: 0.1 },
       curious: { mouthOpen: 0.05, smile: 0.2, eyebrowRaise: 0.5, eyeSquint: 0 },
       warm: { mouthOpen: 0.05, smile: 0.4, eyebrowRaise: 0.1, eyeSquint: 0.2 },
+      concerned: { mouthOpen: 0, smile: -0.1, eyebrowRaise: 0.3, eyeSquint: 0.15 },
+      urgent: { mouthOpen: 0.08, smile: 0, eyebrowRaise: 0.6, eyeSquint: 0.05 },
     };
 
     const base = emotionMap[emotion || "neutral"] || emotionMap.neutral;
@@ -200,7 +212,9 @@ function AnimatedFace({
         emotion === "happy" ? 1 :
         emotion === "thinking" ? 2 :
         emotion === "curious" ? 3 :
-        emotion === "warm" ? 4 : 0;
+        emotion === "warm" ? 4 :
+        emotion === "concerned" ? 5 :
+        emotion === "urgent" ? 6 : 0;
       shaderMaterial.uniforms.emotion.value = emotionValue;
     }
 
@@ -214,8 +228,23 @@ function AnimatedFace({
 
     // Subtle head movement
     if (meshRef.current) {
-      meshRef.current.rotation.y = Math.sin(time * 0.3) * 0.05;
-      meshRef.current.rotation.x = Math.sin(time * 0.2) * 0.02;
+      // Enhanced thinking animation - more contemplative movement
+      if (emotion === "thinking") {
+        meshRef.current.rotation.y = Math.sin(time * 0.5) * 0.08 + Math.sin(time * 1.2) * 0.03;
+        meshRef.current.rotation.x = Math.sin(time * 0.3) * 0.04 - 0.03; // Slight downward tilt
+        meshRef.current.rotation.z = Math.sin(time * 0.7) * 0.02;
+      } else if (emotion === "urgent") {
+        // Urgent - slightly faster, more alert movements
+        meshRef.current.rotation.y = Math.sin(time * 0.6) * 0.06;
+        meshRef.current.rotation.x = Math.sin(time * 0.4) * 0.03;
+      } else if (emotion === "concerned") {
+        // Concerned - gentle, empathetic nod
+        meshRef.current.rotation.y = Math.sin(time * 0.25) * 0.04;
+        meshRef.current.rotation.x = Math.sin(time * 0.35) * 0.025 - 0.02;
+      } else {
+        meshRef.current.rotation.y = Math.sin(time * 0.3) * 0.05;
+        meshRef.current.rotation.x = Math.sin(time * 0.2) * 0.02;
+      }
       
       if (isSpeaking) {
         meshRef.current.rotation.z = Math.sin(time * 2) * 0.01;

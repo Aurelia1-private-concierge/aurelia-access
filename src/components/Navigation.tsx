@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Lock, Menu, Compass } from "lucide-react";
+import { Lock, Menu, Compass, Play } from "lucide-react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -23,6 +23,7 @@ const navLinks = [
 const pageLinks = [
   { href: "/experiences", label: "Experiences", icon: Compass },
   { href: "/discover", label: "Discover", icon: Compass },
+  { href: "/demo-services", label: "Demo", icon: Play, isDemo: true },
   { href: "/partners/join", label: "Become a Partner", icon: Compass },
 ];
 
@@ -81,18 +82,26 @@ const Navigation = () => {
           {/* Page Links */}
           {pageLinks.map((link) => {
             const Icon = link.icon;
+            const isDemo = 'isDemo' in link && link.isDemo;
             return (
               <Link
                 key={link.href}
                 to={link.href}
                 className={`relative py-2 transition-colors duration-300 flex items-center gap-1.5 ${
-                  location.pathname === link.href
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
+                  isDemo 
+                    ? "text-primary hover:text-primary/80" 
+                    : location.pathname === link.href
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <Icon className="w-4 h-4" />
                 {link.label}
+                {isDemo && (
+                  <span className="px-1.5 py-0.5 text-[9px] bg-primary/20 border border-primary/30 rounded-full text-primary">
+                    COMING SOON
+                  </span>
+                )}
                 {location.pathname === link.href && (
                   <motion.span
                     layoutId="activeNav"
@@ -158,19 +167,27 @@ const Navigation = () => {
                 {/* Page Links for Mobile */}
                 {pageLinks.map((link, index) => {
                   const Icon = link.icon;
+                  const isDemo = 'isDemo' in link && link.isDemo;
                   return (
                     <Link
                       key={link.href}
                       to={link.href}
                       onClick={() => setIsOpen(false)}
                       className={`py-4 px-4 text-lg font-light transition-all duration-300 border-b border-border/20 flex items-center gap-3 ${
-                        location.pathname === link.href
-                          ? "text-foreground bg-secondary/30 border-l-2 border-l-primary"
-                          : "text-muted-foreground hover:text-foreground hover:bg-secondary/30"
+                        isDemo
+                          ? "text-primary"
+                          : location.pathname === link.href
+                            ? "text-foreground bg-secondary/30 border-l-2 border-l-primary"
+                            : "text-muted-foreground hover:text-foreground hover:bg-secondary/30"
                       }`}
                     >
                       <Icon className="w-5 h-5" />
                       {link.label}
+                      {isDemo && (
+                        <span className="ml-auto px-2 py-0.5 text-[10px] bg-primary/20 border border-primary/30 rounded-full text-primary">
+                          COMING SOON
+                        </span>
+                      )}
                     </Link>
                   );
                 })}

@@ -21,6 +21,7 @@ const PREVIEW_ANIMATIONS: Record<AvatarModelType, { scale: number[]; rotate: num
   masculine: { scale: [1, 1.04, 1], rotate: [0, -4, 0] },
   abstract: { scale: [1, 1.2, 0.95, 1], rotate: [0, 20, 0] },
   cyberpunk: { scale: [1, 1.1, 0.98, 1], rotate: [0, -10, 10, 0] },
+  tyrone: { scale: [1, 1.06, 1], rotate: [0, -5, 0] },
 };
 
 const AnimatedPreview: React.FC<{ 

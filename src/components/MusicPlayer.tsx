@@ -129,11 +129,11 @@ const MusicPlayer: React.FC = () => {
     });
 
     if (error) throw error;
-    if (!data?.audioContent) throw new Error('No audio content received');
+    if (!data?.audioUrl) throw new Error('No audio URL received');
 
-    const audioUrl = `data:audio/mpeg;base64,${data.audioContent}`;
-    audioCache.current.set(cacheKey, audioUrl);
-    return audioUrl;
+    // Use the curated audio URL directly
+    audioCache.current.set(cacheKey, data.audioUrl);
+    return data.audioUrl;
   }, []);
 
   const playGenre = useCallback(async (genre: MusicGenre, duration?: number) => {

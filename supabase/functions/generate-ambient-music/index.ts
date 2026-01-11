@@ -1,49 +1,57 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Extended genre library with rich, detailed prompts for variety
-const GENRE_PROMPTS: Record<string, string> = {
-  // Luxury & Elegant
-  luxury: "Sophisticated ambient music with elegant grand piano melodies interweaving with lush string orchestra. Gentle harp arpeggios and subtle celesta sparkles. Refined, opulent atmosphere perfect for a five-star hotel lobby or private members club. Slow tempo, major key, incredibly smooth and polished. No percussion.",
-  
-  classical: "Romantic era classical orchestral piece with sweeping violin melodies and rich viola harmonies. Gentle crescendos and diminuendos creating emotional depth. Reminiscent of Debussy's dreamlike impressionism. Full symphony orchestra with delicate woodwind accents. Elegant and timeless.",
-  
-  piano: "Solo grand piano performance in the style of modern classical composers like Ludovico Einaudi or Nils Frahm. Contemplative, minimalist melodies with emotional depth. Gentle arpeggios and sustained notes creating space and atmosphere. Intimate recording with subtle room ambiance.",
-  
-  // Jazz & Lounge
-  jazz: "Smooth late-night jazz lounge with sultry saxophone lead over warm upright bass and brushed drums. Soft piano comping and gentle guitar voicings. Intimate club atmosphere, slightly smoky and sophisticated. Medium slow tempo, relaxed swing feel. Perfect for a whiskey bar.",
-  
-  bossa: "Elegant bossa nova with nylon string guitar and soft percussion. Gentle saxophone or flute melodies floating over the groove. Brazilian café atmosphere, warm and romantic. Subtle shakers and light brushwork. Sophisticated and worldly.",
-  
-  lounge: "Modern electronic chill lounge with deep warm basslines and atmospheric synth pads. Subtle lo-fi textures and vinyl crackle. Downtempo beats with jazz-influenced chord progressions. Perfect for a rooftop bar at sunset. Sophisticated and contemporary.",
-  
-  // Nature & Ambient
-  nature: "Immersive forest soundscape with gentle rain falling on leaves, distant birdsong, and soft wind through trees. Occasional thunder in the far distance. Layered with subtle drones and ambient tones for a meditative quality. Peaceful and grounding.",
-  
-  ocean: "Calming ocean waves rolling onto a sandy beach with seagulls in the distance. Subtle underwater ambience and gentle wind. Layered with ethereal synth pads and soft piano notes. Perfect for relaxation and sleep. Hypnotic and soothing rhythm.",
-  
-  rain: "Steady rainfall on windows with occasional distant thunder. Cozy indoor atmosphere with subtle warmth. Layered with extremely soft piano notes barely audible beneath the rain. Perfect for focus and relaxation. ASMR quality recording.",
-  
-  fireplace: "Warm crackling fireplace with gentle wood pops and sizzles. Cozy cabin atmosphere on a winter night. Subtle wind outside. Layered with very soft cello or violin long tones for emotional warmth. Intimate and comforting.",
-  
-  // World & Cultural
-  mediterranean: "Mediterranean sunset ambience with acoustic guitar, soft hand percussion, and gentle accordion or bouzouki. Warm evening atmosphere at a coastal taverna. Olive groves and sea breeze. Relaxed and romantic.",
-  
-  arabic: "Elegant Middle Eastern inspired ambient with oud and kanun melodies over gentle frame drum. Modal scales creating exotic atmosphere. Luxurious Dubai or Moroccan riad evening. Sophisticated and mysterious.",
-  
-  asian: "Zen garden ambience with koto or guzheng over bamboo flute melodies. Gentle water features and wind chimes. Japanese or Chinese classical influence with modern ambient production. Meditative and serene.",
-  
-  // Modern & Electronic
-  cinematic: "Epic cinematic orchestral ambient with sweeping strings, French horns, and ethereal choir pads. Building slowly with emotional intensity. Film score quality production. Majestic mountain vistas or starlit skies. Inspiring and grand.",
-  
-  synthwave: "Retro-futuristic synthwave ambient with warm analog synthesizer pads and gentle arpeggios. 1980s nostalgia meets modern production. Neon-lit cityscape at night. Dreamy and atmospheric without heavy beats.",
-  
-  minimal: "Ultra-minimalist ambient in the style of Brian Eno or Stars of the Lid. Slowly evolving synth drones and subtle harmonic shifts. Vast open spaces and stillness. Perfect for deep focus or meditation. Barely perceptible evolution.",
+// Fallback to curated royalty-free ambient audio URLs
+// These are publicly available ambient/relaxation tracks
+const GENRE_AUDIO_URLS: Record<string, string[]> = {
+  luxury: [
+    "https://cdn.pixabay.com/audio/2024/11/04/audio_0ae1d23ac8.mp3", // Elegant piano
+    "https://cdn.pixabay.com/audio/2024/09/17/audio_de9c3c51e9.mp3", // Ambient luxury
+  ],
+  classical: [
+    "https://cdn.pixabay.com/audio/2024/02/07/audio_77c54e4bf5.mp3", // Classical piano
+    "https://cdn.pixabay.com/audio/2023/10/16/audio_f7a4b46cff.mp3", // Orchestra
+  ],
+  piano: [
+    "https://cdn.pixabay.com/audio/2024/11/04/audio_0ae1d23ac8.mp3",
+    "https://cdn.pixabay.com/audio/2024/02/07/audio_77c54e4bf5.mp3",
+  ],
+  jazz: [
+    "https://cdn.pixabay.com/audio/2024/09/12/audio_c0edf3e2f2.mp3", // Jazz lounge
+    "https://cdn.pixabay.com/audio/2022/10/25/audio_946945cdec.mp3", // Smooth jazz
+  ],
+  lounge: [
+    "https://cdn.pixabay.com/audio/2024/09/17/audio_de9c3c51e9.mp3",
+    "https://cdn.pixabay.com/audio/2024/09/12/audio_c0edf3e2f2.mp3",
+  ],
+  nature: [
+    "https://cdn.pixabay.com/audio/2022/08/23/audio_d12fe0bce3.mp3", // Forest
+    "https://cdn.pixabay.com/audio/2022/03/15/audio_8cb749d484.mp3", // Nature sounds
+  ],
+  ocean: [
+    "https://cdn.pixabay.com/audio/2022/06/07/audio_80b975e245.mp3", // Ocean waves
+    "https://cdn.pixabay.com/audio/2024/04/04/audio_eff09bede0.mp3", // Beach
+  ],
+  rain: [
+    "https://cdn.pixabay.com/audio/2022/04/12/audio_37d6c5c76b.mp3", // Rain
+    "https://cdn.pixabay.com/audio/2024/01/15/audio_59b0e8989c.mp3", // Rain ambient
+  ],
+  minimal: [
+    "https://cdn.pixabay.com/audio/2023/03/20/audio_30db0b08cd.mp3", // Minimal ambient
+    "https://cdn.pixabay.com/audio/2022/10/16/audio_7a6f9e3cf5.mp3", // Drone
+  ],
+  cinematic: [
+    "https://cdn.pixabay.com/audio/2024/07/19/audio_a24b03dd11.mp3", // Cinematic
+    "https://cdn.pixabay.com/audio/2023/10/16/audio_f7a4b46cff.mp3", // Epic
+  ],
+  synthwave: [
+    "https://cdn.pixabay.com/audio/2024/08/15/audio_97ebe2f7a5.mp3", // Synthwave
+    "https://cdn.pixabay.com/audio/2023/05/16/audio_166b9c7424.mp3", // Retro
+  ],
 };
 
 serve(async (req) => {
@@ -52,58 +60,26 @@ serve(async (req) => {
   }
 
   try {
-    const { genre = 'luxury', duration = 120 } = await req.json();
-    const ELEVENLABS_API_KEY = Deno.env.get("ELEVENLABS_API_KEY");
+    const { genre = 'luxury' } = await req.json();
 
-    if (!ELEVENLABS_API_KEY) {
-      throw new Error("ElevenLabs API key not configured");
-    }
-
-    // Get the prompt for the genre, fallback to luxury
-    const musicPrompt = GENRE_PROMPTS[genre] || GENRE_PROMPTS.luxury;
+    // Get audio URLs for the genre, fallback to luxury
+    const audioUrls = GENRE_AUDIO_URLS[genre] || GENRE_AUDIO_URLS.luxury;
     
-    // Clamp duration between 30 and 300 seconds (5 minutes max)
-    const clampedDuration = Math.max(30, Math.min(300, duration));
+    // Pick a random track from the available options
+    const selectedUrl = audioUrls[Math.floor(Math.random() * audioUrls.length)];
 
-    console.log(`Generating ${genre} music for ${clampedDuration} seconds`);
-    console.log(`Prompt: ${musicPrompt.substring(0, 100)}...`);
-
-    const response = await fetch(
-      "https://api.elevenlabs.io/v1/music",
-      {
-        method: "POST",
-        headers: {
-          "xi-api-key": ELEVENLABS_API_KEY,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          prompt: musicPrompt,
-          duration_seconds: clampedDuration,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('ElevenLabs Music API error:', errorText);
-      throw new Error(`Music generation failed: ${response.status}`);
-    }
-
-    const audioBuffer = await response.arrayBuffer();
-    const base64Audio = base64Encode(audioBuffer);
-
-    console.log(`Generated ${genre} music successfully (${(audioBuffer.byteLength / 1024).toFixed(1)}KB)`);
+    console.log(`Returning ${genre} ambient audio URL: ${selectedUrl}`);
 
     return new Response(
       JSON.stringify({ 
-        audioContent: base64Audio,
+        audioUrl: selectedUrl,
         genre,
-        duration: clampedDuration,
+        source: 'curated',
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error: unknown) {
-    console.error('Music generation error:', error);
+    console.error('Ambient audio error:', error);
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: message }),

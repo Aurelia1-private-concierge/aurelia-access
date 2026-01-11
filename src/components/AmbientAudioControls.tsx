@@ -120,14 +120,13 @@ const AmbientAudioControls: React.FC = () => {
     setIsMusicLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-ambient-music', {
-        body: { style: 'luxury' },
+        body: { genre: 'luxury' },
       });
 
       if (error) throw error;
-      if (!data?.audioContent) throw new Error('No audio content received');
+      if (!data?.audioUrl) throw new Error('No audio URL received');
 
-      const audioUrl = `data:audio/mpeg;base64,${data.audioContent}`;
-      const audio = new Audio(audioUrl);
+      const audio = new Audio(data.audioUrl);
       audio.loop = true;
       audio.volume = musicVolume;
       

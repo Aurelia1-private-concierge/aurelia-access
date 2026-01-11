@@ -58,6 +58,8 @@ import CRMPanel from "@/components/admin/CRMPanel";
 import CommissionTracker from "@/components/admin/CommissionTracker";
 import TrialApplicationsPanel from "@/components/admin/TrialApplicationsPanel";
 import SocialScheduler from "@/components/admin/SocialScheduler";
+import BehaviorAnalytics from "@/components/admin/BehaviorAnalytics";
+import SecurityGuidePanel from "@/components/admin/SecurityGuidePanel";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 

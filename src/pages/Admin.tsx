@@ -64,6 +64,7 @@ import ConversionFunnelDashboard from "@/components/admin/ConversionFunnelDashbo
 import CampaignURLBuilder from "@/components/admin/CampaignURLBuilder";
 import AttributionAnalytics from "@/components/admin/AttributionAnalytics";
 import AuditLogsPanel from "@/components/admin/AuditLogsPanel";
+import PartnerDiscoveryPanel from "@/components/admin/PartnerDiscoveryPanel";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -314,6 +315,7 @@ const Admin = () => {
             <TabsTrigger value="crm">CRM</TabsTrigger>
             <TabsTrigger value="commissions">Commissions</TabsTrigger>
             <TabsTrigger value="partners">Partners</TabsTrigger>
+            <TabsTrigger value="discovery">Discovery</TabsTrigger>
             <TabsTrigger value="signups">Signups</TabsTrigger>
             <TabsTrigger value="contacts">Contacts</TabsTrigger>
             <TabsTrigger value="requests">Requests</TabsTrigger>
@@ -321,6 +323,10 @@ const Admin = () => {
             <TabsTrigger value="integrations">Integrations</TabsTrigger>
             <TabsTrigger value="auditlogs">Audit Logs</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="discovery" className="space-y-6">
+            <PartnerDiscoveryPanel />
+          </TabsContent>
 
           <TabsContent value="auditlogs" className="space-y-6">
             <AuditLogsPanel />

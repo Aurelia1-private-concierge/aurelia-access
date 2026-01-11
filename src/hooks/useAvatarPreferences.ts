@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 
 export type AvatarMode = "3d" | "static" | "auto";
+export type AvatarModelType = "classic" | "realistic" | "anime" | "robotic";
 
 interface AvatarPreferences {
   mode: AvatarMode;
+  model: AvatarModelType;
   reducedMotion: boolean;
   transitionSoundEnabled: boolean;
   isLowEndDevice: boolean;
@@ -65,6 +67,7 @@ export const useAvatarPreferences = () => {
         const parsed = JSON.parse(stored);
         return {
           mode: parsed.mode || "auto",
+          model: parsed.model || "classic",
           reducedMotion: parsed.reducedMotion ?? window.matchMedia("(prefers-reduced-motion: reduce)").matches,
           transitionSoundEnabled: parsed.transitionSoundEnabled ?? true,
           isLowEndDevice: isLowEnd,
@@ -76,6 +79,7 @@ export const useAvatarPreferences = () => {
     
     return {
       mode: "auto" as AvatarMode,
+      model: "classic" as AvatarModelType,
       reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
       transitionSoundEnabled: true,
       isLowEndDevice: isLowEnd,
@@ -92,10 +96,11 @@ export const useAvatarPreferences = () => {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       mode: preferences.mode,
+      model: preferences.model,
       reducedMotion: preferences.reducedMotion,
       transitionSoundEnabled: preferences.transitionSoundEnabled,
     }));
-  }, [preferences.mode, preferences.reducedMotion, preferences.transitionSoundEnabled]);
+  }, [preferences.mode, preferences.model, preferences.reducedMotion, preferences.transitionSoundEnabled]);
   
   // Listen for reduced motion preference changes
   useEffect(() => {
@@ -113,6 +118,10 @@ export const useAvatarPreferences = () => {
   
   const setMode = useCallback((mode: AvatarMode) => {
     setPreferences(prev => ({ ...prev, mode }));
+  }, []);
+  
+  const setModel = useCallback((model: AvatarModelType) => {
+    setPreferences(prev => ({ ...prev, model }));
   }, []);
   
   const toggleReducedMotion = useCallback(() => {
@@ -147,6 +156,7 @@ export const useAvatarPreferences = () => {
     ...preferences,
     supportsWebGL,
     setMode,
+    setModel,
     toggleReducedMotion,
     toggleTransitionSound,
     setTransitionSoundEnabled,

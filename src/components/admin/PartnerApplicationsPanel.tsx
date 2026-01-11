@@ -31,6 +31,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { useAdminAuditLog } from "@/hooks/useAdminAuditLog";
 
 interface PartnerApplication {
   id: string;
@@ -81,6 +82,7 @@ const PartnerApplicationsPanel = () => {
   const [selectedApp, setSelectedApp] = useState<PartnerApplication | null>(null);
   const [reviewNotes, setReviewNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { logPartnerAction, logListAccess, logDataAccess } = useAdminAuditLog();
 
   const fetchApplications = async () => {
     setLoading(true);
@@ -92,6 +94,9 @@ const PartnerApplicationsPanel = () => {
 
       if (error) throw error;
       setApplications((data as PartnerApplication[]) || []);
+      
+      // Log access to partner applications list
+      logListAccess("partner_application", { filter: statusFilter }, data?.length || 0);
     } catch (err) {
       console.error("Error fetching applications:", err);
       toast({ title: "Error", description: "Failed to load applications.", variant: "destructive" });
@@ -157,6 +162,9 @@ const PartnerApplicationsPanel = () => {
         .eq("id", selectedApp.id);
 
       if (error) throw error;
+
+      // Log the partner action
+      logPartnerAction(newStatus, selectedApp.id, reviewNotes || undefined);
 
       toast({ 
         title: newStatus === "approved" ? "Application Approved" : "Application Rejected", 

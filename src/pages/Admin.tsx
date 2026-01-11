@@ -60,6 +60,7 @@ import TrialApplicationsPanel from "@/components/admin/TrialApplicationsPanel";
 import SocialScheduler from "@/components/admin/SocialScheduler";
 import BehaviorAnalytics from "@/components/admin/BehaviorAnalytics";
 import SecurityGuidePanel from "@/components/admin/SecurityGuidePanel";
+import ConversionFunnelDashboard from "@/components/admin/ConversionFunnelDashboard";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -301,6 +302,7 @@ const Admin = () => {
         <Tabs defaultValue="analytics" className="space-y-6">
           <TabsList className="bg-card border border-border/50 flex-wrap h-auto gap-1 p-1">
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="funnel">Funnel</TabsTrigger>
             <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
             <TabsTrigger value="abtesting">A/B Tests</TabsTrigger>
             <TabsTrigger value="trials">Trials</TabsTrigger>
@@ -329,6 +331,10 @@ const Admin = () => {
 
           <TabsContent value="analytics" className="space-y-6">
             <AnalyticsDashboard />
+          </TabsContent>
+
+          <TabsContent value="funnel" className="space-y-6">
+            <ConversionFunnelDashboard />
           </TabsContent>
 
           <TabsContent value="campaigns" className="space-y-6">

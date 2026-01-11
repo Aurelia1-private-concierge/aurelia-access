@@ -12,6 +12,7 @@ import { PasswordStrengthMeter } from "@/components/auth/PasswordStrengthMeter";
 import { useLoginRateLimit } from "@/hooks/useLoginRateLimit";
 import { useMFA } from "@/hooks/useMFA";
 import { useAuthAuditLog } from "@/hooks/useAuthAuditLog";
+import { useFunnelTracking } from "@/hooks/useFunnelTracking";
 
 const emailSchema = z.string().email("Please enter a valid email address");
 const passwordSchema = z.string()
@@ -48,6 +49,7 @@ const Auth = () => {
   
   const { needsVerification, checkMFAStatus } = useMFA();
   const { logLogin, logLogout, logSignup, logPasswordReset, logMFAEvent, logOAuthLogin } = useAuthAuditLog();
+  const { trackSignupStarted, trackSignupCompleted } = useFunnelTracking();
 
   const RESET_COOLDOWN_MS = 60000; // 60 seconds
 
@@ -250,6 +252,7 @@ const Auth = () => {
           }
         }
       } else {
+        trackSignupStarted();
         const { error } = await signUp(email, password);
         if (error) {
           if (error.message.includes("User already registered")) {
@@ -267,8 +270,9 @@ const Auth = () => {
             });
           }
         } else {
-          // Log signup event
+          // Log signup event and track funnel
           logSignup(email);
+          trackSignupCompleted(email);
           toast({
             title: "Account Created",
             description: "Welcome! Let's personalize your experience.",

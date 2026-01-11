@@ -46,64 +46,14 @@ const ContactSection = () => {
       
       // Send email notification to admin
       try {
-        await supabase.functions.invoke("send-email", {
+        await supabase.functions.invoke("notify-admin", {
           body: {
-            to: "Tye3to1@outlook.com",
-            subject: `New Contact Form Submission from ${formData.name}`,
-            template: "custom",
+            type: "contact_form",
             data: {
-              html: `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                  <style>
-                    body { font-family: 'Georgia', serif; background: #0a0a0a; color: #f5f5f0; margin: 0; padding: 0; }
-                    .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
-                    .header { text-align: center; border-bottom: 1px solid #D4AF37; padding-bottom: 30px; margin-bottom: 30px; }
-                    .logo { font-size: 28px; letter-spacing: 8px; color: #D4AF37; font-weight: 300; }
-                    .content { line-height: 1.8; color: #c0c0c0; }
-                    .content h1 { color: #f5f5f0; font-weight: 400; font-size: 24px; }
-                    .field { margin-bottom: 16px; }
-                    .field-label { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
-                    .field-value { font-size: 16px; color: #f5f5f0; margin-top: 4px; }
-                    .message-box { background: #1a1a1a; padding: 20px; border-left: 3px solid #D4AF37; margin-top: 20px; }
-                    .footer { margin-top: 40px; padding-top: 30px; border-top: 1px solid #333; text-align: center; font-size: 12px; color: #666; }
-                  </style>
-                </head>
-                <body>
-                  <div class="container">
-                    <div class="header">
-                      <div class="logo">AURELIA</div>
-                      <p style="color: #888; font-size: 12px; letter-spacing: 2px; margin-top: 10px;">NEW CONTACT SUBMISSION</p>
-                    </div>
-                    <div class="content">
-                      <h1>New Contact Form Submission</h1>
-                      <div class="field">
-                        <div class="field-label">Name</div>
-                        <div class="field-value">${formData.name}</div>
-                      </div>
-                      <div class="field">
-                        <div class="field-label">Email</div>
-                        <div class="field-value">${formData.email}</div>
-                      </div>
-                      ${formData.phone ? `
-                      <div class="field">
-                        <div class="field-label">Phone</div>
-                        <div class="field-value">${formData.phone}</div>
-                      </div>
-                      ` : ''}
-                      <div class="field">
-                        <div class="field-label">Message</div>
-                        <div class="message-box">${formData.message}</div>
-                      </div>
-                    </div>
-                    <div class="footer">
-                      <p>Submitted via Aurelia Website Contact Form</p>
-                    </div>
-                  </div>
-                </body>
-                </html>
-              `,
+              name: formData.name,
+              email: formData.email,
+              phone: formData.phone || undefined,
+              message: formData.message,
             },
           },
         });

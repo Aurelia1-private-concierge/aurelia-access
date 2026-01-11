@@ -34,13 +34,16 @@ const Footer = () => {
               </p>
               <div className="flex items-center gap-3 mt-6">
                 {[
-                  { icon: Instagram, href: "#" },
-                  { icon: Twitter, href: "#" },
-                  { icon: Linkedin, href: "#" },
-                ].map(({ icon: Icon, href }, index) => (
+                  { icon: Instagram, href: "https://instagram.com/aureliaprivateconcierge", label: "Instagram" },
+                  { icon: Twitter, href: "https://x.com/aureliaprivate", label: "X (Twitter)" },
+                  { icon: Linkedin, href: "https://linkedin.com/company/aurelia-private-concierge", label: "LinkedIn" },
+                ].map(({ icon: Icon, href, label }) => (
                   <motion.a
-                    key={index}
+                    key={label}
                     href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                     className="w-10 h-10 rounded-full border border-border/30 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/5 transition-all duration-300"

@@ -29,6 +29,7 @@ import AmbientParticles from "@/components/AmbientParticles";
 import GlowingOrb from "@/components/GlowingOrb";
 import MetaverseEntryPoint from "@/components/MetaverseEntryPoint";
 import WearablesHub from "@/components/wearables/WearablesHub";
+import SmartIntegrationsHub from "@/components/SmartIntegrationsHub";
 
 const Index = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -96,6 +97,11 @@ const Index = () => {
 
       {/* Wearables Hub */}
       <WearablesHub />
+
+      <SectionDivider variant="default" />
+
+      {/* Smart Integrations Hub */}
+      <SmartIntegrationsHub />
 
       <SectionDivider variant="ornate" />
 

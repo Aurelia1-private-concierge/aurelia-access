@@ -51,13 +51,13 @@ const TyroneHead: React.FC<{
   const accentColor = useMemo(() => new THREE.Color(colors.accent), [colors.accent]);
   const glowColor = useMemo(() => new THREE.Color(colors.glow), [colors.glow]);
 
-  // Rich dark brown skin tone
-  const skinColor = useMemo(() => new THREE.Color("#4a3728"), []);
-  const skinHighlight = useMemo(() => new THREE.Color("#5c4636"), []);
-  // Deep dark hair
-  const hairColor = useMemo(() => new THREE.Color("#1a1a1a"), []);
-  // Full lips color
-  const lipColor = useMemo(() => new THREE.Color("#6b4a4a"), []);
+  // Aurelia brand-aligned skin tone - rich mahogany warmth
+  const skinColor = useMemo(() => new THREE.Color("#5a3d2b"), []);
+  const skinHighlight = useMemo(() => new THREE.Color("#6d4d3a"), []);
+  // Deep luxurious hair with subtle warmth
+  const hairColor = useMemo(() => new THREE.Color("#0f0e0d"), []);
+  // Refined lip color with champagne undertones
+  const lipColor = useMemo(() => new THREE.Color("#7a5252"), []);
 
   useFrame((state) => {
     const time = state.clock.elapsedTime;
@@ -393,26 +393,29 @@ const TyroneAvatar: React.FC<TyroneAvatarProps> = ({
   isSpeaking = false,
   faceData = null,
   colors = {
-    primary: "#d4af37",      // Rich gold
-    secondary: "#1a1a1a",    // Deep black
-    accent: "#5c3d2e",       // Warm brown eyes
-    glow: "#c9a227",         // Warm gold glow
+    primary: "#c9a55c",      // Aurelia champagne gold
+    secondary: "#050810",    // Deep navy-black
+    accent: "#6b4a3a",       // Warm amber eyes
+    glow: "#d4b76a",         // Elegant gold glow
   },
 }) => {
   return (
     <div className="w-full h-full min-h-[300px]">
       <Canvas camera={{ position: [0, 0, 4], fov: 50 }}>
-        <ambientLight intensity={0.6} />
-        <pointLight position={[5, 5, 5]} intensity={0.8} color="#fff5e6" />
-        <pointLight position={[-5, 3, 5]} intensity={0.5} color="#ffd700" />
-        <pointLight position={[0, -3, 3]} intensity={0.3} color="#8b6914" />
+        {/* Aurelia-branded lighting - warm champagne golds */}
+        <ambientLight intensity={0.5} />
+        <pointLight position={[5, 5, 5]} intensity={0.9} color="#f5efe6" />
+        <pointLight position={[-5, 3, 5]} intensity={0.6} color="#d4b76a" />
+        <pointLight position={[0, -3, 3]} intensity={0.25} color="#a08050" />
         <spotLight
           position={[0, 5, 3]}
-          intensity={0.6}
+          intensity={0.7}
           angle={0.5}
-          color="#fffaf0"
+          color="#fff8f0"
         />
-        <Float speed={1} rotationIntensity={0.1} floatIntensity={0.12}>
+        {/* Subtle rim light for luxury feel */}
+        <pointLight position={[0, 0, -3]} intensity={0.15} color="#c9a55c" />
+        <Float speed={0.8} rotationIntensity={0.08} floatIntensity={0.1}>
           <TyroneHead isSpeaking={isSpeaking} faceData={faceData} colors={colors} />
         </Float>
         <Environment preset="studio" />

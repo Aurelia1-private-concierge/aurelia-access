@@ -14,6 +14,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import GlobalElements from "./components/GlobalElements";
 import ErrorBoundary from "./components/ErrorBoundary";
+import SessionTimeoutProvider from "./components/auth/SessionTimeoutProvider";
 import "@/i18n";
 
 // Eagerly load the waitlist/under construction page for best LCP
@@ -311,10 +312,12 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <AuthProvider>
-              <AnimatedRoutes />
-              <GlobalElements />
-              <BackToTop />
-              <CookieConsent />
+              <SessionTimeoutProvider timeoutMinutes={30} warningMinutes={5}>
+                <AnimatedRoutes />
+                <GlobalElements />
+                <BackToTop />
+                <CookieConsent />
+              </SessionTimeoutProvider>
             </AuthProvider>
           </BrowserRouter>
         </TooltipProvider>

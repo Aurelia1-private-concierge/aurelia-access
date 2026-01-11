@@ -8,8 +8,10 @@ import { toast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { AnimatedLogo } from "@/components/brand";
 import { TwoFactorVerify } from "@/components/auth/TwoFactorVerify";
+import { PasswordStrengthMeter } from "@/components/auth/PasswordStrengthMeter";
 import { useLoginRateLimit } from "@/hooks/useLoginRateLimit";
 import { useMFA } from "@/hooks/useMFA";
+import { useAuthAuditLog } from "@/hooks/useAuthAuditLog";
 
 const emailSchema = z.string().email("Please enter a valid email address");
 const passwordSchema = z.string()
@@ -45,6 +47,7 @@ const Auth = () => {
   } = useLoginRateLimit();
   
   const { needsVerification, checkMFAStatus } = useMFA();
+  const { logLogin, logLogout, logSignup, logPasswordReset, logMFAEvent, logOAuthLogin } = useAuthAuditLog();
 
   const RESET_COOLDOWN_MS = 60000; // 60 seconds
 
@@ -164,6 +167,7 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
+      logOAuthLogin("google");
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -203,8 +207,9 @@ const Auth = () => {
       if (isLogin) {
         const { error } = await signIn(email, password);
         if (error) {
-          // Record failed attempt for rate limiting
+          // Record failed attempt for rate limiting and audit log
           await recordFailedAttempt(email);
+          logLogin(false, email);
           
           if (error.message.includes("Invalid login credentials")) {
             toast({
@@ -222,8 +227,9 @@ const Auth = () => {
             });
           }
         } else {
-          // Record successful login
+          // Record successful login and audit log
           recordSuccessfulLogin();
+          logLogin(true, email);
           
           // Check if MFA verification is needed
           await checkMFAStatus();
@@ -261,6 +267,8 @@ const Auth = () => {
             });
           }
         } else {
+          // Log signup event
+          logSignup(email);
           toast({
             title: "Account Created",
             description: "Welcome! Let's personalize your experience.",
@@ -277,6 +285,7 @@ const Auth = () => {
   // Handle MFA verification success
   const handleMFASuccess = () => {
     setShowMFAVerify(false);
+    logMFAEvent("verify");
     toast({
       title: "Welcome Back",
       description: "You have successfully signed in with 2FA.",
@@ -287,6 +296,7 @@ const Auth = () => {
   // Handle MFA verification cancel
   const handleMFACancel = async () => {
     setShowMFAVerify(false);
+    logLogout("mfa_cancelled");
     await supabase.auth.signOut();
     setEmail("");
     setPassword("");
@@ -522,6 +532,9 @@ const Auth = () => {
                   {errors.password && (
                     <p className="text-xs text-destructive mt-1">{errors.password}</p>
                   )}
+                  
+                  {/* Password strength meter (signup only) */}
+                  {!isLogin && <PasswordStrengthMeter password={password} />}
                 </div>
 
                 {/* Confirm Password (signup only) */}

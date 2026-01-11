@@ -35,6 +35,7 @@ import PictureInPicture from "@/components/PictureInPicture";
 import VoiceCommands from "@/components/VoiceCommands";
 import ContextualSoundscapeIndicator from "@/components/ContextualSoundscapeIndicator";
 import useContextualSoundscapes from "@/hooks/useContextualSoundscapes";
+import MusicPlayer from "@/components/MusicPlayer";
 
 const Index = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -167,7 +168,9 @@ const Index = () => {
       {/* Floating Elements */}
       <MultiAgentWidget />
       <FloatingWhatsApp />
-      <AmbientAudioControls />
+      
+      {/* Music Player - Replaces AmbientAudioControls */}
+      <MusicPlayer />
       
       {/* Picture-in-Picture Video */}
       <PictureInPicture 

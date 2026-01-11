@@ -65,3 +65,6 @@ verify_jwt = false
 
 [functions.narrate-section]
 verify_jwt = false
+
+[functions.generate-ambient-sfx]
+verify_jwt = false

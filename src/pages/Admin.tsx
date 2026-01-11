@@ -61,6 +61,8 @@ import SocialScheduler from "@/components/admin/SocialScheduler";
 import BehaviorAnalytics from "@/components/admin/BehaviorAnalytics";
 import SecurityGuidePanel from "@/components/admin/SecurityGuidePanel";
 import ConversionFunnelDashboard from "@/components/admin/ConversionFunnelDashboard";
+import CampaignURLBuilder from "@/components/admin/CampaignURLBuilder";
+import AttributionAnalytics from "@/components/admin/AttributionAnalytics";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -304,6 +306,7 @@ const Admin = () => {
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="funnel">Funnel</TabsTrigger>
             <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
+            <TabsTrigger value="urlbuilder">URL Builder</TabsTrigger>
             <TabsTrigger value="abtesting">A/B Tests</TabsTrigger>
             <TabsTrigger value="trials">Trials</TabsTrigger>
             <TabsTrigger value="concierge">Concierge</TabsTrigger>
@@ -339,6 +342,15 @@ const Admin = () => {
 
           <TabsContent value="campaigns" className="space-y-6">
             <CampaignAnalytics />
+            <AttributionAnalytics />
+          </TabsContent>
+
+          <TabsContent value="urlbuilder" className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-serif text-3xl text-foreground mb-2">Campaign URL Builder</h1>
+              <p className="text-muted-foreground">Generate trackable UTM links for marketing campaigns</p>
+            </motion.div>
+            <CampaignURLBuilder />
           </TabsContent>
 
           <TabsContent value="abtesting" className="space-y-6">

@@ -12,7 +12,7 @@ interface SEOHeadProps {
 const DEFAULT_TITLE = "Aurelia | Private Concierge for the Discerning Few";
 const DEFAULT_DESCRIPTION = "The world's most exclusive private concierge service. Private aviation, yacht charters, rare collectibles, and bespoke experiences—curated for those who expect nothing less than extraordinary.";
 const DEFAULT_IMAGE = "/og-image.png";
-const BASE_URL = "https://www.aurelia-privateconciege.com";
+const BASE_URL = "https://aurelia-privateconcierge.com";
 
 export const SEOHead = ({
   title,

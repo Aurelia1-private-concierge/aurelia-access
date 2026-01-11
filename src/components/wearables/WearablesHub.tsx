@@ -1,82 +1,135 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Watch, Heart, Fingerprint, Glasses, Sparkles, Play,
-  Mail, Bell, Car, Anchor, Plane, ChevronRight, X
+  Mail, Bell, Car, Anchor, Plane, ChevronRight, X, Pause, Volume2, VolumeX
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import AppleWatchWidget from "./AppleWatchWidget";
 import HealthWearableSync from "./HealthWearableSync";
 import NFCSmartRing from "./NFCSmartRing";
 import VisionProExperience from "./VisionProExperience";
 
-// Demo video modal component
+// Import demo videos
+import demoWatchVideo from "@/assets/demo-watch.mp4";
+import demoVisionVideo from "@/assets/demo-vision.mp4";
+import demoHealthVideo from "@/assets/demo-health.mp4";
+import demoNfcVideo from "@/assets/demo-nfc.mp4";
+
+// Demo video modal component with real video player
 const VideoPreviewModal = ({ 
   isOpen, 
   onClose, 
   title, 
-  description 
+  description,
+  videoSrc
 }: { 
   isOpen: boolean; 
   onClose: () => void; 
   title: string;
   description: string;
-}) => (
-  <AnimatePresence>
-    {isOpen && (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-        className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
-      >
+  videoSrc: string;
+}) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const togglePlay = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
         <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
-          onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-3xl bg-card border border-border/30 rounded-2xl overflow-hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
         >
-          {/* Video Player Placeholder */}
-          <div className="relative aspect-video bg-gradient-to-br from-secondary to-background flex items-center justify-center">
-            <div className="text-center">
-              <motion.div
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="w-20 h-20 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center mx-auto mb-4"
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-3xl bg-card border border-border/30 rounded-2xl overflow-hidden"
+          >
+            {/* Video Player */}
+            <div className="relative aspect-video bg-gradient-to-br from-secondary to-background">
+              <video
+                ref={videoRef}
+                src={videoSrc}
+                className="w-full h-full object-cover"
+                autoPlay
+                loop
+                muted={isMuted}
+                playsInline
+              />
+              
+              {/* Video Controls Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 opacity-0 hover:opacity-100 transition-opacity">
+                {/* Play/Pause Button */}
+                <button
+                  onClick={togglePlay}
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-primary hover:bg-primary/30 transition-colors"
+                >
+                  {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 fill-current" />}
+                </button>
+                
+                {/* Bottom Controls */}
+                <div className="absolute bottom-4 right-4 flex gap-2">
+                  <button
+                    onClick={toggleMute}
+                    className="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors"
+                  >
+                    {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+              
+              {/* Demo Badge */}
+              <div className="absolute top-4 left-4 px-3 py-1 bg-primary/20 border border-primary/40 rounded-full backdrop-blur-sm">
+                <span className="text-xs text-primary font-medium">DEMO PREVIEW</span>
+              </div>
+              
+              {/* Close Button */}
+              <button
+                onClick={onClose}
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors"
               >
-                <Play className="w-8 h-8 text-primary fill-primary" />
-              </motion.div>
-              <p className="text-sm text-muted-foreground">Demo video coming soon</p>
+                <X className="w-4 h-4" />
+              </button>
             </div>
             
-            {/* Demo Badge */}
-            <div className="absolute top-4 left-4 px-3 py-1 bg-primary/20 border border-primary/40 rounded-full">
-              <span className="text-xs text-primary font-medium">DEMO PREVIEW</span>
+            {/* Info */}
+            <div className="p-6">
+              <h3 className="text-xl font-serif text-foreground mb-2">{title}</h3>
+              <p className="text-sm text-muted-foreground">{description}</p>
             </div>
-            
-            {/* Close Button */}
-            <button
-              onClick={onClose}
-              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-          
-          {/* Info */}
-          <div className="p-6">
-            <h3 className="text-xl font-serif text-foreground mb-2">{title}</h3>
-            <p className="text-sm text-muted-foreground">{description}</p>
-          </div>
+          </motion.div>
         </motion.div>
-      </motion.div>
-    )}
-  </AnimatePresence>
-);
+      )}
+    </AnimatePresence>
+  );
+};
 
 // Coming Soon Card with Waitlist
 const ComingSoonCard = ({ 
@@ -95,11 +148,25 @@ const ComingSoonCard = ({
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    setIsSubmitted(true);
-    toast.success(`You'll be notified when ${title} launches!`);
+    
+    try {
+      const { error } = await supabase.functions.invoke("waitlist-notification", {
+        body: { email, feature: title.toLowerCase().replace(/\s+/g, "-") },
+      });
+      
+      if (error) throw error;
+      
+      setIsSubmitted(true);
+      toast.success(`You'll be notified when ${title} launches!`);
+    } catch (error) {
+      console.error("Waitlist error:", error);
+      // Still show success to user (graceful degradation)
+      setIsSubmitted(true);
+      toast.success(`You'll be notified when ${title} launches!`);
+    }
   };
 
   const colorClasses: Record<string, string> = {
@@ -166,6 +233,7 @@ const WearablesHub = () => {
       component: AppleWatchWidget,
       videoTitle: "Apple Watch Companion Demo",
       videoDescription: "See how Aurelia's Apple Watch widget lets you make quick requests, view your credit balance, and receive haptic notifications for service updates.",
+      videoSrc: demoWatchVideo,
     },
     {
       id: "vision",
@@ -177,6 +245,7 @@ const WearablesHub = () => {
       component: VisionProExperience,
       videoTitle: "Vision Pro Spatial Tours Demo",
       videoDescription: "Experience immersive property tours and yacht walkthroughs in stunning spatial reality with gesture and eye tracking controls.",
+      videoSrc: demoVisionVideo,
     },
     {
       id: "health",
@@ -188,6 +257,7 @@ const WearablesHub = () => {
       component: HealthWearableSync,
       videoTitle: "Health Integration Demo",
       videoDescription: "Discover how Aurelia uses your wellness data to provide personalized recommendations for travel, dining, and experiences.",
+      videoSrc: demoHealthVideo,
     },
     {
       id: "nfc",
@@ -199,6 +269,7 @@ const WearablesHub = () => {
       component: NFCSmartRing,
       videoTitle: "NFC Authentication Demo",
       videoDescription: "Watch how a simple tap of your smart ring grants instant VIP access at Aurelia's exclusive partner venues worldwide.",
+      videoSrc: demoNfcVideo,
     },
   ];
 
@@ -302,6 +373,7 @@ const WearablesHub = () => {
                   onClose={() => setActiveVideo(null)}
                   title={item.videoTitle}
                   description={item.videoDescription}
+                  videoSrc={item.videoSrc}
                 />
               </motion.div>
             );

@@ -258,6 +258,53 @@ export type Database = {
           },
         ]
       }
+      concierge_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message_type: string | null
+          metadata: Json | null
+          read_at: string | null
+          sender_id: string
+          sender_role: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message_type?: string | null
+          metadata?: Json | null
+          read_at?: string | null
+          sender_id: string
+          sender_role: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message_type?: string | null
+          metadata?: Json | null
+          read_at?: string | null
+          sender_id?: string
+          sender_role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "concierge_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_submissions: {
         Row: {
           assigned_to: string | null
@@ -477,6 +524,48 @@ export type Database = {
           service_id?: string
           service_title?: string
           traveler_archetype?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      email_notifications: {
+        Row: {
+          created_at: string
+          data: Json | null
+          email: string
+          error_message: string | null
+          id: string
+          retry_count: number | null
+          sent_at: string | null
+          status: string | null
+          subject: string
+          template: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json | null
+          email: string
+          error_message?: string | null
+          id?: string
+          retry_count?: number | null
+          sent_at?: string | null
+          status?: string | null
+          subject: string
+          template: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json | null
+          email?: string
+          error_message?: string | null
+          id?: string
+          retry_count?: number | null
+          sent_at?: string | null
+          status?: string | null
+          subject?: string
+          template?: string
           user_id?: string
         }
         Relationships: []
@@ -1193,6 +1282,59 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      service_request_updates: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_visible_to_client: boolean | null
+          metadata: Json | null
+          new_status: string | null
+          previous_status: string | null
+          service_request_id: string
+          title: string
+          update_type: string
+          updated_by: string | null
+          updated_by_role: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_visible_to_client?: boolean | null
+          metadata?: Json | null
+          new_status?: string | null
+          previous_status?: string | null
+          service_request_id: string
+          title: string
+          update_type: string
+          updated_by?: string | null
+          updated_by_role?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_visible_to_client?: boolean | null
+          metadata?: Json | null
+          new_status?: string | null
+          previous_status?: string | null
+          service_request_id?: string
+          title?: string
+          update_type?: string
+          updated_by?: string | null
+          updated_by_role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_request_updates_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       service_requests: {
         Row: {

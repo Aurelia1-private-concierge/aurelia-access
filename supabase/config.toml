@@ -41,3 +41,6 @@ verify_jwt = false
 
 [functions.stripe-credits-webhook]
 verify_jwt = false
+
+[functions.reset-monthly-credits]
+verify_jwt = false

@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useConversation } from "@elevenlabs/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, MicOff, Phone, PhoneOff, ArrowLeft, Sparkles, Volume2, Wifi, WifiOff, Clock, MessageSquare, CheckCircle2, User, History, Eye } from "lucide-react";
+import { Mic, MicOff, Phone, PhoneOff, ArrowLeft, Sparkles, Volume2, Wifi, WifiOff, Clock, MessageSquare, CheckCircle2, User, History, Eye, Camera, CameraOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import { toast } from "sonner";
@@ -11,6 +11,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import CircularWaveform from "@/components/CircularWaveform";
 import GuestPreview from "@/components/orla/GuestPreview";
 import Orla3DAvatar from "@/components/orla/Orla3DAvatar";
+import MotionTrackedAvatar from "@/components/orla/MotionTrackedAvatar";
+import CameraPreview from "@/components/orla/CameraPreview";
 import { OrlaExpressionProvider, useOrlaExpression, OrlaEmotion } from "@/components/orla/OrlaExpressionController";
 import VoiceSessionHistory from "@/components/orla/VoiceSessionHistory";
 import LanguageSelector from "@/components/orla/LanguageSelector";
@@ -21,6 +23,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useVoiceSession } from "@/hooks/useVoiceSession";
 import { useVoiceReactive } from "@/hooks/useVoiceReactive";
 import { useTransitionSounds } from "@/hooks/useTransitionSounds";
+import { useFaceTracking } from "@/hooks/useFaceTracking";
+import { useAvatarStyle } from "@/hooks/useAvatarStyle";
 import { languages } from "@/i18n";
 
 const ELEVENLABS_AGENT_ID = "agent_01jx7t3mjgeqzsjh5qxbvdsxey";
@@ -54,6 +58,8 @@ const OrlaInner = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [demoMode, setDemoMode] = useState(false);
   const [demoEmotion, setDemoEmotion] = useState<OrlaEmotion>("neutral");
+  const [faceTrackingEnabled, setFaceTrackingEnabled] = useState(false);
+  const [useMotionAvatar, setUseMotionAvatar] = useState(false);
   const transcriptEndRef = useRef<HTMLDivElement>(null);
   
   // Expression controller for 3D avatar
@@ -65,6 +71,29 @@ const OrlaInner = () => {
   
   // Transition sounds
   const { playConnectionChime, playDisconnectChime } = useTransitionSounds();
+  
+  // Face tracking for motion avatar
+  const { 
+    faceData, 
+    isLoading: faceTrackingLoading, 
+    error: faceTrackingError,
+    cameraActive,
+    startCamera,
+    stopCamera,
+  } = useFaceTracking(faceTrackingEnabled && isConnecting === false);
+  
+  // Avatar style for theming
+  const { currentStyle } = useAvatarStyle();
+  
+  // Toggle face tracking
+  const toggleFaceTracking = useCallback(() => {
+    const newState = !faceTrackingEnabled;
+    setFaceTrackingEnabled(newState);
+    setUseMotionAvatar(newState);
+    if (!newState) {
+      stopCamera();
+    }
+  }, [faceTrackingEnabled, stopCamera]);
   
   // Demo mode emotion cycling
   useEffect(() => {
@@ -750,14 +779,31 @@ const OrlaInner = () => {
               transition={{ duration: 1.5, repeat: isSpeaking ? Infinity : 0 }}
               className="rounded-full overflow-hidden relative z-10"
             >
-              <Orla3DAvatar
-                isSpeaking={isSpeaking}
-                isConnected={isConnected}
-                isListening={!isSpeaking && isConnected}
-                getVolume={conversation.getOutputVolume}
-                emotion={expressionState.emotion}
-                size={208}
-              />
+              {/* Conditional rendering: Motion Tracked Avatar or Standard 3D Avatar */}
+              {useMotionAvatar && faceTrackingEnabled ? (
+                <MotionTrackedAvatar
+                  faceData={faceData}
+                  isSpeaking={isSpeaking}
+                  isListening={!isSpeaking && isConnected}
+                  audioLevel={audioLevel}
+                  size={208}
+                  style={{
+                    primary: currentStyle.colors.primary,
+                    secondary: currentStyle.colors.secondary,
+                    accent: currentStyle.colors.accent,
+                    glow: currentStyle.colors.glow,
+                  }}
+                />
+              ) : (
+                <Orla3DAvatar
+                  isSpeaking={isSpeaking}
+                  isConnected={isConnected}
+                  isListening={!isSpeaking && isConnected}
+                  getVolume={conversation.getOutputVolume}
+                  emotion={expressionState.emotion}
+                  size={208}
+                />
+              )}
             </motion.div>
 
             {/* Speaking/Listening indicator badge */}
@@ -787,7 +833,44 @@ const OrlaInner = () => {
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Face tracking toggle button */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="absolute -bottom-16 left-1/2 -translate-x-1/2 z-20"
+            >
+              <Button
+                variant={faceTrackingEnabled ? "default" : "outline"}
+                size="sm"
+                onClick={toggleFaceTracking}
+                className="gap-2 text-xs"
+                disabled={faceTrackingLoading}
+              >
+                {faceTrackingEnabled ? (
+                  <>
+                    <Camera className="w-3.5 h-3.5" />
+                    Motion Tracking On
+                  </>
+                ) : (
+                  <>
+                    <CameraOff className="w-3.5 h-3.5" />
+                    Enable Motion Tracking
+                  </>
+                )}
+              </Button>
+            </motion.div>
           </motion.div>
+
+          {/* Camera Preview (when face tracking enabled) */}
+          {faceTrackingEnabled && (
+            <CameraPreview
+              faceData={faceData}
+              isActive={cameraActive}
+              onToggle={toggleFaceTracking}
+              showDebug={true}
+            />
+          )}
 
           {/* Name and Status */}
           <motion.div

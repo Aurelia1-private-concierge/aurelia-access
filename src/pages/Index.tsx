@@ -28,6 +28,7 @@ import MembershipTiersPreview from "@/components/MembershipTiersPreview";
 import AmbientParticles from "@/components/AmbientParticles";
 import GlowingOrb from "@/components/GlowingOrb";
 import MetaverseEntryPoint from "@/components/MetaverseEntryPoint";
+import WearablesHub from "@/components/wearables/WearablesHub";
 
 const Index = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -90,6 +91,11 @@ const Index = () => {
 
       {/* Metaverse & EQ Intelligence Section */}
       <MetaverseEntryPoint />
+
+      <SectionDivider variant="default" />
+
+      {/* Wearables Hub */}
+      <WearablesHub />
 
       <SectionDivider variant="ornate" />
 

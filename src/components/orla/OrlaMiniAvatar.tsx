@@ -110,9 +110,10 @@ const MiniOrb = memo(({ isActive, reducedMotion }: { isActive: boolean; reducedM
 MiniOrb.displayName = "MiniOrb";
 
 // Static avatar fallback with animated glow
-const StaticAvatar = memo(({ isActive }: { size: number; isActive: boolean }) => (
+const StaticAvatar = memo(({ size, isActive }: { size: number; isActive: boolean }) => (
   <motion.div
-    className="w-full h-full rounded-full overflow-hidden relative"
+    className="w-full h-full rounded-full overflow-hidden relative flex items-center justify-center"
+    style={{ width: size, height: size }}
     animate={isActive ? { 
       boxShadow: [
         "0 0 10px rgba(212,175,55,0.3)",
@@ -122,10 +123,15 @@ const StaticAvatar = memo(({ isActive }: { size: number; isActive: boolean }) =>
     } : {}}
     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
   >
-    <img src={orlaAvatar} alt="Orla" className="w-full h-full object-cover" />
+    <img 
+      src={orlaAvatar} 
+      alt="Orla" 
+      className="w-full h-full object-cover rounded-full"
+      style={{ width: size, height: size }}
+    />
     {isActive && (
       <motion.div
-        className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"
+        className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent rounded-full"
         animate={{ opacity: [0.3, 0.6, 0.3] }}
         transition={{ duration: 1.5, repeat: Infinity }}
       />

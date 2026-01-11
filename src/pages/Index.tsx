@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import MetricsStrip from "@/components/MetricsStrip";
@@ -31,9 +31,26 @@ import MetaverseEntryPoint from "@/components/MetaverseEntryPoint";
 import WearablesHub from "@/components/wearables/WearablesHub";
 import SmartIntegrationsHub from "@/components/SmartIntegrationsHub";
 import AmbientAudioControls from "@/components/AmbientAudioControls";
+import PictureInPicture from "@/components/PictureInPicture";
+import VoiceCommands from "@/components/VoiceCommands";
+import ContextualSoundscapeIndicator from "@/components/ContextualSoundscapeIndicator";
+import useContextualSoundscapes from "@/hooks/useContextualSoundscapes";
 
 const Index = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [isPipEnabled, setIsPipEnabled] = useState(true);
+  const soundscapes = useContextualSoundscapes();
+  const musicToggleRef = useRef<(() => void) | null>(null);
+  const narratorToggleRef = useRef<(() => void) | null>(null);
+
+  // Callbacks for voice commands
+  const handleToggleMusic = useCallback(() => {
+    musicToggleRef.current?.();
+  }, []);
+
+  const handleToggleNarrator = useCallback(() => {
+    narratorToggleRef.current?.();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden relative">
@@ -151,6 +168,25 @@ const Index = () => {
       <MultiAgentWidget />
       <FloatingWhatsApp />
       <AmbientAudioControls />
+      
+      {/* Picture-in-Picture Video */}
+      <PictureInPicture 
+        isEnabled={isPipEnabled} 
+        onClose={() => setIsPipEnabled(false)} 
+      />
+      
+      {/* Voice Commands */}
+      <VoiceCommands 
+        onToggleMusic={handleToggleMusic}
+        onToggleNarrator={handleToggleNarrator}
+      />
+      
+      {/* Contextual Soundscape Indicator */}
+      <ContextualSoundscapeIndicator
+        currentSection={soundscapes.currentSection}
+        description={soundscapes.getCurrentSoundscape().description}
+        isPlaying={soundscapes.isPlaying}
+      />
 
       {/* Video Modal */}
       <VideoModal

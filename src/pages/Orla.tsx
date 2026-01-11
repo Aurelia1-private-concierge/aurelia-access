@@ -11,8 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import CircularWaveform from "@/components/CircularWaveform";
 import GuestPreview from "@/components/orla/GuestPreview";
 import Orla3DAvatar from "@/components/orla/Orla3DAvatar";
-import { TyroneAvatar } from "@/components/orla/avatars";
-import AvatarModelSelector from "@/components/orla/avatars/AvatarModelSelector";
+// Avatar imports removed - using only Orla3DAvatar
 import MotionTrackedAvatar from "@/components/orla/MotionTrackedAvatar";
 import CameraPreview from "@/components/orla/CameraPreview";
 import { OrlaExpressionProvider, useOrlaExpression, OrlaEmotion } from "@/components/orla/OrlaExpressionController";
@@ -88,8 +87,7 @@ const OrlaInner = () => {
   // Avatar style for theming
   const { currentStyle } = useAvatarStyle();
   
-  // Avatar preferences (model selection)
-  const { model: avatarModel, setModel: setAvatarModel } = useAvatarPreferences();
+  // Avatar preferences removed - using only Orla
   
   // Toggle face tracking
   const toggleFaceTracking = useCallback(() => {
@@ -785,7 +783,7 @@ const OrlaInner = () => {
               transition={{ duration: 1.5, repeat: isSpeaking ? Infinity : 0 }}
               className="rounded-full overflow-hidden relative z-10"
             >
-              {/* Conditional rendering based on avatar model and face tracking */}
+              {/* Orla 3D Avatar - always use original Orla */}
               {useMotionAvatar && faceTrackingEnabled ? (
                 <MotionTrackedAvatar
                   faceData={faceData}
@@ -794,17 +792,6 @@ const OrlaInner = () => {
                   audioLevel={audioLevel}
                   size={208}
                   style={{
-                    primary: currentStyle.colors.primary,
-                    secondary: currentStyle.colors.secondary,
-                    accent: currentStyle.colors.accent,
-                    glow: currentStyle.colors.glow,
-                  }}
-                />
-              ) : avatarModel === "tyrone" ? (
-                <TyroneAvatar
-                  isSpeaking={isSpeaking}
-                  faceData={faceTrackingEnabled ? faceData : undefined}
-                  colors={{
                     primary: currentStyle.colors.primary,
                     secondary: currentStyle.colors.secondary,
                     accent: currentStyle.colors.accent,
@@ -878,19 +865,7 @@ const OrlaInner = () => {
               </Button>
             </motion.div>
 
-            {/* Avatar Model Selector */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="absolute -bottom-28 left-1/2 -translate-x-1/2 z-20"
-            >
-              <AvatarModelSelector
-                currentModel={avatarModel}
-                onSelect={setAvatarModel}
-                compact
-              />
-            </motion.div>
+            {/* Avatar selector removed - using only Orla */}
           </motion.div>
 
           {/* Camera Preview (when face tracking enabled) */}

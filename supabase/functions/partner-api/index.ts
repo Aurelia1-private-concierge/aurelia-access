@@ -350,10 +350,19 @@ serve(async (req) => {
         );
     }
   } catch (error) {
-    console.error("Partner API error:", error);
-    // Return generic error to avoid leaking internal details
+    // Log detailed error server-side for debugging
+    console.error("[Partner API] Internal error:", {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString(),
+    });
+    
+    // Return sanitized error to client - never expose internal details
     return new Response(
-      JSON.stringify({ error: "An error occurred processing your request" }),
+      JSON.stringify({ 
+        error: "An error occurred processing your request. Please try again.",
+        code: "PARTNER_API_ERROR"
+      }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

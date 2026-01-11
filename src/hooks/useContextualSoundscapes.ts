@@ -116,16 +116,15 @@ export const useContextualSoundscapes = () => {
     try {
       // Preload hero section first
       const { data, error } = await supabase.functions.invoke('generate-ambient-music', {
-        body: { style: 'luxury' },
+        body: { genre: 'luxury' },
       });
 
       if (error) throw error;
-      if (data?.audioContent) {
-        const audioUrl = `data:audio/mpeg;base64,${data.audioContent}`;
-        audioCache.current.set('hero', audioUrl);
+      if (data?.audioUrl) {
+        audioCache.current.set('hero', data.audioUrl);
         
         // Initialize audio element
-        audioRef.current = new Audio(audioUrl);
+        audioRef.current = new Audio(data.audioUrl);
         audioRef.current.loop = true;
         audioRef.current.volume = volume;
       }

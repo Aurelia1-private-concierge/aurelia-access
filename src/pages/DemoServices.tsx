@@ -177,7 +177,7 @@ const DemoServices = () => {
   const categories = [...new Set(demoServices.map(s => s.category))];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-[100dvh] bg-background">
       <Navigation />
       
       {/* Hero */}

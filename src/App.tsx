@@ -12,6 +12,7 @@ import BackToTop from "@/components/BackToTop";
 import CookieConsent from "@/components/CookieConsent";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
+import GlobalElements from "./components/GlobalElements";
 import "@/i18n";
 
 // Eagerly load the homepage for best LCP
@@ -268,6 +269,7 @@ const App = () => (
         <BrowserRouter>
           <AuthProvider>
             <AnimatedRoutes />
+            <GlobalElements />
             <BackToTop />
             <CookieConsent />
           </AuthProvider>

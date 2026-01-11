@@ -62,3 +62,6 @@ verify_jwt = false
 
 [functions.narrate-tour]
 verify_jwt = false
+
+[functions.narrate-section]
+verify_jwt = false

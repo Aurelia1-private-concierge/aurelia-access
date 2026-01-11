@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useConversation } from "@elevenlabs/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, MicOff, Phone, PhoneOff, ArrowLeft, Sparkles, Volume2, Wifi, WifiOff, Clock, MessageSquare, CheckCircle2, User, History } from "lucide-react";
+import { Mic, MicOff, Phone, PhoneOff, ArrowLeft, Sparkles, Volume2, Wifi, WifiOff, Clock, MessageSquare, CheckCircle2, User, History, Eye } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import { toast } from "sonner";
@@ -48,10 +48,32 @@ const OrlaInner = () => {
   const [actionNotifications, setActionNotifications] = useState<ActionNotification[]>([]);
   const [userProfile, setUserProfile] = useState<{ display_name: string | null; avatar_url: string | null } | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [demoMode, setDemoMode] = useState(false);
+  const [demoEmotion, setDemoEmotion] = useState<OrlaEmotion>("neutral");
   const transcriptEndRef = useRef<HTMLDivElement>(null);
   
   // Expression controller for 3D avatar
   const { state: expressionState, setSpeaking, setListening, setThinking, reactToContent, setEmotion, transitionTo } = useOrlaExpression();
+  
+  // Demo mode emotion cycling
+  useEffect(() => {
+    if (!demoMode) {
+      setDemoEmotion("neutral");
+      return;
+    }
+    
+    const emotions: OrlaEmotion[] = ["neutral", "happy", "thinking", "curious", "warm"];
+    let index = 0;
+    
+    const interval = setInterval(() => {
+      index = (index + 1) % emotions.length;
+      const newEmotion = emotions[index];
+      setDemoEmotion(newEmotion);
+      transitionTo(newEmotion, 400);
+    }, 2500);
+    
+    return () => clearInterval(interval);
+  }, [demoMode, transitionTo]);
   
   // Get current language info
   const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
@@ -780,6 +802,34 @@ const OrlaInner = () => {
                     You'll be asked to allow microphone access
                   </p>
                 )}
+
+                {/* Demo Mode Button */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setDemoMode(!demoMode)}
+                  className={`gap-2 mt-2 ${demoMode ? 'bg-primary/10 text-primary border border-primary/30' : ''}`}
+                >
+                  <Eye className="w-4 h-4" />
+                  {demoMode ? 'Stop Demo' : 'Preview Expressions'}
+                </Button>
+
+                {/* Demo Emotion Label */}
+                <AnimatePresence>
+                  {demoMode && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="flex items-center gap-2 px-4 py-2 bg-card/80 border border-border/40 rounded-full"
+                    >
+                      <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                      <span className="text-xs text-foreground capitalize font-medium">
+                        {demoEmotion}
+                      </span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </>
             ) : (
               <div className="flex items-center gap-4">

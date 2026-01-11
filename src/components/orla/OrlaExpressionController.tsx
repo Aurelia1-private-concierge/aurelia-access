@@ -30,30 +30,50 @@ export const useOrlaExpression = () => {
   return context;
 };
 
-// Sentiment analysis for content-based emotion reactions
+// Enhanced sentiment analysis for content-based emotion reactions
 const analyzeContentSentiment = (content: string): OrlaEmotion => {
   const lowerContent = content.toLowerCase();
   
-  // Happy triggers
-  const happyWords = ["wonderful", "excellent", "perfect", "delighted", "pleasure", "congratulations", "welcome", "excited"];
+  // Happy triggers - celebration, success, positivity
+  const happyWords = [
+    "wonderful", "excellent", "perfect", "delighted", "pleasure", "congratulations", 
+    "welcome", "excited", "fantastic", "amazing", "brilliant", "superb", "thrilled",
+    "celebration", "celebrate", "success", "accomplished", "achieved", "won", "victory",
+    "love", "beautiful", "gorgeous", "stunning", "magnificent", "exceptional"
+  ];
   if (happyWords.some(word => lowerContent.includes(word))) {
     return "happy";
   }
   
-  // Thinking triggers
-  const thinkingWords = ["let me check", "considering", "analyzing", "looking into", "one moment", "processing"];
+  // Thinking triggers - processing, analysis, consideration
+  const thinkingWords = [
+    "let me check", "considering", "analyzing", "looking into", "one moment", "processing",
+    "let me see", "reviewing", "examining", "researching", "investigating", "evaluating",
+    "calculating", "assessing", "verifying", "confirming", "cross-referencing",
+    "searching", "finding", "locating", "checking availability", "moment please"
+  ];
   if (thinkingWords.some(word => lowerContent.includes(word))) {
     return "thinking";
   }
   
-  // Curious triggers
-  const curiousWords = ["interesting", "tell me more", "how", "why", "what", "could you explain"];
+  // Curious triggers - questions, exploration, interest
+  const curiousWords = [
+    "interesting", "tell me more", "how", "why", "what", "could you explain",
+    "fascinating", "intriguing", "curious", "wondering", "exploring", "discover",
+    "learn more", "elaborate", "details", "specifics", "preferences", "options",
+    "would you like", "shall i", "may i suggest", "have you considered"
+  ];
   if (curiousWords.some(word => lowerContent.includes(word))) {
     return "curious";
   }
   
-  // Warm triggers
-  const warmWords = ["thank you", "appreciate", "grateful", "happy to help", "my pleasure", "of course"];
+  // Warm triggers - gratitude, care, service
+  const warmWords = [
+    "thank you", "appreciate", "grateful", "happy to help", "my pleasure", "of course",
+    "certainly", "absolutely", "gladly", "honored", "privilege", "welcome",
+    "take care", "enjoy", "wishing you", "hope you", "looking forward", "pleasure serving",
+    "at your service", "here for you", "assist you", "support you", "anything else"
+  ];
   if (warmWords.some(word => lowerContent.includes(word))) {
     return "warm";
   }

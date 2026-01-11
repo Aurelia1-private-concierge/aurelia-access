@@ -34,23 +34,36 @@ const Footer = () => {
               </p>
               <div className="flex items-center gap-3 mt-6">
                 {[
-                  { icon: Instagram, href: "https://instagram.com/aureliaprivateconcierge", label: "Instagram" },
-                  { icon: Facebook, href: "https://facebook.com/aureliaprivateconcierge", label: "Facebook" },
-                  { icon: Twitter, href: "https://x.com/aureliaprivate", label: "X (Twitter)" },
-                  { icon: Linkedin, href: "https://linkedin.com/company/aurelia-private-concierge", label: "LinkedIn" },
-                ].map(({ icon: Icon, href, label }) => (
-                  <motion.a
-                    key={label}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={label}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-10 h-10 rounded-full border border-border/30 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/5 transition-all duration-300"
-                  >
-                    <Icon className="w-4 h-4" />
-                  </motion.a>
+                  { icon: Instagram, href: "/instagram", label: "Instagram", isInternal: true },
+                  { icon: Facebook, href: "https://facebook.com/aureliaprivateconcierge", label: "Facebook", isInternal: false },
+                  { icon: Twitter, href: "https://x.com/aureliaprivate", label: "X (Twitter)", isInternal: false },
+                  { icon: Linkedin, href: "/linkedin", label: "LinkedIn", isInternal: true },
+                ].map(({ icon: Icon, href, label, isInternal }) => (
+                  isInternal ? (
+                    <Link key={label} to={href}>
+                      <motion.div
+                        aria-label={label}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="w-10 h-10 rounded-full border border-border/30 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/5 transition-all duration-300"
+                      >
+                        <Icon className="w-4 h-4" />
+                      </motion.div>
+                    </Link>
+                  ) : (
+                    <motion.a
+                      key={label}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={label}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-10 h-10 rounded-full border border-border/30 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/5 transition-all duration-300"
+                    >
+                      <Icon className="w-4 h-4" />
+                    </motion.a>
+                  )
                 ))}
               </div>
             </motion.div>

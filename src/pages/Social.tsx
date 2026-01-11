@@ -10,18 +10,47 @@ import {
   Heart,
   Sparkles
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+
+// TikTok icon component
+const TikTokIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+  </svg>
+);
 
 const socialPlatforms = [
   {
     name: "Instagram",
-    handle: "@aureliaprivateconcierge",
+    handle: "@aurelia.concierge",
     description: "Behind-the-scenes glimpses of extraordinary experiences, curated aesthetics, and lifestyle inspiration.",
     icon: Instagram,
     href: "https://instagram.com/aureliaprivateconcierge",
+    internalLink: "/instagram",
     color: "from-purple-500 via-pink-500 to-orange-400",
-    followers: "Follow for exclusive content"
+    followers: "125K followers"
+  },
+  {
+    name: "TikTok",
+    handle: "@aurelia.concierge",
+    description: "Viral luxury content, exclusive access moments, and behind-the-scenes of the extraordinary.",
+    icon: TikTokIcon,
+    href: "https://tiktok.com/@aurelia.concierge",
+    internalLink: "/tiktok",
+    color: "from-gray-900 to-gray-800",
+    followers: "2.4M followers"
+  },
+  {
+    name: "LinkedIn",
+    handle: "Aurelia Private Concierge",
+    description: "Professional insights, partnership opportunities, and thought leadership in luxury lifestyle management.",
+    icon: Linkedin,
+    href: "https://linkedin.com/company/aurelia-private-concierge",
+    internalLink: "/linkedin",
+    color: "from-blue-700 to-blue-600",
+    followers: "47.2K followers"
   },
   {
     name: "Facebook",
@@ -31,15 +60,6 @@ const socialPlatforms = [
     href: "https://facebook.com/aureliaprivateconcierge",
     color: "from-blue-600 to-blue-500",
     followers: "Join our community"
-  },
-  {
-    name: "LinkedIn",
-    handle: "Aurelia Private Concierge",
-    description: "Professional insights, partnership opportunities, and thought leadership in luxury lifestyle management.",
-    icon: Linkedin,
-    href: "https://linkedin.com/company/aurelia-private-concierge",
-    color: "from-blue-700 to-blue-600",
-    followers: "Connect with us"
   },
   {
     name: "X (Twitter)",
@@ -129,47 +149,73 @@ const Social = () => {
             animate="visible"
             className="grid md:grid-cols-2 gap-6"
           >
-            {socialPlatforms.map((platform) => (
-              <motion.a
-                key={platform.name}
-                href={platform.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                variants={itemVariants}
-                whileHover={{ scale: 1.02, y: -4 }}
-                whileTap={{ scale: 0.98 }}
-                className="group relative bg-card/50 border border-border/30 rounded-2xl p-6 hover:border-primary/30 transition-all duration-500 overflow-hidden"
-              >
-                {/* Gradient background on hover */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${platform.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
-                
-                <div className="relative z-10">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${platform.color} flex items-center justify-center shadow-lg`}>
-                      <platform.icon className="w-6 h-6 text-white" strokeWidth={1.5} />
+            {socialPlatforms.map((platform) => {
+              const CardContent = (
+                <>
+                  {/* Gradient background on hover */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${platform.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+                  
+                  <div className="relative z-10">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${platform.color} flex items-center justify-center shadow-lg`}>
+                        {typeof platform.icon === 'function' && platform.icon.toString().includes('svg') ? (
+                          <platform.icon className="w-6 h-6 text-white" />
+                        ) : (
+                          <platform.icon className="w-6 h-6 text-white" strokeWidth={1.5} />
+                        )}
+                      </div>
+                      <ExternalLink className="w-4 h-4 text-muted-foreground/50 group-hover:text-primary transition-colors" />
                     </div>
-                    <ExternalLink className="w-4 h-4 text-muted-foreground/50 group-hover:text-primary transition-colors" />
+                    
+                    <h3 className="text-xl font-serif text-foreground mb-1 group-hover:text-primary transition-colors duration-300">
+                      {platform.name}
+                    </h3>
+                    
+                    <p className="text-sm text-primary/80 font-medium mb-3">
+                      {platform.handle}
+                    </p>
+                    
+                    <p className="text-sm text-muted-foreground font-light leading-relaxed mb-4">
+                      {platform.description}
+                    </p>
+                    
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground/70">
+                      <Users className="w-3 h-3" />
+                      <span>{platform.followers}</span>
+                    </div>
                   </div>
-                  
-                  <h3 className="text-xl font-serif text-foreground mb-1 group-hover:text-primary transition-colors duration-300">
-                    {platform.name}
-                  </h3>
-                  
-                  <p className="text-sm text-primary/80 font-medium mb-3">
-                    {platform.handle}
-                  </p>
-                  
-                  <p className="text-sm text-muted-foreground font-light leading-relaxed mb-4">
-                    {platform.description}
-                  </p>
-                  
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground/70">
-                    <Users className="w-3 h-3" />
-                    <span>{platform.followers}</span>
-                  </div>
-                </div>
-              </motion.a>
-            ))}
+                </>
+              );
+
+              // Use internal link if available, otherwise external
+              if (platform.internalLink) {
+                return (
+                  <motion.div key={platform.name} variants={itemVariants}>
+                    <Link
+                      to={platform.internalLink}
+                      className="group relative bg-card/50 border border-border/30 rounded-2xl p-6 hover:border-primary/30 transition-all duration-500 overflow-hidden block hover:scale-[1.02] hover:-translate-y-1"
+                    >
+                      {CardContent}
+                    </Link>
+                  </motion.div>
+                );
+              }
+
+              return (
+                <motion.a
+                  key={platform.name}
+                  href={platform.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.02, y: -4 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="group relative bg-card/50 border border-border/30 rounded-2xl p-6 hover:border-primary/30 transition-all duration-500 overflow-hidden"
+                >
+                  {CardContent}
+                </motion.a>
+              );
+            })}
           </motion.div>
         </div>
       </section>

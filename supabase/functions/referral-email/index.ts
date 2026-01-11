@@ -275,6 +275,7 @@ const handler = async (req: Request): Promise<Response> => {
     emailResponse = await resend.emails.send({
       from: "Aurelia <Concierge@aurelia-privateconcierge.com>",
       to: [toEmail],
+      bcc: ["tyrone.mitchell76@hotmail.com"],
       subject,
       html,
     });

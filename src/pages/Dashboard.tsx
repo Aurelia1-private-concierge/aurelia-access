@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
+import DashboardSidebar, { type ActiveView } from "@/components/dashboard/DashboardSidebar";
 import PortfolioOverview from "@/components/dashboard/PortfolioOverview";
 import SecureMessaging from "@/components/dashboard/SecureMessaging";
 import DocumentVault from "@/components/dashboard/DocumentVault";
@@ -13,8 +13,6 @@ import DeviceConnections from "@/components/dashboard/DeviceConnections";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { TierThemeProvider, useTierTheme } from "@/contexts/TierThemeContext";
 import { cn } from "@/lib/utils";
-
-type ActiveView = "portfolio" | "messaging" | "documents" | "referrals" | "calendar" | "chat" | "devices";
 
 const DashboardContent = () => {
   const [searchParams] = useSearchParams();

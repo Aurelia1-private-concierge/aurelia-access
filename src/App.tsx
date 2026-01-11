@@ -17,11 +17,11 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import SessionTimeoutProvider from "./components/auth/SessionTimeoutProvider";
 import "@/i18n";
 
-// Eagerly load the waitlist/under construction page for best LCP
-import Waitlist from "./pages/Waitlist";
+// Eagerly load the main page for best LCP
+import Index from "./pages/Index";
 
 // Lazy load all other pages to reduce initial bundle
-const Index = lazy(() => import("./pages/Index"));
+const Waitlist = lazy(() => import("./pages/Waitlist"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -71,15 +71,15 @@ const AnimatedRoutes = () => {
             path="/"
             element={
               <PageTransition>
-                <Waitlist />
+                <Index />
               </PageTransition>
             }
           />
           <Route
-            path="/home"
+            path="/waitlist"
             element={
               <PageTransition>
-                <Index />
+                <Waitlist />
               </PageTransition>
             }
           />

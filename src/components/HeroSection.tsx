@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronDown, Play } from "lucide-react";
+import { ArrowRight, ChevronDown, Play, Loader2 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useRef, useState } from "react";
@@ -14,6 +14,7 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
   const { t } = useTranslation();
   const ref = useRef<HTMLElement>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [videoError, setVideoError] = useState(false);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
@@ -24,6 +25,16 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
   const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
   const mediaScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
   const overlayOpacity = useTransform(scrollYProgress, [0, 0.5], [0.6, 0.9]);
+
+  const handleVideoLoad = () => {
+    setVideoLoaded(true);
+    setVideoError(false);
+  };
+
+  const handleVideoError = () => {
+    setVideoError(true);
+    setVideoLoaded(false);
+  };
 
   return (
     <header ref={ref} className="relative w-full min-h-[100dvh] overflow-hidden flex items-center justify-center">
@@ -38,12 +49,32 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
           alt="Luxury Experience"
           fetchPriority="high"
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-            videoSrc && videoLoaded ? "opacity-0" : "opacity-60"
+            videoSrc && videoLoaded && !videoError ? "opacity-0" : "opacity-60"
           }`}
         />
         
+        {/* Video loading indicator */}
+        {videoSrc && !videoLoaded && !videoError && (
+          <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="flex flex-col items-center gap-3"
+            >
+              <div className="relative">
+                <div className="w-12 h-12 rounded-full border border-primary/30 flex items-center justify-center bg-background/20 backdrop-blur-sm">
+                  <Loader2 className="w-5 h-5 text-primary animate-spin" />
+                </div>
+                <div className="absolute inset-0 w-12 h-12 rounded-full border-t border-primary/50 animate-spin" style={{ animationDuration: '2s' }} />
+              </div>
+              <span className="text-[10px] uppercase tracking-[0.2em] text-foreground/40">Loading video</span>
+            </motion.div>
+          </div>
+        )}
+        
         {/* Video background */}
-        {videoSrc && (
+        {videoSrc && !videoError && (
           <video
             key={videoSrc}
             autoPlay
@@ -51,8 +82,9 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
             loop
             playsInline
             preload="auto"
-            onLoadedData={() => setVideoLoaded(true)}
-            onCanPlay={() => setVideoLoaded(true)}
+            onLoadedData={handleVideoLoad}
+            onCanPlay={handleVideoLoad}
+            onError={handleVideoError}
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
               videoLoaded ? "opacity-60" : "opacity-0"
             }`}

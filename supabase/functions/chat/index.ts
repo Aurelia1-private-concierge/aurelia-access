@@ -358,8 +358,18 @@ Guidelines:
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (error) {
-    console.error("Chat error:", error);
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
+    // Log detailed error server-side
+    console.error("[Chat] Internal error:", {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString(),
+    });
+    
+    // Return sanitized error to client
+    return new Response(JSON.stringify({ 
+      error: "An error occurred processing your request. Please try again.",
+      code: "CHAT_ERROR"
+    }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

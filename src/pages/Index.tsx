@@ -30,6 +30,7 @@ import GlowingOrb from "@/components/GlowingOrb";
 import MetaverseEntryPoint from "@/components/MetaverseEntryPoint";
 import WearablesHub from "@/components/wearables/WearablesHub";
 import SmartIntegrationsHub from "@/components/SmartIntegrationsHub";
+import AmbientAudioControls from "@/components/AmbientAudioControls";
 
 const Index = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -149,6 +150,7 @@ const Index = () => {
       {/* Floating Elements */}
       <MultiAgentWidget />
       <FloatingWhatsApp />
+      <AmbientAudioControls />
 
       {/* Video Modal */}
       <VideoModal

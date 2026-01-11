@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
 import { format, addDays } from "date-fns";
+import { useAdminAuditLog } from "@/hooks/useAdminAuditLog";
 
 interface TrialApplication {
   id: string;
@@ -90,6 +91,7 @@ const TrialApplicationsPanel = () => {
   const [selectedApp, setSelectedApp] = useState<TrialApplication | null>(null);
   const [reviewNotes, setReviewNotes] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { logTrialAction, logListAccess, logDataAccess } = useAdminAuditLog();
 
   useEffect(() => {
     fetchApplications();
@@ -105,6 +107,9 @@ const TrialApplicationsPanel = () => {
 
       if (error) throw error;
       setApplications(data || []);
+      
+      // Log access to trial applications list
+      logListAccess("trial_application", { filter: statusFilter }, data?.length || 0);
     } catch (error) {
       console.error("Error fetching applications:", error);
     } finally {
@@ -139,6 +144,13 @@ const TrialApplicationsPanel = () => {
         .eq("id", selectedApp.id);
 
       if (error) throw error;
+
+      // Log the trial action
+      logTrialAction(status, selectedApp.id, {
+        applicant_email: selectedApp.email,
+        applicant_name: selectedApp.full_name,
+        review_notes: reviewNotes || undefined,
+      });
 
       toast({
         title: status === "approved" ? "Trial Approved" : "Application Rejected",

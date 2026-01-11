@@ -273,7 +273,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     emailResponse = await resend.emails.send({
-      from: "Aurelia <notifications@aurelia-privateconcierge.com>",
+      from: "Aurelia <Concierge@aurelia-privateconcierge.com>",
       to: [toEmail],
       subject,
       html,

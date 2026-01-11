@@ -56,3 +56,9 @@ verify_jwt = false
 
 [functions.ai-insights]
 verify_jwt = false
+
+[functions.generate-ambient-music]
+verify_jwt = false
+
+[functions.narrate-tour]
+verify_jwt = false

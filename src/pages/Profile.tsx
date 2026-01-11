@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { User, Phone, Building2, Globe, Bell, Save, Loader2, ArrowLeft, Camera, Trash2, Upload, Shield, ShieldCheck, ShieldOff } from "lucide-react";
+import { User, Phone, Building2, Globe, Bell, Save, Loader2, ArrowLeft, Camera, Trash2, Upload, Shield, ShieldCheck, ShieldOff, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,7 +18,9 @@ import NotificationSettings from "@/components/dashboard/NotificationSettings";
 import TwoFactorSetup from "@/components/auth/TwoFactorSetup";
 import AvatarSettingsPanel from "@/components/profile/AvatarSettingsPanel";
 import AvatarStyleGallery from "@/components/profile/AvatarStyleGallery";
+import AvatarModelSelector from "@/components/orla/avatars/AvatarModelSelector";
 import { useMFA } from "@/hooks/useMFA";
+import { useAvatarPreferences } from "@/hooks/useAvatarPreferences";
 
 interface Profile {
   display_name: string | null;
@@ -62,6 +64,7 @@ const Profile = () => {
   const [isDisabling2FA, setIsDisabling2FA] = useState(false);
   
   const { isEnrolled, factors, checkMFAStatus, unenrollMFA, isLoading: mfaLoading } = useMFA();
+  const { model: avatarModel, setModel: setAvatarModel } = useAvatarPreferences();
   const [profile, setProfile] = useState<Profile>({
     display_name: "",
     phone: "",
@@ -560,6 +563,29 @@ const Profile = () => {
             </CardHeader>
             <CardContent>
               <NotificationSettings />
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Orla Avatar Model */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.12 }}
+        >
+          <Card className="border-border/30 bg-card/50 backdrop-blur-xl">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg font-medium">
+                <Sparkles className="w-5 h-5 text-primary" />
+                Orla Avatar Model
+              </CardTitle>
+              <CardDescription>Choose your preferred avatar character style for Orla</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AvatarModelSelector
+                currentModel={avatarModel}
+                onSelect={setAvatarModel}
+              />
             </CardContent>
           </Card>
         </motion.div>

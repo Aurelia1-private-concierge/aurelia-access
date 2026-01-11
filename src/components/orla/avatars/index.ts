@@ -1,76 +1,13 @@
-export { default as RealisticAvatar } from "./RealisticAvatar";
-export { default as AnimeAvatar } from "./AnimeAvatar";
-export { default as RoboticAvatar } from "./RoboticAvatar";
-export { default as FantasyElfAvatar } from "./FantasyElfAvatar";
-export { default as SteampunkAvatar } from "./SteampunkAvatar";
-export { default as MinimalistAvatar } from "./MinimalistAvatar";
-export { default as MasculineAvatar } from "./MasculineAvatar";
-export { default as AbstractEnergyAvatar } from "./AbstractEnergyAvatar";
-export { default as CyberpunkAvatar } from "./CyberpunkAvatar";
 export { default as TyroneAvatar } from "./TyroneAvatar";
 
-export type AvatarModelType = "classic" | "realistic" | "anime" | "robotic" | "elf" | "steampunk" | "minimalist" | "masculine" | "abstract" | "cyberpunk" | "tyrone";
+export type AvatarModelType = "classic" | "tyrone";
 
 export const AVATAR_MODELS = [
   {
     id: "classic" as const,
-    name: "Classic Orla",
+    name: "Orla",
     description: "Elegant ethereal avatar with expressive features",
     preview: "✨",
-  },
-  {
-    id: "realistic" as const,
-    name: "Realistic",
-    description: "Photorealistic human-like avatar with natural skin tones",
-    preview: "👤",
-  },
-  {
-    id: "anime" as const,
-    name: "Anime",
-    description: "Stylized anime character with large expressive eyes",
-    preview: "🌸",
-  },
-  {
-    id: "robotic" as const,
-    name: "Robotic",
-    description: "Futuristic AI robot with LED displays and holographics",
-    preview: "🤖",
-  },
-  {
-    id: "elf" as const,
-    name: "Fantasy Elf",
-    description: "Ethereal elven avatar with pointed ears and magical runes",
-    preview: "🧝",
-  },
-  {
-    id: "steampunk" as const,
-    name: "Steampunk",
-    description: "Victorian mechanical avatar with gears, brass, and steam",
-    preview: "⚙️",
-  },
-  {
-    id: "minimalist" as const,
-    name: "Minimalist",
-    description: "Clean geometric avatar with low-poly aesthetic",
-    preview: "◆",
-  },
-  {
-    id: "masculine" as const,
-    name: "Masculine",
-    description: "Strong angular features with defined jawline and brow",
-    preview: "👨",
-  },
-  {
-    id: "abstract" as const,
-    name: "Abstract Energy",
-    description: "Pure energy orb with rotating rings and particles",
-    preview: "🔮",
-  },
-  {
-    id: "cyberpunk" as const,
-    name: "Cyberpunk",
-    description: "Neon-lit cyber implants with holographic displays",
-    preview: "🌃",
   },
   {
     id: "tyrone" as const,

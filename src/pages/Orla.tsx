@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import CircularWaveform from "@/components/CircularWaveform";
 import GuestPreview from "@/components/orla/GuestPreview";
 import Orla3DAvatar from "@/components/orla/Orla3DAvatar";
-import { RealisticAvatar, AnimeAvatar, RoboticAvatar, FantasyElfAvatar, SteampunkAvatar, MinimalistAvatar, MasculineAvatar, AbstractEnergyAvatar, CyberpunkAvatar, TyroneAvatar } from "@/components/orla/avatars";
+import { TyroneAvatar } from "@/components/orla/avatars";
 import AvatarModelSelector from "@/components/orla/avatars/AvatarModelSelector";
 import MotionTrackedAvatar from "@/components/orla/MotionTrackedAvatar";
 import CameraPreview from "@/components/orla/CameraPreview";
@@ -794,120 +794,6 @@ const OrlaInner = () => {
                   audioLevel={audioLevel}
                   size={208}
                   style={{
-                    primary: currentStyle.colors.primary,
-                    secondary: currentStyle.colors.secondary,
-                    accent: currentStyle.colors.accent,
-                    glow: currentStyle.colors.glow,
-                  }}
-                />
-              ) : avatarModel === "realistic" ? (
-                <RealisticAvatar
-                  isSpeaking={isSpeaking}
-                  isConnected={isConnected}
-                  isListening={!isSpeaking && isConnected}
-                  getVolume={conversation.getOutputVolume}
-                  emotion={expressionState.emotion}
-                  faceData={faceTrackingEnabled ? faceData : undefined}
-                  size={208}
-                  colors={{
-                    primary: currentStyle.colors.primary,
-                    secondary: currentStyle.colors.secondary,
-                    accent: currentStyle.colors.accent,
-                    glow: currentStyle.colors.glow,
-                  }}
-                />
-              ) : avatarModel === "anime" ? (
-                <AnimeAvatar
-                  isSpeaking={isSpeaking}
-                  isConnected={isConnected}
-                  isListening={!isSpeaking && isConnected}
-                  getVolume={conversation.getOutputVolume}
-                  emotion={expressionState.emotion}
-                  faceData={faceTrackingEnabled ? faceData : undefined}
-                  size={208}
-                  colors={{
-                    primary: currentStyle.colors.primary,
-                    secondary: currentStyle.colors.secondary,
-                    accent: currentStyle.colors.accent,
-                    glow: currentStyle.colors.glow,
-                  }}
-                />
-              ) : avatarModel === "robotic" ? (
-                <RoboticAvatar
-                  isSpeaking={isSpeaking}
-                  isConnected={isConnected}
-                  isListening={!isSpeaking && isConnected}
-                  getVolume={conversation.getOutputVolume}
-                  emotion={expressionState.emotion}
-                  faceData={faceTrackingEnabled ? faceData : undefined}
-                  size={208}
-                  colors={{
-                    primary: currentStyle.colors.primary,
-                    secondary: currentStyle.colors.secondary,
-                    accent: currentStyle.colors.accent,
-                    glow: currentStyle.colors.glow,
-                  }}
-                />
-              ) : avatarModel === "elf" ? (
-                <FantasyElfAvatar
-                  isSpeaking={isSpeaking}
-                  faceData={faceTrackingEnabled ? faceData : undefined}
-                  colors={{
-                    primary: currentStyle.colors.primary,
-                    secondary: currentStyle.colors.secondary,
-                    accent: currentStyle.colors.accent,
-                    glow: currentStyle.colors.glow,
-                  }}
-                />
-              ) : avatarModel === "steampunk" ? (
-                <SteampunkAvatar
-                  isSpeaking={isSpeaking}
-                  faceData={faceTrackingEnabled ? faceData : undefined}
-                  colors={{
-                    primary: currentStyle.colors.primary,
-                    secondary: currentStyle.colors.secondary,
-                    accent: currentStyle.colors.accent,
-                    glow: currentStyle.colors.glow,
-                  }}
-                />
-              ) : avatarModel === "minimalist" ? (
-                <MinimalistAvatar
-                  isSpeaking={isSpeaking}
-                  faceData={faceTrackingEnabled ? faceData : undefined}
-                  colors={{
-                    primary: currentStyle.colors.primary,
-                    secondary: currentStyle.colors.secondary,
-                    accent: currentStyle.colors.accent,
-                    glow: currentStyle.colors.glow,
-                  }}
-                />
-              ) : avatarModel === "masculine" ? (
-                <MasculineAvatar
-                  isSpeaking={isSpeaking}
-                  faceData={faceTrackingEnabled ? faceData : undefined}
-                  colors={{
-                    primary: currentStyle.colors.primary,
-                    secondary: currentStyle.colors.secondary,
-                    accent: currentStyle.colors.accent,
-                    glow: currentStyle.colors.glow,
-                  }}
-                />
-              ) : avatarModel === "abstract" ? (
-                <AbstractEnergyAvatar
-                  isSpeaking={isSpeaking}
-                  faceData={faceTrackingEnabled ? faceData : undefined}
-                  colors={{
-                    primary: currentStyle.colors.primary,
-                    secondary: currentStyle.colors.secondary,
-                    accent: currentStyle.colors.accent,
-                    glow: currentStyle.colors.glow,
-                  }}
-                />
-              ) : avatarModel === "cyberpunk" ? (
-                <CyberpunkAvatar
-                  isSpeaking={isSpeaking}
-                  faceData={faceTrackingEnabled ? faceData : undefined}
-                  colors={{
                     primary: currentStyle.colors.primary,
                     secondary: currentStyle.colors.secondary,
                     accent: currentStyle.colors.accent,

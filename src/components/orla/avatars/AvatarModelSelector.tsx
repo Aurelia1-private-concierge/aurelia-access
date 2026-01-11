@@ -12,15 +12,6 @@ interface AvatarModelSelectorProps {
 // Animated preview states for each model
 const PREVIEW_ANIMATIONS: Record<AvatarModelType, { scale: number[]; rotate: number[] }> = {
   classic: { scale: [1, 1.1, 1], rotate: [0, 5, 0] },
-  realistic: { scale: [1, 1.05, 1], rotate: [0, -3, 0] },
-  anime: { scale: [1, 1.15, 1], rotate: [0, 10, -10, 0] },
-  robotic: { scale: [1, 1.08, 1], rotate: [0, -5, 5, 0] },
-  elf: { scale: [1, 1.1, 1.05, 1], rotate: [0, 8, 0] },
-  steampunk: { scale: [1, 1.05, 1], rotate: [0, -8, 8, 0] },
-  minimalist: { scale: [1, 1.12, 1], rotate: [0, 15, 0] },
-  masculine: { scale: [1, 1.04, 1], rotate: [0, -4, 0] },
-  abstract: { scale: [1, 1.2, 0.95, 1], rotate: [0, 20, 0] },
-  cyberpunk: { scale: [1, 1.1, 0.98, 1], rotate: [0, -10, 10, 0] },
   tyrone: { scale: [1, 1.06, 1], rotate: [0, -5, 0] },
 };
 

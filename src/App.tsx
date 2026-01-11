@@ -43,6 +43,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Social = lazy(() => import("./pages/Social"));
+const Campaign = lazy(() => import("./pages/Campaign"));
 
 // Minimal loading fallback
 const PageLoader = () => (
@@ -263,6 +264,14 @@ const AnimatedRoutes = () => {
             element={
               <PageTransition>
                 <Social />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/c/:campaignId?"
+            element={
+              <PageTransition>
+                <Campaign />
               </PageTransition>
             }
           />

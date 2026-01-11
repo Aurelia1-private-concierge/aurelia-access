@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Watch, Heart, Fingerprint, Glasses, Smartphone, Wifi,
-  WifiOff, Check, X, Settings, RefreshCw, Zap, Link2
+  Watch, Heart, Fingerprint, Glasses, Wifi,
+  WifiOff, Check, X, Settings, RefreshCw, Zap, Link2, Activity
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -14,6 +14,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { useWearables, type WearableProvider } from "@/hooks/useWearables";
+import { Progress } from "@/components/ui/progress";
 
 interface Device {
   id: string;
@@ -25,9 +27,22 @@ interface Device {
   lastSync?: string;
   batteryLevel?: number;
   features: string[];
+  provider?: WearableProvider;
+  isReal?: boolean;
 }
 
 const DeviceConnections = () => {
+  const { 
+    connections, 
+    wellnessData, 
+    loading, 
+    syncing,
+    connect, 
+    disconnect, 
+    syncData, 
+    isConnected 
+  } = useWearables();
+
   const [devices, setDevices] = useState<Device[]>([
     {
       id: "apple-watch",
@@ -55,15 +70,19 @@ const DeviceConnections = () => {
       color: "rose",
       connected: false,
       features: ["Sleep Tracking", "Readiness Score", "Activity Insights", "Wellness Recommendations"],
+      provider: "oura",
+      isReal: true,
     },
     {
       id: "whoop",
       name: "WHOOP Band",
       type: "4.0",
-      icon: Heart,
+      icon: Activity,
       color: "emerald",
       connected: false,
       features: ["Strain Coach", "Recovery Score", "Sleep Performance", "HRV Monitoring"],
+      provider: "whoop",
+      isReal: true,
     },
     {
       id: "nfc-ring",
@@ -75,6 +94,28 @@ const DeviceConnections = () => {
       features: ["Venue Access", "Member Verification", "Secure Payments", "Digital Keys"],
     },
   ]);
+
+  // Update devices based on real connections
+  useEffect(() => {
+    setDevices((prev) =>
+      prev.map((device) => {
+        if (device.provider) {
+          const conn = connections.find((c) => c.provider === device.provider);
+          if (conn) {
+            return {
+              ...device,
+              connected: true,
+              lastSync: conn.last_sync_at || undefined,
+              type: conn.device_name?.includes("Demo") ? "Demo Mode" : device.type,
+            };
+          } else {
+            return { ...device, connected: false, lastSync: undefined };
+          }
+        }
+        return device;
+      })
+    );
+  }, [connections]);
 
   const [connectingDevice, setConnectingDevice] = useState<string | null>(null);
   const [settingsDevice, setSettingsDevice] = useState<Device | null>(null);
@@ -88,57 +129,157 @@ const DeviceConnections = () => {
     violet: { bg: "bg-violet-500/10", border: "border-violet-500/30", text: "text-violet-400" },
   };
 
-  const handleConnect = async (deviceId: string) => {
-    setConnectingDevice(deviceId);
-    
-    // Simulate connection process
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    
-    setDevices((prev) =>
-      prev.map((d) =>
-        d.id === deviceId
-          ? {
-              ...d,
-              connected: true,
-              lastSync: new Date().toISOString(),
-              batteryLevel: Math.floor(Math.random() * 40) + 60,
-            }
-          : d
-      )
-    );
-    
-    setConnectingDevice(null);
-    toast.success("Device connected successfully!", {
-      description: "Your device is now synced with Aurelia.",
-    });
+  const handleConnect = async (device: Device) => {
+    if (device.isReal && device.provider) {
+      setConnectingDevice(device.id);
+      await connect(device.provider);
+      setConnectingDevice(null);
+    } else {
+      // Simulated connection for non-API devices
+      setConnectingDevice(device.id);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      
+      setDevices((prev) =>
+        prev.map((d) =>
+          d.id === device.id
+            ? {
+                ...d,
+                connected: true,
+                lastSync: new Date().toISOString(),
+                batteryLevel: Math.floor(Math.random() * 40) + 60,
+              }
+            : d
+        )
+      );
+      
+      setConnectingDevice(null);
+      toast.success("Device connected (Demo Mode)", {
+        description: "This device uses simulated data.",
+      });
+    }
   };
 
-  const handleDisconnect = (deviceId: string) => {
-    setDevices((prev) =>
-      prev.map((d) =>
-        d.id === deviceId
-          ? { ...d, connected: false, lastSync: undefined, batteryLevel: undefined }
-          : d
-      )
-    );
-    toast.info("Device disconnected");
+  const handleDisconnect = async (device: Device) => {
+    if (device.isReal && device.provider) {
+      await disconnect(device.provider);
+    } else {
+      setDevices((prev) =>
+        prev.map((d) =>
+          d.id === device.id
+            ? { ...d, connected: false, lastSync: undefined, batteryLevel: undefined }
+            : d
+        )
+      );
+      toast.info("Device disconnected");
+    }
   };
 
-  const handleSync = async (deviceId: string) => {
-    setSyncingDevice(deviceId);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
-    setDevices((prev) =>
-      prev.map((d) =>
-        d.id === deviceId ? { ...d, lastSync: new Date().toISOString() } : d
-      )
-    );
-    
-    setSyncingDevice(null);
-    toast.success("Device synced!");
+  const handleSync = async (device: Device) => {
+    if (device.isReal && device.provider) {
+      await syncData(device.provider);
+    } else {
+      setSyncingDevice(device.id);
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      
+      setDevices((prev) =>
+        prev.map((d) =>
+          d.id === device.id ? { ...d, lastSync: new Date().toISOString() } : d
+        )
+      );
+      
+      setSyncingDevice(null);
+      toast.success("Device synced!");
+    }
   };
 
   const connectedCount = devices.filter((d) => d.connected).length;
+
+  // Wellness data display for connected health devices
+  const renderWellnessCard = () => {
+    if (!wellnessData) return null;
+
+    const isOura = wellnessData.provider === "oura";
+    const mainScore = isOura ? wellnessData.readiness_score : wellnessData.recovery_score;
+    const mainLabel = isOura ? "Readiness" : "Recovery";
+    const secondaryScore = isOura ? wellnessData.sleep_score : wellnessData.strain_score;
+    const secondaryLabel = isOura ? "Sleep" : "Strain";
+
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="p-5 bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl mb-6"
+      >
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Activity className="w-5 h-5 text-primary" />
+            <h3 className="font-medium text-foreground">Today's Wellness</h3>
+          </div>
+          <span className="text-xs text-muted-foreground">
+            {wellnessData.provider === "oura" ? "Oura Ring" : "WHOOP"}
+            {(wellnessData as any).demo_mode && " • Demo"}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* Main Score */}
+          <div className="text-center">
+            <div className="relative w-16 h-16 mx-auto mb-2">
+              <svg className="w-16 h-16 transform -rotate-90">
+                <circle
+                  cx="32"
+                  cy="32"
+                  r="28"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  className="text-secondary"
+                />
+                <circle
+                  cx="32"
+                  cy="32"
+                  r="28"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  strokeDasharray={`${(mainScore || 0) * 1.76} 176`}
+                  className="text-primary"
+                />
+              </svg>
+              <span className="absolute inset-0 flex items-center justify-center text-lg font-semibold text-foreground">
+                {mainScore || "--"}
+              </span>
+            </div>
+            <span className="text-xs text-muted-foreground">{mainLabel}</span>
+          </div>
+
+          {/* Secondary Score */}
+          <div className="text-center">
+            <div className="text-2xl font-semibold text-foreground mb-1">
+              {isOura ? secondaryScore || "--" : secondaryScore?.toFixed(1) || "--"}
+            </div>
+            <span className="text-xs text-muted-foreground">{secondaryLabel}</span>
+          </div>
+
+          {/* HRV */}
+          <div className="text-center">
+            <div className="text-2xl font-semibold text-foreground mb-1">
+              {wellnessData.hrv_avg || "--"}
+            </div>
+            <span className="text-xs text-muted-foreground">HRV (ms)</span>
+          </div>
+
+          {/* Sleep */}
+          <div className="text-center">
+            <div className="text-2xl font-semibold text-foreground mb-1">
+              {wellnessData.sleep_hours?.toFixed(1) || "--"}h
+            </div>
+            <span className="text-xs text-muted-foreground">Sleep</span>
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -152,7 +293,7 @@ const DeviceConnections = () => {
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-full">
           <Zap className="w-4 h-4 text-primary" />
-          <span className="text-xs text-primary font-medium">DEMO MODE</span>
+          <span className="text-xs text-primary font-medium">LIVE SYNC</span>
         </div>
       </div>
 
@@ -166,13 +307,16 @@ const DeviceConnections = () => {
         />
       </div>
 
+      {/* Wellness Data Card */}
+      {renderWellnessCard()}
+
       {/* Devices Grid */}
       <div className="grid gap-4">
         {devices.map((device) => {
           const colors = colorClasses[device.color];
           const Icon = device.icon;
           const isConnecting = connectingDevice === device.id;
-          const isSyncing = syncingDevice === device.id;
+          const isSyncing = syncingDevice === device.id || syncing === device.provider;
 
           return (
             <motion.div
@@ -207,6 +351,11 @@ const DeviceConnections = () => {
                     <div className="flex items-center gap-2">
                       <h3 className="text-lg font-medium text-foreground">{device.name}</h3>
                       <span className="text-xs text-muted-foreground">{device.type}</span>
+                      {device.isReal && (
+                        <span className="text-[10px] px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 rounded-full">
+                          API
+                        </span>
+                      )}
                     </div>
                     
                     {device.connected ? (
@@ -230,7 +379,7 @@ const DeviceConnections = () => {
                         )}
                         {device.lastSync && (
                           <span className="text-xs text-muted-foreground">
-                            Last sync: {new Date(device.lastSync).toLocaleTimeString()}
+                            Synced: {new Date(device.lastSync).toLocaleTimeString()}
                           </span>
                         )}
                       </div>
@@ -267,7 +416,7 @@ const DeviceConnections = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleSync(device.id)}
+                        onClick={() => handleSync(device)}
                         disabled={isSyncing}
                         className="h-9 w-9"
                       >
@@ -284,7 +433,7 @@ const DeviceConnections = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleDisconnect(device.id)}
+                        onClick={() => handleDisconnect(device)}
                         className="text-red-400 border-red-500/30 hover:bg-red-500/10"
                       >
                         <X className="w-4 h-4 mr-1" />
@@ -293,7 +442,7 @@ const DeviceConnections = () => {
                     </>
                   ) : (
                     <Button
-                      onClick={() => handleConnect(device.id)}
+                      onClick={() => handleConnect(device)}
                       disabled={isConnecting}
                       className="bg-gradient-to-r from-primary to-primary/80"
                     >
@@ -377,10 +526,10 @@ const DeviceConnections = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Demo Notice */}
+      {/* Info Notice */}
       <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl">
         <p className="text-xs text-center text-primary/80">
-          🔗 Device connections are simulated in demo mode. Real device pairing will be available with your membership.
+          🔗 Oura Ring and WHOOP connections use real APIs when credentials are configured. Other devices use demo mode.
         </p>
       </div>
     </div>

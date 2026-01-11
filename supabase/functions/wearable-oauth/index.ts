@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
+import { safeEncrypt, safeDecrypt } from "../_shared/crypto-utils.ts";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -119,7 +119,13 @@ const handler = async (req: Request): Promise<Response> => {
 
         const tokens = await tokenResponse.json();
         
-        // Store tokens in database
+        // Encrypt tokens before storage
+        const encryptedAccessToken = await safeEncrypt(tokens.access_token);
+        const encryptedRefreshToken = tokens.refresh_token 
+          ? await safeEncrypt(tokens.refresh_token) 
+          : null;
+        
+        // Store encrypted tokens in database
         const expiresAt = tokens.expires_in 
           ? new Date(Date.now() + tokens.expires_in * 1000).toISOString()
           : null;
@@ -129,8 +135,8 @@ const handler = async (req: Request): Promise<Response> => {
           .upsert({
             user_id: user.id,
             provider,
-            access_token: tokens.access_token,
-            refresh_token: tokens.refresh_token,
+            access_token: encryptedAccessToken,
+            refresh_token: encryptedRefreshToken,
             expires_at: expiresAt,
             device_name: provider === "oura" ? "Oura Ring" : "WHOOP Band",
             last_sync_at: new Date().toISOString(),
@@ -159,6 +165,9 @@ const handler = async (req: Request): Promise<Response> => {
           throw new Error("No refresh token available");
         }
 
+        // Decrypt the refresh token
+        const decryptedRefreshToken = await safeDecrypt(connection.refresh_token);
+
         const refreshResponse = await fetch(config.tokenUrl, {
           method: "POST",
           headers: {
@@ -166,7 +175,7 @@ const handler = async (req: Request): Promise<Response> => {
           },
           body: new URLSearchParams({
             grant_type: "refresh_token",
-            refresh_token: connection.refresh_token,
+            refresh_token: decryptedRefreshToken,
             client_id: config.clientId,
             client_secret: config.clientSecret,
           }),
@@ -178,6 +187,12 @@ const handler = async (req: Request): Promise<Response> => {
 
         const tokens = await refreshResponse.json();
         
+        // Encrypt new tokens
+        const encryptedAccessToken = await safeEncrypt(tokens.access_token);
+        const encryptedRefreshToken = tokens.refresh_token 
+          ? await safeEncrypt(tokens.refresh_token) 
+          : connection.refresh_token;
+        
         const expiresAt = tokens.expires_in 
           ? new Date(Date.now() + tokens.expires_in * 1000).toISOString()
           : null;
@@ -185,8 +200,8 @@ const handler = async (req: Request): Promise<Response> => {
         await supabase
           .from("wearable_connections")
           .update({
-            access_token: tokens.access_token,
-            refresh_token: tokens.refresh_token || connection.refresh_token,
+            access_token: encryptedAccessToken,
+            refresh_token: encryptedRefreshToken,
             expires_at: expiresAt,
           })
           .eq("user_id", user.id)

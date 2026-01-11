@@ -33,11 +33,13 @@ import VoiceCommands from "@/components/VoiceCommands";
 import ContextualSoundscapeIndicator from "@/components/ContextualSoundscapeIndicator";
 import useContextualSoundscapes from "@/hooks/useContextualSoundscapes";
 import GA4Script from "@/components/GA4Script";
+import useBehaviorTracking from "@/hooks/useBehaviorTracking";
 
 const Index = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [isPipEnabled, setIsPipEnabled] = useState(true);
   const soundscapes = useContextualSoundscapes();
+  useBehaviorTracking(); // Track user behavior
   const musicToggleRef = useRef<(() => void) | null>(null);
   const narratorToggleRef = useRef<(() => void) | null>(null);
 

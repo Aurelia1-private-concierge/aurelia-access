@@ -1231,6 +1231,66 @@ export type Database = {
         }
         Relationships: []
       }
+      user_behavior_events: {
+        Row: {
+          created_at: string
+          element_class: string | null
+          element_id: string | null
+          element_text: string | null
+          event_type: string
+          id: string
+          ip_country: string | null
+          metadata: Json | null
+          page_path: string
+          referrer: string | null
+          scroll_depth: number | null
+          session_id: string
+          time_on_page: number | null
+          user_agent: string | null
+          user_id: string | null
+          viewport_height: number | null
+          viewport_width: number | null
+        }
+        Insert: {
+          created_at?: string
+          element_class?: string | null
+          element_id?: string | null
+          element_text?: string | null
+          event_type: string
+          id?: string
+          ip_country?: string | null
+          metadata?: Json | null
+          page_path: string
+          referrer?: string | null
+          scroll_depth?: number | null
+          session_id: string
+          time_on_page?: number | null
+          user_agent?: string | null
+          user_id?: string | null
+          viewport_height?: number | null
+          viewport_width?: number | null
+        }
+        Update: {
+          created_at?: string
+          element_class?: string | null
+          element_id?: string | null
+          element_text?: string | null
+          event_type?: string
+          id?: string
+          ip_country?: string | null
+          metadata?: Json | null
+          page_path?: string
+          referrer?: string | null
+          scroll_depth?: number | null
+          session_id?: string
+          time_on_page?: number | null
+          user_agent?: string | null
+          user_id?: string | null
+          viewport_height?: number | null
+          viewport_width?: number | null
+        }
+        Relationships: []
+      }
       user_credits: {
         Row: {
           balance: number
@@ -1410,7 +1470,30 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      page_heatmap_data: {
+        Row: {
+          click_count: number | null
+          element_class: string | null
+          element_id: string | null
+          hour: string | null
+          page_path: string | null
+        }
+        Relationships: []
+      }
+      session_summary: {
+        Row: {
+          max_scroll_depth: number | null
+          pages_visited: number | null
+          referrer: string | null
+          session_end: string | null
+          session_id: string | null
+          session_start: string | null
+          total_events: number | null
+          total_time: number | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       check_launch_signup_rate_limit: {

@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import CircularWaveform from "@/components/CircularWaveform";
 import GuestPreview from "@/components/orla/GuestPreview";
 import Orla3DAvatar from "@/components/orla/Orla3DAvatar";
-import { RealisticAvatar, AnimeAvatar, RoboticAvatar, FantasyElfAvatar, SteampunkAvatar, MinimalistAvatar, MasculineAvatar, AbstractEnergyAvatar } from "@/components/orla/avatars";
+import { RealisticAvatar, AnimeAvatar, RoboticAvatar, FantasyElfAvatar, SteampunkAvatar, MinimalistAvatar, MasculineAvatar, AbstractEnergyAvatar, CyberpunkAvatar } from "@/components/orla/avatars";
 import AvatarModelSelector from "@/components/orla/avatars/AvatarModelSelector";
 import MotionTrackedAvatar from "@/components/orla/MotionTrackedAvatar";
 import CameraPreview from "@/components/orla/CameraPreview";
@@ -894,6 +894,17 @@ const OrlaInner = () => {
                 />
               ) : avatarModel === "abstract" ? (
                 <AbstractEnergyAvatar
+                  isSpeaking={isSpeaking}
+                  faceData={faceTrackingEnabled ? faceData : undefined}
+                  colors={{
+                    primary: currentStyle.colors.primary,
+                    secondary: currentStyle.colors.secondary,
+                    accent: currentStyle.colors.accent,
+                    glow: currentStyle.colors.glow,
+                  }}
+                />
+              ) : avatarModel === "cyberpunk" ? (
+                <CyberpunkAvatar
                   isSpeaking={isSpeaking}
                   faceData={faceTrackingEnabled ? faceData : undefined}
                   colors={{

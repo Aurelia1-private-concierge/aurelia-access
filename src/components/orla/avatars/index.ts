@@ -6,8 +6,9 @@ export { default as SteampunkAvatar } from "./SteampunkAvatar";
 export { default as MinimalistAvatar } from "./MinimalistAvatar";
 export { default as MasculineAvatar } from "./MasculineAvatar";
 export { default as AbstractEnergyAvatar } from "./AbstractEnergyAvatar";
+export { default as CyberpunkAvatar } from "./CyberpunkAvatar";
 
-export type AvatarModelType = "classic" | "realistic" | "anime" | "robotic" | "elf" | "steampunk" | "minimalist" | "masculine" | "abstract";
+export type AvatarModelType = "classic" | "realistic" | "anime" | "robotic" | "elf" | "steampunk" | "minimalist" | "masculine" | "abstract" | "cyberpunk";
 
 export const AVATAR_MODELS = [
   {
@@ -63,5 +64,11 @@ export const AVATAR_MODELS = [
     name: "Abstract Energy",
     description: "Pure energy orb with rotating rings and particles",
     preview: "🔮",
+  },
+  {
+    id: "cyberpunk" as const,
+    name: "Cyberpunk",
+    description: "Neon-lit cyber implants with holographic displays",
+    preview: "🌃",
   },
 ];

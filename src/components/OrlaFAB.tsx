@@ -1,8 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useState, Suspense } from "react";
+import { useState } from "react";
 import OrlaMiniAvatar from "@/components/orla/OrlaMiniAvatar";
-import orlaAvatar from "@/assets/orla-avatar.png";
 
 const OrlaFAB = () => {
   const [isHovered, setIsHovered] = useState(false);
@@ -21,18 +20,12 @@ const OrlaFAB = () => {
       >
         {/* Animated glow ring */}
         <motion.span 
-          animate={{ 
-            scale: [1, 1.4, 1], 
-            opacity: [0.4, 0, 0.4],
-          }}
+          animate={{ scale: [1, 1.4, 1], opacity: [0.4, 0, 0.4] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
           className="absolute inset-0 rounded-full bg-primary/40"
         />
         <motion.span 
-          animate={{ 
-            scale: [1, 1.2, 1], 
-            opacity: [0.6, 0.2, 0.6],
-          }}
+          animate={{ scale: [1, 1.2, 1], opacity: [0.6, 0.2, 0.6] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
           className="absolute inset-0 rounded-full bg-primary/30"
         />
@@ -46,16 +39,8 @@ const OrlaFAB = () => {
           <span className="text-[9px] font-bold text-white">1</span>
         </motion.span>
 
-        {/* 3D Mini Avatar with fallback */}
-        <Suspense fallback={
-          <img 
-            src={orlaAvatar} 
-            alt="Speak with Orla"
-            className="w-full h-full object-cover"
-          />
-        }>
-          <OrlaMiniAvatar size={56} isActive={isHovered} showSparkles={true} />
-        </Suspense>
+        {/* Mini Avatar */}
+        <OrlaMiniAvatar size={56} isActive={isHovered} showSparkles={true} />
 
         {/* Tooltip on hover */}
         <motion.div

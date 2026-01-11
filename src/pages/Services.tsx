@@ -27,7 +27,7 @@ import {
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import ChatWidget from "@/components/ChatWidget";
+import MultiAgentWidget from "@/components/MultiAgentWidget";
 
 const services = [
   {
@@ -380,7 +380,7 @@ const Services = () => {
       </section>
 
       <Footer />
-      <ChatWidget />
+      <MultiAgentWidget />
     </div>
   );
 };

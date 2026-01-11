@@ -10,7 +10,7 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import FAQSection from "@/components/FAQSection";
 import MembershipCTA from "@/components/MembershipCTA";
 import Footer from "@/components/Footer";
-import OrlaFAB from "@/components/OrlaFAB";
+import MultiAgentWidget from "@/components/MultiAgentWidget";
 import heroVideo from "@/assets/hero-video.mp4";
 import LoadingScreen from "@/components/LoadingScreen";
 import ScrollProgress from "@/components/ScrollProgress";
@@ -121,7 +121,7 @@ const Index = () => {
       <Footer />
 
       {/* Floating Elements */}
-      <OrlaFAB />
+      <MultiAgentWidget />
       <FloatingWhatsApp />
 
       {/* Video Modal */}

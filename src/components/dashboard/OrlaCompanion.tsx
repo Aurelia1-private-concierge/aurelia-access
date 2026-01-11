@@ -3,9 +3,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import OrlaMiniAvatar from "@/components/orla/OrlaMiniAvatar";
+import { useAvatarStyle } from "@/hooks/useAvatarStyle";
 
 const OrlaCompanion = () => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { currentStyle } = useAvatarStyle();
   
   const suggestions = [
     "Review your pending service requests",
@@ -29,9 +31,9 @@ const OrlaCompanion = () => {
           <motion.div 
             animate={{ 
               boxShadow: [
-                "0 0 15px rgba(212, 175, 55, 0.2)",
-                "0 0 25px rgba(212, 175, 55, 0.4)",
-                "0 0 15px rgba(212, 175, 55, 0.2)"
+                `0 0 15px ${currentStyle.colors.glow}`,
+                `0 0 25px ${currentStyle.colors.glow}`,
+                `0 0 15px ${currentStyle.colors.glow}`
               ]
             }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
@@ -43,11 +45,40 @@ const OrlaCompanion = () => {
               transition={{ duration: 2, repeat: Infinity }}
               className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full border-2 border-card shadow-lg shadow-emerald-500/50" 
             />
+            
+            {/* Style-matched accent particles */}
+            {currentStyle.effects.sparkles && isExpanded && (
+              <>
+                {[0, 1, 2].map((i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute w-1 h-1 rounded-full"
+                    style={{ 
+                      backgroundColor: currentStyle.colors.primary,
+                      left: "50%",
+                      top: "50%",
+                    }}
+                    animate={{
+                      x: Math.cos((i / 3) * Math.PI * 2 + Date.now() / 1000) * 20,
+                      y: Math.sin((i / 3) * Math.PI * 2 + Date.now() / 1000) * 20,
+                      opacity: [0.3, 0.8, 0.3],
+                      scale: [0.5, 1, 0.5],
+                    }}
+                    transition={{
+                      duration: 2,
+                      delay: i * 0.3,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  />
+                ))}
+              </>
+            )}
           </motion.div>
           
           <div>
             <h3 className="font-serif text-lg text-foreground">Orla</h3>
-            <p className="text-xs text-primary uppercase tracking-[0.2em] font-medium flex items-center gap-1.5">
+            <p className="text-xs uppercase tracking-[0.2em] font-medium flex items-center gap-1.5" style={{ color: currentStyle.colors.primary }}>
               <Sparkles className="w-3 h-3" />
               Your Private Liaison
             </p>
@@ -88,7 +119,13 @@ const OrlaCompanion = () => {
                     className="w-full text-left p-3 bg-secondary/30 hover:bg-primary/10 border border-border/30 hover:border-primary/30 rounded-xl text-sm text-foreground/80 hover:text-foreground transition-all group"
                   >
                     <span className="flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:bg-primary transition-colors" />
+                      <span 
+                        className="w-1.5 h-1.5 rounded-full transition-colors"
+                        style={{ 
+                          backgroundColor: currentStyle.colors.primary,
+                          opacity: 0.5,
+                        }}
+                      />
                       {suggestion}
                     </span>
                   </motion.button>
@@ -97,7 +134,8 @@ const OrlaCompanion = () => {
               
               <Link 
                 to="/orla" 
-                className="block mt-4 text-center text-xs text-primary hover:text-primary/80 transition-colors"
+                className="block mt-4 text-center text-xs hover:opacity-80 transition-colors"
+                style={{ color: currentStyle.colors.primary }}
               >
                 Open full voice conversation →
               </Link>

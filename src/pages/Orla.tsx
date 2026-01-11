@@ -14,9 +14,11 @@ import Orla3DAvatar from "@/components/orla/Orla3DAvatar";
 import { OrlaExpressionProvider, useOrlaExpression, OrlaEmotion } from "@/components/orla/OrlaExpressionController";
 import VoiceSessionHistory from "@/components/orla/VoiceSessionHistory";
 import LanguageSelector from "@/components/orla/LanguageSelector";
+import StyleMatchedParticles from "@/components/orla/StyleMatchedParticles";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useVoiceSession } from "@/hooks/useVoiceSession";
+import { useVoiceReactive } from "@/hooks/useVoiceReactive";
 import { languages } from "@/i18n";
 
 const ELEVENLABS_AGENT_ID = "agent_01jx7t3mjgeqzsjh5qxbvdsxey";
@@ -54,6 +56,10 @@ const OrlaInner = () => {
   
   // Expression controller for 3D avatar
   const { state: expressionState, setSpeaking, setListening, setThinking, reactToContent, setEmotion, transitionTo } = useOrlaExpression();
+  
+  // Voice reactivity for audio levels
+  const voiceReactive = useVoiceReactive();
+  const [audioLevel, setAudioLevel] = useState(0);
   
   // Demo mode emotion cycling
   useEffect(() => {
@@ -454,6 +460,30 @@ const OrlaInner = () => {
     }
   }, [isConnected, isSpeaking, setListening]);
 
+  // Track audio levels for voice-reactive particles
+  useEffect(() => {
+    if (!isConnected) {
+      setAudioLevel(0);
+      return;
+    }
+    
+    const updateAudioLevel = () => {
+      // Get the output volume when speaking, input volume when listening
+      const getVolume = isSpeaking 
+        ? conversation.getOutputVolume 
+        : conversation.getInputVolume;
+      
+      if (getVolume) {
+        const volume = getVolume();
+        // Smooth the audio level
+        setAudioLevel(prev => prev * 0.7 + volume * 0.3);
+      }
+    };
+    
+    const interval = setInterval(updateAudioLevel, 50);
+    return () => clearInterval(interval);
+  }, [isConnected, isSpeaking, conversation]);
+
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -679,6 +709,14 @@ const OrlaInner = () => {
                 </>
               )}
             </AnimatePresence>
+
+            {/* Style-matched voice-reactive particles */}
+            <StyleMatchedParticles 
+              isActive={isConnected}
+              audioLevel={audioLevel}
+              particleCount={24}
+              size={320}
+            />
 
             {/* Avatar container */}
             <motion.div

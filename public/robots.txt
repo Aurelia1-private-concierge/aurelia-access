@@ -1,25 +1,102 @@
 # Aurelia Private Concierge - robots.txt
-# https://www.aurelia-privateconciege.com
+# https://aurelia-privateconcierge.com
 
-Sitemap: https://www.aurelia-privateconciege.com/sitemap.xml
+# Sitemap location
+Sitemap: https://aurelia-privateconcierge.com/sitemap.xml
 
+# Google
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 1
 
-User-agent: Bingbot
+User-agent: Googlebot-Image
 Allow: /
 
+User-agent: Googlebot-News
+Allow: /
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: msnbot
+Allow: /
+
+# Social Media Crawlers
 User-agent: Twitterbot
 Allow: /
 
 User-agent: facebookexternalhit
 Allow: /
 
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: Pinterest
+Allow: /
+
+User-agent: Slackbot
+Allow: /
+
+# Other Search Engines
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+# AI/LLM Crawlers (allow for visibility)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+# Default rule for all other bots
 User-agent: *
 Allow: /
+
+# Protected/Private Areas - Disallow
 Disallow: /dashboard
+Disallow: /dashboard/*
 Disallow: /profile
-Disallow: /partner
-Disallow: /partner/apply
-Disallow: /partner/services/new
+Disallow: /profile/*
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /partner/portal
+Disallow: /partner/portal/*
 Disallow: /reset-password
+Disallow: /onboarding
+Disallow: /credit-history
+Disallow: /api/
+Disallow: /_next/
+Disallow: /private/
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /

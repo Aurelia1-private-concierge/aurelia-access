@@ -49,6 +49,8 @@ import ServiceRequestsPanel from "@/components/admin/ServiceRequestsPanel";
 import ConciergeRequestsPanel from "@/components/admin/ConciergeRequestsPanel";
 import PartnerApplicationsPanel from "@/components/admin/PartnerApplicationsPanel";
 import AnalyticsDashboard from "@/components/admin/AnalyticsDashboard";
+import CampaignAnalytics from "@/components/admin/CampaignAnalytics";
+import ABTestingPanel from "@/components/admin/ABTestingPanel";
 import CRMPanel from "@/components/admin/CRMPanel";
 import CommissionTracker from "@/components/admin/CommissionTracker";
 import TrialApplicationsPanel from "@/components/admin/TrialApplicationsPanel";
@@ -293,6 +295,8 @@ const Admin = () => {
         <Tabs defaultValue="analytics" className="space-y-6">
           <TabsList className="bg-card border border-border/50 flex-wrap h-auto gap-1 p-1">
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
+            <TabsTrigger value="abtesting">A/B Tests</TabsTrigger>
             <TabsTrigger value="trials">Trials</TabsTrigger>
             <TabsTrigger value="concierge">Concierge</TabsTrigger>
             <TabsTrigger value="crm">CRM</TabsTrigger>
@@ -314,6 +318,14 @@ const Admin = () => {
 
           <TabsContent value="analytics" className="space-y-6">
             <AnalyticsDashboard />
+          </TabsContent>
+
+          <TabsContent value="campaigns" className="space-y-6">
+            <CampaignAnalytics />
+          </TabsContent>
+
+          <TabsContent value="abtesting" className="space-y-6">
+            <ABTestingPanel />
           </TabsContent>
 
           <TabsContent value="crm" className="space-y-6">

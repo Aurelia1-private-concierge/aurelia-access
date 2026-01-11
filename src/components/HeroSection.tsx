@@ -32,36 +32,34 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
         style={{ y: mediaY, scale: mediaScale }}
         className="absolute inset-0 w-full h-[130%] z-0"
       >
-        {videoSrc ? (
-          <>
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              onLoadedData={() => setVideoLoaded(true)}
-              className={`w-full h-full object-cover transition-opacity duration-1000 ${
-                videoLoaded ? "opacity-60" : "opacity-0"
-              }`}
-            >
-              <source src={videoSrc} type="video/mp4" />
-            </video>
-            {!videoLoaded && (
-              <img
-                src={heroImage}
-                alt="Luxury Experience"
-                fetchPriority="high"
-                className="absolute inset-0 w-full h-full object-cover opacity-60"
-              />
-            )}
-          </>
-        ) : (
-          <img
-            src={heroImage}
-            alt="Luxury Experience"
-            fetchPriority="high"
-            className="w-full h-full object-cover opacity-60"
-          />
+        {/* Fallback image - always present */}
+        <img
+          src={heroImage}
+          alt="Luxury Experience"
+          fetchPriority="high"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+            videoSrc && videoLoaded ? "opacity-0" : "opacity-60"
+          }`}
+        />
+        
+        {/* Video background */}
+        {videoSrc && (
+          <video
+            key={videoSrc}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            onLoadedData={() => setVideoLoaded(true)}
+            onCanPlay={() => setVideoLoaded(true)}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+              videoLoaded ? "opacity-60" : "opacity-0"
+            }`}
+          >
+            <source src={videoSrc} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
         )}
       </motion.div>
 

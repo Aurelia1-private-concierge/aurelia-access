@@ -3,8 +3,7 @@ import { motion } from "framer-motion";
 import NotificationPanel from "./NotificationPanel";
 import { useTierTheme } from "@/contexts/TierThemeContext";
 import { cn } from "@/lib/utils";
-
-type ActiveView = "portfolio" | "messaging" | "documents" | "referrals" | "calendar" | "chat";
+import { type ActiveView } from "./DashboardSidebar";
 
 interface DashboardHeaderProps {
   activeView: ActiveView;
@@ -17,6 +16,7 @@ const viewTitles: Record<ActiveView, string> = {
   referrals: "Referral Program",
   calendar: "Lifestyle Calendar",
   chat: "Concierge Chat",
+  devices: "Connected Devices",
 };
 
 const tierIcons = {

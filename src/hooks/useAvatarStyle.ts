@@ -164,6 +164,79 @@ const AVATAR_STYLES: AvatarStyle[] = [
       pulse: false,
     },
   },
+  // New styles
+  {
+    id: "aurora-borealis",
+    name: "Aurora Borealis",
+    description: "Shifting northern lights colors",
+    preview: "🌌",
+    colors: {
+      primary: "#06b6d4",
+      secondary: "#ecfeff",
+      accent: "#a5f3fc",
+      glow: "rgba(6, 182, 212, 0.5)",
+    },
+    effects: {
+      sparkles: true,
+      particles: true,
+      glow: true,
+      pulse: true,
+    },
+  },
+  {
+    id: "crimson-velvet",
+    name: "Crimson Velvet",
+    description: "Luxurious deep red elegance",
+    preview: "🍷",
+    colors: {
+      primary: "#be123c",
+      secondary: "#fff1f2",
+      accent: "#fecdd3",
+      glow: "rgba(190, 18, 60, 0.4)",
+    },
+    effects: {
+      sparkles: false,
+      particles: true,
+      glow: true,
+      pulse: true,
+    },
+  },
+  {
+    id: "obsidian-night",
+    name: "Obsidian Night",
+    description: "Dark mystique with subtle shimmer",
+    preview: "🌑",
+    colors: {
+      primary: "#1f2937",
+      secondary: "#111827",
+      accent: "#374151",
+      glow: "rgba(31, 41, 55, 0.6)",
+    },
+    effects: {
+      sparkles: true,
+      particles: true,
+      glow: true,
+      pulse: false,
+    },
+  },
+  {
+    id: "champagne-dreams",
+    name: "Champagne Dreams",
+    description: "Effervescent bubbles and celebration",
+    preview: "🥂",
+    colors: {
+      primary: "#fbbf24",
+      secondary: "#fffbeb",
+      accent: "#fde68a",
+      glow: "rgba(251, 191, 36, 0.5)",
+    },
+    effects: {
+      sparkles: true,
+      particles: true,
+      glow: true,
+      pulse: true,
+    },
+  },
 ];
 
 const STORAGE_KEY = "orla-avatar-style";

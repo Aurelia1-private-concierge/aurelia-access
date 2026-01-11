@@ -15,10 +15,12 @@ import { OrlaExpressionProvider, useOrlaExpression, OrlaEmotion } from "@/compon
 import VoiceSessionHistory from "@/components/orla/VoiceSessionHistory";
 import LanguageSelector from "@/components/orla/LanguageSelector";
 import StyleMatchedParticles from "@/components/orla/StyleMatchedParticles";
+import AudioVisualizerBackground from "@/components/orla/AudioVisualizerBackground";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useVoiceSession } from "@/hooks/useVoiceSession";
 import { useVoiceReactive } from "@/hooks/useVoiceReactive";
+import { useTransitionSounds } from "@/hooks/useTransitionSounds";
 import { languages } from "@/i18n";
 
 const ELEVENLABS_AGENT_ID = "agent_01jx7t3mjgeqzsjh5qxbvdsxey";
@@ -60,6 +62,9 @@ const OrlaInner = () => {
   // Voice reactivity for audio levels
   const voiceReactive = useVoiceReactive();
   const [audioLevel, setAudioLevel] = useState(0);
+  
+  // Transition sounds
+  const { playConnectionChime, playDisconnectChime } = useTransitionSounds();
   
   // Demo mode emotion cycling
   useEffect(() => {
@@ -129,6 +134,7 @@ const OrlaInner = () => {
       toast.success("Connected to Orla");
       setConnectionStartTime(new Date());
       transitionTo("warm", 500);
+      playConnectionChime();
     },
     onDisconnect: () => {
       console.log("Disconnected from Orla");
@@ -136,6 +142,7 @@ const OrlaInner = () => {
       setConnectionDuration(0);
       setEmotion("neutral");
       setSpeaking(false);
+      playDisconnectChime();
       setListening(false);
     },
     onMessage: (message) => {
@@ -495,8 +502,17 @@ const OrlaInner = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col relative">
       <SEOHead pageType="orla" />
+      
+      {/* Audio Visualizer Background */}
+      <AudioVisualizerBackground 
+        isActive={isConnected}
+        audioLevel={audioLevel}
+        isSpeaking={isSpeaking}
+        getFrequencyData={isSpeaking ? conversation.getOutputByteFrequencyData : conversation.getInputByteFrequencyData}
+      />
+      
       {/* Action Notifications */}
       <div className="fixed top-20 right-6 z-50 flex flex-col gap-2 max-w-sm">
         <AnimatePresence>

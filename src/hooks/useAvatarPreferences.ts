@@ -5,6 +5,7 @@ export type AvatarMode = "3d" | "static" | "auto";
 interface AvatarPreferences {
   mode: AvatarMode;
   reducedMotion: boolean;
+  transitionSoundEnabled: boolean;
   isLowEndDevice: boolean;
 }
 
@@ -63,7 +64,9 @@ export const useAvatarPreferences = () => {
       try {
         const parsed = JSON.parse(stored);
         return {
-          ...parsed,
+          mode: parsed.mode || "auto",
+          reducedMotion: parsed.reducedMotion ?? window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+          transitionSoundEnabled: parsed.transitionSoundEnabled ?? true,
           isLowEndDevice: isLowEnd,
         };
       } catch {
@@ -74,6 +77,7 @@ export const useAvatarPreferences = () => {
     return {
       mode: "auto" as AvatarMode,
       reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+      transitionSoundEnabled: true,
       isLowEndDevice: isLowEnd,
     };
   });
@@ -89,8 +93,9 @@ export const useAvatarPreferences = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       mode: preferences.mode,
       reducedMotion: preferences.reducedMotion,
+      transitionSoundEnabled: preferences.transitionSoundEnabled,
     }));
-  }, [preferences.mode, preferences.reducedMotion]);
+  }, [preferences.mode, preferences.reducedMotion, preferences.transitionSoundEnabled]);
   
   // Listen for reduced motion preference changes
   useEffect(() => {
@@ -114,6 +119,14 @@ export const useAvatarPreferences = () => {
     setPreferences(prev => ({ ...prev, reducedMotion: !prev.reducedMotion }));
   }, []);
   
+  const toggleTransitionSound = useCallback(() => {
+    setPreferences(prev => ({ ...prev, transitionSoundEnabled: !prev.transitionSoundEnabled }));
+  }, []);
+  
+  const setTransitionSoundEnabled = useCallback((enabled: boolean) => {
+    setPreferences(prev => ({ ...prev, transitionSoundEnabled: enabled }));
+  }, []);
+  
   // Determine if 3D should be used based on preferences and capabilities
   const shouldUse3D = useCallback((): boolean => {
     if (!supportsWebGL) return false;
@@ -135,6 +148,8 @@ export const useAvatarPreferences = () => {
     supportsWebGL,
     setMode,
     toggleReducedMotion,
+    toggleTransitionSound,
+    setTransitionSoundEnabled,
     shouldUse3D,
   };
 };

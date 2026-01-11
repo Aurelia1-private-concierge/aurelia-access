@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, Suspense } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Mic, MicOff, X, Minus, Lock, ArrowRight, Sparkles, 
@@ -169,30 +169,16 @@ const MultiAgentWidget = () => {
                   <div className="relative">
                     {(agent.mode === "voice" || agent.mode === "hybrid") && agent.isConnected ? (
                       <div className="w-14 h-14">
-                        <Suspense fallback={
-                          <img src={orlaAvatar} alt="Orla" className="w-full h-full object-cover rounded-full" />
-                        }>
-                          <OrlaMiniAvatar 
-                            size={56}
-                            isActive={agent.isSpeaking || agent.isListening}
-                            showSparkles={agent.isSpeaking}
-                          />
-                        </Suspense>
+                        <OrlaMiniAvatar 
+                          size={56}
+                          isActive={agent.isSpeaking || agent.isListening}
+                          showSparkles={agent.isSpeaking}
+                        />
                       </div>
                     ) : (
-                      <motion.div 
-                        animate={{ 
-                          boxShadow: [
-                            "0 0 20px rgba(212, 175, 55, 0.2)",
-                            "0 0 40px rgba(212, 175, 55, 0.5)",
-                            "0 0 20px rgba(212, 175, 55, 0.2)"
-                          ]
-                        }}
-                        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                        className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border-2 border-primary/50 overflow-hidden"
-                      >
-                        <img src={orlaAvatar} alt="Orla" className="w-full h-full object-cover" />
-                      </motion.div>
+                      <div className="w-14 h-14">
+                        <OrlaMiniAvatar size={56} isActive={false} showSparkles={false} />
+                      </div>
                     )}
                     <motion.div 
                       animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}

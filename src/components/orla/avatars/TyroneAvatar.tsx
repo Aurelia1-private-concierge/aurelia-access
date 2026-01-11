@@ -1,7 +1,136 @@
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useMemo, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, Environment } from "@react-three/drei";
 import * as THREE from "three";
+
+// Gold particles component for Aurelia brand aesthetic
+const GoldParticles: React.FC<{ count?: number; glowColor: string }> = ({ count = 35, glowColor }) => {
+  const particlesRef = useRef<THREE.Points>(null);
+  const goldColor = useMemo(() => new THREE.Color(glowColor), [glowColor]);
+  
+  const particles = useMemo(() => {
+    const positions = new Float32Array(count * 3);
+    const sizes = new Float32Array(count);
+    const speeds = new Float32Array(count);
+    const phases = new Float32Array(count);
+    
+    for (let i = 0; i < count; i++) {
+      // Distribute particles in a sphere around the avatar
+      const radius = 1.8 + Math.random() * 1.2;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      
+      positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+      positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+      positions[i * 3 + 2] = radius * Math.cos(phi);
+      
+      sizes[i] = 0.015 + Math.random() * 0.025;
+      speeds[i] = 0.2 + Math.random() * 0.4;
+      phases[i] = Math.random() * Math.PI * 2;
+    }
+    
+    return { positions, sizes, speeds, phases };
+  }, [count]);
+
+  useFrame((state) => {
+    if (!particlesRef.current) return;
+    
+    const time = state.clock.elapsedTime;
+    const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
+    
+    for (let i = 0; i < count; i++) {
+      const speed = particles.speeds[i];
+      const phase = particles.phases[i];
+      const baseRadius = 1.8 + (i % 5) * 0.25;
+      
+      // Elegant orbital motion
+      const angle = time * speed + phase;
+      const verticalOffset = Math.sin(time * 0.5 + phase) * 0.3;
+      
+      positions[i * 3] = Math.cos(angle) * baseRadius;
+      positions[i * 3 + 1] = verticalOffset + Math.sin(angle * 0.5) * 0.5;
+      positions[i * 3 + 2] = Math.sin(angle) * baseRadius * 0.8;
+    }
+    
+    particlesRef.current.geometry.attributes.position.needsUpdate = true;
+    
+    // Gentle rotation of entire particle system
+    particlesRef.current.rotation.y = time * 0.05;
+  });
+
+  return (
+    <points ref={particlesRef}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          count={count}
+          array={particles.positions}
+          itemSize={3}
+        />
+        <bufferAttribute
+          attach="attributes-size"
+          count={count}
+          array={particles.sizes}
+          itemSize={1}
+        />
+      </bufferGeometry>
+      <pointsMaterial
+        size={0.04}
+        color={goldColor}
+        transparent
+        opacity={0.7}
+        sizeAttenuation
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
+    </points>
+  );
+};
+
+// Floating sparkle dust for extra elegance
+const SparkleRing: React.FC<{ glowColor: string }> = ({ glowColor }) => {
+  const ringRef = useRef<THREE.Group>(null);
+  const goldColor = useMemo(() => new THREE.Color(glowColor), [glowColor]);
+  
+  const sparkles = useMemo(() => {
+    return Array.from({ length: 12 }).map((_, i) => ({
+      angle: (i / 12) * Math.PI * 2,
+      radius: 2.2 + Math.random() * 0.3,
+      size: 0.02 + Math.random() * 0.015,
+      speed: 0.3 + Math.random() * 0.2,
+      yOffset: (Math.random() - 0.5) * 0.8,
+    }));
+  }, []);
+
+  useFrame((state) => {
+    if (!ringRef.current) return;
+    ringRef.current.rotation.y = state.clock.elapsedTime * 0.08;
+  });
+
+  return (
+    <group ref={ringRef}>
+      {sparkles.map((sparkle, i) => (
+        <mesh
+          key={i}
+          position={[
+            Math.cos(sparkle.angle) * sparkle.radius,
+            sparkle.yOffset,
+            Math.sin(sparkle.angle) * sparkle.radius,
+          ]}
+        >
+          <sphereGeometry args={[sparkle.size, 8, 8]} />
+          <meshStandardMaterial
+            color={goldColor}
+            emissive={goldColor}
+            emissiveIntensity={0.8}
+            transparent
+            opacity={0.6}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+};
 
 interface FaceData {
   headRotationX: number;
@@ -415,6 +544,10 @@ const TyroneAvatar: React.FC<TyroneAvatarProps> = ({
         />
         {/* Subtle rim light for luxury feel */}
         <pointLight position={[0, 0, -3]} intensity={0.15} color="#c9a55c" />
+        {/* Gold particle effects */}
+        <GoldParticles glowColor={colors.glow} />
+        <SparkleRing glowColor={colors.glow} />
+        
         <Float speed={0.8} rotationIntensity={0.08} floatIntensity={0.1}>
           <TyroneHead isSpeaking={isSpeaking} faceData={faceData} colors={colors} />
         </Float>

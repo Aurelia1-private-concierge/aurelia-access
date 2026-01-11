@@ -17,6 +17,7 @@ import AvatarCropModal from "@/components/profile/AvatarCropModal";
 import NotificationSettings from "@/components/dashboard/NotificationSettings";
 import TwoFactorSetup from "@/components/auth/TwoFactorSetup";
 import AvatarSettingsPanel from "@/components/profile/AvatarSettingsPanel";
+import AvatarStyleGallery from "@/components/profile/AvatarStyleGallery";
 import { useMFA } from "@/hooks/useMFA";
 
 interface Profile {
@@ -534,7 +535,16 @@ const Profile = () => {
           <AvatarSettingsPanel />
         </motion.div>
 
+        {/* Avatar Style Gallery */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.08 }}
+        >
+          <AvatarStyleGallery />
+        </motion.div>
 
+        {/* Notification Preferences */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

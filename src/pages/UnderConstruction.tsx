@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { Link } from "react-router-dom";
 import { 
   Sparkles, ArrowRight, Check, Loader2, Mail, Bell, Rocket, Star, 
   Globe, Shield, Users, Plane, Ship, Building2,
@@ -48,10 +49,10 @@ const launchPageSchema = {
 };
 
 const socialLinks = [
-  { icon: Instagram, href: "https://instagram.com/aureliaprivate", label: "Instagram", color: "hover:text-pink-400" },
-  { icon: Linkedin, href: "https://linkedin.com/company/aurelia-private-concierge", label: "LinkedIn", color: "hover:text-blue-400" },
-  { icon: Twitter, href: "https://twitter.com/AureliaPrivate", label: "X (Twitter)", color: "hover:text-sky-400" },
-  { icon: Facebook, href: "https://facebook.com/aureliaprivateconcierge", label: "Facebook", color: "hover:text-blue-500" },
+  { icon: Instagram, href: "/instagram", label: "Instagram", color: "hover:text-pink-400", isInternal: true },
+  { icon: Linkedin, href: "/linkedin", label: "LinkedIn", color: "hover:text-blue-400", isInternal: true },
+  { icon: Twitter, href: "https://twitter.com/AureliaPrivate", label: "X (Twitter)", color: "hover:text-sky-400", isInternal: false },
+  { icon: Facebook, href: "/facebook", label: "Facebook", color: "hover:text-blue-500", isInternal: true },
 ];
 
 const highlights = [
@@ -794,16 +795,27 @@ const UnderConstruction = () => {
                   </p>
                   <div className="flex items-center gap-3">
                     {socialLinks.map((social) => (
-                      <a
-                        key={social.label}
-                        href={social.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`p-2 rounded-full bg-secondary/50 border border-primary/10 text-muted-foreground ${social.color} transition-colors`}
-                        aria-label={social.label}
-                      >
-                        <social.icon className="w-5 h-5" />
-                      </a>
+                      social.isInternal ? (
+                        <Link
+                          key={social.label}
+                          to={social.href}
+                          className={`p-2 rounded-full bg-secondary/50 border border-primary/10 text-muted-foreground ${social.color} transition-colors`}
+                          aria-label={social.label}
+                        >
+                          <social.icon className="w-5 h-5" />
+                        </Link>
+                      ) : (
+                        <a
+                          key={social.label}
+                          href={social.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`p-2 rounded-full bg-secondary/50 border border-primary/10 text-muted-foreground ${social.color} transition-colors`}
+                          aria-label={social.label}
+                        >
+                          <social.icon className="w-5 h-5" />
+                        </a>
+                      )
                     ))}
                   </div>
                 </motion.div>
@@ -874,16 +886,27 @@ const UnderConstruction = () => {
               <div className="flex items-center gap-4">
                 <span className="text-sm text-muted-foreground">Follow us:</span>
                 {socialLinks.map((social) => (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`p-2 rounded-full bg-secondary/50 border border-primary/10 text-muted-foreground ${social.color} transition-colors`}
-                    aria-label={social.label}
-                  >
-                    <social.icon className="w-4 h-4" />
-                  </a>
+                  social.isInternal ? (
+                    <Link
+                      key={social.label}
+                      to={social.href}
+                      className={`p-2 rounded-full bg-secondary/50 border border-primary/10 text-muted-foreground ${social.color} transition-colors`}
+                      aria-label={social.label}
+                    >
+                      <social.icon className="w-4 h-4" />
+                    </Link>
+                  ) : (
+                    <a
+                      key={social.label}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`p-2 rounded-full bg-secondary/50 border border-primary/10 text-muted-foreground ${social.color} transition-colors`}
+                      aria-label={social.label}
+                    >
+                      <social.icon className="w-4 h-4" />
+                    </a>
+                  )
                 ))}
               </div>
 

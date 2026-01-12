@@ -58,8 +58,9 @@ const socialPlatforms = [
     description: "Community updates, event announcements, and stories from our global network of discerning clients.",
     icon: Facebook,
     href: "https://facebook.com/aureliaprivateconcierge",
+    internalLink: "/facebook",
     color: "from-blue-600 to-blue-500",
-    followers: "Join our community"
+    followers: "125K followers"
   },
   {
     name: "X (Twitter)",

@@ -30,7 +30,7 @@ const Footer = () => {
               <Link to="/">
                 <Logo variant="wordmark" size="lg" />
               </Link>
-              <p className="text-sm text-muted-foreground/70 mt-4 leading-relaxed max-w-sm">
+              <p className="text-sm text-muted-foreground mt-4 leading-relaxed max-w-sm">
                 {BRAND.description} {BRAND.tagline}
               </p>
               <div className="mt-4">
@@ -133,7 +133,7 @@ const Footer = () => {
                   </a>
                 </li>
                 <li>London • Geneva • Singapore</li>
-                <li className="text-xs text-muted-foreground/60">
+                <li className="text-xs text-muted-foreground/80">
                   Aurelia Holdings Ltd.<br />
                   London, United Kingdom
                 </li>
@@ -171,7 +171,7 @@ const Footer = () => {
         {/* Legal Text Strip */}
         <div className="border-t border-border/10">
           <div className="max-w-7xl mx-auto px-6 py-4">
-            <p className="text-[10px] text-muted-foreground/30 text-center leading-relaxed">
+            <p className="text-[10px] text-muted-foreground/50 text-center leading-relaxed">
               {BRAND.legal.trademark} {BRAND.legal.jurisdiction}
             </p>
           </div>
@@ -180,10 +180,10 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-border/10">
           <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-xs text-muted-foreground/40 font-light">
+            <p className="text-xs text-muted-foreground/60 font-light">
               © {BRAND.year} {BRAND.entity}. {BRAND.legal.copyright}
             </p>
-            <div className="flex items-center gap-6 text-xs text-muted-foreground/40 font-light">
+            <div className="flex items-center gap-6 text-xs text-muted-foreground/60 font-light">
               <Link to="/privacy" className="hover:text-muted-foreground transition-colors">{t("footer.privacy")}</Link>
               <Link to="/terms" className="hover:text-muted-foreground transition-colors">{t("footer.terms")}</Link>
               <a href="mailto:concierge@aurelia-privateconcierge.com" className="hover:text-muted-foreground transition-colors">{t("footer.legal")}</a>

@@ -22,6 +22,7 @@ const navLinks = [
 
 const pageLinks = [
   { href: "/services", label: "Services", icon: Compass },
+  { href: "/blog", label: "Journal", icon: Compass },
   { href: "/discover", label: "Discover", icon: Compass },
   { href: "/partners/join", label: "Become a Partner", icon: Compass },
 ];

@@ -52,6 +52,7 @@ const LinkedInProfile = lazy(() => import("./pages/LinkedInProfile"));
 const InstagramProfile = lazy(() => import("./pages/InstagramProfile"));
 const TikTokProfile = lazy(() => import("./pages/TikTokProfile"));
 const MediaKit = lazy(() => import("./pages/MediaKit"));
+const Blog = lazy(() => import("./pages/Blog"));
 
 // Minimal loading fallback
 const PageLoader = () => (
@@ -332,6 +333,14 @@ const AnimatedRoutes = () => {
             element={
               <PageTransition>
                 <MediaKit />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/blog"
+            element={
+              <PageTransition>
+                <Blog />
               </PageTransition>
             }
           />

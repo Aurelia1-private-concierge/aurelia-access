@@ -65,6 +65,7 @@ import CampaignURLBuilder from "@/components/admin/CampaignURLBuilder";
 import AttributionAnalytics from "@/components/admin/AttributionAnalytics";
 import AuditLogsPanel from "@/components/admin/AuditLogsPanel";
 import PartnerDiscoveryPanel from "@/components/admin/PartnerDiscoveryPanel";
+import EncryptionManagementPanel from "@/components/admin/EncryptionManagementPanel";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -322,6 +323,7 @@ const Admin = () => {
             <TabsTrigger value="scheduler">Scheduler</TabsTrigger>
             <TabsTrigger value="integrations">Integrations</TabsTrigger>
             <TabsTrigger value="auditlogs">Audit Logs</TabsTrigger>
+            <TabsTrigger value="encryption">Encryption</TabsTrigger>
           </TabsList>
 
           <TabsContent value="discovery" className="space-y-6">
@@ -330,6 +332,14 @@ const Admin = () => {
 
           <TabsContent value="auditlogs" className="space-y-6">
             <AuditLogsPanel />
+          </TabsContent>
+
+          <TabsContent value="encryption" className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-serif text-3xl text-foreground mb-2">Encryption & Security</h1>
+              <p className="text-muted-foreground">Enterprise-grade encryption, key rotation, and certificate management</p>
+            </motion.div>
+            <EncryptionManagementPanel />
           </TabsContent>
 
           <TabsContent value="scheduler" className="space-y-6">

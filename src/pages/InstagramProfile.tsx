@@ -98,8 +98,12 @@ const InstagramProfile = () => {
           <div className="relative">
             <div className="w-32 h-32 md:w-40 md:h-40 rounded-full p-1 bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-500">
               <div className="w-full h-full rounded-full bg-background p-1">
-                <div className="w-full h-full rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
-                  <span className="text-4xl md:text-5xl font-serif text-primary-foreground">A</span>
+                <div className="w-full h-full rounded-full overflow-hidden">
+                  <img 
+                    src="/logos/aurelia-icon.svg" 
+                    alt="Aurelia Private Concierge"
+                    className="w-full h-full object-cover bg-primary p-4"
+                  />
                 </div>
               </div>
             </div>
@@ -108,7 +112,7 @@ const InstagramProfile = () => {
           {/* Profile Info */}
           <div className="flex-1 text-center md:text-left">
             <div className="flex flex-col md:flex-row items-center gap-4 mb-4">
-              <h1 className="text-xl font-medium text-foreground">aurelia.concierge</h1>
+              <h1 className="text-xl font-medium text-foreground">tye12085</h1>
               <div className="flex items-center gap-2">
                 <Button size="sm" className="rounded-lg">
                   Follow
@@ -125,15 +129,15 @@ const InstagramProfile = () => {
             {/* Stats */}
             <div className="flex justify-center md:justify-start gap-8 mb-4">
               <div className="text-center">
-                <div className="font-semibold text-foreground">847</div>
+                <div className="font-semibold text-foreground">48</div>
                 <div className="text-sm text-muted-foreground">posts</div>
               </div>
               <div className="text-center">
-                <div className="font-semibold text-foreground">125K</div>
+                <div className="font-semibold text-foreground">2,847</div>
                 <div className="text-sm text-muted-foreground">followers</div>
               </div>
               <div className="text-center">
-                <div className="font-semibold text-foreground">342</div>
+                <div className="font-semibold text-foreground">156</div>
                 <div className="text-sm text-muted-foreground">following</div>
               </div>
             </div>
@@ -142,13 +146,13 @@ const InstagramProfile = () => {
             <div className="space-y-1">
               <div className="font-semibold text-foreground">Aurelia Private Concierge</div>
               <div className="text-muted-foreground text-sm">
-                ✨ The Art of Bespoke Living<br />
-                🌍 Serving discerning clients worldwide<br />
-                ✈️ Private Aviation • Yachts • Experiences<br />
+                ✨ Your Private World, Perfected<br />
+                🌍 Elite concierge for discerning clients<br />
+                ✈️ Private Jets • Yachts • Experiences<br />
                 🤖 Meet Orla, your AI concierge
               </div>
-              <a href="https://aurelia-privateconcierge.com" className="text-primary text-sm font-medium hover:underline">
-                aurelia-privateconcierge.com
+              <a href="https://aurelia.com" className="text-primary text-sm font-medium hover:underline">
+                aurelia.com
               </a>
             </div>
           </div>
@@ -292,7 +296,7 @@ const InstagramProfile = () => {
           <Button 
             size="lg"
             className="gap-2"
-            onClick={() => window.open('https://instagram.com/aurelia.concierge', '_blank')}
+            onClick={() => window.open('https://www.instagram.com/tye12085', '_blank')}
           >
             <Instagram className="w-5 h-5" />
             Follow on Instagram

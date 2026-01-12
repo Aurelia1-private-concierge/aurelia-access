@@ -105,8 +105,12 @@ const TwitterProfile = () => {
         >
           {/* Profile Picture */}
           <div className="absolute -top-16 left-4">
-            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center ring-4 ring-background">
-              <span className="text-4xl font-serif text-primary-foreground">A</span>
+            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center ring-4 ring-background overflow-hidden">
+              <img 
+                src="/logos/aurelia-logo-light.svg" 
+                alt="Aurelia" 
+                className="w-20 h-20 object-contain"
+              />
             </div>
           </div>
 
@@ -123,13 +127,16 @@ const TwitterProfile = () => {
               <h1 className="text-xl font-bold text-foreground">Aurelia Private Concierge</h1>
               <Verified className="w-5 h-5 text-primary fill-primary" />
             </div>
-            <p className="text-muted-foreground">@aureliaprivate</p>
+            <p className="text-muted-foreground">@tye12085</p>
           </div>
 
           {/* Bio */}
-          <p className="text-foreground mb-3">
-            The world's most exclusive private concierge service. Private jets, superyachts, off-market real estate, and experiences that don't exist on menus.
-          </p>
+          <div className="text-foreground mb-3 space-y-1">
+            <p>✨ Your Private World, Perfected</p>
+            <p>🌍 Elite concierge for discerning clients</p>
+            <p>✈️ Private Jets • Yachts • Experiences</p>
+            <p>🤖 Meet Orla, your AI concierge</p>
+          </div>
 
           {/* Meta Info */}
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-3">
@@ -152,11 +159,11 @@ const TwitterProfile = () => {
           {/* Stats */}
           <div className="flex gap-4 text-sm">
             <span>
-              <strong className="text-foreground">342</strong>{" "}
+              <strong className="text-foreground">156</strong>{" "}
               <span className="text-muted-foreground">Following</span>
             </span>
             <span>
-              <strong className="text-foreground">89.2K</strong>{" "}
+              <strong className="text-foreground">2,847</strong>{" "}
               <span className="text-muted-foreground">Followers</span>
             </span>
           </div>
@@ -203,8 +210,12 @@ const TwitterProfile = () => {
                 >
                   <div className="flex gap-3">
                     {/* Avatar */}
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center flex-shrink-0">
-                      <span className="text-sm font-serif text-primary-foreground">A</span>
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      <img 
+                        src="/logos/aurelia-logo-light.svg" 
+                        alt="Aurelia" 
+                        className="w-6 h-6 object-contain"
+                      />
                     </div>
 
                     <div className="flex-1 min-w-0">
@@ -212,7 +223,7 @@ const TwitterProfile = () => {
                       <div className="flex items-center gap-1 mb-1">
                         <span className="font-bold text-foreground truncate">Aurelia Private Concierge</span>
                         <Verified className="w-4 h-4 text-primary fill-primary flex-shrink-0" />
-                        <span className="text-muted-foreground truncate">@aureliaprivate · {tweet.timestamp}</span>
+                        <span className="text-muted-foreground truncate">@tye12085 · {tweet.timestamp}</span>
                       </div>
 
                       {/* Content */}
@@ -252,7 +263,7 @@ const TwitterProfile = () => {
             <div className="py-20 text-center text-muted-foreground">
               <MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p className="font-medium mb-1">No replies yet</p>
-              <p className="text-sm">When @aureliaprivate replies, they'll show up here.</p>
+              <p className="text-sm">When @tye12085 replies, they'll show up here.</p>
             </div>
           </TabsContent>
 
@@ -283,7 +294,7 @@ const TwitterProfile = () => {
             <div className="py-20 text-center text-muted-foreground">
               <Heart className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p className="font-medium mb-1">No likes yet</p>
-              <p className="text-sm">Posts @aureliaprivate likes will show up here.</p>
+              <p className="text-sm">Posts @tye12085 likes will show up here.</p>
             </div>
           </TabsContent>
         </Tabs>
@@ -298,7 +309,7 @@ const TwitterProfile = () => {
           <Button 
             size="lg"
             className="gap-2 bg-foreground text-background hover:bg-foreground/90 rounded-full"
-            onClick={() => window.open('https://x.com/aureliaprivate', '_blank')}
+            onClick={() => window.open('https://x.com/tye12085', '_blank')}
           >
             <XIcon className="w-5 h-5" />
             Follow on X

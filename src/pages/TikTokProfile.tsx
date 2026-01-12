@@ -26,45 +26,45 @@ const TikTokIcon = ({ className }: { className?: string }) => (
 const videos = [
   {
     thumbnail: "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=400&h=700&fit=crop",
-    views: 2400000,
-    likes: 342000,
-    comments: 4521,
-    caption: "When your client needs a private jet in 2 hours ✈️ #luxury #concierge"
+    views: 12400,
+    likes: 2100,
+    comments: 89,
+    caption: "When your client needs a private jet in 2 hours ✈️ #luxury #concierge #privatejet"
   },
   {
     thumbnail: "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=400&h=700&fit=crop",
-    views: 1800000,
-    likes: 256000,
-    comments: 3214,
-    caption: "POV: You're on a superyacht in Monaco 🛥️ #yacht #monaco"
+    views: 8900,
+    likes: 1560,
+    comments: 67,
+    caption: "POV: You're on a superyacht in Monaco 🛥️ #yacht #monaco #luxury"
   },
   {
     thumbnail: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=400&h=700&fit=crop",
-    views: 3100000,
-    likes: 489000,
-    comments: 6732,
-    caption: "The view from our client's penthouse 🌆 #luxury #lifestyle"
+    views: 15200,
+    likes: 2890,
+    comments: 124,
+    caption: "The view from our client's penthouse 🌆 #luxury #lifestyle #penthouse"
   },
   {
     thumbnail: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=700&fit=crop",
-    views: 980000,
-    likes: 134000,
-    comments: 1892,
-    caption: "Backstage access at Fashion Week 👗 #exclusive #events"
+    views: 6800,
+    likes: 980,
+    comments: 43,
+    caption: "Backstage access at Fashion Week 👗 #exclusive #events #fashionweek"
   },
   {
     thumbnail: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=700&fit=crop",
-    views: 1500000,
-    likes: 198000,
-    comments: 2341,
-    caption: "3 Michelin star dinner for 2, arranged in 30 mins 🍽️ #finedining"
+    views: 9500,
+    likes: 1780,
+    comments: 78,
+    caption: "3 Michelin star dinner for 2, arranged in 30 mins 🍽️ #finedining #michelin"
   },
   {
     thumbnail: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=700&fit=crop",
-    views: 2100000,
-    likes: 287000,
-    comments: 3890,
-    caption: "Secret spots only locals know about 🏔️ #travel #hidden"
+    views: 11200,
+    likes: 2340,
+    comments: 96,
+    caption: "Secret spots only locals know about 🏔️ #travel #hidden #exclusive"
   }
 ];
 
@@ -91,8 +91,12 @@ const TikTokProfile = () => {
           className="text-center mb-8"
         >
           {/* Profile Picture */}
-          <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center ring-2 ring-primary/20 ring-offset-2 ring-offset-background">
-            <span className="text-3xl font-serif text-primary-foreground">A</span>
+          <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden ring-2 ring-primary/20 ring-offset-2 ring-offset-background">
+            <img 
+              src="/logos/aurelia-icon.svg" 
+              alt="Aurelia Private Concierge"
+              className="w-full h-full object-cover bg-primary p-4"
+            />
           </div>
 
           {/* Username */}
@@ -102,15 +106,15 @@ const TikTokProfile = () => {
           {/* Stats */}
           <div className="flex justify-center gap-6 mb-4">
             <div className="text-center">
-              <div className="font-bold text-foreground">127</div>
+              <div className="font-bold text-foreground">24</div>
               <div className="text-xs text-muted-foreground">Following</div>
             </div>
             <div className="text-center">
-              <div className="font-bold text-foreground">2.4M</div>
+              <div className="font-bold text-foreground">1,247</div>
               <div className="text-xs text-muted-foreground">Followers</div>
             </div>
             <div className="text-center">
-              <div className="font-bold text-foreground">48.7M</div>
+              <div className="font-bold text-foreground">18.5K</div>
               <div className="text-xs text-muted-foreground">Likes</div>
             </div>
           </div>
@@ -130,9 +134,10 @@ const TikTokProfile = () => {
 
           {/* Bio */}
           <p className="text-sm text-foreground max-w-sm mx-auto">
-            ✨ Luxury lifestyle at your fingertips<br />
-            🌍 Serving elite clients worldwide<br />
-            🔗 Link in bio for exclusive access
+            ✨ Your Private World, Perfected<br />
+            🌍 Elite concierge for discerning clients<br />
+            ✈️ Private jets • Yachts • Experiences<br />
+            🔗 aurelia.com
           </p>
         </motion.div>
 

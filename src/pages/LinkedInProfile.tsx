@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   Linkedin, 
@@ -8,14 +9,16 @@ import {
   Calendar,
   ExternalLink,
   Award,
-  Briefcase,
-  TrendingUp
+  ThumbsUp,
+  MessageCircle,
+  Share2
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "@/hooks/use-toast";
 import aureliaSocialLogo from "@/assets/aurelia-social-logo.png";
 import aureliaSocialBanner from "@/assets/aurelia-social-banner.png";
 
@@ -24,42 +27,45 @@ const teamMembers = [
     name: "Alexandra Sterling",
     role: "Founder & CEO",
     image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face",
-    linkedin: "#"
+    linkedin: "https://linkedin.com"
   },
   {
     name: "James Rothwell",
     role: "Chief Experience Officer",
     image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face",
-    linkedin: "#"
+    linkedin: "https://linkedin.com"
   },
   {
     name: "Victoria Chen",
     role: "Head of Private Aviation",
     image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face",
-    linkedin: "#"
+    linkedin: "https://linkedin.com"
   },
   {
     name: "Marcus Webb",
     role: "Director of Partnerships",
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
-    linkedin: "#"
+    linkedin: "https://linkedin.com"
   }
 ];
 
 const recentPosts = [
   {
+    id: 1,
     content: "Thrilled to announce our expansion into the Asia-Pacific region. Aurelia now serves discerning clients across 40+ countries worldwide.",
     likes: 847,
     comments: 62,
     date: "2 days ago"
   },
   {
+    id: 2,
     content: "Our AI concierge, Orla, has successfully curated over 10,000 bespoke experiences this quarter. The future of luxury is intelligent and personal.",
     likes: 1243,
     comments: 89,
     date: "1 week ago"
   },
   {
+    id: 3,
     content: "Proud to be recognized as 'Best Luxury Concierge Service 2025' by Luxury Lifestyle Awards. Thank you to our incredible team and members.",
     likes: 2156,
     comments: 134,
@@ -67,7 +73,48 @@ const recentPosts = [
   }
 ];
 
+const LINKEDIN_URL = "https://www.linkedin.com/company/aurelia-private-concierge";
+
 const LinkedInProfile = () => {
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [likedPosts, setLikedPosts] = useState<number[]>([]);
+
+  const handleFollow = () => {
+    setIsFollowing(!isFollowing);
+    toast({
+      title: isFollowing ? "Unfollowed" : "Following!",
+      description: isFollowing ? "You've unfollowed Aurelia Private Concierge" : "You're now following Aurelia Private Concierge",
+    });
+  };
+
+  const handleLike = (postId: number) => {
+    if (likedPosts.includes(postId)) {
+      setLikedPosts(likedPosts.filter(id => id !== postId));
+    } else {
+      setLikedPosts([...likedPosts, postId]);
+    }
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: "Aurelia Private Concierge - LinkedIn",
+        text: "Check out Aurelia Private Concierge on LinkedIn",
+        url: LINKEDIN_URL,
+      });
+    } else {
+      navigator.clipboard.writeText(LINKEDIN_URL);
+      toast({
+        title: "Link copied!",
+        description: "Profile link copied to clipboard",
+      });
+    }
+  };
+
+  const handleVisitWebsite = () => {
+    window.open('https://aurelia-privateconcierge.com', '_blank');
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -116,17 +163,20 @@ const LinkedInProfile = () => {
                     </span>
                   </div>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-3 flex-wrap">
                   <Button 
-                    className="gap-2"
-                    onClick={() => window.open('https://www.linkedin.com/company/518708441', '_blank')}
+                    className={`gap-2 ${isFollowing ? 'bg-muted text-foreground hover:bg-muted/80' : ''}`}
+                    onClick={handleFollow}
                   >
                     <Linkedin className="w-4 h-4" />
-                    Follow
+                    {isFollowing ? 'Following' : 'Follow'}
                   </Button>
-                  <Button variant="outline" className="gap-2" onClick={() => window.open('https://aurelia-privateconcierge.com', '_blank')}>
+                  <Button variant="outline" className="gap-2" onClick={handleVisitWebsite}>
                     <Globe className="w-4 h-4" />
                     Visit Website
+                  </Button>
+                  <Button variant="outline" size="icon" onClick={handleShare}>
+                    <Share2 className="w-4 h-4" />
                   </Button>
                 </div>
               </div>
@@ -191,13 +241,13 @@ const LinkedInProfile = () => {
               <h2 className="text-xl font-semibold text-foreground mb-4">Recent Posts</h2>
               <div className="space-y-6">
                 {recentPosts.map((post, index) => (
-                  <div key={index}>
+                  <div key={post.id}>
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
                         <img 
-                          src="/logos/aurelia-logo-light.svg" 
+                          src={aureliaSocialLogo} 
                           alt="Aurelia" 
-                          className="w-8 h-8 object-contain"
+                          className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="flex-1">
@@ -206,9 +256,18 @@ const LinkedInProfile = () => {
                           <span className="text-sm text-muted-foreground">• {post.date}</span>
                         </div>
                         <p className="text-muted-foreground">{post.content}</p>
-                        <div className="flex items-center gap-4 mt-3 text-sm text-muted-foreground">
-                          <span>{post.likes.toLocaleString()} likes</span>
-                          <span>{post.comments} comments</span>
+                        <div className="flex items-center gap-4 mt-3">
+                          <button 
+                            className={`flex items-center gap-1 text-sm transition-colors ${likedPosts.includes(post.id) ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}
+                            onClick={() => handleLike(post.id)}
+                          >
+                            <ThumbsUp className={`w-4 h-4 ${likedPosts.includes(post.id) ? 'fill-primary' : ''}`} />
+                            {(post.likes + (likedPosts.includes(post.id) ? 1 : 0)).toLocaleString()} likes
+                          </button>
+                          <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors">
+                            <MessageCircle className="w-4 h-4" />
+                            {post.comments} comments
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -228,8 +287,11 @@ const LinkedInProfile = () => {
               <h2 className="text-xl font-semibold text-foreground mb-4">Leadership Team</h2>
               <div className="grid sm:grid-cols-2 gap-4">
                 {teamMembers.map((member) => (
-                  <div 
+                  <a 
                     key={member.name}
+                    href={member.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center gap-4 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer group"
                   >
                     <img 
@@ -244,7 +306,7 @@ const LinkedInProfile = () => {
                       <p className="text-sm text-muted-foreground truncate">{member.role}</p>
                     </div>
                     <ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
+                  </a>
                 ))}
               </div>
             </motion.div>
@@ -261,13 +323,18 @@ const LinkedInProfile = () => {
             >
               <h3 className="font-semibold text-foreground mb-4">Company Details</h3>
               <div className="space-y-4 text-sm">
-                <div className="flex items-start gap-3">
+                <a 
+                  href="https://aurelia-privateconcierge.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-3 group"
+                >
                   <Globe className="w-5 h-5 text-muted-foreground mt-0.5" />
                   <div>
                     <div className="text-foreground">Website</div>
-                    <a href="https://aurelia.com" className="text-primary hover:underline">aurelia.com</a>
+                    <span className="text-primary hover:underline group-hover:underline">aurelia-privateconcierge.com</span>
                   </div>
-                </div>
+                </a>
                 <div className="flex items-start gap-3">
                   <Building2 className="w-5 h-5 text-muted-foreground mt-0.5" />
                   <div>
@@ -343,6 +410,24 @@ const LinkedInProfile = () => {
             </motion.div>
           </div>
         </div>
+
+        {/* CTA */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="mt-12 text-center"
+        >
+          <Button 
+            size="lg"
+            className="gap-2"
+            onClick={() => window.open(LINKEDIN_URL, '_blank')}
+          >
+            <Linkedin className="w-5 h-5" />
+            Connect on LinkedIn
+            <ExternalLink className="w-4 h-4" />
+          </Button>
+        </motion.div>
       </div>
 
       <Footer />

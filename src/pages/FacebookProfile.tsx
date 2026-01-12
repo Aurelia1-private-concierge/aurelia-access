@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   Facebook, 
@@ -11,7 +12,6 @@ import {
   Star,
   Users,
   Image as ImageIcon,
-  Video,
   Calendar,
   ExternalLink,
   Phone,
@@ -22,6 +22,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
+import { toast } from "@/hooks/use-toast";
 import aureliaSocialLogo from "@/assets/aurelia-social-logo.png";
 import aureliaSocialBanner from "@/assets/aurelia-social-banner.png";
 
@@ -97,7 +98,39 @@ const reviews = [
   }
 ];
 
+const FACEBOOK_URL = "https://facebook.com/aureliaprivateconcierge";
+
 const FacebookProfile = () => {
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [likedPosts, setLikedPosts] = useState<number[]>([]);
+
+  const handleFollow = () => {
+    setIsFollowing(!isFollowing);
+    toast({
+      title: isFollowing ? "Unfollowed" : "Following!",
+      description: isFollowing ? "You've unfollowed Aurelia Private Concierge" : "You're now following Aurelia Private Concierge",
+    });
+  };
+
+  const handleLike = (postId: number) => {
+    if (likedPosts.includes(postId)) {
+      setLikedPosts(likedPosts.filter(id => id !== postId));
+    } else {
+      setLikedPosts([...likedPosts, postId]);
+    }
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({ title: "Aurelia Private Concierge", url: FACEBOOK_URL });
+    } else {
+      navigator.clipboard.writeText(FACEBOOK_URL);
+      toast({ title: "Link copied!", description: "Profile link copied to clipboard" });
+    }
+  };
+
+  const handleMessage = () => window.open(FACEBOOK_URL, '_blank');
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -150,16 +183,16 @@ const FacebookProfile = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-2">
-                <Button className="gap-2">
+              <div className="flex gap-2 flex-wrap">
+                <Button className={`gap-2 ${isFollowing ? 'bg-muted text-foreground hover:bg-muted/80' : ''}`} onClick={handleFollow}>
                   <ThumbsUp className="w-4 h-4" />
-                  Follow
+                  {isFollowing ? 'Following' : 'Follow'}
                 </Button>
-                <Button variant="outline" className="gap-2">
+                <Button variant="outline" className="gap-2" onClick={handleMessage}>
                   <MessageCircle className="w-4 h-4" />
                   Message
                 </Button>
-                <Button variant="outline" className="gap-2">
+                <Button variant="outline" className="gap-2" onClick={handleShare}>
                   <Share2 className="w-4 h-4" />
                   Share
                 </Button>
@@ -311,15 +344,18 @@ const FacebookProfile = () => {
 
                         {/* Action Buttons */}
                         <div className="px-4 py-2 flex items-center justify-around">
-                          <button className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors py-2 px-4 rounded-lg hover:bg-muted/50">
-                            <ThumbsUp className="w-5 h-5" />
+                          <button 
+                            className={`flex items-center gap-2 transition-colors py-2 px-4 rounded-lg hover:bg-muted/50 ${likedPosts.includes(post.id) ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                            onClick={() => handleLike(post.id)}
+                          >
+                            <ThumbsUp className={`w-5 h-5 ${likedPosts.includes(post.id) ? 'fill-primary' : ''}`} />
                             <span>Like</span>
                           </button>
                           <button className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors py-2 px-4 rounded-lg hover:bg-muted/50">
                             <MessageCircle className="w-5 h-5" />
                             <span>Comment</span>
                           </button>
-                          <button className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors py-2 px-4 rounded-lg hover:bg-muted/50">
+                          <button className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors py-2 px-4 rounded-lg hover:bg-muted/50" onClick={handleShare}>
                             <Share2 className="w-5 h-5" />
                             <span>Share</span>
                           </button>

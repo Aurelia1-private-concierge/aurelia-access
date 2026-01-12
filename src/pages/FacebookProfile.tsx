@@ -120,8 +120,12 @@ const FacebookProfile = () => {
           >
             <div className="flex flex-col md:flex-row items-center md:items-end gap-4">
               {/* Profile Picture */}
-              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-background bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-xl">
-                <span className="text-4xl md:text-5xl font-serif text-primary-foreground">A</span>
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-background bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-xl overflow-hidden">
+                <img 
+                  src="/logos/aurelia-logo-light.svg" 
+                  alt="Aurelia" 
+                  className="w-20 md:w-24 h-20 md:h-24 object-contain"
+                />
               </div>
 
               {/* Profile Info */}
@@ -256,8 +260,12 @@ const FacebookProfile = () => {
                       <Card className="overflow-hidden">
                         {/* Post Header */}
                         <div className="p-4 flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
-                            <span className="text-lg font-serif text-primary-foreground">A</span>
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center overflow-hidden">
+                            <img 
+                              src="/logos/aurelia-logo-light.svg" 
+                              alt="Aurelia" 
+                              className="w-6 h-6 object-contain"
+                            />
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-1">

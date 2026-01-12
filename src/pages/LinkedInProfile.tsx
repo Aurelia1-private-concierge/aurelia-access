@@ -85,8 +85,12 @@ const LinkedInProfile = () => {
         >
           <div className="flex flex-col md:flex-row gap-6">
             {/* Logo */}
-            <div className="w-24 h-24 md:w-32 md:h-32 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg -mt-16 md:-mt-20 border-4 border-background">
-              <span className="text-3xl md:text-4xl font-serif text-primary-foreground">A</span>
+            <div className="w-24 h-24 md:w-32 md:h-32 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg -mt-16 md:-mt-20 border-4 border-background overflow-hidden">
+              <img 
+                src="/logos/aurelia-logo-light.svg" 
+                alt="Aurelia" 
+                className="w-16 md:w-20 h-16 md:h-20 object-contain"
+              />
             </div>
 
             {/* Company Info */}
@@ -187,8 +191,12 @@ const LinkedInProfile = () => {
                 {recentPosts.map((post, index) => (
                   <div key={index}>
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center flex-shrink-0">
-                        <span className="text-lg font-serif text-primary-foreground">A</span>
+                      <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                        <img 
+                          src="/logos/aurelia-logo-light.svg" 
+                          alt="Aurelia" 
+                          className="w-8 h-8 object-contain"
+                        />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">

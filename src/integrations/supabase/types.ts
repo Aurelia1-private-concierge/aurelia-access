@@ -714,6 +714,33 @@ export type Database = {
         }
         Relationships: []
       }
+      ip_login_attempts: {
+        Row: {
+          attempt_type: string
+          created_at: string
+          email: string | null
+          id: string
+          ip_address: string
+          user_agent: string | null
+        }
+        Insert: {
+          attempt_type?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          ip_address: string
+          user_agent?: string | null
+        }
+        Update: {
+          attempt_type?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          ip_address?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       key_rotation_history: {
         Row: {
           affected_records: number | null
@@ -2159,6 +2186,20 @@ export type Database = {
       }
     }
     Functions: {
+      check_ip_rate_limit: {
+        Args: {
+          p_ip_address: string
+          p_lockout_minutes?: number
+          p_max_attempts?: number
+          p_window_minutes?: number
+        }
+        Returns: {
+          attempts_in_window: number
+          cooldown_seconds: number
+          is_limited: boolean
+          lockout_until: string
+        }[]
+      }
       check_launch_signup_rate_limit: {
         Args: { p_email: string; p_phone: string }
         Returns: boolean
@@ -2229,6 +2270,15 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      record_ip_login_attempt: {
+        Args: {
+          p_attempt_type: string
+          p_email: string
+          p_ip_address: string
+          p_user_agent?: string
+        }
+        Returns: undefined
       }
     }
     Enums: {

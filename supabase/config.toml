@@ -95,3 +95,6 @@ verify_jwt = false
 
 [functions.rotate-encryption-key]
 verify_jwt = false
+
+[functions.check-login-rate-limit]
+verify_jwt = false

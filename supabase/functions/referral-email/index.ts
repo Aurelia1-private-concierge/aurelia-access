@@ -10,7 +10,7 @@ const corsHeaders = {
 };
 
 interface ReferralEmailRequest {
-  type: "invitation" | "signup_notification" | "reward_confirmation";
+  type: "invitation" | "signup_notification" | "reward_confirmation" | "network_share";
   referrerEmail?: string;
   referrerName?: string;
   referredEmail?: string;
@@ -216,6 +216,105 @@ const getRewardConfirmationHtml = (referrerName: string, rewardType: string, rew
 </html>
 `;
 
+const getNetworkShareHtml = (referrerName: string, referralLink: string) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; background-color: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0a0a0a; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%); border-radius: 16px; border: 1px solid #2a2a2a;">
+          <tr>
+            <td style="padding: 48px 40px; text-align: center;">
+              <!-- Logo -->
+              <div style="margin-bottom: 32px;">
+                <span style="font-size: 32px; font-weight: 300; color: #d4af37; letter-spacing: 4px;">AURELIA</span>
+              </div>
+              
+              <!-- Heading -->
+              <h1 style="color: #ffffff; font-size: 28px; font-weight: 300; margin: 0 0 24px 0; letter-spacing: 1px;">
+                An Exclusive Invitation
+              </h1>
+              
+              <!-- Message -->
+              <p style="color: #a0a0a0; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
+                ${referrerName} believes you belong in an exclusive circle.
+              </p>
+              
+              <p style="color: #a0a0a0; font-size: 16px; line-height: 1.6; margin: 0 0 32px 0;">
+                Aurelia is the world's first AI-powered private concierge service, designed for those who expect nothing less than extraordinary.
+              </p>
+              
+              <!-- What You Get -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 32px;">
+                <tr>
+                  <td style="padding: 20px; background-color: rgba(212, 175, 55, 0.1); border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.2); text-align: left;">
+                    <p style="color: #d4af37; font-size: 14px; margin: 0 0 16px 0; font-weight: 500; text-align: center;">WHAT AWAITS YOU</p>
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="padding: 8px 0; color: #ffffff; font-size: 14px;">✈️ Private Aviation</td>
+                        <td style="padding: 8px 0; color: #888888; font-size: 13px; text-align: right;">Last-minute jets worldwide</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px 0; color: #ffffff; font-size: 14px;">🛥️ Yacht Charters</td>
+                        <td style="padding: 8px 0; color: #888888; font-size: 13px; text-align: right;">Curated luxury experiences</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px 0; color: #ffffff; font-size: 14px;">🏛️ Off-Market Real Estate</td>
+                        <td style="padding: 8px 0; color: #888888; font-size: 13px; text-align: right;">Before they hit the market</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px 0; color: #ffffff; font-size: 14px;">🎭 VIP Event Access</td>
+                        <td style="padding: 8px 0; color: #888888; font-size: 13px; text-align: right;">Front row everywhere</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- Exclusive Offer -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 32px;">
+                <tr>
+                  <td style="padding: 16px; background-color: rgba(34, 197, 94, 0.1); border-radius: 8px; border: 1px solid rgba(34, 197, 94, 0.2);">
+                    <p style="color: #22c55e; font-size: 14px; margin: 0 0 8px 0; font-weight: 500;">REFERRED MEMBER BENEFIT</p>
+                    <p style="color: #ffffff; font-size: 18px; margin: 0;">20% off your first month + priority access</p>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- CTA Button -->
+              <a href="${referralLink}" style="display: inline-block; background: linear-gradient(135deg, #d4af37 0%, #b8962e 100%); color: #000000; text-decoration: none; padding: 16px 48px; border-radius: 8px; font-size: 14px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">
+                Claim Your Invitation
+              </a>
+              
+              <!-- Security Note -->
+              <p style="color: #666666; font-size: 12px; margin: 32px 0 0 0;">
+                🔐 Bank-grade security • Complete privacy • 24/7 availability
+              </p>
+              
+              <!-- Footer -->
+              <p style="color: #444444; font-size: 12px; margin: 24px 0 0 0;">
+                This exclusive invitation was sent by ${referrerName}.
+              </p>
+            </td>
+          </tr>
+        </table>
+        
+        <!-- Footer Links -->
+        <p style="color: #444444; font-size: 11px; margin-top: 24px;">
+          © ${new Date().getFullYear()} Aurelia Private Concierge. All rights reserved.
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
+
 const handler = async (req: Request): Promise<Response> => {
   console.log("Referral email function called");
 
@@ -266,6 +365,15 @@ const handler = async (req: Request): Promise<Response> => {
           request.rewardType,
           request.rewardValue || 1
         );
+        break;
+
+      case "network_share":
+        if (!request.referredEmail || !request.referrerName || !request.referralLink) {
+          throw new Error("Missing required fields for network share email");
+        }
+        toEmail = request.referredEmail;
+        subject = `${request.referrerName} thinks you'd be perfect for Aurelia`;
+        html = getNetworkShareHtml(request.referrerName, request.referralLink);
         break;
 
       default:

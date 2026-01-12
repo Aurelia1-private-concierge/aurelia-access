@@ -15,6 +15,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import aureliaSocialLogo from "@/assets/aurelia-social-logo.png";
 
 // TikTok icon component
 const TikTokIcon = ({ className }: { className?: string }) => (
@@ -91,11 +92,11 @@ const TikTokProfile = () => {
           className="text-center mb-8"
         >
           {/* Profile Picture */}
-          <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden ring-2 ring-primary/20 ring-offset-2 ring-offset-background bg-gradient-to-br from-primary to-primary/80">
+          <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden ring-2 ring-primary/20 ring-offset-2 ring-offset-background">
             <img 
-              src="/logos/aurelia-logo-light.svg" 
+              src={aureliaSocialLogo} 
               alt="Aurelia Private Concierge"
-              className="w-full h-full object-contain p-4"
+              className="w-full h-full object-cover"
             />
           </div>
 

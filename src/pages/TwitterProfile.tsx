@@ -16,6 +16,8 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import aureliaSocialLogo from "@/assets/aurelia-social-logo.png";
+import aureliaSocialBanner from "@/assets/aurelia-social-banner.png";
 
 // X/Twitter icon component
 const XIcon = ({ className }: { className?: string }) => (
@@ -92,9 +94,9 @@ const TwitterProfile = () => {
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="h-48 bg-gradient-to-r from-primary/30 via-primary/20 to-primary/10 rounded-t-xl relative"
+          className="h-48 rounded-t-xl relative overflow-hidden"
         >
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=800')] bg-cover bg-center opacity-30 rounded-t-xl" />
+          <img src={aureliaSocialBanner} alt="Aurelia Banner" className="absolute inset-0 w-full h-full object-cover" />
         </motion.div>
 
         {/* Profile Info */}
@@ -105,11 +107,11 @@ const TwitterProfile = () => {
         >
           {/* Profile Picture */}
           <div className="absolute -top-16 left-4">
-            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center ring-4 ring-background overflow-hidden">
+            <div className="w-32 h-32 rounded-full ring-4 ring-background overflow-hidden">
               <img 
-                src="/logos/aurelia-logo-light.svg" 
+                src={aureliaSocialLogo} 
                 alt="Aurelia" 
-                className="w-20 h-20 object-contain"
+                className="w-full h-full object-cover"
               />
             </div>
           </div>

@@ -328,15 +328,40 @@ const DemoVideoSection = () => {
         className="relative max-w-4xl mx-auto mb-12"
       >
         {/* Outer Gold Frame */}
-        <div className="relative p-3 md:p-4 rounded-2xl bg-gradient-to-br from-[#D4AF37] via-[#F4E4A6] to-[#D4AF37] shadow-[0_0_40px_rgba(212,175,55,0.3)]">
+        <div className="relative p-3 md:p-4 rounded-2xl bg-gradient-to-br from-[#D4AF37] via-[#F4E4A6] to-[#D4AF37] shadow-[0_0_40px_rgba(212,175,55,0.3)] overflow-hidden">
+          {/* Shimmer Animation Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-[shimmer_3s_ease-in-out_infinite] pointer-events-none" />
+          
           {/* Inner Gold Border with Ornate Effect */}
           <div className="absolute inset-2 md:inset-3 rounded-xl border-2 border-[#B8860B]/50 pointer-events-none" />
           
-          {/* Corner Ornaments */}
-          <div className="absolute top-1 left-1 w-6 h-6 md:w-8 md:h-8 border-t-3 border-l-3 border-[#8B6914] rounded-tl-lg" />
-          <div className="absolute top-1 right-1 w-6 h-6 md:w-8 md:h-8 border-t-3 border-r-3 border-[#8B6914] rounded-tr-lg" />
-          <div className="absolute bottom-1 left-1 w-6 h-6 md:w-8 md:h-8 border-b-3 border-l-3 border-[#8B6914] rounded-bl-lg" />
-          <div className="absolute bottom-1 right-1 w-6 h-6 md:w-8 md:h-8 border-b-3 border-r-3 border-[#8B6914] rounded-br-lg" />
+          {/* Baroque Corner Flourishes - Top Left */}
+          <div className="absolute top-0 left-0 w-12 h-12 md:w-16 md:h-16 pointer-events-none">
+            <svg viewBox="0 0 60 60" className="w-full h-full text-[#8B6914]" fill="currentColor">
+              <path d="M0 0 C15 0 20 5 20 20 C20 25 18 28 15 30 C20 32 22 35 22 40 C22 45 18 50 10 55 L8 53 C14 49 17 45 17 40 C17 36 15 33 12 31 C8 35 3 38 0 38 L0 35 C5 35 10 30 10 25 C10 20 5 15 0 15 Z" />
+            </svg>
+          </div>
+          
+          {/* Baroque Corner Flourishes - Top Right */}
+          <div className="absolute top-0 right-0 w-12 h-12 md:w-16 md:h-16 pointer-events-none -scale-x-100">
+            <svg viewBox="0 0 60 60" className="w-full h-full text-[#8B6914]" fill="currentColor">
+              <path d="M0 0 C15 0 20 5 20 20 C20 25 18 28 15 30 C20 32 22 35 22 40 C22 45 18 50 10 55 L8 53 C14 49 17 45 17 40 C17 36 15 33 12 31 C8 35 3 38 0 38 L0 35 C5 35 10 30 10 25 C10 20 5 15 0 15 Z" />
+            </svg>
+          </div>
+          
+          {/* Baroque Corner Flourishes - Bottom Left */}
+          <div className="absolute bottom-0 left-0 w-12 h-12 md:w-16 md:h-16 pointer-events-none -scale-y-100">
+            <svg viewBox="0 0 60 60" className="w-full h-full text-[#8B6914]" fill="currentColor">
+              <path d="M0 0 C15 0 20 5 20 20 C20 25 18 28 15 30 C20 32 22 35 22 40 C22 45 18 50 10 55 L8 53 C14 49 17 45 17 40 C17 36 15 33 12 31 C8 35 3 38 0 38 L0 35 C5 35 10 30 10 25 C10 20 5 15 0 15 Z" />
+            </svg>
+          </div>
+          
+          {/* Baroque Corner Flourishes - Bottom Right */}
+          <div className="absolute bottom-0 right-0 w-12 h-12 md:w-16 md:h-16 pointer-events-none scale-[-1]">
+            <svg viewBox="0 0 60 60" className="w-full h-full text-[#8B6914]" fill="currentColor">
+              <path d="M0 0 C15 0 20 5 20 20 C20 25 18 28 15 30 C20 32 22 35 22 40 C22 45 18 50 10 55 L8 53 C14 49 17 45 17 40 C17 36 15 33 12 31 C8 35 3 38 0 38 L0 35 C5 35 10 30 10 25 C10 20 5 15 0 15 Z" />
+            </svg>
+          </div>
           
           {/* Inner Shadow for Depth */}
           <div className="relative rounded-xl overflow-hidden shadow-[inset_0_2px_10px_rgba(0,0,0,0.3)] border-2 border-[#8B6914]">
@@ -386,19 +411,6 @@ const DemoVideoSection = () => {
 
           {/* Video Controls */}
           <div className="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/70 to-transparent p-4">
-            {/* Progress Bar */}
-            <div 
-              className="w-full h-1 bg-white/20 rounded-full mb-3 cursor-pointer group"
-              onClick={handleProgressClick}
-            >
-              <div 
-                className="h-full bg-primary rounded-full relative transition-all"
-                style={{ width: `${progress}%` }}
-              >
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-            </div>
-            
             {/* Control Buttons */}
             <div className="flex items-center justify-between">
               <button

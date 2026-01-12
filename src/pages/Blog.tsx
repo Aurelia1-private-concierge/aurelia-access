@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Calendar, Clock, ArrowRight, Tag, Search, User } from "lucide-react";
+import { Calendar, Clock, ArrowRight, Tag, Search, User, TrendingUp, BookOpen, Rss } from "lucide-react";
 import { Logo } from "@/components/brand";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import SocialShareButtons from "@/components/SocialShareButtons";
+import BlogArticleSchema from "@/components/blog/BlogArticleSchema";
+import FAQSchema from "@/components/seo/FAQSchema";
+import { generateVideoListSchema, VIDEO_LIBRARY } from "@/lib/video-seo-schema";
 
 interface BlogPost {
   id: string;
@@ -137,12 +140,30 @@ const Blog = () => {
   const featuredPosts = filteredPosts.filter(post => post.featured);
   const regularPosts = filteredPosts.filter(post => !post.featured);
 
+  // Inject video schema on mount
+  useEffect(() => {
+    const videoSchema = generateVideoListSchema(VIDEO_LIBRARY);
+    const existingVideoScript = document.querySelector('script[data-video-list-schema]');
+    if (existingVideoScript) existingVideoScript.remove();
+    
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.setAttribute("data-video-list-schema", "true");
+    script.textContent = JSON.stringify(videoSchema);
+    document.head.appendChild(script);
+
+    return () => {
+      script.remove();
+    };
+  }, []);
+
   return (
     <>
       <SEOHead 
-        title="Luxury Lifestyle Blog | Aurelia Private Concierge"
-        description="Insights, guides, and exclusive content for discerning individuals. Explore luxury travel, private aviation, superyachts, art collecting, and more."
+        title="The Aurelia Journal | Luxury Lifestyle Insights & Guides"
+        description="Expert perspectives on luxury travel, private aviation, superyachts, art collecting, and exceptional living. Curated content for discerning individuals."
       />
+      <FAQSchema pageType="home" />
 
       <div className="min-h-screen bg-background">
         {/* Navigation */}
@@ -182,6 +203,7 @@ const Blog = () => {
               className="max-w-3xl mx-auto text-center"
             >
               <Badge variant="outline" className="mb-6 border-primary/30 text-primary">
+                <BookOpen className="w-3 h-3 mr-1" />
                 The Aurelia Journal
               </Badge>
               <h1 className="font-serif text-4xl md:text-6xl text-foreground mb-6">
@@ -193,7 +215,7 @@ const Blog = () => {
               </p>
 
               {/* Search */}
-              <div className="relative max-w-md mx-auto">
+              <div className="relative max-w-md mx-auto mb-8">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   placeholder="Search articles..."
@@ -201,6 +223,22 @@ const Blog = () => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-12 bg-card border-border/50"
                 />
+              </div>
+
+              {/* Quick Stats */}
+              <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-primary" />
+                  <span>{blogPosts.length} Articles</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-primary" />
+                  <span>Updated Weekly</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Rss className="w-4 h-4 text-primary" />
+                  <span>Subscribe</span>
+                </div>
               </div>
             </motion.div>
           </div>

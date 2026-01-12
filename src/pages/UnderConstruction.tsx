@@ -105,12 +105,56 @@ const demoFeatures = [
 
 const DemoVideoSection = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [progress, setProgress] = useState(0);
   const [hasAutoPlayed, setHasAutoPlayed] = useState(false);
   const [showUnmuteHint, setShowUnmuteHint] = useState(false);
+  const [audioLoaded, setAudioLoaded] = useState(false);
+  const [isLoadingAudio, setIsLoadingAudio] = useState(false);
+
+  // Load background music on component mount
+  useEffect(() => {
+    const loadAudio = async () => {
+      if (audioLoaded || isLoadingAudio) return;
+      
+      setIsLoadingAudio(true);
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-demo-music`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+            body: JSON.stringify({ 
+              prompt: "Elegant ambient luxury music, sophisticated piano with soft strings, cinematic premium feel, calm refined atmosphere for high-end brand",
+              duration: 30 
+            }),
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.audioContent && audioRef.current) {
+            audioRef.current.src = `data:audio/mpeg;base64,${data.audioContent}`;
+            audioRef.current.loop = true;
+            setAudioLoaded(true);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load background music:", error);
+      } finally {
+        setIsLoadingAudio(false);
+      }
+    };
+
+    loadAudio();
+  }, [audioLoaded, isLoadingAudio]);
 
   // Scroll-triggered autoplay (muted for browser compliance)
   useEffect(() => {
@@ -136,6 +180,32 @@ const DemoVideoSection = () => {
     return () => observer.disconnect();
   }, [hasAutoPlayed]);
 
+  // Sync audio with video playback
+  useEffect(() => {
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if (!video || !audio) return;
+
+    const handlePlay = () => {
+      if (!isMuted && audioLoaded) {
+        audio.currentTime = video.currentTime % audio.duration;
+        audio.play().catch(() => {});
+      }
+    };
+
+    const handlePause = () => {
+      audio.pause();
+    };
+
+    video.addEventListener('play', handlePlay);
+    video.addEventListener('pause', handlePause);
+
+    return () => {
+      video.removeEventListener('play', handlePlay);
+      video.removeEventListener('pause', handlePause);
+    };
+  }, [isMuted, audioLoaded]);
+
   // Progress bar update
   useEffect(() => {
     const video = videoRef.current;
@@ -154,12 +224,13 @@ const DemoVideoSection = () => {
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
+        audioRef.current?.pause();
       } else {
-        // When user manually plays, unmute for better experience
         videoRef.current.play();
-        if (isMuted) {
-          videoRef.current.muted = false;
+        // When user manually plays, unmute for better experience
+        if (isMuted && audioLoaded) {
           setIsMuted(false);
+          audioRef.current?.play().catch(() => {});
         }
       }
       setIsPlaying(!isPlaying);
@@ -167,10 +238,16 @@ const DemoVideoSection = () => {
   };
 
   const toggleMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
-      setShowUnmuteHint(false);
+    const newMuted = !isMuted;
+    setIsMuted(newMuted);
+    setShowUnmuteHint(false);
+    
+    if (audioRef.current && audioLoaded) {
+      if (newMuted) {
+        audioRef.current.pause();
+      } else if (isPlaying) {
+        audioRef.current.play().catch(() => {});
+      }
     }
   };
 
@@ -189,6 +266,8 @@ const DemoVideoSection = () => {
       transition={{ delay: 0.7 }}
       className="w-full max-w-5xl mx-auto"
     >
+      {/* Hidden audio element for background music */}
+      <audio ref={audioRef} preload="none" />
       {/* Section Header */}
       <div className="text-center mb-10">
         <motion.div

@@ -98,11 +98,11 @@ const InstagramProfile = () => {
           <div className="relative">
             <div className="w-32 h-32 md:w-40 md:h-40 rounded-full p-1 bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-500">
               <div className="w-full h-full rounded-full bg-background p-1">
-                <div className="w-full h-full rounded-full overflow-hidden">
+                <div className="w-full h-full rounded-full overflow-hidden bg-[#0a0a0a] flex items-center justify-center">
                   <img 
-                    src="/logos/aurelia-icon.svg" 
+                    src="/logos/aurelia-logo-light.svg" 
                     alt="Aurelia Private Concierge"
-                    className="w-full h-full object-cover bg-primary p-4"
+                    className="w-3/4 h-3/4 object-contain"
                   />
                 </div>
               </div>

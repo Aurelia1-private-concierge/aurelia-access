@@ -181,7 +181,7 @@ const Footer = () => {
         <div className="border-t border-border/10">
           <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-xs text-muted-foreground/60 font-light">
-              © {BRAND.year} {BRAND.entity}. {BRAND.legal.copyright}
+              © 2026 Aurelia Concierge Services.. All rights reserved. Unauthorized reproduction prohibited.
             </p>
             <div className="flex items-center gap-6 text-xs text-muted-foreground/60 font-light">
               <Link to="/privacy" className="hover:text-muted-foreground transition-colors">{t("footer.privacy")}</Link>

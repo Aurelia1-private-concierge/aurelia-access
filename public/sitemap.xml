@@ -31,6 +31,19 @@
       <image:caption>The world's most exclusive private concierge service for billionaires and UHNW individuals</image:caption>
     </image:image>
   </url>
+
+  <!-- Blog / Journal - High SEO Value -->
+  <url>
+    <loc>https://aurelia-privateconcierge.com/blog</loc>
+    <lastmod>2026-01-12</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.90</priority>
+    <image:image>
+      <image:loc>https://aurelia-privateconcierge.com/og-image-new.png</image:loc>
+      <image:title>The Aurelia Journal - Luxury Lifestyle Insights</image:title>
+      <image:caption>Expert perspectives on luxury travel, private aviation, art collecting, and exceptional living</image:caption>
+    </image:image>
+  </url>
   
   <!-- Core Service Pages -->
   <url>

@@ -51,7 +51,7 @@ const launchPageSchema = {
 const socialLinks = [
   { icon: Instagram, href: "/instagram", label: "Instagram", color: "hover:text-pink-400", isInternal: true },
   { icon: Linkedin, href: "/linkedin", label: "LinkedIn", color: "hover:text-blue-400", isInternal: true },
-  { icon: Twitter, href: "https://twitter.com/AureliaPrivate", label: "X (Twitter)", color: "hover:text-sky-400", isInternal: false },
+  { icon: Twitter, href: "/twitter", label: "X (Twitter)", color: "hover:text-sky-400", isInternal: true },
   { icon: Facebook, href: "/facebook", label: "Facebook", color: "hover:text-blue-500", isInternal: true },
 ];
 

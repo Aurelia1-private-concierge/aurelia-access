@@ -91,11 +91,11 @@ const TikTokProfile = () => {
           className="text-center mb-8"
         >
           {/* Profile Picture */}
-          <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden ring-2 ring-primary/20 ring-offset-2 ring-offset-background">
+          <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden ring-2 ring-primary/20 ring-offset-2 ring-offset-background bg-gradient-to-br from-primary to-primary/80">
             <img 
-              src="/logos/aurelia-icon.svg" 
+              src="/logos/aurelia-logo-light.svg" 
               alt="Aurelia Private Concierge"
-              className="w-full h-full object-cover bg-primary p-4"
+              className="w-full h-full object-contain p-4"
             />
           </div>
 

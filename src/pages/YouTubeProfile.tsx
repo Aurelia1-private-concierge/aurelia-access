@@ -124,8 +124,12 @@ const YouTubeProfile = () => {
         >
           {/* Channel Avatar */}
           <div className="flex-shrink-0">
-            <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
-              <span className="text-3xl md:text-4xl font-serif text-primary-foreground">A</span>
+            <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center overflow-hidden">
+              <img 
+                src="/logos/aurelia-logo-light.svg" 
+                alt="Aurelia" 
+                className="w-16 md:w-20 h-16 md:h-20 object-contain"
+              />
             </div>
           </div>
 

@@ -16,6 +16,8 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import aureliaSocialLogo from "@/assets/aurelia-social-logo.png";
+import aureliaSocialBanner from "@/assets/aurelia-social-banner.png";
 
 // YouTube icon component
 const YouTubeIcon = ({ className }: { className?: string }) => (
@@ -110,9 +112,9 @@ const YouTubeProfile = () => {
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="h-40 md:h-56 bg-gradient-to-r from-primary/30 via-primary/20 to-primary/10 rounded-xl relative overflow-hidden mb-6"
+          className="h-40 md:h-56 rounded-xl relative overflow-hidden mb-6"
         >
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=1200')] bg-cover bg-center opacity-40" />
+          <img src={aureliaSocialBanner} alt="Aurelia Banner" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
         </motion.div>
 
@@ -124,11 +126,11 @@ const YouTubeProfile = () => {
         >
           {/* Channel Avatar */}
           <div className="flex-shrink-0">
-            <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center overflow-hidden">
+            <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden shadow-xl">
               <img 
-                src="/logos/aurelia-logo-light.svg" 
+                src={aureliaSocialLogo} 
                 alt="Aurelia" 
-                className="w-16 md:w-20 h-16 md:h-20 object-contain"
+                className="w-full h-full object-cover"
               />
             </div>
           </div>

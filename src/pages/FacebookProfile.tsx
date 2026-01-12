@@ -22,6 +22,8 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
+import aureliaSocialLogo from "@/assets/aurelia-social-logo.png";
+import aureliaSocialBanner from "@/assets/aurelia-social-banner.png";
 
 const posts = [
   {
@@ -102,11 +104,11 @@ const FacebookProfile = () => {
       
       <div className="pt-20">
         {/* Cover Photo */}
-        <div className="relative h-48 md:h-72 lg:h-96 bg-gradient-to-r from-primary/20 to-primary/5 overflow-hidden">
+        <div className="relative h-48 md:h-72 lg:h-96 overflow-hidden">
           <img 
-            src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&h=400&fit=crop"
+            src={aureliaSocialBanner}
             alt="Cover"
-            className="w-full h-full object-cover opacity-80"
+            className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
         </div>
@@ -120,11 +122,11 @@ const FacebookProfile = () => {
           >
             <div className="flex flex-col md:flex-row items-center md:items-end gap-4">
               {/* Profile Picture */}
-              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-background bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-xl overflow-hidden">
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-background shadow-xl overflow-hidden">
                 <img 
-                  src="/logos/aurelia-logo-light.svg" 
+                  src={aureliaSocialLogo} 
                   alt="Aurelia" 
-                  className="w-20 md:w-24 h-20 md:h-24 object-contain"
+                  className="w-full h-full object-cover"
                 />
               </div>
 

@@ -16,6 +16,8 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import aureliaSocialLogo from "@/assets/aurelia-social-logo.png";
+import aureliaSocialBanner from "@/assets/aurelia-social-banner.png";
 
 const teamMembers = [
   {
@@ -71,8 +73,8 @@ const LinkedInProfile = () => {
       <Navigation />
       
       {/* Cover Image */}
-      <div className="relative h-48 md:h-64 lg:h-80 bg-gradient-to-r from-primary/20 via-primary/10 to-secondary/20 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1920&h=400&fit=crop')] bg-cover bg-center opacity-30" />
+      <div className="relative h-48 md:h-64 lg:h-80 overflow-hidden">
+        <img src={aureliaSocialBanner} alt="Aurelia Banner" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
       </div>
 
@@ -85,11 +87,11 @@ const LinkedInProfile = () => {
         >
           <div className="flex flex-col md:flex-row gap-6">
             {/* Logo */}
-            <div className="w-24 h-24 md:w-32 md:h-32 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg -mt-16 md:-mt-20 border-4 border-background overflow-hidden">
+            <div className="w-24 h-24 md:w-32 md:h-32 rounded-xl shadow-lg -mt-16 md:-mt-20 border-4 border-background overflow-hidden">
               <img 
-                src="/logos/aurelia-logo-light.svg" 
+                src={aureliaSocialLogo} 
                 alt="Aurelia" 
-                className="w-16 md:w-20 h-16 md:h-20 object-contain"
+                className="w-full h-full object-cover"
               />
             </div>
 

@@ -13,8 +13,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useVoiceSession } from "@/hooks/useVoiceSession";
 import orlaAvatar from "@/assets/orla-avatar.png";
 
-const ELEVENLABS_AGENT_ID = "06d4366fbeffc3e8b4b0d11b4c1c9327cfd5fc598644119c3a69bc0e9ebfe3fd";
-
 interface TranscriptEntry {
   id: string;
   role: "user" | "agent";
@@ -144,7 +142,7 @@ const Orla = () => {
       await startSession();
 
       const { data, error } = await supabase.functions.invoke("elevenlabs-conversation-token", {
-        body: { agentId: ELEVENLABS_AGENT_ID, language: i18n.language },
+        body: { language: i18n.language },
       });
 
       if (error || !data?.signed_url) {

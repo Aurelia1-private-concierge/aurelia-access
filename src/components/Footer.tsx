@@ -40,7 +40,7 @@ const Footer = () => {
                 {[
                   { icon: Instagram, href: "/instagram", label: "Instagram", isInternal: true },
                   { icon: Facebook, href: "/facebook", label: "Facebook", isInternal: true },
-                  { icon: Twitter, href: "https://x.com/aureliaprivate", label: "X (Twitter)", isInternal: false },
+                  { icon: Twitter, href: "/twitter", label: "X (Twitter)", isInternal: true },
                   { icon: Linkedin, href: "/linkedin", label: "LinkedIn", isInternal: true },
                 ].map(({ icon: Icon, href, label, isInternal }) => (
                   isInternal ? (

@@ -285,7 +285,7 @@ const AnimatedRoutes = () => {
             }
           />
           <Route
-            path="/c/:campaignId?"
+            path="/campaign/:campaignId?"
             element={
               <PageTransition>
                 <Campaign />

@@ -13,7 +13,13 @@ import {
   Globe,
   Sparkles,
   Package,
-  Loader2
+  Loader2,
+  Mail,
+  Camera,
+  Share2,
+  Smartphone,
+  Monitor,
+  Layout
 } from "lucide-react";
 import { useState } from "react";
 import JSZip from "jszip";
@@ -32,6 +38,57 @@ const logoAssets = [
   { name: "aurelia-wordmark-gold.svg", path: "/logos/aurelia-wordmark-gold.svg", description: "Wordmark (gold)" },
   { name: "aurelia-wordmark-black.svg", path: "/logos/aurelia-wordmark-black.svg", description: "Wordmark (black)" },
   { name: "aurelia-wordmark-white.svg", path: "/logos/aurelia-wordmark-white.svg", description: "Wordmark (white)" },
+];
+
+const pngSizes = [64, 128, 256, 512, 1024];
+
+const socialMediaSizes = [
+  { platform: "LinkedIn", sizes: [
+    { name: "Profile Photo", width: 400, height: 400 },
+    { name: "Cover Image", width: 1584, height: 396 },
+    { name: "Post Image", width: 1200, height: 627 },
+  ]},
+  { platform: "Instagram", sizes: [
+    { name: "Profile Photo", width: 320, height: 320 },
+    { name: "Feed Post", width: 1080, height: 1080 },
+    { name: "Story", width: 1080, height: 1920 },
+  ]},
+  { platform: "Twitter/X", sizes: [
+    { name: "Profile Photo", width: 400, height: 400 },
+    { name: "Header", width: 1500, height: 500 },
+    { name: "Post Image", width: 1200, height: 675 },
+  ]},
+  { platform: "Facebook", sizes: [
+    { name: "Profile Photo", width: 180, height: 180 },
+    { name: "Cover Photo", width: 820, height: 312 },
+    { name: "Post Image", width: 1200, height: 630 },
+  ]},
+];
+
+const emailSignatureHtml = `<table cellpadding="0" cellspacing="0" border="0" style="font-family: 'Inter', Arial, sans-serif; color: #333;">
+  <tr>
+    <td style="padding-right: 15px; border-right: 2px solid #D4AF37;">
+      <img src="https://aurelia-privateconcierge.com/logos/aurelia-icon.svg" alt="Aurelia" width="48" height="48" />
+    </td>
+    <td style="padding-left: 15px;">
+      <p style="margin: 0; font-size: 16px; font-weight: 600; color: #0A0A0A;">[Your Name]</p>
+      <p style="margin: 4px 0; font-size: 13px; color: #666;">[Your Title] | Aurelia Private Concierge</p>
+      <p style="margin: 8px 0 0; font-size: 12px;">
+        <a href="mailto:name@aurelia-privateconcierge.com" style="color: #D4AF37; text-decoration: none;">name@aurelia-privateconcierge.com</a>
+        <span style="color: #ccc; margin: 0 8px;">|</span>
+        <a href="https://aurelia-privateconcierge.com" style="color: #666; text-decoration: none;">aurelia-privateconcierge.com</a>
+      </p>
+    </td>
+  </tr>
+</table>`;
+
+const photographyGuidelines = [
+  { title: "Style", description: "Sophisticated, editorial-quality imagery with natural lighting and muted tones" },
+  { title: "Subjects", description: "Luxury lifestyle moments — private jets, yachts, fine dining, exclusive events" },
+  { title: "Mood", description: "Aspirational yet approachable, intimate rather than ostentatious" },
+  { title: "Color Grading", description: "Warm undertones, subtle gold highlights, deep shadows" },
+  { title: "Composition", description: "Clean lines, negative space, focus on details and craftsmanship" },
+  { title: "Avoid", description: "Overly staged shots, visible branding of other luxury brands, crowded scenes" },
 ];
 
 const MediaKit = () => {
@@ -63,17 +120,66 @@ const MediaKit = () => {
     }
   };
 
+  // Convert SVG to PNG at specified size
+  const svgToPng = async (svgContent: string, width: number, height: number): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const svg = new Blob([svgContent], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(svg);
+      
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Failed to get canvas context"));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error("Failed to create PNG blob"));
+          }
+          URL.revokeObjectURL(url);
+        }, "image/png");
+      };
+      
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error("Failed to load SVG"));
+      };
+      
+      img.src = url;
+    });
+  };
+
   const downloadAllAssets = async () => {
     setIsDownloading(true);
     try {
       const zip = new JSZip();
       const svgFolder = zip.folder("svg");
+      const pngFolder = zip.folder("png");
       
-      // Fetch all SVG files
+      // Fetch all SVG files and generate PNGs
       for (const asset of logoAssets) {
         const response = await fetch(asset.path);
         const content = await response.text();
         svgFolder?.file(asset.name, content);
+        
+        // Generate PNG versions at multiple sizes
+        const baseName = asset.name.replace(".svg", "");
+        for (const size of pngSizes) {
+          try {
+            const pngBlob = await svgToPng(content, size, size);
+            const sizeFolder = pngFolder?.folder(`${size}x${size}`);
+            sizeFolder?.file(`${baseName}.png`, pngBlob);
+          } catch (e) {
+            console.warn(`Failed to generate PNG for ${baseName} at ${size}px`, e);
+          }
+        }
       }
 
       // Add a README file
@@ -82,26 +188,46 @@ const MediaKit = () => {
 
 This package contains official Aurelia logo assets.
 
-INCLUDED FILES:
-- svg/aurelia-logo-dark.svg - Full logo for dark backgrounds
-- svg/aurelia-logo-light.svg - Full logo for light backgrounds
-- svg/aurelia-icon.svg - Icon mark (gold)
-- svg/aurelia-icon-dark.svg - Icon mark (dark)
-- svg/aurelia-wordmark-gold.svg - Wordmark (gold)
-- svg/aurelia-wordmark-black.svg - Wordmark (black)
-- svg/aurelia-wordmark-white.svg - Wordmark (white)
+FOLDER STRUCTURE:
+/svg/ - Vector files (scalable, recommended for print)
+/png/64x64/ - Small icons (favicons, app icons)
+/png/128x128/ - Medium icons (thumbnails)
+/png/256x256/ - Standard web usage
+/png/512x512/ - High-resolution displays
+/png/1024x1024/ - Print and large displays
+
+INCLUDED ASSETS:
+- aurelia-logo-dark - Full logo for dark backgrounds
+- aurelia-logo-light - Full logo for light backgrounds
+- aurelia-icon - Diamond icon mark (gold)
+- aurelia-icon-dark - Diamond icon mark (dark)
+- aurelia-wordmark-gold - Text-only wordmark (gold)
+- aurelia-wordmark-black - Text-only wordmark (black)
+- aurelia-wordmark-white - Text-only wordmark (white)
 
 USAGE GUIDELINES:
 - Use provided logo files without modification
-- Maintain clear space around the logo
+- Maintain clear space around the logo (minimum 1/4 logo height)
 - Use on appropriate contrasting backgrounds
-- Scale proportionally
+- Scale proportionally — never stretch or distort
+- Do not alter colors, add effects, or modify the design
+
+SOCIAL MEDIA SIZES:
+- LinkedIn Profile: 400x400px
+- LinkedIn Cover: 1584x396px
+- Instagram Feed: 1080x1080px
+- Instagram Story: 1080x1920px
+- Twitter/X Profile: 400x400px
+- Facebook Cover: 820x312px
 
 For questions, contact: press@aurelia-privateconcierge.com
 
 © ${new Date().getFullYear()} Aurelia Private Concierge. All rights reserved.
 `;
       zip.file("README.txt", readme);
+
+      // Add email signature template
+      zip.file("email-signature.html", emailSignatureHtml);
 
       // Generate and download ZIP
       const blob = await zip.generateAsync({ type: "blob" });
@@ -114,7 +240,7 @@ For questions, contact: press@aurelia-privateconcierge.com
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       
-      toast({ title: "Success", description: "Brand assets downloaded successfully" });
+      toast({ title: "Success", description: "Brand assets with PNGs downloaded successfully" });
     } catch {
       toast({ title: "Error", description: "Failed to create ZIP file", variant: "destructive" });
     } finally {
@@ -204,19 +330,21 @@ For more information, visit aurelia-privateconcierge.com`;
         {/* Content */}
         <section className="container mx-auto px-4">
           <Tabs defaultValue="brand" className="space-y-8">
-            <TabsList className="grid grid-cols-2 md:grid-cols-4 gap-2 bg-transparent h-auto p-0">
+            <TabsList className="grid grid-cols-2 md:grid-cols-6 gap-2 bg-transparent h-auto p-0">
               {[
-                { value: "brand", label: "Brand Guidelines", icon: Palette },
-                { value: "messaging", label: "Key Messaging", icon: MessageSquare },
-                { value: "assets", label: "Logo Assets", icon: ImageIcon },
-                { value: "press", label: "Press Info", icon: FileText },
+                { value: "brand", label: "Brand", icon: Palette },
+                { value: "messaging", label: "Messaging", icon: MessageSquare },
+                { value: "assets", label: "Logos", icon: ImageIcon },
+                { value: "social", label: "Social", icon: Share2 },
+                { value: "templates", label: "Templates", icon: Layout },
+                { value: "press", label: "Press", icon: FileText },
               ].map((tab) => (
                 <TabsTrigger
                   key={tab.value}
                   value={tab.value}
-                  className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border-primary/30 border border-border/30 rounded-lg py-3 px-4"
+                  className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border-primary/30 border border-border/30 rounded-lg py-3 px-3 text-xs md:text-sm"
                 >
-                  <tab.icon className="w-4 h-4 mr-2" />
+                  <tab.icon className="w-4 h-4 mr-1.5" />
                   {tab.label}
                 </TabsTrigger>
               ))}
@@ -607,6 +735,207 @@ For more information, visit aurelia-privateconcierge.com`;
               </Card>
             </TabsContent>
 
+            {/* Social Media Assets */}
+            <TabsContent value="social" className="space-y-8">
+              {/* Social Media Sizes Reference */}
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Share2 className="w-5 h-5 text-primary" />
+                    Social Media Asset Sizes
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {socialMediaSizes.map((platform) => (
+                      <div key={platform.platform} className="p-4 rounded-lg bg-muted/20 border border-border/20">
+                        <h4 className="font-medium text-foreground mb-3 flex items-center gap-2">
+                          {platform.platform === "Instagram" && <Smartphone className="w-4 h-4 text-primary" />}
+                          {platform.platform === "LinkedIn" && <Monitor className="w-4 h-4 text-primary" />}
+                          {platform.platform === "Twitter/X" && <MessageSquare className="w-4 h-4 text-primary" />}
+                          {platform.platform === "Facebook" && <Globe className="w-4 h-4 text-primary" />}
+                          {platform.platform}
+                        </h4>
+                        <div className="space-y-2">
+                          {platform.sizes.map((size) => (
+                            <div key={size.name} className="flex justify-between text-sm">
+                              <span className="text-muted-foreground">{size.name}</span>
+                              <span className="text-foreground font-mono">{size.width} × {size.height}px</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* OG Image / Social Share */}
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle>Open Graph / Social Share Images</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="p-6 rounded-xl bg-[#0A0A0A] border border-border/30">
+                      <div className="aspect-[1200/630] bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] rounded-lg flex items-center justify-center mb-4 border border-[#333]">
+                        <div className="text-center">
+                          <span className="text-2xl font-light tracking-[0.3em] text-[#D4AF37]">AURELIA</span>
+                          <p className="text-xs tracking-[0.2em] text-[#888] mt-1">PRIVATE CONCIERGE</p>
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground mb-3">OG Image — 1200×630px</p>
+                      <p className="text-xs text-muted-foreground/70">Recommended for link sharing on social platforms</p>
+                    </div>
+                    <div className="p-6 rounded-xl bg-[#F5F5F0] border border-border/30">
+                      <div className="aspect-[1200/630] bg-gradient-to-br from-[#FAFAF8] to-[#F0F0E8] rounded-lg flex items-center justify-center mb-4 border border-[#E5E5E0]">
+                        <div className="text-center">
+                          <span className="text-2xl font-light tracking-[0.3em] text-[#0A0A0A]">AURELIA</span>
+                          <p className="text-xs tracking-[0.2em] text-[#666] mt-1">PRIVATE CONCIERGE</p>
+                        </div>
+                      </div>
+                      <p className="text-xs text-[#666] mb-3">OG Image Light — 1200×630px</p>
+                      <p className="text-xs text-[#888]">Alternative for light-themed contexts</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Photography Guidelines */}
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Camera className="w-5 h-5 text-primary" />
+                    Photography Guidelines
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {photographyGuidelines.map((guideline) => (
+                      <div key={guideline.title} className="p-4 rounded-lg bg-muted/20 border border-border/20">
+                        <h4 className="font-medium text-primary mb-2">{guideline.title}</h4>
+                        <p className="text-sm text-muted-foreground">{guideline.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Templates Tab */}
+            <TabsContent value="templates" className="space-y-8">
+              {/* Email Signature */}
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Mail className="w-5 h-5 text-primary" />
+                    Email Signature Template
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="p-6 rounded-xl bg-white border border-border/30">
+                    <table cellPadding="0" cellSpacing="0" style={{ fontFamily: "'Inter', Arial, sans-serif", color: "#333" }}>
+                      <tbody>
+                        <tr>
+                          <td style={{ paddingRight: 15, borderRight: "2px solid #D4AF37" }}>
+                            <div className="w-12 h-12">
+                              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M24 4L44 24L24 44L4 24L24 4Z" stroke="#D4AF37" strokeWidth="1.5" fill="none"/>
+                                <path d="M24 12L32 20L24 28L16 20L24 12Z" fill="#D4AF37"/>
+                                <path d="M12 24L24 36M36 24L24 36" stroke="#D4AF37" strokeWidth="1.5" opacity="0.6"/>
+                              </svg>
+                            </div>
+                          </td>
+                          <td style={{ paddingLeft: 15 }}>
+                            <p style={{ margin: 0, fontSize: 16, fontWeight: 600, color: "#0A0A0A" }}>[Your Name]</p>
+                            <p style={{ margin: "4px 0", fontSize: 13, color: "#666" }}>[Your Title] | Aurelia Private Concierge</p>
+                            <p style={{ margin: "8px 0 0", fontSize: 12 }}>
+                              <a href="#" style={{ color: "#D4AF37", textDecoration: "none" }}>name@aurelia-privateconcierge.com</a>
+                              <span style={{ color: "#ccc", margin: "0 8px" }}>|</span>
+                              <a href="#" style={{ color: "#666", textDecoration: "none" }}>aurelia-privateconcierge.com</a>
+                            </p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="flex gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={() => handleCopy(emailSignatureHtml, "Email Signature HTML")}
+                    >
+                      {copiedItem === "Email Signature HTML" ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
+                      Copy HTML
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Presentation Slide Formats */}
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle>Presentation Guidelines</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="p-6 rounded-xl bg-muted/20 border border-border/20">
+                      <h4 className="font-medium text-foreground mb-3">Slide Dimensions</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Standard (16:9)</span>
+                          <span className="font-mono">1920 × 1080px</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Widescreen (16:10)</span>
+                          <span className="font-mono">1920 × 1200px</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Classic (4:3)</span>
+                          <span className="font-mono">1024 × 768px</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-6 rounded-xl bg-muted/20 border border-border/20">
+                      <h4 className="font-medium text-foreground mb-3">Slide Design Rules</h4>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
+                        <li>• Use dark backgrounds (#0A0A0A) as primary</li>
+                        <li>• Headlines in Playfair Display, gold (#D4AF37)</li>
+                        <li>• Body text in Inter, white (#F5F5F0)</li>
+                        <li>• Logo placed top-left or bottom-right corner</li>
+                        <li>• Maintain 10% margins on all sides</li>
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Print Specifications */}
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle>Print Specifications</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div className="p-4 rounded-lg bg-muted/20 border border-border/20">
+                      <h4 className="font-medium text-primary mb-2">Business Cards</h4>
+                      <p className="text-sm text-muted-foreground">3.5" × 2" (89 × 51mm)</p>
+                      <p className="text-xs text-muted-foreground/70 mt-1">CMYK, 300 DPI, 0.125" bleed</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-muted/20 border border-border/20">
+                      <h4 className="font-medium text-primary mb-2">Letterhead</h4>
+                      <p className="text-sm text-muted-foreground">A4 (210 × 297mm)</p>
+                      <p className="text-xs text-muted-foreground/70 mt-1">CMYK, 300 DPI, 5mm bleed</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-muted/20 border border-border/20">
+                      <h4 className="font-medium text-primary mb-2">Brochures</h4>
+                      <p className="text-sm text-muted-foreground">A5 folded (148 × 210mm)</p>
+                      <p className="text-xs text-muted-foreground/70 mt-1">CMYK, 300 DPI, 3mm bleed</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
             {/* Press Info */}
             <TabsContent value="press" className="space-y-8">
               {/* Quick Facts */}
@@ -658,11 +987,19 @@ For more information, visit aurelia-privateconcierge.com`;
                   <div className="text-center">
                     <h3 className="text-xl font-light text-foreground mb-2">Download Complete Media Kit</h3>
                     <p className="text-muted-foreground mb-6">
-                      All logos, brand guidelines, and press materials in one package.
+                      All logos (SVG + PNG in 5 sizes), email signature, and README included.
                     </p>
-                    <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                      <Download className="w-4 h-4 mr-2" />
-                      Download Media Kit (ZIP)
+                    <Button 
+                      onClick={downloadAllAssets}
+                      disabled={isDownloading}
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                    >
+                      {isDownloading ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Download className="w-4 h-4 mr-2" />
+                      )}
+                      {isDownloading ? "Preparing..." : "Download Media Kit (ZIP)"}
                     </Button>
                   </div>
                 </CardContent>

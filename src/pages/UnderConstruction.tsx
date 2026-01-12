@@ -320,14 +320,27 @@ const DemoVideoSection = () => {
         </p>
       </div>
 
-      {/* Video Player */}
+      {/* Video Player with Gold Premium Frame */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.8 }}
-        className="relative max-w-4xl mx-auto mb-12 rounded-2xl overflow-hidden shadow-2xl border border-primary/20"
+        className="relative max-w-4xl mx-auto mb-12"
       >
-        <div className="relative aspect-video">
+        {/* Outer Gold Frame */}
+        <div className="relative p-3 md:p-4 rounded-2xl bg-gradient-to-br from-[#D4AF37] via-[#F4E4A6] to-[#D4AF37] shadow-[0_0_40px_rgba(212,175,55,0.3)]">
+          {/* Inner Gold Border with Ornate Effect */}
+          <div className="absolute inset-2 md:inset-3 rounded-xl border-2 border-[#B8860B]/50 pointer-events-none" />
+          
+          {/* Corner Ornaments */}
+          <div className="absolute top-1 left-1 w-6 h-6 md:w-8 md:h-8 border-t-3 border-l-3 border-[#8B6914] rounded-tl-lg" />
+          <div className="absolute top-1 right-1 w-6 h-6 md:w-8 md:h-8 border-t-3 border-r-3 border-[#8B6914] rounded-tr-lg" />
+          <div className="absolute bottom-1 left-1 w-6 h-6 md:w-8 md:h-8 border-b-3 border-l-3 border-[#8B6914] rounded-bl-lg" />
+          <div className="absolute bottom-1 right-1 w-6 h-6 md:w-8 md:h-8 border-b-3 border-r-3 border-[#8B6914] rounded-br-lg" />
+          
+          {/* Inner Shadow for Depth */}
+          <div className="relative rounded-xl overflow-hidden shadow-[inset_0_2px_10px_rgba(0,0,0,0.3)] border-2 border-[#8B6914]">
+            <div className="relative aspect-video">
           <video
             ref={videoRef}
             src={aureliaDemo}
@@ -446,6 +459,8 @@ const DemoVideoSection = () => {
                   {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                 </button>
               </div>
+            </div>
+          </div>
             </div>
           </div>
         </div>

@@ -84,7 +84,7 @@ const formatNumber = (num: number): string => {
   return num.toString();
 };
 
-const TWITTER_URL = "https://x.com/aureliaprivate";
+const TWITTER_URL = "https://x.com/AureliaPrivate_";
 
 const TwitterProfile = () => {
   const [isFollowing, setIsFollowing] = useState(false);

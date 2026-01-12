@@ -252,17 +252,25 @@ export const useFaceTracking = (enabled: boolean = false) => {
 
   // Initialize face mesh
   const initializeFaceMesh = useCallback(async () => {
-    if (isInitialized || isLoading) return;
+    if (isInitialized || isLoading || faceMeshRef.current === "failed") return;
     
     setIsLoading(true);
     setError(null);
     
     try {
-      const { FaceMesh } = await import("@mediapipe/face_mesh");
+      // Dynamic import with explicit default handling for MediaPipe
+      const faceMeshModule = await import("@mediapipe/face_mesh");
       
-      const faceMesh = new FaceMesh({
-        locateFile: (file) => {
-          return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
+      // Handle different module export formats
+      const FaceMeshClass = faceMeshModule.FaceMesh || (faceMeshModule as any).default?.FaceMesh;
+      
+      if (!FaceMeshClass) {
+        throw new Error("FaceMesh class not found in module");
+      }
+      
+      const faceMesh = new FaceMeshClass({
+        locateFile: (file: string) => {
+          return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559619/${file}`;
         },
       });
       
@@ -285,7 +293,9 @@ export const useFaceTracking = (enabled: boolean = false) => {
       setIsInitialized(true);
     } catch (err) {
       console.error("Failed to initialize FaceMesh:", err);
-      setError("Failed to load face tracking. Please refresh and try again.");
+      // Mark as failed to prevent infinite retry loop
+      faceMeshRef.current = "failed";
+      setError("Face tracking is not available in this environment. The feature will be disabled.");
     } finally {
       setIsLoading(false);
     }
@@ -295,8 +305,19 @@ export const useFaceTracking = (enabled: boolean = false) => {
   const startCamera = useCallback(async () => {
     if (!enabled || cameraActive) return;
     
+    // Don't attempt if FaceMesh already failed
+    if (faceMeshRef.current === "failed") {
+      setError("Face tracking is not available in this environment.");
+      return;
+    }
+    
     try {
       await initializeFaceMesh();
+      
+      // Check again after init attempt
+      if (faceMeshRef.current === "failed") {
+        return;
+      }
       
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -327,7 +348,7 @@ export const useFaceTracking = (enabled: boolean = false) => {
       
       // Start processing loop
       const processFrame = async () => {
-        if (!faceMeshRef.current || !videoRef.current || !cameraActive) return;
+        if (!faceMeshRef.current || faceMeshRef.current === "failed" || !videoRef.current || !cameraActive) return;
         
         if (videoRef.current.readyState === 4) {
           await faceMeshRef.current.send({ image: videoRef.current });

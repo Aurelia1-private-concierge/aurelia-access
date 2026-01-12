@@ -17,10 +17,11 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import SessionTimeoutProvider from "./components/auth/SessionTimeoutProvider";
 import "@/i18n";
 
-// Eagerly load the main page for best LCP
-import Index from "./pages/Index";
+// Eagerly load the landing page for best LCP
+import UnderConstruction from "./pages/UnderConstruction";
 
 // Lazy load all other pages to reduce initial bundle
+const Index = lazy(() => import("./pages/Index"));
 const Waitlist = lazy(() => import("./pages/Waitlist"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Auth = lazy(() => import("./pages/Auth"));
@@ -50,7 +51,6 @@ const MarketingHub = lazy(() => import("./pages/MarketingHub"));
 const LinkedInProfile = lazy(() => import("./pages/LinkedInProfile"));
 const InstagramProfile = lazy(() => import("./pages/InstagramProfile"));
 const TikTokProfile = lazy(() => import("./pages/TikTokProfile"));
-const UnderConstruction = lazy(() => import("./pages/UnderConstruction"));
 
 // Minimal loading fallback
 const PageLoader = () => (
@@ -68,8 +68,18 @@ const AnimatedRoutes = () => {
     <AnimatePresence mode="wait">
       <Suspense fallback={<PageLoader />}>
         <Routes location={location} key={location.pathname}>
+          {/* Under Construction landing page */}
           <Route
             path="/"
+            element={
+              <PageTransition>
+                <UnderConstruction />
+              </PageTransition>
+            }
+          />
+          {/* Full site available at /launch when ready */}
+          <Route
+            path="/launch"
             element={
               <PageTransition>
                 <Index />
@@ -313,14 +323,6 @@ const AnimatedRoutes = () => {
             element={
               <PageTransition>
                 <TikTokProfile />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/coming-soon"
-            element={
-              <PageTransition>
-                <UnderConstruction />
               </PageTransition>
             }
           />

@@ -17,7 +17,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import aureliaSocialLogo from "@/assets/aurelia-social-logo.png";
-import heroVideo from "@/assets/hero-luxury-holiday.mp4";
+import heroLuxuryHoliday from "@/assets/hero-luxury-holiday.mp4";
+import heroVideo from "@/assets/hero-video.mp4";
+import heroVideoExtended from "@/assets/hero-video-extended.mp4";
+import aureliaDemo from "@/assets/aurelia-demo.mp4";
+import orlaDemo from "@/assets/orla-demo.mp4";
+import demoWatch from "@/assets/demo-watch.mp4";
 
 // TikTok icon component
 const TikTokIcon = ({ className }: { className?: string }) => (
@@ -34,7 +39,7 @@ const videos = [
     likes: 2100,
     comments: 89,
     caption: "When your client needs a private jet in 2 hours ✈️ #luxury #concierge #privatejet",
-    videoSrc: heroVideo
+    videoSrc: heroLuxuryHoliday
   },
   {
     id: 2,
@@ -52,7 +57,7 @@ const videos = [
     likes: 2890,
     comments: 124,
     caption: "The view from our client's penthouse 🌆 #luxury #lifestyle #penthouse",
-    videoSrc: heroVideo
+    videoSrc: heroVideoExtended
   },
   {
     id: 4,
@@ -61,7 +66,7 @@ const videos = [
     likes: 980,
     comments: 43,
     caption: "Backstage access at Fashion Week 👗 #exclusive #events #fashionweek",
-    videoSrc: heroVideo
+    videoSrc: aureliaDemo
   },
   {
     id: 5,
@@ -70,7 +75,7 @@ const videos = [
     likes: 1780,
     comments: 78,
     caption: "3 Michelin star dinner for 2, arranged in 30 mins 🍽️ #finedining #michelin",
-    videoSrc: heroVideo
+    videoSrc: orlaDemo
   },
   {
     id: 6,
@@ -79,9 +84,10 @@ const videos = [
     likes: 2340,
     comments: 96,
     caption: "Secret spots only locals know about 🏔️ #travel #hidden #exclusive",
-    videoSrc: heroVideo
+    videoSrc: demoWatch
   }
 ];
+
 
 const formatNumber = (num: number): string => {
   if (num >= 1000000) {

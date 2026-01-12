@@ -19,7 +19,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import aureliaSocialLogo from "@/assets/aurelia-social-logo.png";
-import heroVideo from "@/assets/hero-luxury-holiday.mp4";
+import heroLuxuryHoliday from "@/assets/hero-luxury-holiday.mp4";
+import aureliaDemo from "@/assets/aurelia-demo.mp4";
 
 const stories = [
   { title: "Monaco", image: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=150&h=150&fit=crop" },
@@ -54,7 +55,7 @@ const posts = [
     comments: 428,
     isVideo: true,
     caption: "City lights from the penthouse 🌃 #penthouse #luxury #cityview",
-    videoSrc: heroVideo
+    videoSrc: heroLuxuryHoliday
   },
   {
     id: 4,
@@ -79,7 +80,7 @@ const posts = [
     comments: 134,
     isVideo: true,
     caption: "3 Michelin stars of perfection ⭐ #finedining #michelin #culinary",
-    videoSrc: heroVideo
+    videoSrc: aureliaDemo
   },
   {
     id: 7,

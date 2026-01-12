@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   Gift, 
   ArrowRight, 
@@ -10,13 +10,21 @@ import {
   CheckCircle2,
   Loader2,
   Users,
-  Share2
+  Share2,
+  Trophy,
+  Sparkles,
+  TrendingUp,
+  Zap,
+  Award
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { AnimatedLogo } from "@/components/brand";
 import { supabase } from "@/integrations/supabase/client";
 import SocialShareButtons from "@/components/referral/SocialShareButtons";
 import SEOHead from "@/components/SEOHead";
+import FAQSchema from "@/components/seo/FAQSchema";
+import { getFAQsByCategory } from "@/lib/seo-faq-schema";
 
 const Referral = () => {
   const [searchParams] = useSearchParams();
@@ -57,23 +65,35 @@ const Referral = () => {
     {
       icon: Crown,
       title: "Exclusive Access",
-      description: "Priority access to limited experiences and services"
+      description: "Priority access to limited experiences and services",
+      color: "text-amber-500"
     },
     {
       icon: Shield,
       title: "Trusted Network",
-      description: "Join a vetted community of discerning individuals"
+      description: "Join a vetted community of discerning individuals",
+      color: "text-blue-500"
     },
     {
       icon: Star,
       title: "Premium Benefits",
-      description: "Receive special perks as a referred member"
+      description: "Receive special perks as a referred member",
+      color: "text-purple-500"
     },
     {
       icon: Gift,
       title: "Referral Rewards",
-      description: "Both you and your referrer receive exclusive rewards"
+      description: "Both you and your referrer receive exclusive rewards",
+      color: "text-emerald-500"
     }
+  ];
+
+  // Referral tiers for gamification
+  const referralTiers = [
+    { name: "Member", minReferrals: 0, reward: "Base membership", icon: Users },
+    { name: "Advocate", minReferrals: 3, reward: "1 Free Month", icon: Star },
+    { name: "Ambassador", minReferrals: 5, reward: "VIP Event Access", icon: Trophy },
+    { name: "Elite", minReferrals: 10, reward: "Tier Upgrade", icon: Crown }
   ];
 
   if (isLoading) {
@@ -87,7 +107,7 @@ const Referral = () => {
   return (
     <div className="min-h-[100dvh] bg-background">
       <SEOHead pageType="referral" />
-      {/* Hero Section */}
+      <FAQSchema pageType="home" />
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Background */}
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />
@@ -182,15 +202,89 @@ const Referral = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 + index * 0.1 }}
-                className="bg-card/30 backdrop-blur-sm border border-border/30 rounded-xl p-6 text-left"
+                className="bg-card/30 backdrop-blur-sm border border-border/30 rounded-xl p-6 text-left hover:border-primary/30 transition-colors group"
               >
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                  <benefit.icon className="w-5 h-5 text-primary" />
+                <div className={`w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                  <benefit.icon className={`w-5 h-5 ${benefit.color}`} />
                 </div>
                 <h3 className="font-medium text-foreground mb-2">{benefit.title}</h3>
                 <p className="text-sm text-muted-foreground">{benefit.description}</p>
               </motion.div>
             ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Referral Tiers Gamification Section */}
+      <section className="py-16 border-t border-border/30 bg-gradient-to-b from-background to-primary/5">
+        <div className="max-w-4xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-4">
+              <Sparkles className="w-4 h-4 text-primary" />
+              <span className="text-xs uppercase tracking-widest text-primary">Rewards Program</span>
+            </div>
+            <h2 className="font-serif text-3xl text-foreground mb-4">
+              Earn More as You Refer
+            </h2>
+            <p className="text-muted-foreground max-w-xl mx-auto">
+              Unlock exclusive rewards and status as you invite more friends to Aurelia. 
+              The more you share, the more you earn.
+            </p>
+          </motion.div>
+
+          {/* Tier Progress */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            {referralTiers.map((tier, index) => (
+              <motion.div
+                key={tier.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="relative bg-card/50 border border-border/30 rounded-xl p-5 text-center hover:border-primary/30 transition-all"
+              >
+                <div className="w-12 h-12 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-3">
+                  <tier.icon className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="font-medium text-foreground mb-1">{tier.name}</h3>
+                <p className="text-xs text-muted-foreground mb-2">{tier.minReferrals}+ referrals</p>
+                <p className="text-xs text-primary font-medium">{tier.reward}</p>
+                {index < referralTiers.length - 1 && (
+                  <div className="hidden md:block absolute top-1/2 -right-2 transform -translate-y-1/2">
+                    <ArrowRight className="w-4 h-4 text-border" />
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Reward Highlights */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-4"
+          >
+            <div className="bg-gradient-to-br from-amber-500/10 to-amber-500/5 border border-amber-500/20 rounded-xl p-5">
+              <Zap className="w-6 h-6 text-amber-500 mb-3" />
+              <h4 className="font-medium text-foreground mb-1">Instant Rewards</h4>
+              <p className="text-sm text-muted-foreground">Get rewarded as soon as your referral subscribes</p>
+            </div>
+            <div className="bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20 rounded-xl p-5">
+              <TrendingUp className="w-6 h-6 text-purple-500 mb-3" />
+              <h4 className="font-medium text-foreground mb-1">Tier Upgrades</h4>
+              <p className="text-sm text-muted-foreground">Unlock premium membership at no extra cost</p>
+            </div>
+            <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border border-emerald-500/20 rounded-xl p-5">
+              <Award className="w-6 h-6 text-emerald-500 mb-3" />
+              <h4 className="font-medium text-foreground mb-1">VIP Events</h4>
+              <p className="text-sm text-muted-foreground">Exclusive access to Aurelia ambassador events</p>
+            </div>
           </motion.div>
         </div>
       </section>

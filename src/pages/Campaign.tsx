@@ -11,52 +11,17 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { useUTMTracking, getStoredUTMParams } from "@/hooks/useUTMTracking";
 
-// Campaign configurations
+// Campaign configurations - All verticals
 const campaigns: Record<string, {
   headline: string;
   subheadline: string;
   ctaText: string;
   benefits: string[];
   source: string;
-  theme?: "dark" | "gold";
   badge?: string;
+  icon?: string;
 }> = {
-  "luxury-travel": {
-    headline: "Elevate Your Travel Experience",
-    subheadline: "Private aviation, yacht charters, and bespoke itineraries—crafted by Aurelia's elite concierge team.",
-    ctaText: "Reserve Your Spot",
-    benefits: [
-      "Priority access to private jets",
-      "Curated yacht experiences",
-      "24/7 dedicated travel concierge",
-      "Exclusive partner rates",
-    ],
-    source: "campaign_luxury_travel",
-  },
-  "vip-events": {
-    headline: "Access the Inaccessible",
-    subheadline: "From sold-out shows to private galleries—unlock doors that remain closed to others.",
-    ctaText: "Get VIP Access",
-    benefits: [
-      "Front-row seats to global events",
-      "Private gallery viewings",
-      "Celebrity meet-and-greets",
-      "Exclusive launch invitations",
-    ],
-    source: "campaign_vip_events",
-  },
-  "wealth-management": {
-    headline: "Beyond Traditional Concierge",
-    subheadline: "Aurelia integrates lifestyle management with your wealth strategy for seamless living.",
-    ctaText: "Learn More",
-    benefits: [
-      "Coordinated with your advisors",
-      "Real estate acquisition support",
-      "Art & collectibles guidance",
-      "Family office integration",
-    ],
-    source: "campaign_wealth",
-  },
+  // ===== TECH & AI VERTICALS =====
   "tech-leaders": {
     headline: "Time is Your Scarcest Resource",
     subheadline: "You've built the future. Now let Aurelia's AI-powered concierge optimize your lifestyle while you focus on what matters.",
@@ -122,6 +87,321 @@ const campaigns: Record<string, {
     ],
     source: "campaign_genai",
   },
+  "crypto": {
+    headline: "Decentralize Everything Except Your Lifestyle",
+    subheadline: "Focus on building the future of finance. We'll handle the present.",
+    ctaText: "Join Crypto Circle",
+    badge: "Web3 & Crypto Leaders",
+    benefits: [
+      "Crypto-friendly payments accepted",
+      "Global tax residency guidance",
+      "Conference circuit logistics",
+      "Privacy-first communication",
+    ],
+    source: "campaign_crypto",
+  },
+  "vc-partners": {
+    headline: "Your Portfolio Gets Attention. So Should You.",
+    subheadline: "Between board meetings and term sheets, reclaim your personal time with Aurelia.",
+    ctaText: "Request Partner Access",
+    badge: "Venture Capital Partners",
+    benefits: [
+      "LP event coordination",
+      "Deal dinner reservations",
+      "Global travel optimization",
+      "Family scheduling support",
+    ],
+    source: "campaign_vc_partners",
+  },
+  
+  // ===== FINANCE VERTICALS =====
+  "hedge-fund": {
+    headline: "Alpha in Every Aspect",
+    subheadline: "You generate returns. We generate time—freeing you to focus on what matters most.",
+    ctaText: "Access Private Preview",
+    badge: "Hedge Fund Professionals",
+    benefits: [
+      "Market hours-aware service",
+      "Last-minute travel flexibility",
+      "Discretionary spending support",
+      "Family office integration",
+    ],
+    source: "campaign_hedge_fund",
+  },
+  "private-equity": {
+    headline: "Operate Your Life Like Your Portfolio",
+    subheadline: "Maximize value. Minimize friction. Aurelia handles the operational complexity of luxury living.",
+    ctaText: "Schedule Consultation",
+    badge: "Private Equity Principals",
+    benefits: [
+      "Deal celebration planning",
+      "Portfolio company perks access",
+      "International LP entertainment",
+      "Estate management coordination",
+    ],
+    source: "campaign_private_equity",
+  },
+  "family-office": {
+    headline: "Generational Service Excellence",
+    subheadline: "Your family office manages wealth. Aurelia manages lifestyle—across generations.",
+    ctaText: "Request Family Access",
+    badge: "Family Office Principals",
+    benefits: [
+      "Multi-generational accounts",
+      "Coordinated family travel",
+      "Education placement support",
+      "Philanthropic event access",
+    ],
+    source: "campaign_family_office",
+  },
+  "wealth-management": {
+    headline: "Beyond Traditional Concierge",
+    subheadline: "Aurelia integrates lifestyle management with your wealth strategy for seamless living.",
+    ctaText: "Learn More",
+    badge: "Wealth Advisors",
+    benefits: [
+      "Coordinated with your advisors",
+      "Real estate acquisition support",
+      "Art & collectibles guidance",
+      "Family office integration",
+    ],
+    source: "campaign_wealth",
+  },
+  
+  // ===== TRAVEL & LIFESTYLE =====
+  "luxury-travel": {
+    headline: "Elevate Your Travel Experience",
+    subheadline: "Private aviation, yacht charters, and bespoke itineraries—crafted by Aurelia's elite concierge team.",
+    ctaText: "Reserve Your Spot",
+    badge: "Travel Enthusiasts",
+    benefits: [
+      "Priority access to private jets",
+      "Curated yacht experiences",
+      "24/7 dedicated travel concierge",
+      "Exclusive partner rates",
+    ],
+    source: "campaign_luxury_travel",
+  },
+  "vip-events": {
+    headline: "Access the Inaccessible",
+    subheadline: "From sold-out shows to private galleries—unlock doors that remain closed to others.",
+    ctaText: "Get VIP Access",
+    badge: "Event Access",
+    benefits: [
+      "Front-row seats to global events",
+      "Private gallery viewings",
+      "Celebrity meet-and-greets",
+      "Exclusive launch invitations",
+    ],
+    source: "campaign_vip_events",
+  },
+  "yacht": {
+    headline: "Seas the Moment",
+    subheadline: "From Mediterranean summers to Caribbean escapes—your superyacht adventures, seamlessly arranged.",
+    ctaText: "Explore Charter Options",
+    badge: "Yacht Enthusiasts",
+    benefits: [
+      "Priority superyacht access",
+      "Crew & chef arrangements",
+      "Itinerary customization",
+      "Destination expertise",
+    ],
+    source: "campaign_yacht",
+  },
+  "aviation": {
+    headline: "Fly Private. Arrive Refreshed.",
+    subheadline: "Skip the terminals. Aurelia coordinates your private aviation with precision.",
+    ctaText: "Book Private Access",
+    badge: "Aviation Members",
+    benefits: [
+      "Empty leg opportunities",
+      "Jet card optimization",
+      "FBO lounge access",
+      "Catering preferences saved",
+    ],
+    source: "campaign_aviation",
+  },
+  
+  // ===== EXECUTIVE & CORPORATE =====
+  "ceo": {
+    headline: "Lead Your Company. We'll Lead Your Calendar.",
+    subheadline: "CEOs trust Aurelia to handle the complexity of elite lifestyle management.",
+    ctaText: "Request Executive Access",
+    badge: "C-Suite Executives",
+    benefits: [
+      "Executive assistant coordination",
+      "Board meeting logistics",
+      "Shareholder event planning",
+      "Reputation-conscious service",
+    ],
+    source: "campaign_ceo",
+  },
+  "founder": {
+    headline: "You Built Something Great. Now Enjoy It.",
+    subheadline: "Post-exit or pre-IPO—Aurelia supports founders at every stage.",
+    ctaText: "Join Founder Circle",
+    badge: "Startup Founders",
+    benefits: [
+      "Investor dinner coordination",
+      "Board offsite planning",
+      "Work-life boundary support",
+      "Founder retreat access",
+    ],
+    source: "campaign_founder",
+  },
+  
+  // ===== ENTERTAINMENT & SPORTS =====
+  "athlete": {
+    headline: "Perform at Your Peak. Live at Your Best.",
+    subheadline: "Professional athletes trust Aurelia for seamless off-field lifestyle management.",
+    ctaText: "Get Athlete Access",
+    badge: "Professional Athletes",
+    benefits: [
+      "Training schedule integration",
+      "Family relocation support",
+      "Endorsement event coordination",
+      "Recovery retreat bookings",
+    ],
+    source: "campaign_athlete",
+  },
+  "entertainment": {
+    headline: "Your Stage is Set. Let Us Handle the Rest.",
+    subheadline: "From tour logistics to private escapes—entertainment professionals deserve elite service.",
+    ctaText: "Request Industry Access",
+    badge: "Entertainment Industry",
+    benefits: [
+      "Tour city coordination",
+      "Privacy-first arrangements",
+      "Award show logistics",
+      "Creative retreat planning",
+    ],
+    source: "campaign_entertainment",
+  },
+  
+  // ===== MEDICAL & LEGAL =====
+  "physician": {
+    headline: "You Heal Others. We Handle Everything Else.",
+    subheadline: "Surgeons and specialists trust Aurelia to optimize their limited personal time.",
+    ctaText: "Request Medical Professional Access",
+    badge: "Medical Professionals",
+    benefits: [
+      "Call schedule awareness",
+      "CME conference logistics",
+      "Last-minute cancellation handling",
+      "Family time optimization",
+    ],
+    source: "campaign_physician",
+  },
+  "attorney": {
+    headline: "Bill Hours. Not Your Personal Time.",
+    subheadline: "Top attorneys trust Aurelia to manage lifestyle while they manage cases.",
+    ctaText: "Request Partner Access",
+    badge: "Legal Partners",
+    benefits: [
+      "Client entertainment support",
+      "Billable hours protection",
+      "Confidential service standards",
+      "Partnership retreat planning",
+    ],
+    source: "campaign_attorney",
+  },
+  
+  // ===== REAL ESTATE =====
+  "real-estate": {
+    headline: "You Close Deals. We Open Doors.",
+    subheadline: "Elite real estate professionals deserve elite personal service.",
+    ctaText: "Join Real Estate Circle",
+    badge: "Real Estate Developers",
+    benefits: [
+      "Property viewing coordination",
+      "Investor entertainment",
+      "Global market access",
+      "Relocation services",
+    ],
+    source: "campaign_real_estate",
+  },
+  
+  // ===== REGIONAL CAMPAIGNS =====
+  "london": {
+    headline: "London's Finest. At Your Service.",
+    subheadline: "From Mayfair to Monaco—Aurelia serves London's most discerning residents.",
+    ctaText: "Join London Circle",
+    badge: "London Members",
+    benefits: [
+      "West End priority access",
+      "Private club reservations",
+      "Country estate weekends",
+      "European travel coordination",
+    ],
+    source: "campaign_london",
+  },
+  "dubai": {
+    headline: "Where Ambition Meets Excellence",
+    subheadline: "Dubai's global citizens trust Aurelia for seamless lifestyle management.",
+    ctaText: "Request Dubai Access",
+    badge: "Dubai Residents",
+    benefits: [
+      "Multi-property coordination",
+      "Ramadan & Eid planning",
+      "Desert experience curation",
+      "Family office integration",
+    ],
+    source: "campaign_dubai",
+  },
+  "nyc": {
+    headline: "The City Never Sleeps. Neither Does Aurelia.",
+    subheadline: "New York's busiest professionals trust Aurelia to handle the impossible.",
+    ctaText: "Join NYC Circle",
+    badge: "New York Members",
+    benefits: [
+      "Last-minute reservations",
+      "Hamptons coordination",
+      "Broadway priority access",
+      "Art world connections",
+    ],
+    source: "campaign_nyc",
+  },
+  "singapore": {
+    headline: "Asia's Gateway. Global Service.",
+    subheadline: "From Singapore to the world—Aurelia serves APAC's elite with precision.",
+    ctaText: "Request Singapore Access",
+    badge: "Singapore Residents",
+    benefits: [
+      "F1 Grand Prix access",
+      "Regional travel expertise",
+      "Multi-cultural event planning",
+      "Family education support",
+    ],
+    source: "campaign_singapore",
+  },
+  "monaco": {
+    headline: "Riviera Excellence",
+    subheadline: "Monaco's most discerning residents trust Aurelia for seamless Mediterranean living.",
+    ctaText: "Join Monaco Circle",
+    badge: "Monaco Residents",
+    benefits: [
+      "Grand Prix hospitality",
+      "Yacht week coordination",
+      "Casino & event access",
+      "Côte d'Azur expertise",
+    ],
+    source: "campaign_monaco",
+  },
+  "zurich": {
+    headline: "Swiss Precision. Global Reach.",
+    subheadline: "Zurich's financial elite trust Aurelia for discreet, exceptional service.",
+    ctaText: "Request Swiss Access",
+    badge: "Zurich Residents",
+    benefits: [
+      "Ski season coordination",
+      "Private banking integration",
+      "Art Basel arrangements",
+      "Alpine retreat bookings",
+    ],
+    source: "campaign_zurich",
+  },
+  
+  // ===== DEFAULT =====
   "default": {
     headline: "The Future of Luxury Awaits",
     subheadline: "Join the waitlist for the world's most exclusive private concierge service.",

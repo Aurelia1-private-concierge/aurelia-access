@@ -2,6 +2,78 @@
 
 Use these pre-built UTM links for your marketing campaigns. All links track to the `funnel_events` table.
 
+---
+
+## 🤖 Tech & AI Targeting
+
+### LinkedIn - Tech & AI Professionals
+- **Tech Leaders (C-Suite)**: `https://aurelia-privateconcierge.com/campaign/tech-leaders?utm_source=linkedin&utm_medium=paid_social&utm_campaign=tech_leaders`
+- **AI/ML Founders**: `https://aurelia-privateconcierge.com/campaign/ai-founders?utm_source=linkedin&utm_medium=paid_social&utm_campaign=ai_founders`
+- **ML Engineers (Principal+)**: `https://aurelia-privateconcierge.com/campaign/ml-engineers?utm_source=linkedin&utm_medium=paid_social&utm_campaign=ml_engineers`
+- **Robotics/Deep Tech**: `https://aurelia-privateconcierge.com/campaign/robotics?utm_source=linkedin&utm_medium=paid_social&utm_campaign=robotics`
+- **GenAI Professionals**: `https://aurelia-privateconcierge.com/campaign/genai?utm_source=linkedin&utm_medium=paid_social&utm_campaign=genai`
+- **Crypto/Web3 Leaders**: `https://aurelia-privateconcierge.com/campaign/crypto?utm_source=linkedin&utm_medium=paid_social&utm_campaign=crypto`
+- **VC Partners**: `https://aurelia-privateconcierge.com/campaign/vc-partners?utm_source=linkedin&utm_medium=paid_social&utm_campaign=vc_partners`
+
+---
+
+## 💰 Finance & Investment
+
+### LinkedIn - Finance Professionals
+- **Hedge Fund Managers**: `https://aurelia-privateconcierge.com/campaign/hedge-fund?utm_source=linkedin&utm_medium=paid_social&utm_campaign=hedge_fund`
+- **Private Equity Principals**: `https://aurelia-privateconcierge.com/campaign/private-equity?utm_source=linkedin&utm_medium=paid_social&utm_campaign=private_equity`
+- **Family Office Principals**: `https://aurelia-privateconcierge.com/campaign/family-office?utm_source=linkedin&utm_medium=paid_social&utm_campaign=family_office`
+- **Wealth Advisors**: `https://aurelia-privateconcierge.com/campaign/wealth-management?utm_source=linkedin&utm_medium=paid_social&utm_campaign=wealth_management`
+
+---
+
+## 👔 Executive & Corporate
+
+### LinkedIn - C-Suite Targeting
+- **CEOs**: `https://aurelia-privateconcierge.com/campaign/ceo?utm_source=linkedin&utm_medium=paid_social&utm_campaign=ceo`
+- **Startup Founders**: `https://aurelia-privateconcierge.com/campaign/founder?utm_source=linkedin&utm_medium=paid_social&utm_campaign=founder`
+
+---
+
+## ⚕️ Professional Services
+
+### LinkedIn - High-Income Professionals
+- **Physicians/Surgeons**: `https://aurelia-privateconcierge.com/campaign/physician?utm_source=linkedin&utm_medium=paid_social&utm_campaign=physician`
+- **Law Partners**: `https://aurelia-privateconcierge.com/campaign/attorney?utm_source=linkedin&utm_medium=paid_social&utm_campaign=attorney`
+- **Real Estate Developers**: `https://aurelia-privateconcierge.com/campaign/real-estate?utm_source=linkedin&utm_medium=paid_social&utm_campaign=real_estate`
+
+---
+
+## 🏆 Entertainment & Sports
+
+### Social Media - Talent & Athletes
+- **Professional Athletes**: `https://aurelia-privateconcierge.com/campaign/athlete?utm_source=instagram&utm_medium=paid_social&utm_campaign=athlete`
+- **Entertainment Industry**: `https://aurelia-privateconcierge.com/campaign/entertainment?utm_source=instagram&utm_medium=paid_social&utm_campaign=entertainment`
+
+---
+
+## ✈️ Travel & Lifestyle
+
+### Google Ads - Luxury Keywords
+- **Luxury Travel**: `https://aurelia-privateconcierge.com/campaign/luxury-travel?utm_source=google&utm_medium=cpc&utm_campaign=luxury_travel`
+- **VIP Events**: `https://aurelia-privateconcierge.com/campaign/vip-events?utm_source=google&utm_medium=cpc&utm_campaign=vip_events`
+- **Yacht Charter**: `https://aurelia-privateconcierge.com/campaign/yacht?utm_source=google&utm_medium=cpc&utm_campaign=yacht`
+- **Private Aviation**: `https://aurelia-privateconcierge.com/campaign/aviation?utm_source=google&utm_medium=cpc&utm_campaign=aviation`
+
+---
+
+## 🌍 Regional Campaigns
+
+### Location-Based Targeting
+- **London**: `https://aurelia-privateconcierge.com/campaign/london?utm_source=linkedin&utm_medium=paid_social&utm_campaign=london`
+- **Dubai**: `https://aurelia-privateconcierge.com/campaign/dubai?utm_source=linkedin&utm_medium=paid_social&utm_campaign=dubai`
+- **New York City**: `https://aurelia-privateconcierge.com/campaign/nyc?utm_source=linkedin&utm_medium=paid_social&utm_campaign=nyc`
+- **Singapore**: `https://aurelia-privateconcierge.com/campaign/singapore?utm_source=linkedin&utm_medium=paid_social&utm_campaign=singapore`
+- **Monaco**: `https://aurelia-privateconcierge.com/campaign/monaco?utm_source=linkedin&utm_medium=paid_social&utm_campaign=monaco`
+- **Zurich**: `https://aurelia-privateconcierge.com/campaign/zurich?utm_source=linkedin&utm_medium=paid_social&utm_campaign=zurich`
+
+---
+
 ## 📱 Social Media Campaigns
 
 ### Instagram
@@ -11,18 +83,11 @@ Use these pre-built UTM links for your marketing campaigns. All links track to t
 - **Bio Link**: `https://aurelia-privateconcierge.com/?utm_source=instagram&utm_medium=organic_social&utm_campaign=bio_link`
 - **Paid Ad**: `https://aurelia-privateconcierge.com/?utm_source=instagram&utm_medium=paid_social&utm_campaign=ig_ads_jan2026`
 
-### LinkedIn
+### LinkedIn - Organic
 - **Company Post**: `https://aurelia-privateconcierge.com/?utm_source=linkedin&utm_medium=organic_social&utm_campaign=company_post`
 - **Personal Post**: `https://aurelia-privateconcierge.com/?utm_source=linkedin&utm_medium=organic_social&utm_campaign=personal_post`
 - **Article**: `https://aurelia-privateconcierge.com/membership?utm_source=linkedin&utm_medium=organic_social&utm_campaign=thought_leadership`
 - **Sponsored**: `https://aurelia-privateconcierge.com/?utm_source=linkedin&utm_medium=paid_social&utm_campaign=linkedin_sponsored`
-
-### LinkedIn - Tech & AI Targeting
-- **Tech Leaders**: `https://aurelia-privateconcierge.com/campaign/tech-leaders?utm_source=linkedin&utm_medium=paid_social&utm_campaign=tech_leaders`
-- **AI/ML Founders**: `https://aurelia-privateconcierge.com/campaign/ai-founders?utm_source=linkedin&utm_medium=paid_social&utm_campaign=ai_founders`
-- **ML Engineers**: `https://aurelia-privateconcierge.com/campaign/ml-engineers?utm_source=linkedin&utm_medium=paid_social&utm_campaign=ml_engineers`
-- **Robotics/Deep Tech**: `https://aurelia-privateconcierge.com/campaign/robotics?utm_source=linkedin&utm_medium=paid_social&utm_campaign=robotics`
-- **GenAI Professionals**: `https://aurelia-privateconcierge.com/campaign/genai?utm_source=linkedin&utm_medium=paid_social&utm_campaign=genai`
 
 ### Twitter/X
 - **Tweet**: `https://aurelia-privateconcierge.com/?utm_source=twitter&utm_medium=organic_social&utm_campaign=tweet`
@@ -58,9 +123,9 @@ Use these pre-built UTM links for your marketing campaigns. All links track to t
 - **Brand Search**: `https://aurelia-privateconcierge.com/?utm_source=google&utm_medium=cpc&utm_campaign=brand&utm_term=aurelia_concierge`
 
 ### Service Keywords
-- **Private Jet**: `https://aurelia-privateconcierge.com/services?utm_source=google&utm_medium=cpc&utm_campaign=services&utm_term=private_jet_charter`
+- **Private Jet**: `https://aurelia-privateconcierge.com/campaign/aviation?utm_source=google&utm_medium=cpc&utm_campaign=services&utm_term=private_jet_charter`
 - **Luxury Concierge**: `https://aurelia-privateconcierge.com/?utm_source=google&utm_medium=cpc&utm_campaign=services&utm_term=luxury_concierge_service`
-- **Yacht Charter**: `https://aurelia-privateconcierge.com/services?utm_source=google&utm_medium=cpc&utm_campaign=services&utm_term=superyacht_charter`
+- **Yacht Charter**: `https://aurelia-privateconcierge.com/campaign/yacht?utm_source=google&utm_medium=cpc&utm_campaign=services&utm_term=superyacht_charter`
 - **UHNW Services**: `https://aurelia-privateconcierge.com/?utm_source=google&utm_medium=cpc&utm_campaign=services&utm_term=uhnw_lifestyle_management`
 
 ### Competitor Keywords
@@ -139,3 +204,19 @@ Use these pre-built UTM links for your marketing campaigns. All links track to t
 3. **Tracking**: All links auto-track to your Admin → Campaigns dashboard
 4. **Shortening**: Use bit.ly or similar for long URLs in print/social
 5. **Testing**: Always test links before publishing campaigns
+
+---
+
+## 📋 Campaign Summary
+
+| Category | Campaigns | Target Audience |
+|----------|-----------|-----------------|
+| Tech & AI | 7 | Tech leaders, AI founders, ML engineers, robotics, GenAI, crypto, VCs |
+| Finance | 4 | Hedge funds, PE, family offices, wealth advisors |
+| Executive | 2 | CEOs, startup founders |
+| Professional | 3 | Physicians, attorneys, real estate developers |
+| Entertainment | 2 | Athletes, entertainment industry |
+| Travel | 4 | Luxury travel, VIP events, yacht, aviation |
+| Regional | 6 | London, Dubai, NYC, Singapore, Monaco, Zurich |
+
+**Total Active Campaigns: 28**

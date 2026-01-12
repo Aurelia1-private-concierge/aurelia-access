@@ -19,6 +19,7 @@ const campaigns: Record<string, {
   benefits: string[];
   source: string;
   theme?: "dark" | "gold";
+  badge?: string;
 }> = {
   "luxury-travel": {
     headline: "Elevate Your Travel Experience",
@@ -55,6 +56,71 @@ const campaigns: Record<string, {
       "Family office integration",
     ],
     source: "campaign_wealth",
+  },
+  "tech-leaders": {
+    headline: "Time is Your Scarcest Resource",
+    subheadline: "You've built the future. Now let Aurelia's AI-powered concierge optimize your lifestyle while you focus on what matters.",
+    ctaText: "Claim Your Time Back",
+    badge: "Built for Tech Leaders",
+    benefits: [
+      "AI-enhanced request processing",
+      "Async-first communication",
+      "API integrations with your calendar",
+      "Privacy-first data handling",
+    ],
+    source: "campaign_tech_leaders",
+  },
+  "ai-founders": {
+    headline: "From Exit to Extraordinary",
+    subheadline: "You disrupted an industry. Now experience a concierge service that understands the pace of innovation.",
+    ctaText: "Schedule Private Preview",
+    badge: "For AI/ML Executives",
+    benefits: [
+      "Dedicated liaison (not a chatbot)",
+      "Last-minute travel optimization",
+      "Exclusive founder retreats access",
+      "Family office coordination",
+    ],
+    source: "campaign_ai_founders",
+  },
+  "ml-engineers": {
+    headline: "Deploy Your Lifestyle",
+    subheadline: "You optimize models at scale. We optimize every other aspect of your life with the same precision.",
+    ctaText: "Request Early Access",
+    badge: "Tech Professional Tier",
+    benefits: [
+      "24/7 async support globally",
+      "Seamless expense reporting",
+      "Conference & speaking logistics",
+      "Relocation & visa assistance",
+    ],
+    source: "campaign_ml_engineers",
+  },
+  "robotics": {
+    headline: "Automate Your Lifestyle",
+    subheadline: "You build machines that work for humans. Now experience service that works seamlessly for you.",
+    ctaText: "Join Founder Circle",
+    badge: "Robotics & Deep Tech",
+    benefits: [
+      "Lab-to-destination logistics",
+      "International travel coordination",
+      "Hardware event VIP access",
+      "Team retreat planning",
+    ],
+    source: "campaign_robotics",
+  },
+  "genai": {
+    headline: "The Only Prompt You Need",
+    subheadline: "One message to Aurelia. Everything else handled—from Michelin reservations to Monaco weekends.",
+    ctaText: "Unlock White-Glove AI",
+    badge: "Generative AI Professionals",
+    benefits: [
+      "Human+AI hybrid service",
+      "Context-aware recommendations",
+      "Voice-first interaction option",
+      "Unlimited request credits",
+    ],
+    source: "campaign_genai",
   },
   "default": {
     headline: "The Future of Luxury Awaits",
@@ -144,7 +210,7 @@ const Campaign = () => {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/30 bg-primary/5 text-primary mb-8"
             >
               <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">Exclusive Invitation</span>
+              <span className="text-sm font-medium">{campaign.badge || "Exclusive Invitation"}</span>
             </motion.div>
 
             {/* Title */}

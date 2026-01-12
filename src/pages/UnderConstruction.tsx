@@ -103,6 +103,9 @@ const demoFeatures = [
   },
 ];
 
+// Royalty-free ambient luxury music URL (no API needed)
+const AMBIENT_MUSIC_URL = "https://assets.mixkit.co/music/preview/mixkit-serene-view-443.mp3";
+
 const DemoVideoSection = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -112,49 +115,6 @@ const DemoVideoSection = () => {
   const [progress, setProgress] = useState(0);
   const [hasAutoPlayed, setHasAutoPlayed] = useState(false);
   const [showUnmuteHint, setShowUnmuteHint] = useState(false);
-  const [audioLoaded, setAudioLoaded] = useState(false);
-  const [isLoadingAudio, setIsLoadingAudio] = useState(false);
-
-  // Load background music on component mount
-  useEffect(() => {
-    const loadAudio = async () => {
-      if (audioLoaded || isLoadingAudio) return;
-      
-      setIsLoadingAudio(true);
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-demo-music`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-            },
-            body: JSON.stringify({ 
-              prompt: "Elegant ambient luxury music, sophisticated piano with soft strings, cinematic premium feel, calm refined atmosphere for high-end brand",
-              duration: 30 
-            }),
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.audioContent && audioRef.current) {
-            audioRef.current.src = `data:audio/mpeg;base64,${data.audioContent}`;
-            audioRef.current.loop = true;
-            setAudioLoaded(true);
-          }
-        }
-      } catch (error) {
-        console.error("Failed to load background music:", error);
-      } finally {
-        setIsLoadingAudio(false);
-      }
-    };
-
-    loadAudio();
-  }, [audioLoaded, isLoadingAudio]);
 
   // Scroll-triggered autoplay (muted for browser compliance)
   useEffect(() => {
@@ -186,25 +146,30 @@ const DemoVideoSection = () => {
     const audio = audioRef.current;
     if (!video || !audio) return;
 
-    const handlePlay = () => {
-      if (!isMuted && audioLoaded) {
-        audio.currentTime = video.currentTime % audio.duration;
+    const handleVideoPlay = () => {
+      if (!isMuted) {
         audio.play().catch(() => {});
       }
     };
 
-    const handlePause = () => {
+    const handleVideoPause = () => {
       audio.pause();
     };
 
-    video.addEventListener('play', handlePlay);
-    video.addEventListener('pause', handlePause);
+    const handleVideoEnded = () => {
+      audio.currentTime = 0;
+    };
+
+    video.addEventListener('play', handleVideoPlay);
+    video.addEventListener('pause', handleVideoPause);
+    video.addEventListener('ended', handleVideoEnded);
 
     return () => {
-      video.removeEventListener('play', handlePlay);
-      video.removeEventListener('pause', handlePause);
+      video.removeEventListener('play', handleVideoPlay);
+      video.removeEventListener('pause', handleVideoPause);
+      video.removeEventListener('ended', handleVideoEnded);
     };
-  }, [isMuted, audioLoaded]);
+  }, [isMuted]);
 
   // Progress bar update
   useEffect(() => {
@@ -228,7 +193,7 @@ const DemoVideoSection = () => {
       } else {
         videoRef.current.play();
         // When user manually plays, unmute for better experience
-        if (isMuted && audioLoaded) {
+        if (isMuted) {
           setIsMuted(false);
           audioRef.current?.play().catch(() => {});
         }
@@ -242,7 +207,7 @@ const DemoVideoSection = () => {
     setIsMuted(newMuted);
     setShowUnmuteHint(false);
     
-    if (audioRef.current && audioLoaded) {
+    if (audioRef.current) {
       if (newMuted) {
         audioRef.current.pause();
       } else if (isPlaying) {
@@ -267,7 +232,7 @@ const DemoVideoSection = () => {
       className="w-full max-w-5xl mx-auto"
     >
       {/* Hidden audio element for background music */}
-      <audio ref={audioRef} preload="none" />
+      <audio ref={audioRef} src={AMBIENT_MUSIC_URL} preload="auto" loop />
       {/* Section Header */}
       <div className="text-center mb-10">
         <motion.div

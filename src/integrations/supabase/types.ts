@@ -169,6 +169,63 @@ export type Database = {
           },
         ]
       }
+      certificates: {
+        Row: {
+          auto_renew: boolean | null
+          certificate_type: string | null
+          created_at: string
+          domain: string | null
+          expires_at: string
+          fingerprint_sha256: string | null
+          id: string
+          issued_at: string | null
+          issuer: string | null
+          last_checked_at: string | null
+          metadata: Json | null
+          name: string
+          renewal_reminder_days: number | null
+          serial_number: string | null
+          status: Database["public"]["Enums"]["certificate_status"]
+          updated_at: string
+        }
+        Insert: {
+          auto_renew?: boolean | null
+          certificate_type?: string | null
+          created_at?: string
+          domain?: string | null
+          expires_at: string
+          fingerprint_sha256?: string | null
+          id?: string
+          issued_at?: string | null
+          issuer?: string | null
+          last_checked_at?: string | null
+          metadata?: Json | null
+          name: string
+          renewal_reminder_days?: number | null
+          serial_number?: string | null
+          status?: Database["public"]["Enums"]["certificate_status"]
+          updated_at?: string
+        }
+        Update: {
+          auto_renew?: boolean | null
+          certificate_type?: string | null
+          created_at?: string
+          domain?: string | null
+          expires_at?: string
+          fingerprint_sha256?: string | null
+          id?: string
+          issued_at?: string | null
+          issuer?: string | null
+          last_checked_at?: string | null
+          metadata?: Json | null
+          name?: string
+          renewal_reminder_days?: number | null
+          serial_number?: string | null
+          status?: Database["public"]["Enums"]["certificate_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       client_notes: {
         Row: {
           client_id: string
@@ -570,6 +627,51 @@ export type Database = {
         }
         Relationships: []
       }
+      encryption_keys: {
+        Row: {
+          algorithm: string
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          key_identifier: string
+          key_version: number
+          metadata: Json | null
+          next_rotation_at: string | null
+          rotated_at: string | null
+          rotation_interval_days: number | null
+          status: Database["public"]["Enums"]["encryption_key_status"]
+        }
+        Insert: {
+          algorithm?: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          key_identifier: string
+          key_version?: number
+          metadata?: Json | null
+          next_rotation_at?: string | null
+          rotated_at?: string | null
+          rotation_interval_days?: number | null
+          status?: Database["public"]["Enums"]["encryption_key_status"]
+        }
+        Update: {
+          algorithm?: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          key_identifier?: string
+          key_version?: number
+          metadata?: Json | null
+          next_rotation_at?: string | null
+          rotated_at?: string | null
+          rotation_interval_days?: number | null
+          status?: Database["public"]["Enums"]["encryption_key_status"]
+        }
+        Relationships: []
+      }
       funnel_events: {
         Row: {
           campaign: string | null
@@ -611,6 +713,53 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      key_rotation_history: {
+        Row: {
+          affected_records: number | null
+          error_message: string | null
+          id: string
+          key_id: string | null
+          new_version: number
+          old_version: number
+          rotated_at: string
+          rotated_by: string | null
+          rotation_reason: string | null
+          success: boolean
+        }
+        Insert: {
+          affected_records?: number | null
+          error_message?: string | null
+          id?: string
+          key_id?: string | null
+          new_version: number
+          old_version: number
+          rotated_at?: string
+          rotated_by?: string | null
+          rotation_reason?: string | null
+          success?: boolean
+        }
+        Update: {
+          affected_records?: number | null
+          error_message?: string | null
+          id?: string
+          key_id?: string | null
+          new_version?: number
+          old_version?: number
+          rotated_at?: string
+          rotated_by?: string | null
+          rotation_reason?: string | null
+          success?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "key_rotation_history_key_id_fkey"
+            columns: ["key_id"]
+            isOneToOne: false
+            referencedRelation: "encryption_keys"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       launch_signups: {
         Row: {
@@ -1405,6 +1554,48 @@ export type Database = {
         }
         Relationships: []
       }
+      security_audit_events: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          description: string
+          event_type: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          resource_id: string | null
+          resource_type: string
+          severity: string
+          user_agent: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          description: string
+          event_type: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type: string
+          severity?: string
+          user_agent?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          description?: string
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type?: string
+          severity?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       sent_notifications: {
         Row: {
           channel: string
@@ -1981,6 +2172,56 @@ export type Database = {
         }
         Returns: boolean
       }
+      get_expiring_certificates: {
+        Args: { days_threshold?: number }
+        Returns: {
+          auto_renew: boolean | null
+          certificate_type: string | null
+          created_at: string
+          domain: string | null
+          expires_at: string
+          fingerprint_sha256: string | null
+          id: string
+          issued_at: string | null
+          issuer: string | null
+          last_checked_at: string | null
+          metadata: Json | null
+          name: string
+          renewal_reminder_days: number | null
+          serial_number: string | null
+          status: Database["public"]["Enums"]["certificate_status"]
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "certificates"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      get_keys_due_for_rotation: {
+        Args: never
+        Returns: {
+          algorithm: string
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          key_identifier: string
+          key_version: number
+          metadata: Json | null
+          next_rotation_at: string | null
+          rotated_at: string | null
+          rotation_interval_days: number | null
+          status: Database["public"]["Enums"]["encryption_key_status"]
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "encryption_keys"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       has_active_trial: { Args: { p_user_id: string }; Returns: boolean }
       has_role: {
         Args: {
@@ -1992,6 +2233,8 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "partner" | "member"
+      certificate_status: "active" | "pending" | "expired" | "revoked"
+      encryption_key_status: "active" | "rotating" | "retired" | "compromised"
       partner_status: "pending" | "approved" | "suspended" | "rejected"
       request_status:
         | "pending"
@@ -2139,6 +2382,8 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "partner", "member"],
+      certificate_status: ["active", "pending", "expired", "revoked"],
+      encryption_key_status: ["active", "rotating", "retired", "compromised"],
       partner_status: ["pending", "approved", "suspended", "rejected"],
       request_status: [
         "pending",

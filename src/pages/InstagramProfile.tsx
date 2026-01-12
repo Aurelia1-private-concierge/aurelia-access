@@ -151,8 +151,8 @@ const InstagramProfile = () => {
                 ✈️ Private Jets • Yachts • Experiences<br />
                 🤖 Meet Orla, your AI concierge
               </div>
-              <a href="https://aurelia.com" className="text-primary text-sm font-medium hover:underline">
-                aurelia.com
+              <a href="https://aurelia-privateconcierge.com" className="text-primary text-sm font-medium hover:underline">
+                aurelia-privateconcierge.com
               </a>
             </div>
           </div>

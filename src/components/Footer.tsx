@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Logo, BRAND } from "@/components/brand";
 import LanguageSwitcher from "./LanguageSwitcher";
+import SecurityTrustBadge from "./SecurityTrustBadge";
 
 const Footer = () => {
   const { t } = useTranslation();
@@ -32,6 +33,9 @@ const Footer = () => {
               <p className="text-sm text-muted-foreground/70 mt-4 leading-relaxed max-w-sm">
                 {BRAND.description} {BRAND.tagline}
               </p>
+              <div className="mt-4">
+                <SecurityTrustBadge variant="compact" />
+              </div>
               <div className="flex items-center gap-3 mt-6">
                 {[
                   { icon: Instagram, href: "/instagram", label: "Instagram", isInternal: true },

@@ -24,7 +24,6 @@ export interface WellnessData {
   resting_hr: number | null;
   sleep_hours: number | null;
   provider: string;
-  demo_mode?: boolean;
 }
 
 export function useWearables() {
@@ -105,12 +104,10 @@ export function useWearables() {
 
       if (error) throw error;
 
-      if (data.demo_mode) {
-        toast.info(data.message, {
-          description: "Demo data will be shown instead.",
+      if (data.error) {
+        toast.error(data.error, {
+          description: "Please configure API credentials to connect this device.",
         });
-        // Create a demo connection
-        await createDemoConnection(provider);
         return;
       }
 
@@ -122,28 +119,6 @@ export function useWearables() {
       toast.error(`Failed to connect ${provider === "oura" ? "Oura Ring" : "WHOOP"}`);
     }
   }, [user]);
-
-  // Create demo connection (when real API not available)
-  const createDemoConnection = async (provider: WearableProvider) => {
-    if (!user) return;
-
-    const { error } = await supabase
-      .from("wearable_connections")
-      .upsert({
-        user_id: user.id,
-        provider,
-        access_token: "demo_token",
-        device_name: provider === "oura" ? "Oura Ring (Demo)" : "WHOOP Band (Demo)",
-        last_sync_at: new Date().toISOString(),
-        sync_enabled: true,
-      }, { onConflict: "user_id,provider" });
-
-    if (!error) {
-      toast.success(`${provider === "oura" ? "Oura Ring" : "WHOOP"} connected (Demo Mode)`);
-      fetchConnections();
-      syncData(provider);
-    }
-  };
 
   // Disconnect provider
   const disconnect = useCallback(async (provider: WearableProvider) => {
@@ -179,32 +154,20 @@ export function useWearables() {
 
       if (error) throw error;
 
-      if (data.demo_mode) {
-        // Store demo data locally
-        const demoData = {
-          ...data.data,
-          date: new Date().toISOString().split("T")[0],
-          provider,
-          demo_mode: true,
-        };
-        setWellnessData(demoData);
-        
-        // Also store in database
-        await supabase.from("wellness_data").upsert({
-          user_id: user.id,
-          provider,
-          date: demoData.date,
-          ...data.data,
-        }, { onConflict: "user_id,provider,date" });
-      } else if (data.data) {
+      if (data.error) {
+        toast.error(data.error);
+        return;
+      }
+
+      if (data.data) {
         setWellnessData({
           ...data.data,
           date: new Date().toISOString().split("T")[0],
           provider,
         });
+        toast.success("Data synced successfully!");
       }
 
-      toast.success("Data synced successfully!");
       fetchConnections();
     } catch (error: any) {
       console.error("Sync error:", error);

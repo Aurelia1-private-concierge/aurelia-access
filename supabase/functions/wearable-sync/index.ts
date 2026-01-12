@@ -46,21 +46,18 @@ const handler = async (req: Request): Promise<Response> => {
       .single();
 
     if (connError || !connection) {
-      // Return demo data if no real connection
       return new Response(
         JSON.stringify({
-          demo_mode: true,
-          data: generateDemoData(provider, targetDate),
+          error: "No connection found. Please connect your device first.",
         }),
-        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        { status: 404, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
     // Check if token needs refresh
     if (connection.expires_at && new Date(connection.expires_at) < new Date()) {
-      // Token expired, needs refresh
       return new Response(
-        JSON.stringify({ error: "Token expired", needs_refresh: true }),
+        JSON.stringify({ error: "Token expired. Please reconnect your device.", needs_refresh: true }),
         { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }

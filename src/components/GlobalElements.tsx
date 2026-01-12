@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import PWAInstallPrompt from "./PWAInstallPrompt";
 import MusicPlayer from "./MusicPlayer";
@@ -7,6 +7,7 @@ import OrlaFAB from "./OrlaFAB";
 import SystemHealthIndicator from "./SystemHealthIndicator";
 import OfflineBanner from "./OfflineBanner";
 import NotificationPermissionPrompt from "./NotificationPermissionPrompt";
+import { useOfflineAI } from "@/hooks/useOfflineAI";
 
 // Lazy load heavy components
 const AmbientParticles = lazy(() => import("./AmbientParticles"));
@@ -32,6 +33,12 @@ const GlobalElements = ({
   showNotificationPrompt = true,
 }: GlobalElementsProps) => {
   const location = useLocation();
+  const { toggleOfflineMode } = useOfflineAI();
+  
+  // Enable offline mode on mount
+  useEffect(() => {
+    toggleOfflineMode(true);
+  }, []);
   
   // Don't show global elements on certain pages
   const hideOnPages = ["/auth", "/admin", "/orla"];

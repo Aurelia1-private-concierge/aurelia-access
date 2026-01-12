@@ -30,9 +30,16 @@ const CACHE_PREFIX = 'aurelia_offline_';
 const QUEUE_KEY = 'aurelia_sync_queue';
 const MAX_CACHE_SIZE = 50 * 1024 * 1024; // 50MB
 
+// Key for persisting forced offline state
+const FORCED_OFFLINE_KEY = 'aurelia_forced_offline';
+
 export const useOfflineAI = () => {
+  const [forcedOffline, setForcedOffline] = useState(() => {
+    return localStorage.getItem(FORCED_OFFLINE_KEY) === 'true';
+  });
+  
   const [offlineState, setOfflineState] = useState<OfflineState>({
-    isOffline: !navigator.onLine,
+    isOffline: !navigator.onLine || localStorage.getItem(FORCED_OFFLINE_KEY) === 'true',
     cachedPages: [],
     pendingSync: 0,
     lastSync: null,
@@ -42,6 +49,14 @@ export const useOfflineAI = () => {
 
   const syncQueue = useRef<QueuedAction[]>([]);
   const isSyncing = useRef(false);
+
+  // Toggle forced offline mode
+  const toggleOfflineMode = useCallback((enabled?: boolean) => {
+    const newValue = enabled !== undefined ? enabled : !forcedOffline;
+    setForcedOffline(newValue);
+    localStorage.setItem(FORCED_OFFLINE_KEY, String(newValue));
+    setOfflineState(prev => ({ ...prev, isOffline: newValue || !navigator.onLine }));
+  }, [forcedOffline]);
 
   // Calculate storage usage
   const calculateStorageUsage = useCallback(() => {
@@ -266,8 +281,10 @@ export const useOfflineAI = () => {
     
     // Listen for online/offline events
     const handleOnline = () => {
-      setOfflineState(prev => ({ ...prev, isOffline: false }));
-      processSyncQueue();
+      if (!forcedOffline) {
+        setOfflineState(prev => ({ ...prev, isOffline: false }));
+        processSyncQueue();
+      }
     };
     
     const handleOffline = () => {
@@ -304,6 +321,8 @@ export const useOfflineAI = () => {
 
   return {
     offlineState,
+    forcedOffline,
+    toggleOfflineMode,
     cacheData,
     getCachedData,
     queueAction,

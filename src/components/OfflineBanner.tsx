@@ -1,17 +1,14 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { WifiOff, Cloud, RefreshCw, Database } from 'lucide-react';
+import { WifiOff, Cloud, RefreshCw, Database, Wifi } from 'lucide-react';
 import { useOfflineAI } from '@/hooks/useOfflineAI';
+import { Switch } from '@/components/ui/switch';
 
 export const OfflineBanner = () => {
-  const { offlineState, processSyncQueue } = useOfflineAI();
-
-  if (!offlineState.isOffline && offlineState.pendingSync === 0) {
-    return null;
-  }
+  const { offlineState, forcedOffline, toggleOfflineMode, processSyncQueue } = useOfflineAI();
 
   return (
     <AnimatePresence>
-      {(offlineState.isOffline || offlineState.pendingSync > 0) && (
+      {(offlineState.isOffline || offlineState.pendingSync > 0 || forcedOffline) && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -39,7 +36,7 @@ export const OfflineBanner = () => {
                   offlineState.isOffline ? 'text-amber-400' : 'text-primary'
                 }`}>
                   {offlineState.isOffline 
-                    ? 'You\'re offline' 
+                    ? forcedOffline ? 'Offline Mode (Forced)' : 'You\'re offline' 
                     : `${offlineState.pendingSync} changes to sync`
                   }
                 </p>
@@ -69,6 +66,18 @@ export const OfflineBanner = () => {
                   whileTap={{ scale: 0.9 }}
                 >
                   <RefreshCw className="w-3.5 h-3.5 text-primary" />
+                </motion.button>
+              )}
+              
+              {/* Toggle to go back online */}
+              {forcedOffline && (
+                <motion.button
+                  onClick={() => toggleOfflineMode(false)}
+                  className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 transition-colors"
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Wifi className="w-3 h-3 text-emerald-400" />
+                  <span className="text-[10px] text-emerald-400 font-medium">Go Online</span>
                 </motion.button>
               )}
             </div>

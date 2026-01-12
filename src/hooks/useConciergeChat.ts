@@ -37,25 +37,31 @@ export const useConciergeChat = () => {
     if (!user) return null;
 
     try {
-      // Check for existing conversation
-      const { data: existing, error: fetchError } = await supabase
+      // Check for existing conversation - use maybeSingle to handle no rows gracefully
+      const { data: existingList, error: fetchError } = await supabase
         .from("conversations")
         .select("*")
         .eq("user_id", user.id)
+        .eq("channel", "concierge")
         .order("last_message_at", { ascending: false })
-        .limit(1)
-        .single();
+        .limit(1);
 
-      if (existing && !fetchError) {
+      if (fetchError) {
+        console.error("Error fetching conversation:", fetchError);
+      }
+
+      const existing = existingList?.[0];
+      if (existing) {
         setConversation(existing);
         return existing;
       }
 
-      // Create new conversation
+      // Create new conversation for concierge chat
       const { data: newConv, error: createError } = await supabase
         .from("conversations")
         .insert({
           user_id: user.id,
+          channel: "concierge",
           metadata: { type: "concierge_support" },
         })
         .select()

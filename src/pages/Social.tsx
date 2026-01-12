@@ -31,27 +31,27 @@ const YouTubeIcon = ({ className }: { className?: string }) => (
 const socialPlatforms = [
   {
     name: "Instagram",
-    handle: "@aurelia.concierge",
+    handle: "@aurelia.private.concierge",
     description: "Behind-the-scenes glimpses of extraordinary experiences, curated aesthetics, and lifestyle inspiration.",
     icon: Instagram,
-    href: "https://instagram.com/aureliaprivateconcierge",
+    href: "https://www.instagram.com/aurelia.private.concierge",
     internalLink: "/instagram",
     color: "from-purple-500 via-pink-500 to-orange-400",
     followers: "125K followers"
   },
   {
     name: "TikTok",
-    handle: "@aurelia.concierge",
+    handle: "@aurelia.private.concierge",
     description: "Viral luxury content, exclusive access moments, and behind-the-scenes of the extraordinary.",
     icon: TikTokIcon,
-    href: "https://tiktok.com/@aurelia.concierge",
+    href: "https://www.tiktok.com/@aurelia.private.concierge",
     internalLink: "/tiktok",
     color: "from-gray-900 to-gray-800",
     followers: "2.4M followers"
   },
   {
     name: "YouTube",
-    handle: "@aureliaprivateconcierge",
+    handle: "@AureliaPrivateConcierge",
     description: "Documentary-style content exploring the world of ultra-luxury travel, properties, and exclusive experiences.",
     icon: YouTubeIcon,
     href: "https://youtube.com/@aureliaprivateconcierge",
@@ -64,7 +64,7 @@ const socialPlatforms = [
     handle: "Aurelia Private Concierge",
     description: "Professional insights, partnership opportunities, and thought leadership in luxury lifestyle management.",
     icon: Linkedin,
-    href: "https://linkedin.com/company/aurelia-private-concierge",
+    href: "https://www.linkedin.com/company/aurelia-private-concierge",
     internalLink: "/linkedin",
     color: "from-blue-700 to-blue-600",
     followers: "47.2K followers"
@@ -81,10 +81,10 @@ const socialPlatforms = [
   },
   {
     name: "X (Twitter)",
-    handle: "@aureliaprivate",
+    handle: "@AureliaPrivate_",
     description: "Real-time updates, industry insights, and conversations about the art of refined living.",
     icon: Twitter,
-    href: "https://x.com/aureliaprivate",
+    href: "https://x.com/AureliaPrivate_",
     internalLink: "/twitter",
     color: "from-gray-800 to-gray-700",
     followers: "89.2K followers"

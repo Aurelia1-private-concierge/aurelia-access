@@ -9,7 +9,7 @@ export const BRAND = {
   name: "AURELIA",
   tagline: "Engineered for sovereignty, curated for legacy.",
   description: "The world's most exclusive private concierge for those who demand the extraordinary.",
-  entity: "Ontarget webdesigns.",
+  entity: "Aurelia Holdings Ltd.",
   email: "concierge@aurelia-privateconcierge.com",
   locations: ["London", "Geneva", "Singapore"],
   year: 2026,

@@ -50,6 +50,7 @@ const Campaign = lazy(() => import("./pages/Campaign"));
 const MarketingHub = lazy(() => import("./pages/MarketingHub"));
 const LinkedInProfile = lazy(() => import("./pages/LinkedInProfile"));
 const InstagramProfile = lazy(() => import("./pages/InstagramProfile"));
+const FacebookProfile = lazy(() => import("./pages/FacebookProfile"));
 const TikTokProfile = lazy(() => import("./pages/TikTokProfile"));
 const MediaKit = lazy(() => import("./pages/MediaKit"));
 const Blog = lazy(() => import("./pages/Blog"));
@@ -328,6 +329,14 @@ const AnimatedRoutes = () => {
             element={
               <PageTransition>
                 <TikTokProfile />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/facebook"
+            element={
+              <PageTransition>
+                <FacebookProfile />
               </PageTransition>
             }
           />

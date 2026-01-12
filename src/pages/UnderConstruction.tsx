@@ -152,89 +152,60 @@ const DemoVideoSection = () => {
         </p>
       </div>
 
-      {/* Video Player - Mobile Phone Mockup */}
+      {/* Video Player */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.8 }}
-        className="relative max-w-sm mx-auto mb-12"
+        className="relative max-w-4xl mx-auto mb-12 rounded-2xl overflow-hidden shadow-2xl border border-primary/20"
       >
-        {/* Phone Frame */}
-        <div className="relative">
-          {/* Phone outer frame */}
-          <div className="relative bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] rounded-[3rem] p-2 shadow-2xl">
-            {/* Phone inner bezel */}
-            <div className="relative bg-[#0A0A0A] rounded-[2.5rem] overflow-hidden">
-              {/* Dynamic Island / Notch */}
-              <div className="absolute top-3 left-1/2 -translate-x-1/2 w-24 h-7 bg-[#0A0A0A] rounded-full z-20" />
-              
-              {/* Screen content */}
-              <div className="relative aspect-[9/19.5]">
-                <video
-                  ref={videoRef}
-                  src={aureliaDemo}
-                  className="w-full h-full object-cover"
-                  loop
-                  muted={isMuted}
-                  playsInline
-                  poster=""
-                  onPlay={() => setIsPlaying(true)}
-                  onPause={() => setIsPlaying(false)}
-                />
-                
-                {/* Aurelia Logo Overlay - Top */}
-                <div className="absolute top-12 left-0 right-0 z-10 flex justify-center pointer-events-none">
-                  <div className="px-4 py-2 backdrop-blur-sm bg-black/30 rounded-full border border-primary/20">
-                    <span className="text-sm font-light tracking-[0.25em] text-primary">AURELIA</span>
-                  </div>
-                </div>
-                
-                {/* Video Overlay - Play Button */}
-                {!isPlaying && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer z-10"
-                    onClick={togglePlay}
-                  >
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center shadow-2xl"
-                    >
-                      <Play className="w-6 h-6 text-primary-foreground ml-1" />
-                    </motion.button>
-                  </motion.div>
-                )}
-
-                {/* Video Controls - Inside Phone */}
-                <div className="absolute bottom-6 left-4 right-4 flex items-center justify-between z-10">
-                  <button
-                    onClick={togglePlay}
-                    className="p-2 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white hover:bg-black/70 transition-colors"
-                  >
-                    {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                  </button>
-                  <button
-                    onClick={toggleMute}
-                    className="p-2 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white hover:bg-black/70 transition-colors"
-                  >
-                    {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Phone side buttons */}
-          <div className="absolute left-0 top-28 w-1 h-8 bg-[#2A2A2A] rounded-l-sm" />
-          <div className="absolute left-0 top-44 w-1 h-12 bg-[#2A2A2A] rounded-l-sm" />
-          <div className="absolute left-0 top-60 w-1 h-12 bg-[#2A2A2A] rounded-l-sm" />
-          <div className="absolute right-0 top-36 w-1 h-16 bg-[#2A2A2A] rounded-r-sm" />
+        <div className="relative aspect-video">
+          <video
+            ref={videoRef}
+            src={aureliaDemo}
+            className="w-full h-full object-cover"
+            loop
+            muted={isMuted}
+            playsInline
+            poster=""
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
+          />
           
-          {/* Reflection effect */}
-          <div className="absolute inset-0 rounded-[3rem] bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none" />
+          {/* Video Overlay - Play Button */}
+          {!isPlaying && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer z-10"
+              onClick={togglePlay}
+            >
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-20 h-20 rounded-full bg-primary/90 flex items-center justify-center shadow-2xl"
+              >
+                <Play className="w-8 h-8 text-primary-foreground ml-1" />
+              </motion.button>
+            </motion.div>
+          )}
+
+          {/* Video Controls */}
+          <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between z-10">
+            <button
+              onClick={togglePlay}
+              className="p-3 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white hover:bg-black/70 transition-colors"
+            >
+              {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+            </button>
+            <button
+              onClick={toggleMute}
+              className="p-3 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white hover:bg-black/70 transition-colors"
+            >
+              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
       </motion.div>
 

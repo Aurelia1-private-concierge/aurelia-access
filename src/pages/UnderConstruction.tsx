@@ -54,11 +54,11 @@ const socialLinks = [
   { icon: Facebook, href: "https://facebook.com/aureliaprivateconcierge", label: "Facebook", color: "hover:text-blue-500" },
 ];
 
-const stats = [
-  { value: "50+", label: "Countries Served" },
-  { value: "$10B+", label: "Assets Managed" },
-  { value: "24/7", label: "Concierge Access" },
-  { value: "500+", label: "Partner Network" },
+const highlights = [
+  { icon: Globe, label: "Global Network", desc: "Launching Worldwide" },
+  { icon: Shield, label: "By Invitation", desc: "Exclusive Access" },
+  { icon: Users, label: "Founding Members", desc: "Limited Spots" },
+  { icon: Rocket, label: "Coming Soon", desc: "Early 2026" },
 ];
 
 const services = [
@@ -407,23 +407,24 @@ const UnderConstruction = () => {
               )}
             </motion.div>
 
-            {/* Stats strip for social proof */}
+            {/* Highlights strip */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.55 }}
               className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 max-w-2xl mx-auto"
             >
-              {stats.map((stat, i) => (
+              {highlights.map((item, i) => (
                 <motion.div
-                  key={stat.label}
+                  key={item.label}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 + i * 0.1 }}
-                  className="text-center p-3"
+                  className="text-center p-3 rounded-xl bg-secondary/20 border border-primary/10"
                 >
-                  <p className="text-2xl md:text-3xl font-bold text-primary">{stat.value}</p>
-                  <p className="text-xs text-muted-foreground">{stat.label}</p>
+                  <item.icon className="w-5 h-5 text-primary mx-auto mb-2" />
+                  <p className="text-sm font-medium text-foreground">{item.label}</p>
+                  <p className="text-xs text-muted-foreground">{item.desc}</p>
                 </motion.div>
               ))}
             </motion.div>

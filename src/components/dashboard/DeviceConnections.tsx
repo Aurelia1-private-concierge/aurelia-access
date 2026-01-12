@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
-  Watch, Heart, Fingerprint, Glasses, Wifi,
-  WifiOff, Check, X, Settings, RefreshCw, Zap, Link2, Activity
+  Watch, Heart, Wifi, WifiOff, Check, X, Settings, 
+  RefreshCw, Zap, Link2, Activity, Bluetooth
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -15,7 +15,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { useWearables, type WearableProvider } from "@/hooks/useWearables";
-import { Progress } from "@/components/ui/progress";
+import { useBluetooth } from "@/hooks/useBluetooth";
 
 interface Device {
   id: string;
@@ -28,7 +28,7 @@ interface Device {
   batteryLevel?: number;
   features: string[];
   provider?: WearableProvider;
-  isReal?: boolean;
+  connectionType: "bluetooth" | "oauth";
 }
 
 const DeviceConnections = () => {
@@ -40,27 +40,20 @@ const DeviceConnections = () => {
     connect, 
     disconnect, 
     syncData, 
-    isConnected 
   } = useWearables();
+
+  const bluetooth = useBluetooth();
 
   const [devices, setDevices] = useState<Device[]>([
     {
-      id: "apple-watch",
-      name: "Apple Watch",
-      type: "Series 9",
-      icon: Watch,
-      color: "primary",
+      id: "heart-rate-monitor",
+      name: "Heart Rate Monitor",
+      type: "Bluetooth",
+      icon: Heart,
+      color: "rose",
       connected: false,
-      features: ["Quick Requests", "Credit Balance", "Haptic Notifications", "Siri Shortcuts"],
-    },
-    {
-      id: "vision-pro",
-      name: "Vision Pro",
-      type: "Spatial Computing",
-      icon: Glasses,
-      color: "cyan",
-      connected: false,
-      features: ["Property Tours", "Yacht Walkthroughs", "Gesture Control", "Eye Tracking"],
+      features: ["Real-time HR", "HRV Tracking", "Session Stats", "Wellness Insights"],
+      connectionType: "bluetooth",
     },
     {
       id: "oura-ring",
@@ -71,7 +64,7 @@ const DeviceConnections = () => {
       connected: false,
       features: ["Sleep Tracking", "Readiness Score", "Activity Insights", "Wellness Recommendations"],
       provider: "oura",
-      isReal: true,
+      connectionType: "oauth",
     },
     {
       id: "whoop",
@@ -82,20 +75,11 @@ const DeviceConnections = () => {
       connected: false,
       features: ["Strain Coach", "Recovery Score", "Sleep Performance", "HRV Monitoring"],
       provider: "whoop",
-      isReal: true,
-    },
-    {
-      id: "nfc-ring",
-      name: "NFC Smart Ring",
-      type: "Aurelia Edition",
-      icon: Fingerprint,
-      color: "violet",
-      connected: false,
-      features: ["Venue Access", "Member Verification", "Secure Payments", "Digital Keys"],
+      connectionType: "oauth",
     },
   ]);
 
-  // Update devices based on real connections
+  // Update devices based on real connections (OAuth)
   useEffect(() => {
     setDevices((prev) =>
       prev.map((device) => {
@@ -106,7 +90,6 @@ const DeviceConnections = () => {
               ...device,
               connected: true,
               lastSync: conn.last_sync_at || undefined,
-              type: conn.device_name?.includes("Demo") ? "Demo Mode" : device.type,
             };
           } else {
             return { ...device, connected: false, lastSync: undefined };
@@ -116,6 +99,26 @@ const DeviceConnections = () => {
       })
     );
   }, [connections]);
+
+  // Update Bluetooth device status
+  const isBluetoothConnected = !!bluetooth.connectedDevice?.connected;
+  
+  useEffect(() => {
+    setDevices((prev) =>
+      prev.map((device) => {
+        if (device.connectionType === "bluetooth") {
+          return {
+            ...device,
+            connected: isBluetoothConnected,
+            batteryLevel: bluetooth.connectedDevice?.batteryLevel ?? undefined,
+            lastSync: isBluetoothConnected ? new Date().toISOString() : undefined,
+            type: bluetooth.connectedDevice?.name || "Bluetooth",
+          };
+        }
+        return device;
+      })
+    );
+  }, [isBluetoothConnected, bluetooth.connectedDevice]);
 
   const [connectingDevice, setConnectingDevice] = useState<string | null>(null);
   const [settingsDevice, setSettingsDevice] = useState<Device | null>(null);
@@ -130,65 +133,51 @@ const DeviceConnections = () => {
   };
 
   const handleConnect = async (device: Device) => {
-    if (device.isReal && device.provider) {
-      setConnectingDevice(device.id);
-      await connect(device.provider);
-      setConnectingDevice(null);
-    } else {
-      // Simulated connection for non-API devices
-      setConnectingDevice(device.id);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      
-      setDevices((prev) =>
-        prev.map((d) =>
-          d.id === device.id
-            ? {
-                ...d,
-                connected: true,
-                lastSync: new Date().toISOString(),
-                batteryLevel: Math.floor(Math.random() * 40) + 60,
-              }
-            : d
-        )
-      );
-      
-      setConnectingDevice(null);
-      toast.success("Device connected (Demo Mode)", {
-        description: "This device uses simulated data.",
+    setConnectingDevice(device.id);
+    
+    try {
+      if (device.connectionType === "bluetooth") {
+        await bluetooth.scanAndConnect();
+      } else if (device.provider) {
+        await connect(device.provider);
+      }
+    } catch (error: any) {
+      toast.error("Connection failed", {
+        description: error.message || "Please try again",
       });
+    } finally {
+      setConnectingDevice(null);
     }
   };
 
   const handleDisconnect = async (device: Device) => {
-    if (device.isReal && device.provider) {
-      await disconnect(device.provider);
-    } else {
-      setDevices((prev) =>
-        prev.map((d) =>
-          d.id === device.id
-            ? { ...d, connected: false, lastSync: undefined, batteryLevel: undefined }
-            : d
-        )
-      );
-      toast.info("Device disconnected");
+    try {
+      if (device.connectionType === "bluetooth") {
+        bluetooth.disconnect();
+        toast.success("Bluetooth device disconnected");
+      } else if (device.provider) {
+        await disconnect(device.provider);
+      }
+    } catch (error: any) {
+      toast.error("Disconnect failed", {
+        description: error.message,
+      });
     }
   };
 
   const handleSync = async (device: Device) => {
-    if (device.isReal && device.provider) {
-      await syncData(device.provider);
-    } else {
+    if (device.connectionType === "bluetooth") {
+      toast.info("Bluetooth data syncs automatically in real-time");
+      return;
+    }
+    
+    if (device.provider) {
       setSyncingDevice(device.id);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      setDevices((prev) =>
-        prev.map((d) =>
-          d.id === device.id ? { ...d, lastSync: new Date().toISOString() } : d
-        )
-      );
-      
-      setSyncingDevice(null);
-      toast.success("Device synced!");
+      try {
+        await syncData(device.provider);
+      } finally {
+        setSyncingDevice(null);
+      }
     }
   };
 
@@ -196,6 +185,67 @@ const DeviceConnections = () => {
 
   // Wellness data display for connected health devices
   const renderWellnessCard = () => {
+    // Show Bluetooth health data if connected
+    if (isBluetoothConnected && bluetooth.healthData) {
+      return (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-5 bg-gradient-to-br from-rose-500/10 to-rose-500/5 border border-rose-500/20 rounded-xl mb-6"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Bluetooth className="w-5 h-5 text-rose-400" />
+              <h3 className="font-medium text-foreground">Live Heart Rate</h3>
+            </div>
+            <span className="text-xs text-emerald-400 flex items-center gap-1">
+              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+              Real-time
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {/* Heart Rate */}
+            <div className="text-center">
+              <motion.div 
+                className="text-3xl font-semibold text-rose-400 mb-1"
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ duration: 0.5, repeat: Infinity }}
+              >
+                {bluetooth.healthData.heartRate || "--"}
+              </motion.div>
+              <span className="text-xs text-muted-foreground">BPM</span>
+            </div>
+
+            {/* HRV */}
+            <div className="text-center">
+              <div className="text-2xl font-semibold text-foreground mb-1">
+                {bluetooth.healthData.heartRateVariability?.toFixed(0) || "--"}
+              </div>
+              <span className="text-xs text-muted-foreground">HRV (ms)</span>
+            </div>
+
+            {/* Battery */}
+            <div className="text-center">
+              <div className="text-2xl font-semibold text-foreground mb-1">
+                {bluetooth.connectedDevice?.batteryLevel || "--"}%
+              </div>
+              <span className="text-xs text-muted-foreground">Battery</span>
+            </div>
+
+            {/* Device */}
+            <div className="text-center">
+              <div className="text-sm font-medium text-foreground mb-1 truncate">
+                {bluetooth.connectedDevice?.name || "Unknown"}
+              </div>
+              <span className="text-xs text-muted-foreground">Device</span>
+            </div>
+          </div>
+        </motion.div>
+      );
+    }
+
+    // Show OAuth wellness data
     if (!wellnessData) return null;
 
     const isOura = wellnessData.provider === "oura";
@@ -217,7 +267,6 @@ const DeviceConnections = () => {
           </div>
           <span className="text-xs text-muted-foreground">
             {wellnessData.provider === "oura" ? "Oura Ring" : "WHOOP"}
-            {(wellnessData as any).demo_mode && " • Demo"}
           </span>
         </div>
 
@@ -281,6 +330,9 @@ const DeviceConnections = () => {
     );
   };
 
+  // Check if Bluetooth is supported
+  const bluetoothSupported = bluetooth.isSupported;
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -296,6 +348,16 @@ const DeviceConnections = () => {
           <span className="text-xs text-primary font-medium">LIVE SYNC</span>
         </div>
       </div>
+
+      {/* Bluetooth Support Warning */}
+      {!bluetoothSupported && (
+        <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+          <p className="text-sm text-amber-400">
+            Web Bluetooth is not supported in this browser. For Bluetooth device connections, 
+            please use Chrome, Edge, or Opera on desktop, or Chrome on Android.
+          </p>
+        </div>
+      )}
 
       {/* Connection Status Bar */}
       <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden">
@@ -315,8 +377,11 @@ const DeviceConnections = () => {
         {devices.map((device) => {
           const colors = colorClasses[device.color];
           const Icon = device.icon;
-          const isConnecting = connectingDevice === device.id;
+          const isConnecting = connectingDevice === device.id || 
+            (device.connectionType === "bluetooth" && bluetooth.isScanning);
           const isSyncing = syncingDevice === device.id || syncing === device.provider;
+          const isBluetoothDevice = device.connectionType === "bluetooth";
+          const isDisabled = isBluetoothDevice && !bluetoothSupported;
 
           return (
             <motion.div
@@ -326,7 +391,7 @@ const DeviceConnections = () => {
               animate={{ opacity: 1, y: 0 }}
               className={`p-5 bg-secondary/20 border rounded-xl transition-all ${
                 device.connected ? "border-primary/30" : "border-border/30"
-              }`}
+              } ${isDisabled ? "opacity-50" : ""}`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
@@ -334,7 +399,11 @@ const DeviceConnections = () => {
                   <div
                     className={`w-14 h-14 rounded-xl ${colors.bg} ${colors.border} border flex items-center justify-center relative`}
                   >
-                    <Icon className={`w-7 h-7 ${colors.text}`} />
+                    {isBluetoothDevice ? (
+                      <Bluetooth className={`w-7 h-7 ${colors.text}`} />
+                    ) : (
+                      <Icon className={`w-7 h-7 ${colors.text}`} />
+                    )}
                     {device.connected && (
                       <motion.div
                         initial={{ scale: 0 }}
@@ -351,11 +420,13 @@ const DeviceConnections = () => {
                     <div className="flex items-center gap-2">
                       <h3 className="text-lg font-medium text-foreground">{device.name}</h3>
                       <span className="text-xs text-muted-foreground">{device.type}</span>
-                      {device.isReal && (
-                        <span className="text-[10px] px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 rounded-full">
-                          API
-                        </span>
-                      )}
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                        isBluetoothDevice 
+                          ? "bg-blue-500/10 text-blue-400" 
+                          : "bg-emerald-500/10 text-emerald-400"
+                      }`}>
+                        {isBluetoothDevice ? "Bluetooth" : "OAuth"}
+                      </span>
                     </div>
                     
                     {device.connected ? (
@@ -413,15 +484,17 @@ const DeviceConnections = () => {
                 <div className="flex items-center gap-2">
                   {device.connected ? (
                     <>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleSync(device)}
-                        disabled={isSyncing}
-                        className="h-9 w-9"
-                      >
-                        <RefreshCw className={`w-4 h-4 ${isSyncing ? "animate-spin" : ""}`} />
-                      </Button>
+                      {!isBluetoothDevice && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleSync(device)}
+                          disabled={isSyncing}
+                          className="h-9 w-9"
+                        >
+                          <RefreshCw className={`w-4 h-4 ${isSyncing ? "animate-spin" : ""}`} />
+                        </Button>
+                      )}
                       <Button
                         variant="ghost"
                         size="icon"
@@ -443,17 +516,21 @@ const DeviceConnections = () => {
                   ) : (
                     <Button
                       onClick={() => handleConnect(device)}
-                      disabled={isConnecting}
+                      disabled={isConnecting || isDisabled}
                       className="bg-gradient-to-r from-primary to-primary/80"
                     >
                       {isConnecting ? (
                         <>
                           <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                          Connecting...
+                          {isBluetoothDevice ? "Scanning..." : "Connecting..."}
                         </>
                       ) : (
                         <>
-                          <Link2 className="w-4 h-4 mr-2" />
+                          {isBluetoothDevice ? (
+                            <Bluetooth className="w-4 h-4 mr-2" />
+                          ) : (
+                            <Link2 className="w-4 h-4 mr-2" />
+                          )}
                           Connect
                         </>
                       )}
@@ -471,7 +548,11 @@ const DeviceConnections = () => {
         <DialogContent className="sm:max-w-md bg-card border-border/30">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              {settingsDevice && <settingsDevice.icon className="w-5 h-5 text-primary" />}
+              {settingsDevice?.connectionType === "bluetooth" ? (
+                <Bluetooth className="w-5 h-5 text-primary" />
+              ) : settingsDevice && (
+                <settingsDevice.icon className="w-5 h-5 text-primary" />
+              )}
               {settingsDevice?.name} Settings
             </DialogTitle>
             <DialogDescription>
@@ -529,7 +610,7 @@ const DeviceConnections = () => {
       {/* Info Notice */}
       <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl">
         <p className="text-xs text-center text-primary/80">
-          🔗 Oura Ring and WHOOP connections use real APIs when credentials are configured. Other devices use demo mode.
+          🔗 Bluetooth heart rate monitors connect directly. Oura Ring and WHOOP require OAuth authentication with real API credentials.
         </p>
       </div>
     </div>

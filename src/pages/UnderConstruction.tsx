@@ -103,8 +103,8 @@ const demoFeatures = [
   },
 ];
 
-// Royalty-free ambient luxury music URL (no API needed)
-const AMBIENT_MUSIC_URL = "https://assets.mixkit.co/music/preview/mixkit-serene-view-443.mp3";
+// Local ambient luxury music file
+const AMBIENT_MUSIC_URL = "/audio/ambient-luxury.mp3";
 
 const DemoVideoSection = () => {
   const videoRef = useRef<HTMLVideoElement>(null);

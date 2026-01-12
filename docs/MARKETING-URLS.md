@@ -17,6 +17,13 @@ Use these pre-built UTM links for your marketing campaigns. All links track to t
 - **Article**: `https://aurelia-privateconcierge.com/membership?utm_source=linkedin&utm_medium=organic_social&utm_campaign=thought_leadership`
 - **Sponsored**: `https://aurelia-privateconcierge.com/?utm_source=linkedin&utm_medium=paid_social&utm_campaign=linkedin_sponsored`
 
+### LinkedIn - Tech & AI Targeting
+- **Tech Leaders**: `https://aurelia-privateconcierge.com/campaign/tech-leaders?utm_source=linkedin&utm_medium=paid_social&utm_campaign=tech_leaders`
+- **AI/ML Founders**: `https://aurelia-privateconcierge.com/campaign/ai-founders?utm_source=linkedin&utm_medium=paid_social&utm_campaign=ai_founders`
+- **ML Engineers**: `https://aurelia-privateconcierge.com/campaign/ml-engineers?utm_source=linkedin&utm_medium=paid_social&utm_campaign=ml_engineers`
+- **Robotics/Deep Tech**: `https://aurelia-privateconcierge.com/campaign/robotics?utm_source=linkedin&utm_medium=paid_social&utm_campaign=robotics`
+- **GenAI Professionals**: `https://aurelia-privateconcierge.com/campaign/genai?utm_source=linkedin&utm_medium=paid_social&utm_campaign=genai`
+
 ### Twitter/X
 - **Tweet**: `https://aurelia-privateconcierge.com/?utm_source=twitter&utm_medium=organic_social&utm_campaign=tweet`
 - **Thread**: `https://aurelia-privateconcierge.com/?utm_source=twitter&utm_medium=organic_social&utm_campaign=thread`

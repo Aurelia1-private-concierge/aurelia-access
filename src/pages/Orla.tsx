@@ -13,7 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useVoiceSession } from "@/hooks/useVoiceSession";
 import orlaAvatar from "@/assets/orla-avatar.png";
 
-const ELEVENLABS_AGENT_ID = "agent_01jx7t3mjgeqzsjh5qxbvdsxey";
+const ELEVENLABS_AGENT_ID = "06d4366fbeffc3e8b4b0d11b4c1c9327cfd5fc598644119c3a69bc0e9ebfe3fd";
 
 interface TranscriptEntry {
   id: string;

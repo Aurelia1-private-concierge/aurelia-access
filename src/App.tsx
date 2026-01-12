@@ -52,6 +52,8 @@ const LinkedInProfile = lazy(() => import("./pages/LinkedInProfile"));
 const InstagramProfile = lazy(() => import("./pages/InstagramProfile"));
 const FacebookProfile = lazy(() => import("./pages/FacebookProfile"));
 const TikTokProfile = lazy(() => import("./pages/TikTokProfile"));
+const TwitterProfile = lazy(() => import("./pages/TwitterProfile"));
+const YouTubeProfile = lazy(() => import("./pages/YouTubeProfile"));
 const MediaKit = lazy(() => import("./pages/MediaKit"));
 const Blog = lazy(() => import("./pages/Blog"));
 const Security = lazy(() => import("./pages/Security"));
@@ -337,6 +339,22 @@ const AnimatedRoutes = () => {
             element={
               <PageTransition>
                 <FacebookProfile />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/twitter"
+            element={
+              <PageTransition>
+                <TwitterProfile />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/youtube"
+            element={
+              <PageTransition>
+                <YouTubeProfile />
               </PageTransition>
             }
           />

@@ -110,11 +110,57 @@ const DemoVideoSection = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const fadeIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [progress, setProgress] = useState(0);
   const [hasAutoPlayed, setHasAutoPlayed] = useState(false);
   const [showUnmuteHint, setShowUnmuteHint] = useState(false);
+  const [volume, setVolume] = useState(0.7);
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+
+  // Fade audio in/out smoothly
+  const fadeAudio = (targetVolume: number, duration: number = 500) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    // Clear any existing fade
+    if (fadeIntervalRef.current) {
+      clearInterval(fadeIntervalRef.current);
+    }
+
+    const startVolume = audio.volume;
+    const volumeDiff = targetVolume - startVolume;
+    const steps = 20;
+    const stepDuration = duration / steps;
+    let currentStep = 0;
+
+    fadeIntervalRef.current = setInterval(() => {
+      currentStep++;
+      const newVolume = startVolume + (volumeDiff * (currentStep / steps));
+      audio.volume = Math.max(0, Math.min(1, newVolume));
+
+      if (currentStep >= steps) {
+        if (fadeIntervalRef.current) {
+          clearInterval(fadeIntervalRef.current);
+          fadeIntervalRef.current = null;
+        }
+        // If fading to 0, pause the audio
+        if (targetVolume === 0) {
+          audio.pause();
+        }
+      }
+    }, stepDuration);
+  };
+
+  // Cleanup fade interval on unmount
+  useEffect(() => {
+    return () => {
+      if (fadeIntervalRef.current) {
+        clearInterval(fadeIntervalRef.current);
+      }
+    };
+  }, []);
 
   // Scroll-triggered autoplay (muted for browser compliance)
   useEffect(() => {
@@ -148,12 +194,14 @@ const DemoVideoSection = () => {
 
     const handleVideoPlay = () => {
       if (!isMuted) {
+        audio.volume = 0;
         audio.play().catch(() => {});
+        fadeAudio(volume, 800); // Fade in over 800ms
       }
     };
 
     const handleVideoPause = () => {
-      audio.pause();
+      fadeAudio(0, 500); // Fade out over 500ms
     };
 
     const handleVideoEnded = () => {
@@ -169,7 +217,7 @@ const DemoVideoSection = () => {
       video.removeEventListener('pause', handleVideoPause);
       video.removeEventListener('ended', handleVideoEnded);
     };
-  }, [isMuted]);
+  }, [isMuted, volume]);
 
   // Progress bar update
   useEffect(() => {
@@ -185,17 +233,35 @@ const DemoVideoSection = () => {
     return () => video.removeEventListener('timeupdate', updateProgress);
   }, []);
 
+  // Update audio volume when slider changes
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = parseFloat(e.target.value);
+    setVolume(newVolume);
+    if (audioRef.current && !isMuted) {
+      audioRef.current.volume = newVolume;
+    }
+    if (newVolume === 0) {
+      setIsMuted(true);
+    } else if (isMuted) {
+      setIsMuted(false);
+    }
+  };
+
   const togglePlay = () => {
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
-        audioRef.current?.pause();
+        fadeAudio(0, 500);
       } else {
         videoRef.current.play();
         // When user manually plays, unmute for better experience
         if (isMuted) {
           setIsMuted(false);
-          audioRef.current?.play().catch(() => {});
+          if (audioRef.current) {
+            audioRef.current.volume = 0;
+            audioRef.current.play().catch(() => {});
+            fadeAudio(volume, 800);
+          }
         }
       }
       setIsPlaying(!isPlaying);
@@ -209,9 +275,11 @@ const DemoVideoSection = () => {
     
     if (audioRef.current) {
       if (newMuted) {
-        audioRef.current.pause();
+        fadeAudio(0, 300);
       } else if (isPlaying) {
+        audioRef.current.volume = 0;
         audioRef.current.play().catch(() => {});
+        fadeAudio(volume, 500);
       }
     }
   };
@@ -326,7 +394,32 @@ const DemoVideoSection = () => {
               >
                 {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
               </button>
-              <div className="relative">
+              <div 
+                className="relative flex items-center gap-2"
+                onMouseEnter={() => setShowVolumeSlider(true)}
+                onMouseLeave={() => setShowVolumeSlider(false)}
+              >
+                {/* Volume Slider */}
+                {showVolumeSlider && !isMuted && (
+                  <motion.div
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: 80 }}
+                    exit={{ opacity: 0, width: 0 }}
+                    className="absolute right-full mr-2 h-8 flex items-center"
+                  >
+                    <div className="px-3 py-2 bg-black/70 backdrop-blur-sm rounded-lg border border-white/10">
+                      <input
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.05"
+                        value={volume}
+                        onChange={handleVolumeChange}
+                        className="w-16 h-1 appearance-none bg-white/30 rounded-full cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-3 [&::-moz-range-thumb]:h-3 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-primary [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
+                      />
+                    </div>
+                  </motion.div>
+                )}
                 {/* Unmute Hint */}
                 {showUnmuteHint && isMuted && (
                   <motion.div

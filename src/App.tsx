@@ -55,6 +55,7 @@ const MediaKit = lazy(() => import("./pages/MediaKit"));
 const Blog = lazy(() => import("./pages/Blog"));
 const Security = lazy(() => import("./pages/Security"));
 const AdCreatives = lazy(() => import("./pages/AdCreatives"));
+const DirectorySubmissions = lazy(() => import("./pages/DirectorySubmissions"));
 
 // Minimal loading fallback
 const PageLoader = () => (
@@ -360,6 +361,16 @@ const AnimatedRoutes = () => {
               <PageTransition>
                 <AdCreatives />
               </PageTransition>
+            }
+          />
+          <Route
+            path="/directories"
+            element={
+              <AdminRoute>
+                <PageTransition>
+                  <DirectorySubmissions />
+                </PageTransition>
+              </AdminRoute>
             }
           />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

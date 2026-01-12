@@ -89,3 +89,6 @@ verify_jwt = false
 
 [functions.referral-email]
 verify_jwt = false
+
+[functions.elevenlabs-cleanup-agent]
+verify_jwt = false

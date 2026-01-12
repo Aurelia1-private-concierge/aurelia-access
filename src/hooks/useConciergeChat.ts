@@ -34,10 +34,16 @@ export const useConciergeChat = () => {
 
   // Get or create conversation for current user
   const getOrCreateConversation = useCallback(async () => {
-    if (!user) return null;
+    if (!user) {
+      console.log("[ConciergeChat] No user, skipping conversation fetch");
+      setIsLoading(false);
+      return null;
+    }
+
+    console.log("[ConciergeChat] Getting/creating conversation for user:", user.id);
 
     try {
-      // Check for existing conversation - use maybeSingle to handle no rows gracefully
+      // Check for existing conversation - use array result to handle no rows gracefully
       const { data: existingList, error: fetchError } = await supabase
         .from("conversations")
         .select("*")
@@ -47,16 +53,21 @@ export const useConciergeChat = () => {
         .limit(1);
 
       if (fetchError) {
-        console.error("Error fetching conversation:", fetchError);
+        console.error("[ConciergeChat] Error fetching conversation:", fetchError);
+        setIsLoading(false);
+        return null;
       }
+
+      console.log("[ConciergeChat] Existing conversations found:", existingList?.length || 0);
 
       const existing = existingList?.[0];
       if (existing) {
-        setConversation(existing);
+        console.log("[ConciergeChat] Using existing conversation:", existing.id);
         return existing;
       }
 
       // Create new conversation for concierge chat
+      console.log("[ConciergeChat] Creating new concierge conversation");
       const { data: newConv, error: createError } = await supabase
         .from("conversations")
         .insert({
@@ -67,20 +78,31 @@ export const useConciergeChat = () => {
         .select()
         .single();
 
-      if (createError) throw createError;
-      setConversation(newConv);
+      if (createError) {
+        console.error("[ConciergeChat] Error creating conversation:", createError);
+        setIsLoading(false);
+        return null;
+      }
+      
+      console.log("[ConciergeChat] Created new conversation:", newConv?.id);
       return newConv;
     } catch (error) {
-      console.error("Error getting/creating conversation:", error);
+      console.error("[ConciergeChat] Error getting/creating conversation:", error);
+      setIsLoading(false);
       return null;
     }
   }, [user]);
 
   // Fetch messages for current conversation
   const fetchMessages = useCallback(async () => {
-    if (!conversation) return;
+    if (!conversation) {
+      console.log("[ConciergeChat] No conversation, skipping message fetch");
+      return;
+    }
 
+    console.log("[ConciergeChat] Fetching messages for conversation:", conversation.id);
     setIsLoading(true);
+    
     try {
       const { data, error } = await supabase
         .from("concierge_messages")
@@ -89,14 +111,19 @@ export const useConciergeChat = () => {
         .order("created_at", { ascending: true })
         .limit(100);
 
-      if (error) throw error;
+      if (error) {
+        console.error("[ConciergeChat] Error fetching messages:", error);
+        throw error;
+      }
 
+      console.log("[ConciergeChat] Messages fetched:", data?.length || 0);
+      
       // Type assertion since we know the data structure
       const typedMessages = (data || []) as unknown as Message[];
       setMessages(typedMessages);
       setUnreadCount(typedMessages.filter((m) => !m.is_read && m.sender_role !== "member").length);
     } catch (error) {
-      console.error("Error fetching messages:", error);
+      console.error("[ConciergeChat] Error fetching messages:", error);
     } finally {
       setIsLoading(false);
     }
@@ -205,20 +232,28 @@ export const useConciergeChat = () => {
   // Initialize conversation and fetch messages
   useEffect(() => {
     const init = async () => {
+      console.log("[ConciergeChat] Initializing for user:", user?.id);
       const conv = await getOrCreateConversation();
       if (conv) {
+        console.log("[ConciergeChat] Setting conversation:", conv.id);
         setConversation(conv);
+      } else {
+        console.log("[ConciergeChat] No conversation returned");
+        setIsLoading(false);
       }
     };
 
     if (user) {
       init();
+    } else {
+      setIsLoading(false);
     }
   }, [user, getOrCreateConversation]);
 
   // Fetch messages when conversation changes
   useEffect(() => {
     if (conversation) {
+      console.log("[ConciergeChat] Conversation changed, fetching messages");
       fetchMessages();
     }
   }, [conversation, fetchMessages]);

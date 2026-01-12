@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,8 +6,10 @@ import { z } from "zod";
 import { 
   Sparkles, ArrowRight, Check, Loader2, Mail, Bell, Rocket, Star, 
   Globe, Shield, Users, Plane, Ship, Building2,
-  Instagram, Linkedin, Twitter, Facebook
+  Instagram, Linkedin, Twitter, Facebook, Play, Pause, Volume2, VolumeX,
+  Bot, Clock, Zap, Diamond, HeartHandshake, Lock
 } from "lucide-react";
+import aureliaDemo from "@/assets/aurelia-demo.mp4";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -67,6 +69,184 @@ const services = [
   { icon: Star, label: "Exclusive Access" },
   { icon: Globe, label: "Global Network" },
 ];
+
+const demoFeatures = [
+  {
+    icon: Bot,
+    title: "Meet Orla",
+    description: "Your 24/7 AI concierge who learns your preferences and anticipates your needs before you ask.",
+  },
+  {
+    icon: Clock,
+    title: "Instant Response",
+    description: "From private jets to impossible dinner reservations, executed in minutes — not days.",
+  },
+  {
+    icon: Globe,
+    title: "Global Network",
+    description: "500+ vetted luxury partners across 6 continents, with exclusive off-market access.",
+  },
+  {
+    icon: Zap,
+    title: "Seamless Experience",
+    description: "One request handles everything — travel, accommodations, security, and experiences.",
+  },
+  {
+    icon: Diamond,
+    title: "Ultra-Exclusive Access",
+    description: "Art auctions, sold-out events, off-market properties — we unlock what others can't.",
+  },
+  {
+    icon: Lock,
+    title: "Complete Discretion",
+    description: "Bank-grade encryption and absolute confidentiality. Your privacy is paramount.",
+  },
+];
+
+const DemoVideoSection = () => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const togglePlay = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.7 }}
+      className="w-full max-w-5xl mx-auto"
+    >
+      {/* Section Header */}
+      <div className="text-center mb-10">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.75 }}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 mb-4"
+        >
+          <Play className="w-4 h-4 text-accent" />
+          <span className="text-sm font-medium text-accent">See Aurelia in Action</span>
+        </motion.div>
+        <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-3">
+          The Future of <span className="text-primary">Luxury Service</span>
+        </h2>
+        <p className="text-muted-foreground max-w-xl mx-auto">
+          Discover how Aurelia transforms the way the world's most discerning individuals experience life.
+        </p>
+      </div>
+
+      {/* Video Player */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.8 }}
+        className="relative rounded-2xl overflow-hidden border border-primary/20 bg-black/50 mb-12"
+      >
+        <video
+          ref={videoRef}
+          src={aureliaDemo}
+          className="w-full aspect-video object-cover"
+          loop
+          muted={isMuted}
+          playsInline
+          poster=""
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+        />
+        
+        {/* Video Overlay */}
+        {!isPlaying && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer"
+            onClick={togglePlay}
+          >
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="w-20 h-20 rounded-full bg-primary/90 flex items-center justify-center shadow-2xl"
+            >
+              <Play className="w-8 h-8 text-primary-foreground ml-1" />
+            </motion.button>
+          </motion.div>
+        )}
+
+        {/* Video Controls */}
+        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+          <button
+            onClick={togglePlay}
+            className="p-2 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white hover:bg-black/70 transition-colors"
+          >
+            {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+          </button>
+          <button
+            onClick={toggleMute}
+            className="p-2 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white hover:bg-black/70 transition-colors"
+          >
+            {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+          </button>
+        </div>
+      </motion.div>
+
+      {/* Feature Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+        {demoFeatures.map((feature, i) => (
+          <motion.div
+            key={feature.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.85 + i * 0.1 }}
+            className="p-5 rounded-xl bg-secondary/30 border border-primary/10 hover:border-primary/30 transition-all group"
+          >
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+              <feature.icon className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* CTA after demo */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.2 }}
+        className="text-center p-8 rounded-2xl bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border border-primary/20"
+      >
+        <HeartHandshake className="w-10 h-10 text-primary mx-auto mb-4" />
+        <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">
+          Ready to Experience Extraordinary?
+        </h3>
+        <p className="text-muted-foreground mb-4 max-w-md mx-auto">
+          Join our exclusive waitlist and be among the first to access the world's most sophisticated concierge service.
+        </p>
+        <p className="text-sm text-primary font-medium">
+          ↑ Enter your email above to secure your spot
+        </p>
+      </motion.div>
+    </motion.section>
+  );
+};
 
 const UnderConstruction = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -386,7 +566,7 @@ const UnderConstruction = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-4 mb-12"
+              className="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-4 mb-16"
             >
               {services.map((item, i) => (
                 <motion.div
@@ -404,6 +584,9 @@ const UnderConstruction = () => {
                 </motion.div>
               ))}
             </motion.div>
+
+            {/* Demo Video Section */}
+            <DemoVideoSection />
           </div>
         </div>
 

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Outer diamond frame -->
+  <path d="M24 4L44 24L24 44L4 24L24 4Z" stroke="#D4AF37" stroke-width="1.5" fill="none"/>
+  <!-- Inner geometric pattern - crown abstraction -->
+  <path d="M24 12L32 20L24 28L16 20L24 12Z" fill="#D4AF37"/>
+  <!-- Accent lines -->
+  <path d="M12 24L24 36M36 24L24 36" stroke="#D4AF37" stroke-width="1.5" opacity="0.6"/>
+</svg>

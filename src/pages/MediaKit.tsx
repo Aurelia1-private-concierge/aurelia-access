@@ -11,9 +11,12 @@ import {
   Star,
   Shield,
   Globe,
-  Sparkles
+  Sparkles,
+  Package,
+  Loader2
 } from "lucide-react";
 import { useState } from "react";
+import JSZip from "jszip";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -21,14 +24,102 @@ import { toast } from "@/hooks/use-toast";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 
+const logoAssets = [
+  { name: "aurelia-logo-dark.svg", path: "/logos/aurelia-logo-dark.svg", description: "Full logo for dark backgrounds" },
+  { name: "aurelia-logo-light.svg", path: "/logos/aurelia-logo-light.svg", description: "Full logo for light backgrounds" },
+  { name: "aurelia-icon.svg", path: "/logos/aurelia-icon.svg", description: "Icon mark (gold)" },
+  { name: "aurelia-icon-dark.svg", path: "/logos/aurelia-icon-dark.svg", description: "Icon mark (dark)" },
+  { name: "aurelia-wordmark-gold.svg", path: "/logos/aurelia-wordmark-gold.svg", description: "Wordmark (gold)" },
+  { name: "aurelia-wordmark-black.svg", path: "/logos/aurelia-wordmark-black.svg", description: "Wordmark (black)" },
+  { name: "aurelia-wordmark-white.svg", path: "/logos/aurelia-wordmark-white.svg", description: "Wordmark (white)" },
+];
+
 const MediaKit = () => {
   const [copiedItem, setCopiedItem] = useState<string | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const handleCopy = async (text: string, label: string) => {
     await navigator.clipboard.writeText(text);
     setCopiedItem(label);
     toast({ title: "Copied!", description: `${label} copied to clipboard` });
     setTimeout(() => setCopiedItem(null), 2000);
+  };
+
+  const downloadSingleAsset = async (path: string, filename: string) => {
+    try {
+      const response = await fetch(path);
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast({ title: "Downloaded", description: `${filename} saved successfully` });
+    } catch {
+      toast({ title: "Error", description: "Failed to download file", variant: "destructive" });
+    }
+  };
+
+  const downloadAllAssets = async () => {
+    setIsDownloading(true);
+    try {
+      const zip = new JSZip();
+      const svgFolder = zip.folder("svg");
+      
+      // Fetch all SVG files
+      for (const asset of logoAssets) {
+        const response = await fetch(asset.path);
+        const content = await response.text();
+        svgFolder?.file(asset.name, content);
+      }
+
+      // Add a README file
+      const readme = `AURELIA BRAND ASSETS
+====================
+
+This package contains official Aurelia logo assets.
+
+INCLUDED FILES:
+- svg/aurelia-logo-dark.svg - Full logo for dark backgrounds
+- svg/aurelia-logo-light.svg - Full logo for light backgrounds
+- svg/aurelia-icon.svg - Icon mark (gold)
+- svg/aurelia-icon-dark.svg - Icon mark (dark)
+- svg/aurelia-wordmark-gold.svg - Wordmark (gold)
+- svg/aurelia-wordmark-black.svg - Wordmark (black)
+- svg/aurelia-wordmark-white.svg - Wordmark (white)
+
+USAGE GUIDELINES:
+- Use provided logo files without modification
+- Maintain clear space around the logo
+- Use on appropriate contrasting backgrounds
+- Scale proportionally
+
+For questions, contact: press@aurelia-privateconcierge.com
+
+© ${new Date().getFullYear()} Aurelia Private Concierge. All rights reserved.
+`;
+      zip.file("README.txt", readme);
+
+      // Generate and download ZIP
+      const blob = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "aurelia-brand-assets.zip";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast({ title: "Success", description: "Brand assets downloaded successfully" });
+    } catch {
+      toast({ title: "Error", description: "Failed to create ZIP file", variant: "destructive" });
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const brandColors = [
@@ -309,6 +400,36 @@ For more information, visit aurelia-privateconcierge.com`;
 
             {/* Logo Assets */}
             <TabsContent value="assets" className="space-y-8">
+              {/* Download All */}
+              <Card className="bg-gradient-to-br from-primary/10 via-card/50 to-card/50 border-primary/30">
+                <CardContent className="py-8">
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center">
+                        <Package className="w-7 h-7 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-medium text-foreground">Complete Brand Package</h3>
+                        <p className="text-muted-foreground">Download all logo assets in one ZIP file (SVG formats)</p>
+                      </div>
+                    </div>
+                    <Button 
+                      size="lg" 
+                      onClick={downloadAllAssets}
+                      disabled={isDownloading}
+                      className="bg-primary text-primary-foreground hover:bg-primary/90"
+                    >
+                      {isDownloading ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Download className="w-4 h-4 mr-2" />
+                      )}
+                      {isDownloading ? "Preparing..." : "Download All Assets"}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
               <Card className="bg-card/50 border-border/30">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -325,7 +446,11 @@ For more information, visit aurelia-privateconcierge.com`;
                         <p className="text-xs tracking-[0.2em] text-[#888] mt-1">PRIVATE CONCIERGE</p>
                       </div>
                       <p className="text-xs text-muted-foreground mb-3">Primary — Dark Background</p>
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => downloadSingleAsset("/logos/aurelia-logo-dark.svg", "aurelia-logo-dark.svg")}
+                      >
                         <Download className="w-3 h-3 mr-2" />
                         Download SVG
                       </Button>
@@ -338,9 +463,114 @@ For more information, visit aurelia-privateconcierge.com`;
                         <p className="text-xs tracking-[0.2em] text-[#666] mt-1">PRIVATE CONCIERGE</p>
                       </div>
                       <p className="text-xs text-[#666] mb-3">Primary — Light Background</p>
-                      <Button variant="outline" size="sm" className="border-[#0A0A0A]/20 text-[#0A0A0A] hover:bg-[#0A0A0A]/5">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="border-[#0A0A0A]/20 text-[#0A0A0A] hover:bg-[#0A0A0A]/5"
+                        onClick={() => downloadSingleAsset("/logos/aurelia-logo-light.svg", "aurelia-logo-light.svg")}
+                      >
                         <Download className="w-3 h-3 mr-2" />
                         Download SVG
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Icon & Wordmark Assets */}
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle>Icon & Wordmark Variations</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    {/* Icon Gold */}
+                    <div className="p-6 rounded-xl bg-[#0A0A0A] border border-border/30 text-center">
+                      <div className="w-12 h-12 mx-auto mb-3">
+                        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M24 4L44 24L24 44L4 24L24 4Z" stroke="#D4AF37" strokeWidth="1.5" fill="none"/>
+                          <path d="M24 12L32 20L24 28L16 20L24 12Z" fill="#D4AF37"/>
+                          <path d="M12 24L24 36M36 24L24 36" stroke="#D4AF37" strokeWidth="1.5" opacity="0.6"/>
+                        </svg>
+                      </div>
+                      <p className="text-xs text-muted-foreground mb-3">Icon (Gold)</p>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => downloadSingleAsset("/logos/aurelia-icon.svg", "aurelia-icon.svg")}
+                      >
+                        <Download className="w-3 h-3 mr-2" />
+                        SVG
+                      </Button>
+                    </div>
+
+                    {/* Icon Dark */}
+                    <div className="p-6 rounded-xl bg-[#F5F5F0] border border-border/30 text-center">
+                      <div className="w-12 h-12 mx-auto mb-3">
+                        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M24 4L44 24L24 44L4 24L24 4Z" stroke="#0A0A0A" strokeWidth="1.5" fill="none"/>
+                          <path d="M24 12L32 20L24 28L16 20L24 12Z" fill="#0A0A0A"/>
+                          <path d="M12 24L24 36M36 24L24 36" stroke="#0A0A0A" strokeWidth="1.5" opacity="0.6"/>
+                        </svg>
+                      </div>
+                      <p className="text-xs text-[#666] mb-3">Icon (Dark)</p>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="border-[#0A0A0A]/20 text-[#0A0A0A] hover:bg-[#0A0A0A]/5"
+                        onClick={() => downloadSingleAsset("/logos/aurelia-icon-dark.svg", "aurelia-icon-dark.svg")}
+                      >
+                        <Download className="w-3 h-3 mr-2" />
+                        SVG
+                      </Button>
+                    </div>
+
+                    {/* Wordmark Gold */}
+                    <div className="p-6 rounded-xl bg-[#0A0A0A] border border-border/30 text-center">
+                      <div className="mb-3 py-2">
+                        <span className="text-xl font-light tracking-[0.2em] text-[#D4AF37]">AURELIA</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mb-3">Wordmark (Gold)</p>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => downloadSingleAsset("/logos/aurelia-wordmark-gold.svg", "aurelia-wordmark-gold.svg")}
+                      >
+                        <Download className="w-3 h-3 mr-2" />
+                        SVG
+                      </Button>
+                    </div>
+
+                    {/* Wordmark Black */}
+                    <div className="p-6 rounded-xl bg-[#F5F5F0] border border-border/30 text-center">
+                      <div className="mb-3 py-2">
+                        <span className="text-xl font-light tracking-[0.2em] text-[#0A0A0A]">AURELIA</span>
+                      </div>
+                      <p className="text-xs text-[#666] mb-3">Wordmark (Black)</p>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="border-[#0A0A0A]/20 text-[#0A0A0A] hover:bg-[#0A0A0A]/5"
+                        onClick={() => downloadSingleAsset("/logos/aurelia-wordmark-black.svg", "aurelia-wordmark-black.svg")}
+                      >
+                        <Download className="w-3 h-3 mr-2" />
+                        SVG
+                      </Button>
+                    </div>
+
+                    {/* Wordmark White */}
+                    <div className="p-6 rounded-xl bg-[#0A0A0A] border border-border/30 text-center">
+                      <div className="mb-3 py-2">
+                        <span className="text-xl font-light tracking-[0.2em] text-[#F5F5F0]">AURELIA</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mb-3">Wordmark (White)</p>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => downloadSingleAsset("/logos/aurelia-wordmark-white.svg", "aurelia-wordmark-white.svg")}
+                      >
+                        <Download className="w-3 h-3 mr-2" />
+                        SVG
                       </Button>
                     </div>
                   </div>

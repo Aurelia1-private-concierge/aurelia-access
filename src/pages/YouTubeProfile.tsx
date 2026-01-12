@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   Play, 
@@ -5,19 +6,20 @@ import {
   ThumbsUp,
   MessageCircle,
   Share2,
-  MoreVertical,
   ExternalLink,
-  Users,
   Video,
   Eye,
-  Clock
+  X
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { toast } from "@/hooks/use-toast";
 import aureliaSocialLogo from "@/assets/aurelia-social-logo.png";
 import aureliaSocialBanner from "@/assets/aurelia-social-banner.png";
+import heroVideo from "@/assets/hero-luxury-holiday.mp4";
 
 // YouTube icon component
 const YouTubeIcon = ({ className }: { className?: string }) => (
@@ -34,7 +36,8 @@ const videos = [
     views: "2.4M views",
     uploaded: "2 weeks ago",
     duration: "18:42",
-    description: "Take an exclusive tour inside a $65 million Gulfstream G700..."
+    description: "Take an exclusive tour inside a $65 million Gulfstream G700...",
+    videoSrc: heroVideo
   },
   {
     id: 2,
@@ -43,7 +46,8 @@ const videos = [
     views: "1.8M views",
     uploaded: "1 month ago",
     duration: "24:15",
-    description: "Experience 24 hours aboard a 60-meter superyacht in Monaco..."
+    description: "Experience 24 hours aboard a 60-meter superyacht in Monaco...",
+    videoSrc: heroVideo
   },
   {
     id: 3,
@@ -52,7 +56,8 @@ const videos = [
     views: "3.1M views",
     uploaded: "3 weeks ago",
     duration: "15:28",
-    description: "An exclusive look at an off-market penthouse in Mayfair..."
+    description: "An exclusive look at an off-market penthouse in Mayfair...",
+    videoSrc: heroVideo
   },
   {
     id: 4,
@@ -61,7 +66,8 @@ const videos = [
     views: "987K views",
     uploaded: "1 month ago",
     duration: "12:34",
-    description: "Behind the scenes at the world's most exclusive restaurants..."
+    description: "Behind the scenes at the world's most exclusive restaurants...",
+    videoSrc: heroVideo
   },
   {
     id: 5,
@@ -70,7 +76,8 @@ const videos = [
     views: "1.2M views",
     uploaded: "2 months ago",
     duration: "20:11",
-    description: "Backstage access at Paris Fashion Week through Aurelia..."
+    description: "Backstage access at Paris Fashion Week through Aurelia...",
+    videoSrc: heroVideo
   },
   {
     id: 6,
@@ -79,30 +86,68 @@ const videos = [
     views: "845K views",
     uploaded: "3 months ago",
     duration: "22:45",
-    description: "Discover hidden destinations only accessible through our network..."
+    description: "Discover hidden destinations only accessible through our network...",
+    videoSrc: heroVideo
   }
 ];
 
 const shorts = [
   {
     thumbnail: "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=400&h=700&fit=crop",
-    views: "4.2M"
+    views: "4.2M",
+    videoSrc: heroVideo
   },
   {
     thumbnail: "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=400&h=700&fit=crop",
-    views: "2.8M"
+    views: "2.8M",
+    videoSrc: heroVideo
   },
   {
     thumbnail: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=400&h=700&fit=crop",
-    views: "5.1M"
+    views: "5.1M",
+    videoSrc: heroVideo
   },
   {
     thumbnail: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=700&fit=crop",
-    views: "1.9M"
+    views: "1.9M",
+    videoSrc: heroVideo
   }
 ];
 
+const YOUTUBE_URL = "https://youtube.com/@aureliaprivateconcierge";
+
 const YouTubeProfile = () => {
+  const [selectedVideo, setSelectedVideo] = useState<typeof videos[0] | null>(null);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+
+  const handleSubscribe = () => {
+    setIsSubscribed(!isSubscribed);
+    toast({
+      title: isSubscribed ? "Unsubscribed" : "Subscribed!",
+      description: isSubscribed ? "You've unsubscribed from Aurelia Private Concierge" : "Thanks for subscribing to Aurelia Private Concierge",
+    });
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: "Aurelia Private Concierge - YouTube",
+        text: "Check out Aurelia Private Concierge on YouTube",
+        url: YOUTUBE_URL,
+      });
+    } else {
+      navigator.clipboard.writeText(YOUTUBE_URL);
+      toast({
+        title: "Link copied!",
+        description: "Channel link copied to clipboard",
+      });
+    }
+  };
+
+  const handleVideoClick = (video: typeof videos[0]) => {
+    setSelectedVideo(video);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -153,13 +198,20 @@ const YouTubeProfile = () => {
             <p className="text-sm text-muted-foreground mb-4 max-w-2xl">
               The world's most exclusive private concierge service. Experience luxury through our lens — private jets, superyachts, off-market properties, and impossible experiences.
             </p>
-            <div className="flex gap-2">
-              <Button className="bg-foreground text-background hover:bg-foreground/90 rounded-full gap-2">
+            <div className="flex gap-2 flex-wrap">
+              <Button 
+                className={`rounded-full gap-2 ${isSubscribed ? 'bg-muted text-foreground hover:bg-muted/80' : 'bg-foreground text-background hover:bg-foreground/90'}`}
+                onClick={handleSubscribe}
+              >
                 <Bell className="w-4 h-4" />
-                Subscribe
+                {isSubscribed ? 'Subscribed' : 'Subscribe'}
               </Button>
-              <Button variant="outline" className="rounded-full">
+              <Button variant="outline" className="rounded-full" onClick={() => window.open(YOUTUBE_URL, '_blank')}>
                 Join
+              </Button>
+              <Button variant="outline" className="rounded-full gap-2" onClick={handleShare}>
+                <Share2 className="w-4 h-4" />
+                Share
               </Button>
             </div>
           </div>
@@ -209,7 +261,10 @@ const YouTubeProfile = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="grid md:grid-cols-2 gap-4"
               >
-                <div className="relative aspect-video rounded-xl overflow-hidden cursor-pointer group">
+                <div 
+                  className="relative aspect-video rounded-xl overflow-hidden cursor-pointer group"
+                  onClick={() => handleVideoClick(videos[0])}
+                >
                   <img 
                     src={videos[0].thumbnail} 
                     alt={videos[0].title}
@@ -237,7 +292,7 @@ const YouTubeProfile = () => {
               <h3 className="text-lg font-semibold mb-4">Popular uploads</h3>
               <div className="grid md:grid-cols-3 gap-4">
                 {videos.slice(1, 4).map((video, index) => (
-                  <VideoCard key={video.id} video={video} index={index} />
+                  <VideoCard key={video.id} video={video} index={index} onClick={() => handleVideoClick(video)} />
                 ))}
               </div>
             </div>
@@ -246,7 +301,7 @@ const YouTubeProfile = () => {
           <TabsContent value="videos" className="mt-0">
             <div className="grid md:grid-cols-3 gap-4">
               {videos.map((video, index) => (
-                <VideoCard key={video.id} video={video} index={index} />
+                <VideoCard key={video.id} video={video} index={index} onClick={() => handleVideoClick(video)} />
               ))}
             </div>
           </TabsContent>
@@ -260,6 +315,7 @@ const YouTubeProfile = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: index * 0.05 }}
                   className="relative aspect-[9/16] rounded-xl overflow-hidden cursor-pointer group"
+                  onClick={() => setSelectedVideo({ ...videos[0], thumbnail: short.thumbnail, videoSrc: short.videoSrc })}
                 >
                   <img 
                     src={short.thumbnail} 
@@ -304,7 +360,7 @@ const YouTubeProfile = () => {
           <Button 
             size="lg"
             className="gap-2 bg-red-600 hover:bg-red-700 text-white rounded-full"
-            onClick={() => window.open('https://youtube.com/@aureliaprivateconcierge', '_blank')}
+            onClick={() => window.open(YOUTUBE_URL, '_blank')}
           >
             <YouTubeIcon className="w-5 h-5" />
             Subscribe on YouTube
@@ -313,18 +369,60 @@ const YouTubeProfile = () => {
         </motion.div>
       </div>
 
+      {/* Video Modal */}
+      <Dialog open={!!selectedVideo} onOpenChange={() => setSelectedVideo(null)}>
+        <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black border-none">
+          <div className="relative aspect-video">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-2 right-2 z-10 text-white hover:bg-white/20"
+              onClick={() => setSelectedVideo(null)}
+            >
+              <X className="w-5 h-5" />
+            </Button>
+            {selectedVideo && (
+              <video
+                src={selectedVideo.videoSrc}
+                className="w-full h-full object-cover"
+                controls
+                autoPlay
+                playsInline
+              />
+            )}
+          </div>
+          {selectedVideo && (
+            <div className="p-4 bg-card">
+              <h3 className="font-semibold text-lg text-foreground mb-2">{selectedVideo.title}</h3>
+              <p className="text-sm text-muted-foreground">{selectedVideo.views} • {selectedVideo.uploaded}</p>
+              <div className="flex gap-2 mt-4">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <ThumbsUp className="w-4 h-4" />
+                  Like
+                </Button>
+                <Button variant="outline" size="sm" className="gap-2" onClick={handleShare}>
+                  <Share2 className="w-4 h-4" />
+                  Share
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       <Footer />
     </div>
   );
 };
 
 // Video Card Component
-const VideoCard = ({ video, index }: { video: typeof videos[0]; index: number }) => (
+const VideoCard = ({ video, index, onClick }: { video: typeof videos[0]; index: number; onClick: () => void }) => (
   <motion.div 
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: index * 0.05 }}
     className="cursor-pointer group"
+    onClick={onClick}
   >
     <div className="relative aspect-video rounded-xl overflow-hidden mb-2">
       <img 
@@ -332,7 +430,9 @@ const VideoCard = ({ video, index }: { video: typeof videos[0]; index: number })
         alt={video.title}
         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
       />
-      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+        <Play className="w-12 h-12 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
+      </div>
       <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded">
         {video.duration}
       </div>

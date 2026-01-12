@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   Calendar,
@@ -7,15 +8,14 @@ import {
   Repeat2,
   Heart,
   Share,
-  MoreHorizontal,
   ExternalLink,
-  Verified,
-  Users
+  Verified
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "@/hooks/use-toast";
 import aureliaSocialLogo from "@/assets/aurelia-social-logo.png";
 import aureliaSocialBanner from "@/assets/aurelia-social-banner.png";
 
@@ -84,7 +84,58 @@ const formatNumber = (num: number): string => {
   return num.toString();
 };
 
+const TWITTER_URL = "https://x.com/aureliaprivate";
+
 const TwitterProfile = () => {
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [likedTweets, setLikedTweets] = useState<number[]>([]);
+  const [repostedTweets, setRepostedTweets] = useState<number[]>([]);
+
+  const handleFollow = () => {
+    setIsFollowing(!isFollowing);
+    toast({
+      title: isFollowing ? "Unfollowed" : "Following!",
+      description: isFollowing ? "You've unfollowed Aurelia Private Concierge" : "You're now following Aurelia Private Concierge",
+    });
+  };
+
+  const handleLike = (tweetId: number) => {
+    if (likedTweets.includes(tweetId)) {
+      setLikedTweets(likedTweets.filter(id => id !== tweetId));
+    } else {
+      setLikedTweets([...likedTweets, tweetId]);
+    }
+  };
+
+  const handleRepost = (tweetId: number) => {
+    if (repostedTweets.includes(tweetId)) {
+      setRepostedTweets(repostedTweets.filter(id => id !== tweetId));
+    } else {
+      setRepostedTweets([...repostedTweets, tweetId]);
+      toast({
+        title: "Reposted!",
+        description: "This post has been reposted to your timeline",
+      });
+    }
+  };
+
+  const handleShare = (tweet?: typeof tweets[0]) => {
+    const url = tweet ? `${TWITTER_URL}/status/${tweet.id}` : TWITTER_URL;
+    if (navigator.share) {
+      navigator.share({
+        title: "Aurelia Private Concierge",
+        text: tweet?.content || "Check out Aurelia Private Concierge on X",
+        url,
+      });
+    } else {
+      navigator.clipboard.writeText(url);
+      toast({
+        title: "Link copied!",
+        description: "Link copied to clipboard",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -118,8 +169,11 @@ const TwitterProfile = () => {
 
           {/* Follow Button */}
           <div className="flex justify-end pt-3 mb-16">
-            <Button className="rounded-full px-6">
-              Follow
+            <Button 
+              className={`rounded-full px-6 ${isFollowing ? 'bg-transparent border border-border text-foreground hover:border-red-500 hover:text-red-500' : ''}`}
+              onClick={handleFollow}
+            >
+              {isFollowing ? 'Following' : 'Follow'}
             </Button>
           </div>
 
@@ -129,7 +183,7 @@ const TwitterProfile = () => {
               <h1 className="text-xl font-bold text-foreground">Aurelia Private Concierge</h1>
               <Verified className="w-5 h-5 text-primary fill-primary" />
             </div>
-            <p className="text-muted-foreground">@tye12085</p>
+            <p className="text-muted-foreground">@aureliaprivate</p>
           </div>
 
           {/* Bio */}
@@ -146,12 +200,15 @@ const TwitterProfile = () => {
               <MapPin className="w-4 h-4" />
               London • Dubai • Monaco
             </span>
-            <span className="flex items-center gap-1">
+            <a 
+              href="https://aurelia-privateconcierge.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-primary hover:underline"
+            >
               <LinkIcon className="w-4 h-4" />
-              <a href="https://aurelia-privateconcierge.com" className="text-primary hover:underline">
-                aurelia-privateconcierge.com
-              </a>
-            </span>
+              aurelia-privateconcierge.com
+            </a>
             <span className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
               Joined January 2024
@@ -160,12 +217,12 @@ const TwitterProfile = () => {
 
           {/* Stats */}
           <div className="flex gap-4 text-sm">
-            <span>
+            <span className="hover:underline cursor-pointer">
               <strong className="text-foreground">156</strong>{" "}
               <span className="text-muted-foreground">Following</span>
             </span>
-            <span>
-              <strong className="text-foreground">2,847</strong>{" "}
+            <span className="hover:underline cursor-pointer">
+              <strong className="text-foreground">125.4K</strong>{" "}
               <span className="text-muted-foreground">Followers</span>
             </span>
           </div>
@@ -212,11 +269,11 @@ const TwitterProfile = () => {
                 >
                   <div className="flex gap-3">
                     {/* Avatar */}
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
                       <img 
-                        src="/logos/aurelia-logo-light.svg" 
+                        src={aureliaSocialLogo} 
                         alt="Aurelia" 
-                        className="w-6 h-6 object-contain"
+                        className="w-full h-full object-cover"
                       />
                     </div>
 
@@ -225,7 +282,7 @@ const TwitterProfile = () => {
                       <div className="flex items-center gap-1 mb-1">
                         <span className="font-bold text-foreground truncate">Aurelia Private Concierge</span>
                         <Verified className="w-4 h-4 text-primary fill-primary flex-shrink-0" />
-                        <span className="text-muted-foreground truncate">@tye12085 · {tweet.timestamp}</span>
+                        <span className="text-muted-foreground truncate">@aureliaprivate · {tweet.timestamp}</span>
                       </div>
 
                       {/* Content */}
@@ -236,21 +293,30 @@ const TwitterProfile = () => {
                       {/* Actions */}
                       <div className="flex justify-between max-w-md text-muted-foreground">
                         <button className="flex items-center gap-1 hover:text-primary transition-colors group">
-                          <MessageCircle className="w-4 h-4 group-hover:bg-primary/10 rounded-full" />
+                          <MessageCircle className="w-4 h-4" />
                           <span className="text-sm">{formatNumber(tweet.replies)}</span>
                         </button>
-                        <button className="flex items-center gap-1 hover:text-green-500 transition-colors group">
+                        <button 
+                          className={`flex items-center gap-1 transition-colors group ${repostedTweets.includes(tweet.id) ? 'text-green-500' : 'hover:text-green-500'}`}
+                          onClick={(e) => { e.stopPropagation(); handleRepost(tweet.id); }}
+                        >
                           <Repeat2 className="w-4 h-4" />
-                          <span className="text-sm">{formatNumber(tweet.reposts)}</span>
+                          <span className="text-sm">{formatNumber(tweet.reposts + (repostedTweets.includes(tweet.id) ? 1 : 0))}</span>
                         </button>
-                        <button className="flex items-center gap-1 hover:text-red-500 transition-colors group">
-                          <Heart className="w-4 h-4" />
-                          <span className="text-sm">{formatNumber(tweet.likes)}</span>
+                        <button 
+                          className={`flex items-center gap-1 transition-colors group ${likedTweets.includes(tweet.id) ? 'text-red-500' : 'hover:text-red-500'}`}
+                          onClick={(e) => { e.stopPropagation(); handleLike(tweet.id); }}
+                        >
+                          <Heart className={`w-4 h-4 ${likedTweets.includes(tweet.id) ? 'fill-red-500' : ''}`} />
+                          <span className="text-sm">{formatNumber(tweet.likes + (likedTweets.includes(tweet.id) ? 1 : 0))}</span>
                         </button>
                         <button className="flex items-center gap-1 hover:text-primary transition-colors">
                           <span className="text-sm">{tweet.views}</span>
                         </button>
-                        <button className="hover:text-primary transition-colors">
+                        <button 
+                          className="hover:text-primary transition-colors"
+                          onClick={(e) => { e.stopPropagation(); handleShare(tweet); }}
+                        >
                           <Share className="w-4 h-4" />
                         </button>
                       </div>
@@ -265,7 +331,7 @@ const TwitterProfile = () => {
             <div className="py-20 text-center text-muted-foreground">
               <MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p className="font-medium mb-1">No replies yet</p>
-              <p className="text-sm">When @tye12085 replies, they'll show up here.</p>
+              <p className="text-sm">When @aureliaprivate replies, they'll show up here.</p>
             </div>
           </TabsContent>
 
@@ -296,7 +362,7 @@ const TwitterProfile = () => {
             <div className="py-20 text-center text-muted-foreground">
               <Heart className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p className="font-medium mb-1">No likes yet</p>
-              <p className="text-sm">Posts @tye12085 likes will show up here.</p>
+              <p className="text-sm">Posts @aureliaprivate likes will show up here.</p>
             </div>
           </TabsContent>
         </Tabs>
@@ -311,7 +377,7 @@ const TwitterProfile = () => {
           <Button 
             size="lg"
             className="gap-2 bg-foreground text-background hover:bg-foreground/90 rounded-full"
-            onClick={() => window.open('https://x.com/tye12085', '_blank')}
+            onClick={() => window.open(TWITTER_URL, '_blank')}
           >
             <XIcon className="w-5 h-5" />
             Follow on X

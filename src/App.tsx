@@ -50,6 +50,7 @@ const MarketingHub = lazy(() => import("./pages/MarketingHub"));
 const LinkedInProfile = lazy(() => import("./pages/LinkedInProfile"));
 const InstagramProfile = lazy(() => import("./pages/InstagramProfile"));
 const TikTokProfile = lazy(() => import("./pages/TikTokProfile"));
+const UnderConstruction = lazy(() => import("./pages/UnderConstruction"));
 
 // Minimal loading fallback
 const PageLoader = () => (
@@ -312,6 +313,14 @@ const AnimatedRoutes = () => {
             element={
               <PageTransition>
                 <TikTokProfile />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/coming-soon"
+            element={
+              <PageTransition>
+                <UnderConstruction />
               </PageTransition>
             }
           />

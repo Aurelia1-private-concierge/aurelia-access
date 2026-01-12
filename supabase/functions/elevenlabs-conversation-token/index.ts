@@ -6,31 +6,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Orla's personality and capabilities
-const ORLA_SYSTEM_PROMPT = `You are Orla, Aurelia's private AI concierge. Speak with warmth, discretion, and sophistication. Never use casual language like "hey" or "cool". Address members by name when known.
-
-Your capabilities include:
-- Private aviation bookings and jet charter
-- Yacht charter arrangements
-- Luxury real estate inquiries
-- Collectibles acquisition
-- Exclusive event access
-- Security services coordination
-- Fine dining reservations
-- Bespoke travel planning
-- Wellness retreat bookings
-- Personal shopping assistance
-- Chauffeur services
-
-Always maintain confidentiality. When discussing services:
-- Confirm budget comfort before presenting options
-- Offer 2-3 curated choices, never overwhelming lists
-- Proactively mention relevant perks for their membership tier
-- For requests outside scope, offer to connect with specialist team
-- Never promise specific availability without checking
-
-Escalate immediately for: Legal matters, medical emergencies, security concerns, complaints about partners, requests over $100k, celebrity/political figures.`;
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -41,11 +16,20 @@ serve(async (req) => {
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
     const ELEVENLABS_API_KEY = Deno.env.get("ELEVENLABS_API_KEY");
+    const ELEVENLABS_AGENT_ID = Deno.env.get("ELEVENLABS_AGENT_ID");
 
     if (!ELEVENLABS_API_KEY) {
       console.error("ELEVENLABS_API_KEY is not configured");
       return new Response(
         JSON.stringify({ error: "Voice service not configured" }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (!ELEVENLABS_AGENT_ID) {
+      console.error("ELEVENLABS_AGENT_ID is not configured");
+      return new Response(
+        JSON.stringify({ error: "Voice agent not configured. Please add ELEVENLABS_AGENT_ID secret." }),
         { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -84,60 +68,11 @@ serve(async (req) => {
     const userId = claimsData.claims.sub;
     console.log(`Authenticated user ${userId} requesting voice session`);
 
-    // Get user profile for personalization
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("display_name")
-      .eq("user_id", userId)
-      .single();
-
-    const userName = profile?.display_name || "valued member";
-
-    // Create a dynamic agent for this conversation
-    console.log("Creating ElevenLabs conversational agent...");
+    // Get signed URL for the pre-configured agent
+    console.log(`Getting signed URL for agent: ${ELEVENLABS_AGENT_ID}`);
     
-    const createAgentResponse = await fetch(
-      "https://api.elevenlabs.io/v1/convai/agents/create",
-      {
-        method: "POST",
-        headers: {
-          "xi-api-key": ELEVENLABS_API_KEY,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: `Orla - Session ${Date.now()}`,
-          conversation_config: {
-            agent: {
-              prompt: {
-                prompt: ORLA_SYSTEM_PROMPT + `\n\nThe current member's name is: ${userName}`,
-              },
-              first_message: `Good day, ${userName}. I'm Orla, your personal concierge. How may I assist you today?`,
-              language: "en",
-            },
-            tts: {
-              voice_id: "EXAVITQu4vr4xnSDxMaL", // Sarah - warm, professional voice
-            },
-          },
-        }),
-      }
-    );
-
-    if (!createAgentResponse.ok) {
-      const errorText = await createAgentResponse.text();
-      console.error("Failed to create agent:", createAgentResponse.status, errorText);
-      return new Response(
-        JSON.stringify({ error: "Failed to initialize voice assistant" }),
-        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    const agentData = await createAgentResponse.json();
-    const agentId = agentData.agent_id;
-    console.log(`Created agent: ${agentId}`);
-
-    // Now get a signed URL for this agent
     const signedUrlResponse = await fetch(
-      `https://api.elevenlabs.io/v1/convai/conversation/get-signed-url?agent_id=${encodeURIComponent(agentId)}`,
+      `https://api.elevenlabs.io/v1/convai/conversation/get-signed-url?agent_id=${encodeURIComponent(ELEVENLABS_AGENT_ID)}`,
       {
         headers: {
           "xi-api-key": ELEVENLABS_API_KEY,
@@ -160,7 +95,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         signed_url: urlData.signed_url,
-        agent_id: agentId 
+        agent_id: ELEVENLABS_AGENT_ID 
       }), 
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -19,7 +19,12 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import aureliaSocialLogo from "@/assets/aurelia-social-logo.png";
 import aureliaSocialBanner from "@/assets/aurelia-social-banner.png";
-import heroVideo from "@/assets/hero-luxury-holiday.mp4";
+import heroLuxuryHoliday from "@/assets/hero-luxury-holiday.mp4";
+import heroVideo from "@/assets/hero-video.mp4";
+import heroVideoExtended from "@/assets/hero-video-extended.mp4";
+import aureliaDemo from "@/assets/aurelia-demo.mp4";
+import orlaDemo from "@/assets/orla-demo.mp4";
+import demoWatch from "@/assets/demo-watch.mp4";
 
 // YouTube icon component
 const YouTubeIcon = ({ className }: { className?: string }) => (
@@ -37,7 +42,7 @@ const videos = [
     uploaded: "2 weeks ago",
     duration: "18:42",
     description: "Take an exclusive tour inside a $65 million Gulfstream G700...",
-    videoSrc: heroVideo
+    videoSrc: heroLuxuryHoliday
   },
   {
     id: 2,
@@ -57,7 +62,7 @@ const videos = [
     uploaded: "3 weeks ago",
     duration: "15:28",
     description: "An exclusive look at an off-market penthouse in Mayfair...",
-    videoSrc: heroVideo
+    videoSrc: heroVideoExtended
   },
   {
     id: 4,
@@ -67,7 +72,7 @@ const videos = [
     uploaded: "1 month ago",
     duration: "12:34",
     description: "Behind the scenes at the world's most exclusive restaurants...",
-    videoSrc: heroVideo
+    videoSrc: aureliaDemo
   },
   {
     id: 5,
@@ -77,7 +82,7 @@ const videos = [
     uploaded: "2 months ago",
     duration: "20:11",
     description: "Backstage access at Paris Fashion Week through Aurelia...",
-    videoSrc: heroVideo
+    videoSrc: orlaDemo
   },
   {
     id: 6,
@@ -87,7 +92,7 @@ const videos = [
     uploaded: "3 months ago",
     duration: "22:45",
     description: "Discover hidden destinations only accessible through our network...",
-    videoSrc: heroVideo
+    videoSrc: demoWatch
   }
 ];
 
@@ -95,7 +100,7 @@ const shorts = [
   {
     thumbnail: "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=400&h=700&fit=crop",
     views: "4.2M",
-    videoSrc: heroVideo
+    videoSrc: heroLuxuryHoliday
   },
   {
     thumbnail: "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=400&h=700&fit=crop",
@@ -105,14 +110,15 @@ const shorts = [
   {
     thumbnail: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=400&h=700&fit=crop",
     views: "5.1M",
-    videoSrc: heroVideo
+    videoSrc: aureliaDemo
   },
   {
     thumbnail: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=700&fit=crop",
     views: "1.9M",
-    videoSrc: heroVideo
+    videoSrc: orlaDemo
   }
 ];
+
 
 const YOUTUBE_URL = "https://youtube.com/@aureliaprivateconcierge";
 

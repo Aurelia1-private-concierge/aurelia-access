@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useConversation } from "@elevenlabs/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, MicOff, Phone, PhoneOff, ArrowLeft, Volume2, Clock, History } from "lucide-react";
+import { Phone, PhoneOff, ArrowLeft, Volume2, Clock, History, Trash2, MessageSquare, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import { toast } from "sonner";
@@ -11,7 +11,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useVoiceSession } from "@/hooks/useVoiceSession";
+import { useConversationHistory } from "@/hooks/useConversationHistory";
 import orlaAvatar from "@/assets/orla-avatar.png";
+import { format } from "date-fns";
 
 interface TranscriptEntry {
   id: string;
@@ -30,10 +32,23 @@ const Orla = () => {
   const [connectionDuration, setConnectionDuration] = useState(0);
   const [connectionStartTime, setConnectionStartTime] = useState<Date | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [currentAgentId, setCurrentAgentId] = useState<string | null>(null);
   const transcriptEndRef = useRef<HTMLDivElement>(null);
 
   // Voice session persistence
   const { startSession, addMessage, endSession } = useVoiceSession(user?.id);
+  
+  // Conversation history
+  const {
+    conversations,
+    selectedConversation,
+    messages: historyMessages,
+    isLoading: historyLoading,
+    fetchConversations,
+    fetchMessages,
+    clearSelection,
+    deleteConversation,
+  } = useConversationHistory(user?.id);
 
   const conversation = useConversation({
     onConnect: () => {
@@ -126,6 +141,28 @@ const Orla = () => {
       .catch(() => {});
   }, []);
 
+  // Cleanup agent on unmount if still active
+  useEffect(() => {
+    return () => {
+      if (currentAgentId) {
+        supabase.functions.invoke("elevenlabs-cleanup-agent", {
+          body: { agentId: currentAgentId },
+        }).catch(console.error);
+      }
+    };
+  }, [currentAgentId]);
+
+  const cleanupAgent = useCallback(async (agentId: string) => {
+    try {
+      await supabase.functions.invoke("elevenlabs-cleanup-agent", {
+        body: { agentId },
+      });
+      console.log("Agent cleaned up:", agentId);
+    } catch (error) {
+      console.error("Failed to cleanup agent:", error);
+    }
+  }, []);
+
   const startConversation = useCallback(async () => {
     if (!user) {
       toast.error("Please sign in to speak with Orla", {
@@ -149,6 +186,11 @@ const Orla = () => {
         throw new Error(error?.message || data?.error || "Failed to get conversation token");
       }
 
+      // Store agent ID for cleanup
+      if (data.agent_id) {
+        setCurrentAgentId(data.agent_id);
+      }
+
       await conversation.startSession({ signedUrl: data.signed_url });
     } catch (error) {
       console.error("Failed to start conversation:", error);
@@ -166,7 +208,25 @@ const Orla = () => {
   const endConversation = useCallback(async () => {
     await conversation.endSession();
     await endSession(true);
-  }, [conversation, endSession]);
+    
+    // Cleanup the agent
+    if (currentAgentId) {
+      await cleanupAgent(currentAgentId);
+      setCurrentAgentId(null);
+    }
+    
+    // Refresh history
+    fetchConversations();
+  }, [conversation, endSession, currentAgentId, cleanupAgent, fetchConversations]);
+
+  const handleDeleteConversation = async (id: string) => {
+    const success = await deleteConversation(id);
+    if (success) {
+      toast.success("Conversation deleted");
+    } else {
+      toast.error("Failed to delete conversation");
+    }
+  };
 
   const isConnected = conversation.status === "connected";
   const isSpeaking = conversation.isSpeaking;
@@ -343,21 +403,117 @@ const Orla = () => {
         {/* History Sidebar */}
         <AnimatePresence>
           {showHistory && (
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25 }}
-              className="fixed right-0 top-0 h-full w-80 bg-card border-l border-border shadow-xl z-50 p-4"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold">Conversation History</h3>
-                <Button variant="ghost" size="sm" onClick={() => setShowHistory(false)}>
-                  ×
-                </Button>
-              </div>
-              <p className="text-sm text-muted-foreground">Your past conversations with Orla will appear here.</p>
-            </motion.div>
+            <>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/50 z-40"
+                onClick={() => {
+                  setShowHistory(false);
+                  clearSelection();
+                }}
+              />
+              
+              <motion.div
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ type: "spring", damping: 25 }}
+                className="fixed right-0 top-0 h-full w-80 md:w-96 bg-card border-l border-border shadow-xl z-50 flex flex-col"
+              >
+                <div className="flex items-center justify-between p-4 border-b border-border">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <History className="w-4 h-4" />
+                    Conversation History
+                  </h3>
+                  <Button variant="ghost" size="icon" onClick={() => {
+                    setShowHistory(false);
+                    clearSelection();
+                  }}>
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                <ScrollArea className="flex-1">
+                  {selectedConversation ? (
+                    // Show selected conversation messages
+                    <div className="p-4">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearSelection}
+                        className="mb-4"
+                      >
+                        ← Back to list
+                      </Button>
+                      
+                      <div className="space-y-3">
+                        {historyLoading ? (
+                          <p className="text-sm text-muted-foreground">Loading...</p>
+                        ) : historyMessages.length === 0 ? (
+                          <p className="text-sm text-muted-foreground">No messages in this conversation.</p>
+                        ) : (
+                          historyMessages.map((msg) => (
+                            <div
+                              key={msg.id}
+                              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                            >
+                              <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${msg.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
+                                {msg.content}
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    // Show conversation list
+                    <div className="p-2">
+                      {historyLoading ? (
+                        <p className="text-sm text-muted-foreground p-4">Loading...</p>
+                      ) : conversations.length === 0 ? (
+                        <div className="text-center py-8 px-4">
+                          <MessageSquare className="w-12 h-12 mx-auto text-muted-foreground/50 mb-3" />
+                          <p className="text-sm text-muted-foreground">No conversations yet.</p>
+                          <p className="text-xs text-muted-foreground mt-1">Start a conversation with Orla to see it here.</p>
+                        </div>
+                      ) : (
+                        conversations.map((conv) => (
+                          <div
+                            key={conv.id}
+                            className="group flex items-center gap-2 p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                            onClick={() => fetchMessages(conv.id)}
+                          >
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate">
+                                {conv.title || "Untitled conversation"}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {conv.started_at ? format(new Date(conv.started_at), "MMM d, yyyy 'at' h:mm a") : "Unknown date"}
+                                {conv.message_count ? ` • ${conv.message_count} messages` : ""}
+                              </p>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteConversation(conv.id);
+                              }}
+                            >
+                              <Trash2 className="w-4 h-4 text-destructive" />
+                            </Button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </ScrollArea>
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
       </div>

@@ -110,8 +110,9 @@ const DemoVideoSection = () => {
   const [isMuted, setIsMuted] = useState(true);
   const [progress, setProgress] = useState(0);
   const [hasAutoPlayed, setHasAutoPlayed] = useState(false);
+  const [showUnmuteHint, setShowUnmuteHint] = useState(false);
 
-  // Scroll-triggered autoplay
+  // Scroll-triggered autoplay (muted for browser compliance)
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -119,6 +120,9 @@ const DemoVideoSection = () => {
           if (entry.isIntersecting && !hasAutoPlayed && videoRef.current) {
             videoRef.current.play();
             setHasAutoPlayed(true);
+            // Show unmute hint after autoplay starts
+            setShowUnmuteHint(true);
+            setTimeout(() => setShowUnmuteHint(false), 4000);
           }
         });
       },
@@ -151,7 +155,12 @@ const DemoVideoSection = () => {
       if (isPlaying) {
         videoRef.current.pause();
       } else {
+        // When user manually plays, unmute for better experience
         videoRef.current.play();
+        if (isMuted) {
+          videoRef.current.muted = false;
+          setIsMuted(false);
+        }
       }
       setIsPlaying(!isPlaying);
     }
@@ -161,6 +170,7 @@ const DemoVideoSection = () => {
     if (videoRef.current) {
       videoRef.current.muted = !isMuted;
       setIsMuted(!isMuted);
+      setShowUnmuteHint(false);
     }
   };
 
@@ -272,12 +282,33 @@ const DemoVideoSection = () => {
               >
                 {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
               </button>
-              <button
-                onClick={toggleMute}
-                className="p-3 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white hover:bg-black/70 transition-colors"
-              >
-                {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-              </button>
+              <div className="relative">
+                {/* Unmute Hint */}
+                {showUnmuteHint && isMuted && (
+                  <motion.div
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute right-full mr-3 top-1/2 -translate-y-1/2 whitespace-nowrap"
+                  >
+                    <div className="px-3 py-2 bg-primary text-primary-foreground text-sm rounded-lg shadow-lg flex items-center gap-2">
+                      <Volume2 className="w-4 h-4" />
+                      <span>Tap for sound</span>
+                      <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 w-2 h-2 bg-primary rotate-45" />
+                    </div>
+                  </motion.div>
+                )}
+                <button
+                  onClick={toggleMute}
+                  className={`p-3 rounded-full backdrop-blur-sm border text-white transition-colors ${
+                    isMuted 
+                      ? 'bg-primary/50 border-primary/50 hover:bg-primary/70 animate-pulse' 
+                      : 'bg-black/50 border-white/10 hover:bg-black/70'
+                  }`}
+                >
+                  {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                </button>
+              </div>
             </div>
           </div>
         </div>

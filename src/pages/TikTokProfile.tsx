@@ -96,7 +96,7 @@ const TikTokProfile = () => {
           </div>
 
           {/* Username */}
-          <h1 className="text-xl font-bold text-foreground mb-1">@aurelia.concierge</h1>
+          <h1 className="text-xl font-bold text-foreground mb-1">@aurelia.private.c</h1>
           <p className="text-muted-foreground text-sm mb-4">Aurelia Private Concierge</p>
 
           {/* Stats */}
@@ -196,7 +196,7 @@ const TikTokProfile = () => {
             <div className="py-20 text-center text-muted-foreground">
               <Heart className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p className="font-medium mb-1">Videos this user liked</p>
-              <p className="text-sm">Videos liked by aurelia.concierge</p>
+              <p className="text-sm">Videos liked by aurelia.private.c</p>
             </div>
           </TabsContent>
 
@@ -263,7 +263,7 @@ const TikTokProfile = () => {
           <Button 
             size="lg"
             className="gap-2 bg-foreground text-background hover:bg-foreground/90"
-            onClick={() => window.open('https://tiktok.com/@aurelia.concierge', '_blank')}
+            onClick={() => window.open('https://www.tiktok.com/@aurelia.private.c', '_blank')}
           >
             <TikTokIcon className="w-5 h-5" />
             Follow on TikTok

@@ -43,6 +43,10 @@ const GlobalElements = ({
   // Don't show global elements on certain pages
   const hideOnPages = ["/auth", "/admin", "/orla"];
   const isHiddenPage = hideOnPages.some(path => location.pathname.startsWith(path));
+  
+  // Hide offline banner on public-facing pages (landing, waitlist)
+  const hideOfflineBannerOn = ["/", "/coming-soon"];
+  const shouldHideOfflineBanner = hideOfflineBannerOn.includes(location.pathname);
 
   if (isHiddenPage) {
     return null;
@@ -50,8 +54,8 @@ const GlobalElements = ({
 
   return (
     <>
-      {/* Offline Banner - shown at top when offline */}
-      <OfflineBanner />
+      {/* Offline Banner - shown on dashboard/app pages only */}
+      {!shouldHideOfflineBanner && <OfflineBanner />}
       
       {/* PWA Install Prompt - shown on all pages */}
       <PWAInstallPrompt />

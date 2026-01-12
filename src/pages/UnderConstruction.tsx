@@ -105,8 +105,46 @@ const demoFeatures = [
 
 const DemoVideoSection = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [hasAutoPlayed, setHasAutoPlayed] = useState(false);
+
+  // Scroll-triggered autoplay
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasAutoPlayed && videoRef.current) {
+            videoRef.current.play();
+            setHasAutoPlayed(true);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasAutoPlayed]);
+
+  // Progress bar update
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const updateProgress = () => {
+      const percent = (video.currentTime / video.duration) * 100;
+      setProgress(percent || 0);
+    };
+
+    video.addEventListener('timeupdate', updateProgress);
+    return () => video.removeEventListener('timeupdate', updateProgress);
+  }, []);
 
   const togglePlay = () => {
     if (videoRef.current) {
@@ -126,8 +164,16 @@ const DemoVideoSection = () => {
     }
   };
 
+  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!videoRef.current) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const percent = (e.clientX - rect.left) / rect.width;
+    videoRef.current.currentTime = percent * videoRef.current.duration;
+  };
+
   return (
     <motion.section
+      ref={sectionRef}
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.7 }}
@@ -172,6 +218,18 @@ const DemoVideoSection = () => {
             onPause={() => setIsPlaying(false)}
           />
           
+          {/* Aurelia Logo Overlay - Top Left */}
+          <div className="absolute top-4 left-4 z-20 pointer-events-none">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1 }}
+              className="px-4 py-2 backdrop-blur-md bg-black/40 rounded-lg border border-primary/30"
+            >
+              <span className="text-sm md:text-base font-light tracking-[0.3em] text-primary">AURELIA</span>
+            </motion.div>
+          </div>
+          
           {/* Video Overlay - Play Button */}
           {!isPlaying && (
             <motion.div
@@ -192,19 +250,35 @@ const DemoVideoSection = () => {
           )}
 
           {/* Video Controls */}
-          <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between z-10">
-            <button
-              onClick={togglePlay}
-              className="p-3 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white hover:bg-black/70 transition-colors"
+          <div className="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/70 to-transparent p-4">
+            {/* Progress Bar */}
+            <div 
+              className="w-full h-1 bg-white/20 rounded-full mb-3 cursor-pointer group"
+              onClick={handleProgressClick}
             >
-              {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-            </button>
-            <button
-              onClick={toggleMute}
-              className="p-3 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white hover:bg-black/70 transition-colors"
-            >
-              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-            </button>
+              <div 
+                className="h-full bg-primary rounded-full relative transition-all"
+                style={{ width: `${progress}%` }}
+              >
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+            </div>
+            
+            {/* Control Buttons */}
+            <div className="flex items-center justify-between">
+              <button
+                onClick={togglePlay}
+                className="p-3 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white hover:bg-black/70 transition-colors"
+              >
+                {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+              </button>
+              <button
+                onClick={toggleMute}
+                className="p-3 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white hover:bg-black/70 transition-colors"
+              >
+                {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
         </div>
       </motion.div>

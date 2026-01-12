@@ -11,6 +11,7 @@ import { TwoFactorVerify } from "@/components/auth/TwoFactorVerify";
 import { PasswordStrengthMeter } from "@/components/auth/PasswordStrengthMeter";
 import { PasswordBreachWarning } from "@/components/auth/PasswordBreachWarning";
 import { useLoginRateLimit } from "@/hooks/useLoginRateLimit";
+import { useIPRateLimit } from "@/hooks/useIPRateLimit";
 import { useMFA } from "@/hooks/useMFA";
 import { useAuthAuditLog } from "@/hooks/useAuthAuditLog";
 import { useFunnelTracking } from "@/hooks/useFunnelTracking";
@@ -41,15 +42,32 @@ const Auth = () => {
   const [lastResetRequest, setLastResetRequest] = useState<number>(0);
   const [cooldownRemaining, setCooldownRemaining] = useState(0);
   
+  // Client-side rate limiting (backup)
   const { 
-    isLimited, 
-    attemptsRemaining, 
-    cooldownSeconds, 
-    recordFailedAttempt, 
-    recordSuccessfulLogin,
+    isLimited: isClientLimited, 
+    attemptsRemaining: clientAttemptsRemaining, 
+    cooldownSeconds: clientCooldownSeconds, 
+    recordFailedAttempt: recordClientFailedAttempt, 
+    recordSuccessfulLogin: recordClientSuccessfulLogin,
     formatCooldown,
     clearAttempts 
   } = useLoginRateLimit();
+  
+  // Server-side IP-based rate limiting (primary protection)
+  const {
+    isLimited: isIPLimited,
+    attemptsRemaining: ipAttemptsRemaining,
+    cooldownSeconds: ipCooldownSeconds,
+    message: ipLimitMessage,
+    checkRateLimit: checkIPRateLimit,
+    recordFailedAttempt: recordIPFailedAttempt,
+    recordSuccessfulLogin: recordIPSuccessfulLogin,
+  } = useIPRateLimit();
+  
+  // Combined rate limit status
+  const isLimited = isClientLimited || isIPLimited;
+  const cooldownSeconds = Math.max(clientCooldownSeconds, ipCooldownSeconds);
+  const attemptsRemaining = Math.min(clientAttemptsRemaining, ipAttemptsRemaining);
   
   const { needsVerification, checkMFAStatus } = useMFA();
   const { logLogin, logLogout, logSignup, logPasswordReset, logMFAEvent, logOAuthLogin } = useAuthAuditLog();
@@ -205,11 +223,11 @@ const Auth = () => {
     
     if (!validateForm()) return;
     
-    // Check rate limit before attempting login
+    // Check client-side rate limit
     if (isLogin && isLimited) {
       toast({
         title: "Too Many Attempts",
-        description: `Please wait ${formatCooldown(cooldownSeconds)} before trying again.`,
+        description: ipLimitMessage || `Please wait ${formatCooldown(cooldownSeconds)} before trying again.`,
         variant: "destructive",
       });
       return;
@@ -219,10 +237,25 @@ const Auth = () => {
 
     try {
       if (isLogin) {
+        // Check server-side IP rate limit before attempting
+        const ipStatus = await checkIPRateLimit();
+        if (ipStatus.isLimited) {
+          toast({
+            title: "Account Locked",
+            description: ipStatus.message || `Too many failed attempts from your IP. Please try again in ${formatCooldown(ipStatus.cooldownSeconds)}.`,
+            variant: "destructive",
+          });
+          setIsLoading(false);
+          return;
+        }
+        
         const { error } = await signIn(email, password);
         if (error) {
-          // Record failed attempt for rate limiting and audit log
-          await recordFailedAttempt(email);
+          // Record failed attempt for both client-side and server-side (IP-based) rate limiting
+          await Promise.all([
+            recordClientFailedAttempt(email),
+            recordIPFailedAttempt(email),
+          ]);
           logLogin(false, email);
           
           if (error.message.includes("Invalid login credentials")) {
@@ -241,8 +274,9 @@ const Auth = () => {
             });
           }
         } else {
-          // Record successful login and audit log
-          recordSuccessfulLogin();
+          // Record successful login for both client-side and server-side tracking
+          recordClientSuccessfulLogin();
+          await recordIPSuccessfulLogin(email);
           logLogin(true, email);
           
           // Record device login for security tracking

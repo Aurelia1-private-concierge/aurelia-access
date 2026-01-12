@@ -1,29 +1,45 @@
 # Aurelia Private Concierge - robots.txt
 # https://aurelia-privateconcierge.com
+# World's Most Exclusive Private Concierge for Billionaires & UHNW Individuals
 
 # Sitemap location
 Sitemap: https://aurelia-privateconcierge.com/sitemap.xml
 
-# Google
+# Host
+Host: https://aurelia-privateconcierge.com
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1
+
+# Google (Priority)
 User-agent: Googlebot
 Allow: /
-Crawl-delay: 1
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /profile
+Disallow: /admin
+Disallow: /api/
 
 User-agent: Googlebot-Image
 Allow: /
+Allow: /og-image-new.png
 
 User-agent: Googlebot-News
+Allow: /
+
+User-agent: Googlebot-Video
 Allow: /
 
 # Bing
 User-agent: Bingbot
 Allow: /
-Crawl-delay: 1
+Disallow: /dashboard
+Disallow: /admin
 
 User-agent: msnbot
 Allow: /
 
-# Social Media Crawlers
+# Social Media Crawlers (Important for shares)
 User-agent: Twitterbot
 Allow: /
 
@@ -39,6 +55,15 @@ Allow: /
 User-agent: Slackbot
 Allow: /
 
+User-agent: WhatsApp
+Allow: /
+
+User-agent: TelegramBot
+Allow: /
+
+User-agent: Discordbot
+Allow: /
+
 # Other Search Engines
 User-agent: DuckDuckBot
 Allow: /
@@ -49,7 +74,10 @@ Allow: /
 User-agent: YandexBot
 Allow: /
 
-# AI/LLM Crawlers (allow for visibility)
+User-agent: Applebot
+Allow: /
+
+# AI/LLM Crawlers (allow for visibility and discovery)
 User-agent: GPTBot
 Allow: /
 
@@ -63,6 +91,9 @@ User-agent: Claude-Web
 Allow: /
 
 User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
 Allow: /
 
 # Default rule for all other bots
@@ -85,7 +116,7 @@ Disallow: /api/
 Disallow: /_next/
 Disallow: /private/
 
-# Block bad bots
+# Block SEO spam bots
 User-agent: AhrefsBot
 Disallow: /
 
@@ -99,4 +130,13 @@ User-agent: DotBot
 Disallow: /
 
 User-agent: BLEXBot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+User-agent: SerpstatBot
 Disallow: /

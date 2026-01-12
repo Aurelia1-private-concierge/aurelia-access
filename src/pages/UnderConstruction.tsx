@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { 
   Sparkles, ArrowRight, Check, Loader2, Mail, Bell, Rocket, Star, 
-  LogOut, LogIn, Globe, Shield, Users, Plane, Ship, Building2,
+  Globe, Shield, Users, Plane, Ship, Building2,
   Instagram, Linkedin, Twitter, Facebook
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,8 +14,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import AnimatedLogo from "@/components/brand/AnimatedLogo";
-import { useAuth } from "@/contexts/AuthContext";
-import { Link } from "react-router-dom";
 
 const waitlistSchema = z.object({
   email: z.string().trim().email({ message: "Please enter a valid email" }).max(255),
@@ -71,7 +69,6 @@ const services = [
 ];
 
 const UnderConstruction = () => {
-  const { user, signOut } = useAuth();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [waitlistCount, setWaitlistCount] = useState<number | null>(null);
@@ -89,7 +86,7 @@ const UnderConstruction = () => {
     
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute('content', 'Be first to access the world\'s most exclusive private concierge. Join 500+ discerning individuals on our waitlist for priority membership to private jets, superyachts & impossible experiences.');
+      metaDesc.setAttribute('content', 'Be first to access the world\'s most exclusive private concierge. Join discerning individuals on our waitlist for priority membership to private jets, superyachts & impossible experiences.');
     }
 
     return () => {
@@ -108,11 +105,6 @@ const UnderConstruction = () => {
     };
     fetchCount();
   }, [isSubmitted]);
-
-  const handleLogout = async () => {
-    await signOut();
-    toast.success("Logged out successfully");
-  };
 
   const form = useForm<WaitlistForm>({
     resolver: zodResolver(waitlistSchema),
@@ -145,46 +137,6 @@ const UnderConstruction = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Auth button in top right */}
-      <div className="absolute top-6 right-6 z-20">
-        {user ? (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-3"
-          >
-            <span className="text-sm text-muted-foreground hidden sm:block">
-              {user.email}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleLogout}
-              className="gap-2 border-primary/20 hover:bg-primary/10"
-            >
-              <LogOut className="w-4 h-4" />
-              Logout
-            </Button>
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <Button
-              variant="outline"
-              size="sm"
-              asChild
-              className="gap-2 border-primary/20 hover:bg-primary/10"
-            >
-              <Link to="/auth">
-                <LogIn className="w-4 h-4" />
-                Login
-              </Link>
-            </Button>
-          </motion.div>
-        )}
-      </div>
 
       {/* Animated grid background */}
       <div className="absolute inset-0 opacity-20 pointer-events-none">

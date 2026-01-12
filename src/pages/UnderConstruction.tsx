@@ -3,13 +3,15 @@ import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Sparkles, ArrowRight, Check, Loader2, Mail, Bell, Rocket, Star } from "lucide-react";
+import { Sparkles, ArrowRight, Check, Loader2, Mail, Bell, Rocket, Star, LogOut, LogIn } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import AnimatedLogo from "@/components/brand/AnimatedLogo";
+import { useAuth } from "@/contexts/AuthContext";
+import { Link } from "react-router-dom";
 
 const waitlistSchema = z.object({
   email: z.string().trim().email({ message: "Please enter a valid email" }).max(255),
@@ -18,8 +20,14 @@ const waitlistSchema = z.object({
 type WaitlistForm = z.infer<typeof waitlistSchema>;
 
 const UnderConstruction = () => {
+  const { user, signOut } = useAuth();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleLogout = async () => {
+    await signOut();
+    toast.success("Logged out successfully");
+  };
 
   const form = useForm<WaitlistForm>({
     resolver: zodResolver(waitlistSchema),
@@ -52,6 +60,46 @@ const UnderConstruction = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden flex items-center justify-center">
+      {/* Auth button in top right */}
+      <div className="absolute top-6 right-6 z-20">
+        {user ? (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center gap-3"
+          >
+            <span className="text-sm text-muted-foreground hidden sm:block">
+              {user.email}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLogout}
+              className="gap-2 border-primary/20 hover:bg-primary/10"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
+            </Button>
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+              className="gap-2 border-primary/20 hover:bg-primary/10"
+            >
+              <Link to="/auth">
+                <LogIn className="w-4 h-4" />
+                Login
+              </Link>
+            </Button>
+          </motion.div>
+        )}
+      </div>
       {/* Animated grid background */}
       <div className="absolute inset-0 opacity-20 pointer-events-none">
         <div 

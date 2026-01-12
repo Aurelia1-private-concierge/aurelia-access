@@ -19,7 +19,13 @@ import {
   Share2,
   Smartphone,
   Monitor,
-  Layout
+  Layout,
+  Video,
+  Music,
+  FileImage,
+  BookOpen,
+  Users,
+  Play
 } from "lucide-react";
 import { useState } from "react";
 import JSZip from "jszip";
@@ -89,6 +95,51 @@ const photographyGuidelines = [
   { title: "Color Grading", description: "Warm undertones, subtle gold highlights, deep shadows" },
   { title: "Composition", description: "Clean lines, negative space, focus on details and craftsmanship" },
   { title: "Avoid", description: "Overly staged shots, visible branding of other luxury brands, crowded scenes" },
+];
+
+// Video & Motion Assets
+const videoAssets = [
+  { name: "Logo Intro Animation", duration: "3s", format: "MP4/MOV", resolution: "1920×1080", description: "Elegant logo reveal with gold particle effects" },
+  { name: "Logo Outro Animation", duration: "2s", format: "MP4/MOV", resolution: "1920×1080", description: "Subtle fade-out with diamond icon" },
+  { name: "Logo Loop", duration: "5s", format: "MP4/MOV/GIF", resolution: "1080×1080", description: "Seamless animated logo for social/web" },
+  { name: "Lower Third Template", duration: "N/A", format: "AE/PR", resolution: "1920×1080", description: "Branded name/title overlay for videos" },
+];
+
+// Audio Assets
+const audioAssets = [
+  { name: "Sonic Logo", duration: "3s", format: "WAV/MP3", description: "Elegant chime sequence for brand recognition" },
+  { name: "Hold Music", duration: "2m loop", format: "WAV/MP3", description: "Refined instrumental for phone systems" },
+  { name: "Notification Sound", duration: "1s", format: "WAV/MP3", description: "Subtle, luxurious alert tone" },
+  { name: "Ambient Background", duration: "5m loop", format: "WAV/MP3", description: "Premium ambiance for videos/presentations" },
+];
+
+// Favicon Package Sizes
+const faviconSizes = [
+  { name: "favicon.ico", size: "16×16, 32×32, 48×48", usage: "Browser tabs" },
+  { name: "favicon-16x16.png", size: "16×16", usage: "Standard favicon" },
+  { name: "favicon-32x32.png", size: "32×32", usage: "Standard favicon" },
+  { name: "apple-touch-icon.png", size: "180×180", usage: "iOS home screen" },
+  { name: "android-chrome-192x192.png", size: "192×192", usage: "Android PWA" },
+  { name: "android-chrome-512x512.png", size: "512×512", usage: "Android PWA splash" },
+  { name: "mstile-150x150.png", size: "150×150", usage: "Windows tiles" },
+  { name: "safari-pinned-tab.svg", size: "SVG", usage: "Safari pinned tabs" },
+];
+
+// Brand Guidelines PDF Chapters
+const brandGuideChapters = [
+  { chapter: "1. Brand Story", pages: "2-5", description: "Origin, mission, vision, and values" },
+  { chapter: "2. Visual Identity", pages: "6-15", description: "Logo, colors, typography, and imagery" },
+  { chapter: "3. Voice & Tone", pages: "16-19", description: "Communication style and key messages" },
+  { chapter: "4. Application", pages: "20-28", description: "Digital, print, and environmental usage" },
+  { chapter: "5. Do's & Don'ts", pages: "29-32", description: "Common mistakes and best practices" },
+];
+
+// Partner Co-branding Templates
+const partnerTemplates = [
+  { name: "Horizontal Lock-up", description: "Aurelia logo + partner logo side by side", usage: "Wide formats, headers" },
+  { name: "Vertical Lock-up", description: "Aurelia logo above partner logo", usage: "Portrait formats, banners" },
+  { name: "Endorsed Lock-up", description: "'In partnership with Aurelia' treatment", usage: "Partner-led materials" },
+  { name: "Co-branded Header", description: "Shared header template for digital use", usage: "Websites, emails" },
 ];
 
 const MediaKit = () => {
@@ -330,13 +381,18 @@ For more information, visit aurelia-privateconcierge.com`;
         {/* Content */}
         <section className="container mx-auto px-4">
           <Tabs defaultValue="brand" className="space-y-8">
-            <TabsList className="grid grid-cols-2 md:grid-cols-6 gap-2 bg-transparent h-auto p-0">
+            <TabsList className="flex flex-wrap gap-2 bg-transparent h-auto p-0 justify-center">
               {[
                 { value: "brand", label: "Brand", icon: Palette },
                 { value: "messaging", label: "Messaging", icon: MessageSquare },
                 { value: "assets", label: "Logos", icon: ImageIcon },
+                { value: "motion", label: "Motion", icon: Video },
+                { value: "audio", label: "Audio", icon: Music },
                 { value: "social", label: "Social", icon: Share2 },
                 { value: "templates", label: "Templates", icon: Layout },
+                { value: "favicons", label: "Favicons", icon: FileImage },
+                { value: "guidelines", label: "Brand Book", icon: BookOpen },
+                { value: "partners", label: "Co-brand", icon: Users },
                 { value: "press", label: "Press", icon: FileText },
               ].map((tab) => (
                 <TabsTrigger
@@ -735,6 +791,143 @@ For more information, visit aurelia-privateconcierge.com`;
               </Card>
             </TabsContent>
 
+            {/* Motion / Video Assets */}
+            <TabsContent value="motion" className="space-y-8">
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Video className="w-5 h-5 text-primary" />
+                    Video & Motion Assets
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {videoAssets.map((asset) => (
+                      <div key={asset.name} className="p-5 rounded-xl bg-muted/20 border border-border/20 group hover:border-primary/30 transition-colors">
+                        <div className="flex items-start gap-4">
+                          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                            <Play className="w-5 h-5 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-medium text-foreground mb-1">{asset.name}</h4>
+                            <p className="text-sm text-muted-foreground mb-3">{asset.description}</p>
+                            <div className="flex flex-wrap gap-2 text-xs">
+                              <span className="px-2 py-1 rounded bg-muted/30 text-muted-foreground">{asset.duration}</span>
+                              <span className="px-2 py-1 rounded bg-muted/30 text-muted-foreground">{asset.format}</span>
+                              <span className="px-2 py-1 rounded bg-muted/30 text-muted-foreground">{asset.resolution}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
+                    <p className="text-sm text-muted-foreground">
+                      <strong className="text-foreground">Request Motion Assets:</strong> Contact{" "}
+                      <a href="mailto:brand@aurelia-privateconcierge.com" className="text-primary hover:underline">
+                        brand@aurelia-privateconcierge.com
+                      </a>{" "}
+                      to receive video files or After Effects/Premiere templates.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Motion Guidelines */}
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle>Motion Design Guidelines</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="p-4 rounded-lg bg-muted/20 border border-border/20">
+                      <h4 className="font-medium text-foreground mb-3">Animation Principles</h4>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
+                        <li>• Elegant, understated transitions (no flashy effects)</li>
+                        <li>• Easing: ease-out for enters, ease-in for exits</li>
+                        <li>• Duration: 0.3-0.8s for UI, 1-3s for logo reveals</li>
+                        <li>• Particle effects: gold (#D4AF37) with subtle glow</li>
+                      </ul>
+                    </div>
+                    <div className="p-4 rounded-lg bg-muted/20 border border-border/20">
+                      <h4 className="font-medium text-foreground mb-3">Video Specifications</h4>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
+                        <li>• Resolution: 1920×1080 (min), 4K preferred</li>
+                        <li>• Frame Rate: 30fps standard, 60fps for web</li>
+                        <li>• Codec: H.264 for web, ProRes for editing</li>
+                        <li>• Color Space: sRGB for web, Rec. 709 for video</li>
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Audio Assets */}
+            <TabsContent value="audio" className="space-y-8">
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Music className="w-5 h-5 text-primary" />
+                    Audio Branding Assets
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {audioAssets.map((asset) => (
+                      <div key={asset.name} className="p-5 rounded-xl bg-muted/20 border border-border/20 group hover:border-primary/30 transition-colors">
+                        <div className="flex items-start gap-4">
+                          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                            <Music className="w-5 h-5 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-medium text-foreground mb-1">{asset.name}</h4>
+                            <p className="text-sm text-muted-foreground mb-3">{asset.description}</p>
+                            <div className="flex gap-2 text-xs">
+                              <span className="px-2 py-1 rounded bg-muted/30 text-muted-foreground">{asset.duration}</span>
+                              <span className="px-2 py-1 rounded bg-muted/30 text-muted-foreground">{asset.format}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
+                    <p className="text-sm text-muted-foreground">
+                      <strong className="text-foreground">Request Audio Assets:</strong> Contact{" "}
+                      <a href="mailto:brand@aurelia-privateconcierge.com" className="text-primary hover:underline">
+                        brand@aurelia-privateconcierge.com
+                      </a>{" "}
+                      for WAV/MP3 files and licensing information.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Audio Guidelines */}
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle>Audio Brand Guidelines</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div className="p-4 rounded-lg bg-muted/20 border border-border/20">
+                      <h4 className="font-medium text-primary mb-2">Sonic Identity</h4>
+                      <p className="text-sm text-muted-foreground">Warm, sophisticated tones with subtle metallic resonance reflecting the gold brand accent.</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-muted/20 border border-border/20">
+                      <h4 className="font-medium text-primary mb-2">Instrumentation</h4>
+                      <p className="text-sm text-muted-foreground">Piano, subtle strings, crystal chimes. Avoid heavy bass, electronic beats, or abrupt sounds.</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-muted/20 border border-border/20">
+                      <h4 className="font-medium text-primary mb-2">Technical Specs</h4>
+                      <p className="text-sm text-muted-foreground">44.1kHz / 16-bit minimum. Normalize to -14 LUFS for consistency across platforms.</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
             {/* Social Media Assets */}
             <TabsContent value="social" className="space-y-8">
               {/* Social Media Sizes Reference */}
@@ -931,6 +1124,200 @@ For more information, visit aurelia-privateconcierge.com`;
                       <p className="text-sm text-muted-foreground">A5 folded (148 × 210mm)</p>
                       <p className="text-xs text-muted-foreground/70 mt-1">CMYK, 300 DPI, 3mm bleed</p>
                     </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Favicons Tab */}
+            <TabsContent value="favicons" className="space-y-8">
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileImage className="w-5 h-5 text-primary" />
+                    Favicon Package
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {faviconSizes.map((favicon) => (
+                      <div key={favicon.name} className="flex items-center justify-between p-4 rounded-lg bg-muted/20 border border-border/20">
+                        <div>
+                          <p className="font-mono text-sm text-foreground">{favicon.name}</p>
+                          <p className="text-xs text-muted-foreground">{favicon.usage}</p>
+                        </div>
+                        <span className="text-xs px-2 py-1 rounded bg-muted/30 text-muted-foreground font-mono">{favicon.size}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
+                    <p className="text-sm text-muted-foreground">
+                      <strong className="text-foreground">Download Favicon Package:</strong> The complete favicon set is included in the "Download All Assets" ZIP file, or contact{" "}
+                      <a href="mailto:brand@aurelia-privateconcierge.com" className="text-primary hover:underline">
+                        brand@aurelia-privateconcierge.com
+                      </a>.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Web Manifest Example */}
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle>Web Manifest Reference</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="p-4 rounded-lg bg-[#1A1A1A] border border-border/30 overflow-x-auto">
+                    <pre className="text-sm text-[#F5F5F0] font-mono">
+{`{
+  "name": "Aurelia Private Concierge",
+  "short_name": "Aurelia",
+  "icons": [
+    { "src": "/favicon-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/favicon-512x512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#D4AF37",
+  "background_color": "#0A0A0A",
+  "display": "standalone"
+}`}
+                    </pre>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Brand Guidelines PDF Tab */}
+            <TabsContent value="guidelines" className="space-y-8">
+              <Card className="bg-gradient-to-br from-primary/10 via-card/50 to-card/50 border-primary/30">
+                <CardContent className="py-8">
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center">
+                        <BookOpen className="w-7 h-7 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-medium text-foreground">Aurelia Brand Guidelines</h3>
+                        <p className="text-muted-foreground">Comprehensive 32-page brand book (PDF)</p>
+                      </div>
+                    </div>
+                    <Button 
+                      size="lg" 
+                      className="bg-primary text-primary-foreground hover:bg-primary/90"
+                      onClick={() => toast({ title: "Coming Soon", description: "Brand Guidelines PDF will be available for download shortly." })}
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Download PDF
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle>Table of Contents</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {brandGuideChapters.map((chapter) => (
+                      <div key={chapter.chapter} className="flex items-center justify-between p-4 rounded-lg bg-muted/20 border border-border/20 hover:border-primary/30 transition-colors">
+                        <div>
+                          <h4 className="font-medium text-foreground">{chapter.chapter}</h4>
+                          <p className="text-sm text-muted-foreground">{chapter.description}</p>
+                        </div>
+                        <span className="text-xs px-3 py-1 rounded bg-muted/30 text-muted-foreground">pp. {chapter.pages}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Partner Co-branding Tab */}
+            <TabsContent value="partners" className="space-y-8">
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="w-5 h-5 text-primary" />
+                    Partner Co-branding Templates
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {partnerTemplates.map((template) => (
+                      <div key={template.name} className="p-5 rounded-xl bg-muted/20 border border-border/20 hover:border-primary/30 transition-colors">
+                        <h4 className="font-medium text-foreground mb-2">{template.name}</h4>
+                        <p className="text-sm text-muted-foreground mb-3">{template.description}</p>
+                        <span className="text-xs px-2 py-1 rounded bg-primary/10 text-primary">{template.usage}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Lock-up Examples */}
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle>Lock-up Examples</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Horizontal Lock-up */}
+                    <div className="p-6 rounded-xl bg-[#0A0A0A] border border-border/30">
+                      <div className="flex items-center justify-center gap-8 py-4">
+                        <span className="text-lg font-light tracking-[0.2em] text-[#D4AF37]">AURELIA</span>
+                        <div className="w-px h-8 bg-[#333]" />
+                        <span className="text-lg font-medium text-[#888]">Partner</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground text-center mt-4">Horizontal Lock-up</p>
+                    </div>
+
+                    {/* Vertical Lock-up */}
+                    <div className="p-6 rounded-xl bg-[#0A0A0A] border border-border/30">
+                      <div className="flex flex-col items-center justify-center gap-4 py-4">
+                        <span className="text-lg font-light tracking-[0.2em] text-[#D4AF37]">AURELIA</span>
+                        <div className="h-px w-16 bg-[#333]" />
+                        <span className="text-lg font-medium text-[#888]">Partner</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground text-center mt-4">Vertical Lock-up</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Co-branding Rules */}
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle>Co-branding Guidelines</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-medium text-emerald-500 mb-3">✓ Requirements</h4>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
+                        <li>• Aurelia logo must be same size or larger than partner logo</li>
+                        <li>• Maintain clear space equal to Aurelia icon height</li>
+                        <li>• Use official Aurelia colors only</li>
+                        <li>• Submit designs for approval before publication</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-red-500 mb-3">✗ Restrictions</h4>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
+                        <li>• No modification of Aurelia logo proportions</li>
+                        <li>• No color changes to accommodate partner palette</li>
+                        <li>• No use without written partnership agreement</li>
+                        <li>• No crowded or cluttered compositions</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="mt-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
+                    <p className="text-sm text-muted-foreground">
+                      <strong className="text-foreground">Request Templates:</strong> Contact{" "}
+                      <a href="mailto:partnerships@aurelia-privateconcierge.com" className="text-primary hover:underline">
+                        partnerships@aurelia-privateconcierge.com
+                      </a>{" "}
+                      for editable co-branding files and approval process.
+                    </p>
                   </div>
                 </CardContent>
               </Card>

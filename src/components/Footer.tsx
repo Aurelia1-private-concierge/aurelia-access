@@ -39,7 +39,7 @@ const Footer = () => {
               <div className="flex items-center gap-3 mt-6">
                 {[
                   { icon: Instagram, href: "/instagram", label: "Instagram", isInternal: true },
-                  { icon: Facebook, href: "https://facebook.com/aureliaprivateconcierge", label: "Facebook", isInternal: false },
+                  { icon: Facebook, href: "/facebook", label: "Facebook", isInternal: true },
                   { icon: Twitter, href: "https://x.com/aureliaprivate", label: "X (Twitter)", isInternal: false },
                   { icon: Linkedin, href: "/linkedin", label: "LinkedIn", isInternal: true },
                 ].map(({ icon: Icon, href, label, isInternal }) => (

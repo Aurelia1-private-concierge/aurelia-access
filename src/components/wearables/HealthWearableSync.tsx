@@ -1,66 +1,103 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Heart, Moon, Zap, Activity, ChevronRight, 
-  Brain, Thermometer, TrendingUp, Sparkles
+  Brain, Sparkles, Bluetooth, BluetoothOff,
+  AlertCircle, RefreshCw
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { toast } from "sonner";
-
-interface HealthMetrics {
-  sleepScore: number;
-  recoveryScore: number;
-  readinessScore: number;
-  hrv: number;
-  restingHR: number;
-  bodyTemp: number;
-}
+import { useBluetooth, type HealthData } from "@/hooks/useBluetooth";
 
 const HealthWearableSync = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
-  const [selectedDevice, setSelectedDevice] = useState<"oura" | "whoop" | null>(null);
-  const [isSyncing, setIsSyncing] = useState(false);
+  const { 
+    isSupported, 
+    isScanning, 
+    connectedDevice, 
+    healthData, 
+    error,
+    scanAndConnect, 
+    disconnect 
+  } = useBluetooth();
 
-  // Mock health data
-  const [metrics] = useState<HealthMetrics>({
-    sleepScore: 87,
-    recoveryScore: 92,
-    readinessScore: 85,
-    hrv: 68,
-    restingHR: 52,
-    bodyTemp: 0.3,
+  const [sessionData, setSessionData] = useState<{
+    avgHeartRate: number;
+    maxHeartRate: number;
+    minHeartRate: number;
+    avgHRV: number;
+    readings: number;
+  }>({
+    avgHeartRate: 0,
+    maxHeartRate: 0,
+    minHeartRate: 999,
+    avgHRV: 0,
+    readings: 0,
   });
 
-  const handleConnect = async (device: "oura" | "whoop") => {
-    setSelectedDevice(device);
-    setIsSyncing(true);
-    
-    // Simulate connection
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setIsSyncing(false);
-    setIsConnected(true);
-    toast.success(`Connected to ${device === "oura" ? "Oura Ring" : "WHOOP"}`);
-  };
+  // Track session statistics
+  useEffect(() => {
+    if (healthData?.heartRate) {
+      setSessionData(prev => {
+        const newReadings = prev.readings + 1;
+        const newAvgHR = Math.round(
+          (prev.avgHeartRate * prev.readings + healthData.heartRate!) / newReadings
+        );
+        const newAvgHRV = healthData.heartRateVariability 
+          ? Math.round((prev.avgHRV * prev.readings + healthData.heartRateVariability) / newReadings)
+          : prev.avgHRV;
+
+        return {
+          avgHeartRate: newAvgHR,
+          maxHeartRate: Math.max(prev.maxHeartRate, healthData.heartRate!),
+          minHeartRate: Math.min(prev.minHeartRate, healthData.heartRate!),
+          avgHRV: newAvgHRV,
+          readings: newReadings,
+        };
+      });
+    }
+  }, [healthData]);
+
+  // Reset session when disconnected
+  useEffect(() => {
+    if (!connectedDevice) {
+      setSessionData({
+        avgHeartRate: 0,
+        maxHeartRate: 0,
+        minHeartRate: 999,
+        avgHRV: 0,
+        readings: 0,
+      });
+    }
+  }, [connectedDevice]);
 
   const getRecommendation = () => {
-    if (metrics.recoveryScore >= 90) {
+    if (!healthData?.heartRate) {
       return {
-        text: "You're at peak performance. Perfect for active experiences.",
-        suggestions: ["Adventure travel", "Water sports", "Nightlife events"],
+        text: "Connect your heart rate monitor to receive personalized recommendations.",
+        suggestions: ["Polar H10", "Garmin HRM", "Wahoo TICKR"],
+        color: "text-muted-foreground",
+      };
+    }
+
+    const hr = healthData.heartRate;
+    const hrv = healthData.heartRateVariability || 0;
+
+    if (hr < 60 && hrv > 50) {
+      return {
+        text: "Excellent recovery state. You're ready for peak performance activities.",
+        suggestions: ["Adventure travel", "Water sports", "Active experiences"],
         color: "text-emerald-400",
       };
-    } else if (metrics.recoveryScore >= 70) {
+    } else if (hr < 75 && hrv > 30) {
       return {
-        text: "Good recovery. Balance activity with relaxation.",
-        suggestions: ["Fine dining", "Art galleries", "Yacht cruises"],
+        text: "Good baseline. Balance activity with mindful experiences.",
+        suggestions: ["Fine dining", "Cultural tours", "Yacht cruises"],
         color: "text-primary",
       };
     } else {
       return {
-        text: "Focus on recovery today. Prioritize wellness.",
+        text: "Focus on recovery. Prioritize wellness and relaxation.",
         suggestions: ["Spa treatments", "Meditation retreats", "Private beaches"],
         color: "text-amber-400",
       };
@@ -78,12 +115,34 @@ const HealthWearableSync = () => {
         whileTap={{ scale: 0.95 }}
         className="flex items-center gap-3 px-5 py-3 bg-secondary/50 border border-border/30 rounded-xl hover:border-primary/30 transition-all group"
       >
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose-500/30 to-rose-500/10 border border-rose-500/40 flex items-center justify-center">
-          <Heart className="w-5 h-5 text-rose-400" />
+        <div className={`w-10 h-10 rounded-full ${
+          connectedDevice ? "bg-gradient-to-br from-emerald-500/30 to-emerald-500/10 border-emerald-500/40" : "bg-gradient-to-br from-rose-500/30 to-rose-500/10 border-rose-500/40"
+        } border flex items-center justify-center relative`}>
+          {connectedDevice ? (
+            <Bluetooth className="w-5 h-5 text-emerald-400" />
+          ) : (
+            <Heart className="w-5 h-5 text-rose-400" />
+          )}
+          {connectedDevice && healthData?.heartRate && (
+            <motion.div
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 0.8, repeat: Infinity }}
+              className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center"
+            >
+              <span className="text-[8px] text-white font-bold">{healthData.heartRate}</span>
+            </motion.div>
+          )}
         </div>
         <div className="text-left">
-          <p className="text-sm font-medium text-foreground">Health Wearables</p>
-          <p className="text-xs text-muted-foreground">Oura Ring / WHOOP</p>
+          <p className="text-sm font-medium text-foreground">
+            {connectedDevice ? connectedDevice.name : "Health Wearables"}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {connectedDevice 
+              ? `${healthData?.heartRate || "--"} BPM • Live` 
+              : "Bluetooth Heart Rate"
+            }
+          </p>
         </div>
         <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
       </motion.button>
@@ -108,116 +167,157 @@ const HealthWearableSync = () => {
               {/* Header */}
               <div className="p-6 bg-gradient-to-br from-rose-500/10 to-transparent border-b border-border/30">
                 <div className="flex items-center gap-3 mb-2">
-                  <Heart className="w-6 h-6 text-rose-400" />
-                  <h3 className="text-lg font-serif text-foreground">Wellness Integration</h3>
+                  {connectedDevice ? (
+                    <Bluetooth className="w-6 h-6 text-emerald-400" />
+                  ) : (
+                    <Heart className="w-6 h-6 text-rose-400" />
+                  )}
+                  <h3 className="text-lg font-serif text-foreground">
+                    {connectedDevice ? "Live Health Data" : "Bluetooth Heart Rate"}
+                  </h3>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Connect your health wearable for personalized recommendations
+                  {connectedDevice 
+                    ? `Connected to ${connectedDevice.name}` 
+                    : "Connect your Bluetooth heart rate monitor"
+                  }
                 </p>
               </div>
 
               {/* Content */}
               <div className="p-6">
-                {!isConnected ? (
+                {!isSupported ? (
+                  <div className="text-center py-8">
+                    <BluetoothOff className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                    <h4 className="font-medium text-foreground mb-2">Bluetooth Not Supported</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Your browser doesn't support Web Bluetooth. Try using Chrome, Edge, or Opera on desktop.
+                    </p>
+                  </div>
+                ) : !connectedDevice ? (
                   <div className="space-y-4">
-                    <p className="text-sm text-muted-foreground mb-4">Select your device:</p>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Connect any Bluetooth heart rate monitor for real-time health tracking:
+                    </p>
                     
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => handleConnect("oura")}
-                      disabled={isSyncing}
-                      className="w-full flex items-center gap-4 p-4 bg-secondary/50 border border-border/30 rounded-xl hover:border-primary/30 transition-all disabled:opacity-50"
-                    >
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-zinc-800 to-zinc-900 border border-zinc-700 flex items-center justify-center">
-                        <span className="text-lg">💍</span>
+                    {error && (
+                      <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                        <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                        {error}
                       </div>
-                      <div className="text-left flex-1">
-                        <p className="font-medium text-foreground">Oura Ring</p>
-                        <p className="text-xs text-muted-foreground">Sleep, Recovery, Activity</p>
-                      </div>
-                      {isSyncing && selectedDevice === "oura" && (
-                        <motion.div
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        >
-                          <Activity className="w-5 h-5 text-primary" />
-                        </motion.div>
-                      )}
-                    </motion.button>
+                    )}
 
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => handleConnect("whoop")}
-                      disabled={isSyncing}
-                      className="w-full flex items-center gap-4 p-4 bg-secondary/50 border border-border/30 rounded-xl hover:border-primary/30 transition-all disabled:opacity-50"
+                    <div className="grid grid-cols-2 gap-3">
+                      {["Polar H10", "Garmin HRM", "Wahoo TICKR", "WHOOP Band"].map((device) => (
+                        <div key={device} className="p-3 bg-secondary/30 rounded-lg text-center">
+                          <Heart className="w-5 h-5 text-rose-400 mx-auto mb-1" />
+                          <p className="text-xs text-muted-foreground">{device}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <Button
+                      onClick={scanAndConnect}
+                      disabled={isScanning}
+                      className="w-full bg-gradient-to-r from-primary to-primary/80"
                     >
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-teal-800 to-teal-900 border border-teal-700 flex items-center justify-center">
-                        <span className="text-lg">⌚</span>
-                      </div>
-                      <div className="text-left flex-1">
-                        <p className="font-medium text-foreground">WHOOP</p>
-                        <p className="text-xs text-muted-foreground">Strain, Recovery, Sleep</p>
-                      </div>
-                      {isSyncing && selectedDevice === "whoop" && (
-                        <motion.div
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        >
-                          <Activity className="w-5 h-5 text-primary" />
-                        </motion.div>
+                      {isScanning ? (
+                        <>
+                          <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                          Scanning...
+                        </>
+                      ) : (
+                        <>
+                          <Bluetooth className="w-4 h-4 mr-2" />
+                          Scan for Devices
+                        </>
                       )}
-                    </motion.button>
+                    </Button>
+
+                    <p className="text-[10px] text-muted-foreground text-center">
+                      Make sure your heart rate monitor is in pairing mode
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-6">
+                    {/* Live Heart Rate Display */}
+                    <div className="text-center">
+                      <motion.div
+                        animate={{ scale: healthData?.heartRate ? [1, 1.05, 1] : 1 }}
+                        transition={{ duration: 0.8, repeat: Infinity }}
+                        className="relative w-32 h-32 mx-auto mb-4"
+                      >
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-rose-500/20 to-rose-500/5 border border-rose-500/30" />
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <span className="text-4xl font-bold text-foreground">
+                            {healthData?.heartRate || "--"}
+                          </span>
+                          <span className="text-xs text-muted-foreground">BPM</span>
+                        </div>
+                        {!healthData?.contactDetected && (
+                          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-amber-500/20 border border-amber-500/30 rounded-full">
+                            <span className="text-[10px] text-amber-400">No contact</span>
+                          </div>
+                        )}
+                      </motion.div>
+                    </div>
+
                     {/* Metrics Grid */}
                     <div className="grid grid-cols-3 gap-3">
                       <div className="text-center p-3 bg-secondary/30 rounded-xl">
-                        <Moon className="w-4 h-4 text-indigo-400 mx-auto mb-1" />
-                        <p className="text-lg font-bold text-foreground">{metrics.sleepScore}</p>
-                        <p className="text-[10px] text-muted-foreground">Sleep</p>
+                        <Activity className="w-4 h-4 text-indigo-400 mx-auto mb-1" />
+                        <p className="text-lg font-bold text-foreground">
+                          {healthData?.heartRateVariability || "--"}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">HRV (ms)</p>
                       </div>
                       <div className="text-center p-3 bg-secondary/30 rounded-xl">
-                        <Zap className="w-4 h-4 text-emerald-400 mx-auto mb-1" />
-                        <p className="text-lg font-bold text-foreground">{metrics.recoveryScore}%</p>
-                        <p className="text-[10px] text-muted-foreground">Recovery</p>
+                        <Moon className="w-4 h-4 text-emerald-400 mx-auto mb-1" />
+                        <p className="text-lg font-bold text-foreground">
+                          {sessionData.avgHeartRate || "--"}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">Avg HR</p>
                       </div>
                       <div className="text-center p-3 bg-secondary/30 rounded-xl">
                         <Brain className="w-4 h-4 text-primary mx-auto mb-1" />
-                        <p className="text-lg font-bold text-foreground">{metrics.readinessScore}</p>
-                        <p className="text-[10px] text-muted-foreground">Readiness</p>
+                        <p className="text-lg font-bold text-foreground">
+                          {sessionData.readings}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">Readings</p>
                       </div>
                     </div>
 
-                    {/* Detailed Metrics */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Activity className="w-3.5 h-3.5 text-rose-400" />
-                          <span className="text-xs text-muted-foreground">HRV</span>
+                    {/* Session Stats */}
+                    {sessionData.readings > 0 && (
+                      <div className="p-3 bg-secondary/20 rounded-lg">
+                        <div className="flex justify-between text-xs text-muted-foreground mb-2">
+                          <span>Session Range</span>
+                          <span>{sessionData.minHeartRate} - {sessionData.maxHeartRate} BPM</span>
                         </div>
-                        <span className="text-sm text-foreground">{metrics.hrv} ms</span>
+                        <Progress 
+                          value={((healthData?.heartRate || 0) - 40) / 1.6} 
+                          className="h-1.5" 
+                        />
                       </div>
-                      <Progress value={metrics.hrv} className="h-1.5" />
-                      
-                      <div className="flex items-center justify-between">
+                    )}
+
+                    {/* Battery Level */}
+                    {connectedDevice.batteryLevel !== null && (
+                      <div className="flex items-center justify-between p-3 bg-secondary/20 rounded-lg">
+                        <span className="text-xs text-muted-foreground">Device Battery</span>
                         <div className="flex items-center gap-2">
-                          <Heart className="w-3.5 h-3.5 text-rose-400" />
-                          <span className="text-xs text-muted-foreground">Resting HR</span>
+                          <div className="w-8 h-3 border border-muted-foreground/50 rounded-sm relative">
+                            <div
+                              className={`h-full rounded-sm ${
+                                connectedDevice.batteryLevel > 20 ? "bg-emerald-500" : "bg-red-500"
+                              }`}
+                              style={{ width: `${connectedDevice.batteryLevel}%` }}
+                            />
+                          </div>
+                          <span className="text-xs text-foreground">{connectedDevice.batteryLevel}%</span>
                         </div>
-                        <span className="text-sm text-foreground">{metrics.restingHR} bpm</span>
                       </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Thermometer className="w-3.5 h-3.5 text-amber-400" />
-                          <span className="text-xs text-muted-foreground">Body Temp Deviation</span>
-                        </div>
-                        <span className="text-sm text-foreground">+{metrics.bodyTemp}°C</span>
-                      </div>
-                    </div>
+                    )}
 
                     {/* AI Recommendation */}
                     <div className="p-4 bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 rounded-xl">
@@ -241,13 +341,22 @@ const HealthWearableSync = () => {
               </div>
 
               {/* Footer */}
-              <div className="p-4 border-t border-border/30 bg-secondary/20">
+              <div className="p-4 border-t border-border/30 bg-secondary/20 flex gap-2">
+                {connectedDevice && (
+                  <Button
+                    variant="destructive"
+                    onClick={disconnect}
+                    className="flex-1"
+                  >
+                    Disconnect
+                  </Button>
+                )}
                 <Button
                   variant="outline"
                   onClick={() => setIsOpen(false)}
-                  className="w-full"
+                  className={connectedDevice ? "flex-1" : "w-full"}
                 >
-                  {isConnected ? "Close" : "Cancel"}
+                  Close
                 </Button>
               </div>
             </motion.div>

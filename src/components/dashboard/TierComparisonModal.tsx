@@ -93,13 +93,13 @@ const TierComparisonModal = ({ isOpen, onClose, highlightTier }: TierComparisonM
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed inset-4 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-5xl md:w-full md:max-h-[85vh] bg-card border border-border rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col"
+            className="fixed inset-2 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-5xl md:w-[95vw] md:max-h-[85vh] bg-card border border-border rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col"
           >
             {/* Header */}
-            <div className="p-6 border-b border-border/50 flex items-center justify-between">
+            <div className="p-4 md:p-6 border-b border-border/50 flex items-center justify-between">
               <div>
-                <h2 className="font-serif text-2xl text-foreground">Compare Membership Tiers</h2>
-                <p className="text-sm text-muted-foreground mt-1">
+                <h2 className="font-serif text-lg md:text-2xl text-foreground">Compare Membership Tiers</h2>
+                <p className="text-xs md:text-sm text-muted-foreground mt-1">
                   Find the perfect level of service for your lifestyle
                 </p>
               </div>
@@ -112,10 +112,10 @@ const TierComparisonModal = ({ isOpen, onClose, highlightTier }: TierComparisonM
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-auto p-6">
+            <div className="flex-1 overflow-auto p-4 md:p-6">
               {/* Tier Headers */}
-              <div className="grid grid-cols-4 gap-4 mb-6 sticky top-0 bg-card pb-4 border-b border-border/30">
-                <div className="text-sm font-medium text-muted-foreground">Features</div>
+              <div className="grid grid-cols-[minmax(120px,1fr)_repeat(3,minmax(80px,1fr))] gap-2 md:gap-4 mb-6 sticky top-0 bg-card pb-4 border-b border-border/30 z-10">
+                <div className="text-xs md:text-sm font-medium text-muted-foreground">Features</div>
                 {MEMBERSHIP_TIERS.map((tier) => {
                   const Icon = tierIcons[tier.id as keyof typeof tierIcons];
                   const colors = tierColors[tier.id as keyof typeof tierColors];
@@ -126,21 +126,21 @@ const TierComparisonModal = ({ isOpen, onClose, highlightTier }: TierComparisonM
                     <div
                       key={tier.id}
                       className={cn(
-                        "text-center p-4 rounded-xl transition-all",
+                        "text-center p-2 md:p-4 rounded-xl transition-all",
                         isHighlighted && cn(colors.bg, colors.border, "border-2"),
                         !isHighlighted && "bg-muted/30"
                       )}
                     >
-                      <div className="flex items-center justify-center gap-2 mb-2">
-                        <Icon className={cn("w-5 h-5", colors.accent)} />
-                        <span className={cn("font-medium", colors.accent)}>{tier.name}</span>
+                      <div className="flex items-center justify-center gap-1 md:gap-2 mb-1 md:mb-2">
+                        <Icon className={cn("w-4 h-4 md:w-5 md:h-5", colors.accent)} />
+                        <span className={cn("font-medium text-xs md:text-sm", colors.accent)}>{tier.name}</span>
                       </div>
-                      <p className="text-lg font-light text-foreground">
-                        {formatPrice(tier.monthlyPrice)}<span className="text-xs text-muted-foreground">/mo</span>
+                      <p className="text-sm md:text-lg font-light text-foreground">
+                        {formatPrice(tier.monthlyPrice)}<span className="text-[10px] md:text-xs text-muted-foreground">/mo</span>
                       </p>
                       {isCurrent && (
-                        <span className="inline-block mt-2 text-xs px-2 py-0.5 bg-emerald-500/20 text-emerald-500 rounded-full">
-                          Current Plan
+                        <span className="inline-block mt-1 md:mt-2 text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 bg-emerald-500/20 text-emerald-500 rounded-full">
+                          Current
                         </span>
                       )}
                     </div>
@@ -149,25 +149,25 @@ const TierComparisonModal = ({ isOpen, onClose, highlightTier }: TierComparisonM
               </div>
 
               {/* Feature Rows */}
-              <div className="space-y-2">
+              <div className="space-y-1 md:space-y-2">
                 {allFeatures.map((feature, index) => (
                   <motion.div
                     key={feature.name}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.02 }}
-                    className="grid grid-cols-4 gap-4 py-3 border-b border-border/20 hover:bg-muted/20 rounded-lg px-2"
+                    className="grid grid-cols-[minmax(120px,1fr)_repeat(3,minmax(80px,1fr))] gap-2 md:gap-4 py-2 md:py-3 border-b border-border/20 hover:bg-muted/20 rounded-lg px-1 md:px-2"
                   >
-                    <div className="text-sm text-foreground">{feature.name}</div>
+                    <div className="text-xs md:text-sm text-foreground leading-tight">{feature.name}</div>
                     {["silver", "gold", "platinum"].map((tierId) => {
                       const hasFeature = feature[tierId as keyof typeof feature];
                       const colors = tierColors[tierId as keyof typeof tierColors];
                       return (
                         <div key={tierId} className="flex justify-center">
                           {hasFeature ? (
-                            <Check className={cn("w-5 h-5", colors.accent)} />
+                            <Check className={cn("w-4 h-4 md:w-5 md:h-5", colors.accent)} />
                           ) : (
-                            <span className="w-5 h-5 flex items-center justify-center text-muted-foreground/30">
+                            <span className="w-4 h-4 md:w-5 md:h-5 flex items-center justify-center text-muted-foreground/30">
                               —
                             </span>
                           )}
@@ -180,8 +180,8 @@ const TierComparisonModal = ({ isOpen, onClose, highlightTier }: TierComparisonM
             </div>
 
             {/* Footer with CTAs */}
-            <div className="p-6 border-t border-border/50 bg-muted/20">
-              <div className="grid grid-cols-4 gap-4">
+            <div className="p-4 md:p-6 border-t border-border/50 bg-muted/20">
+              <div className="grid grid-cols-[minmax(120px,1fr)_repeat(3,minmax(80px,1fr))] gap-2 md:gap-4">
                 <div /> {/* Empty cell for alignment */}
                 {MEMBERSHIP_TIERS.map((tier) => {
                   const colors = tierColors[tier.id as keyof typeof tierColors];
@@ -196,20 +196,22 @@ const TierComparisonModal = ({ isOpen, onClose, highlightTier }: TierComparisonM
                       onClick={() => handleUpgrade(tier.monthlyPriceId)}
                       disabled={isLoading || isCurrent}
                       variant={tier.highlighted ? "default" : "outline"}
+                      size="sm"
                       className={cn(
-                        "w-full",
+                        "w-full text-xs md:text-sm px-2 md:px-4",
                         tier.highlighted && "bg-primary hover:bg-primary/90 gold-glow-hover",
                         !tier.highlighted && cn(colors.border, "hover:bg-muted/50")
                       )}
                     >
                       {isCurrent ? (
-                        "Current Plan"
+                        <span className="truncate">Current</span>
                       ) : isDowngrade ? (
-                        "Downgrade"
+                        <span className="truncate">Downgrade</span>
                       ) : (
-                        <>
-                          {isUpgrade ? "Upgrade" : "Select"} <ArrowRight className="w-4 h-4 ml-1" />
-                        </>
+                        <span className="flex items-center gap-1">
+                          <span className="truncate">{isUpgrade ? "Upgrade" : "Select"}</span>
+                          <ArrowRight className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" />
+                        </span>
                       )}
                     </Button>
                   );

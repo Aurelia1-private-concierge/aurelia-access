@@ -52,23 +52,23 @@ const teamMembers = [
 const recentPosts = [
   {
     id: 1,
-    content: "Thrilled to announce our expansion into the Asia-Pacific region. Aurelia now serves discerning clients across 40+ countries worldwide.",
-    likes: 847,
-    comments: 62,
+    content: "We're thrilled to announce the launch of Aurelia Private Concierge. A new standard in bespoke luxury lifestyle management is here.",
+    likes: 47,
+    comments: 12,
     date: "2 days ago"
   },
   {
     id: 2,
-    content: "Our AI concierge, Orla, has successfully curated over 10,000 bespoke experiences this quarter. The future of luxury is intelligent and personal.",
-    likes: 1243,
-    comments: 89,
+    content: "Introducing Orla—our AI concierge designed to anticipate your needs before you voice them. The future of luxury is intelligent and personal.",
+    likes: 83,
+    comments: 19,
     date: "1 week ago"
   },
   {
     id: 3,
-    content: "Proud to be recognized as 'Best Luxury Concierge Service 2025' by Luxury Lifestyle Awards. Thank you to our incredible team and members.",
-    likes: 2156,
-    comments: 134,
+    content: "From private aviation to exclusive experiences, Aurelia is redefining what bespoke service means. Join our founding members today.",
+    likes: 56,
+    comments: 14,
     date: "2 weeks ago"
   }
 ];
@@ -159,7 +159,7 @@ const LinkedInProfile = () => {
                     </span>
                     <span className="flex items-center gap-1">
                       <Users className="w-4 h-4" />
-                      51-200 employees
+                      2-10 employees
                     </span>
                   </div>
                 </div>
@@ -184,15 +184,15 @@ const LinkedInProfile = () => {
               {/* Stats */}
               <div className="flex flex-wrap gap-6 mt-6 pt-6 border-t border-border">
                 <div>
-                  <div className="text-2xl font-semibold text-foreground">47.2K</div>
+                  <div className="text-2xl font-semibold text-foreground">524</div>
                   <div className="text-sm text-muted-foreground">Followers</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-semibold text-foreground">2,847</div>
+                  <div className="text-2xl font-semibold text-foreground">147</div>
                   <div className="text-sm text-muted-foreground">Connections</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-semibold text-foreground">156</div>
+                  <div className="text-2xl font-semibold text-foreground">12</div>
                   <div className="text-sm text-muted-foreground">Team Members</div>
                 </div>
               </div>
@@ -346,7 +346,7 @@ const LinkedInProfile = () => {
                   <Users className="w-5 h-5 text-muted-foreground mt-0.5" />
                   <div>
                     <div className="text-foreground">Company Size</div>
-                    <div className="text-muted-foreground">51-200 employees</div>
+                    <div className="text-muted-foreground">2-10 employees</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -360,7 +360,7 @@ const LinkedInProfile = () => {
                   <Calendar className="w-5 h-5 text-muted-foreground mt-0.5" />
                   <div>
                     <div className="text-foreground">Founded</div>
-                    <div className="text-muted-foreground">2019</div>
+                    <div className="text-muted-foreground">2026</div>
                   </div>
                 </div>
               </div>
@@ -373,18 +373,18 @@ const LinkedInProfile = () => {
               transition={{ delay: 0.3 }}
               className="bg-card rounded-xl border border-border p-6"
             >
-              <h3 className="font-semibold text-foreground mb-4">Awards & Recognition</h3>
+              <h3 className="font-semibold text-foreground mb-4">Our Focus</h3>
               <div className="space-y-4">
                 {[
-                  { title: 'Best Luxury Concierge 2025', org: 'Luxury Lifestyle Awards' },
-                  { title: 'Innovation in AI', org: 'Forbes Travel' },
-                  { title: 'Excellence in Service', org: 'Condé Nast Traveler' }
-                ].map((award, i) => (
+                  { title: 'AI-Enhanced Service', org: 'Meet Orla, your personal concierge' },
+                  { title: 'Global Network', org: 'Premium partners worldwide' },
+                  { title: 'Bespoke Experiences', org: 'Tailored to your preferences' }
+                ].map((focus, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <Award className="w-5 h-5 text-primary mt-0.5" />
                     <div>
-                      <div className="text-sm font-medium text-foreground">{award.title}</div>
-                      <div className="text-xs text-muted-foreground">{award.org}</div>
+                      <div className="text-sm font-medium text-foreground">{focus.title}</div>
+                      <div className="text-xs text-muted-foreground">{focus.org}</div>
                     </div>
                   </div>
                 ))}
@@ -398,9 +398,9 @@ const LinkedInProfile = () => {
               transition={{ delay: 0.4 }}
               className="bg-card rounded-xl border border-border p-6"
             >
-              <h3 className="font-semibold text-foreground mb-4">Global Offices</h3>
+              <h3 className="font-semibold text-foreground mb-4">Headquarters</h3>
               <div className="space-y-3 text-sm">
-                {['London', 'Dubai', 'Monaco', 'Singapore', 'New York'].map((city) => (
+                {['London (HQ)', 'Geneva', 'Singapore'].map((city) => (
                   <div key={city} className="flex items-center gap-2 text-muted-foreground">
                     <MapPin className="w-4 h-4" />
                     {city}

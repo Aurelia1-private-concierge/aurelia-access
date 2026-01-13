@@ -35,54 +35,54 @@ const videos = [
   {
     id: 1,
     thumbnail: "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=400&h=700&fit=crop",
-    views: 12400,
-    likes: 2100,
-    comments: 89,
+    views: 1240,
+    likes: 210,
+    comments: 19,
     caption: "When your client needs a private jet in 2 hours ✈️ #luxury #concierge #privatejet",
     videoSrc: heroJet
   },
   {
     id: 2,
     thumbnail: "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=400&h=700&fit=crop",
-    views: 8900,
-    likes: 1560,
-    comments: 67,
+    views: 890,
+    likes: 156,
+    comments: 12,
     caption: "POV: You're on a superyacht in Monaco 🛥️ #yacht #monaco #luxury",
     videoSrc: heroYacht
   },
   {
     id: 3,
     thumbnail: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=400&h=700&fit=crop",
-    views: 15200,
-    likes: 2890,
-    comments: 124,
-    caption: "The view from our client's penthouse 🌆 #luxury #lifestyle #penthouse",
+    views: 1520,
+    likes: 289,
+    comments: 24,
+    caption: "The view from the penthouse 🌆 #luxury #lifestyle #penthouse",
     videoSrc: heroPenthouse
   },
   {
     id: 4,
     thumbnail: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&h=700&fit=crop",
-    views: 6800,
-    likes: 980,
-    comments: 43,
+    views: 680,
+    likes: 98,
+    comments: 8,
     caption: "Supercar delivery for the weekend 🏎️ #luxury #supercar #lifestyle",
     videoSrc: luxuryCar
   },
   {
     id: 5,
     thumbnail: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400&h=700&fit=crop",
-    views: 9500,
-    likes: 1780,
-    comments: 78,
+    views: 950,
+    likes: 178,
+    comments: 15,
     caption: "When they ask for a vintage Patek Philippe ⌚ #watches #luxury #collector",
     videoSrc: luxuryWatch
   },
   {
     id: 6,
     thumbnail: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=700&fit=crop",
-    views: 11200,
-    likes: 2340,
-    comments: 96,
+    views: 1120,
+    likes: 234,
+    comments: 21,
     caption: "Your private villa awaits 🏝️ #travel #luxury #paradise",
     videoSrc: luxuryHotel
   }
@@ -175,7 +175,7 @@ const TikTokProfile = () => {
               <div className="text-xs text-muted-foreground">Following</div>
             </div>
             <div className="text-center">
-              <div className="font-bold text-foreground">125.4K</div>
+              <div className="font-bold text-foreground">1,254</div>
               <div className="text-xs text-muted-foreground">Followers</div>
             </div>
             <div className="text-center">

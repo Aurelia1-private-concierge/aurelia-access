@@ -35,24 +35,24 @@ const posts = [
   {
     id: 1,
     image: "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=600&h=600&fit=crop",
-    likes: 12847,
-    comments: 342,
+    likes: 127,
+    comments: 14,
     isVideo: false,
     caption: "Private aviation at its finest ✈️ #luxury #privatejet #aurelia"
   },
   {
     id: 2,
     image: "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=600&h=600&fit=crop",
-    likes: 9523,
-    comments: 186,
+    likes: 95,
+    comments: 8,
     isVideo: false,
     caption: "Mediterranean dreams 🌊 #yachtlife #monaco #summer"
   },
   {
     id: 3,
     image: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=600&h=600&fit=crop",
-    likes: 15234,
-    comments: 428,
+    likes: 152,
+    comments: 21,
     isVideo: true,
     caption: "City lights from the penthouse 🌃 #penthouse #luxury #cityview",
     videoSrc: heroPenthouse
@@ -60,24 +60,24 @@ const posts = [
   {
     id: 4,
     image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&h=600&fit=crop",
-    likes: 8764,
-    comments: 156,
+    likes: 87,
+    comments: 6,
     isVideo: false,
     caption: "Fashion week exclusive access 👗 #fashionweek #exclusive"
   },
   {
     id: 5,
     image: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600&h=600&fit=crop",
-    likes: 11432,
-    comments: 289,
+    likes: 114,
+    comments: 12,
     isVideo: false,
     caption: "Secret destinations await 🏔️ #travel #adventure #explore"
   },
   {
     id: 6,
     image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=600&fit=crop",
-    likes: 7891,
-    comments: 134,
+    likes: 78,
+    comments: 9,
     isVideo: true,
     caption: "Your private paradise awaits 🏝️ #luxury #resort #exclusive",
     videoSrc: luxuryHotel
@@ -85,24 +85,24 @@ const posts = [
   {
     id: 7,
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=600&fit=crop",
-    likes: 6234,
-    comments: 98,
+    likes: 62,
+    comments: 5,
     isVideo: false,
     caption: "The art of luxury living 🎨 #lifestyle #luxury #art"
   },
   {
     id: 8,
     image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&h=600&fit=crop",
-    likes: 13567,
-    comments: 367,
+    likes: 135,
+    comments: 17,
     isVideo: false,
     caption: "Exotic destinations curated for you 🌴 #travel #paradise"
   },
   {
     id: 9,
     image: "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=600&h=600&fit=crop",
-    likes: 10234,
-    comments: 245,
+    likes: 102,
+    comments: 11,
     isVideo: false,
     caption: "Sunset views worth every moment 🌅 #sunset #views #peaceful"
   }
@@ -205,11 +205,11 @@ const InstagramProfile = () => {
                 <div className="text-sm text-muted-foreground">posts</div>
               </div>
               <div className="text-center">
-                <div className="font-semibold text-foreground">125.4K</div>
+                <div className="font-semibold text-foreground">847</div>
                 <div className="text-sm text-muted-foreground">followers</div>
               </div>
               <div className="text-center">
-                <div className="font-semibold text-foreground">156</div>
+                <div className="font-semibold text-foreground">52</div>
                 <div className="text-sm text-muted-foreground">following</div>
               </div>
             </div>

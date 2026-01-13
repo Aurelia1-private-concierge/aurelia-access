@@ -37,17 +37,17 @@ const socialPlatforms = [
     href: "https://www.instagram.com/aurelia.private.concierge",
     internalLink: "/instagram",
     color: "from-purple-500 via-pink-500 to-orange-400",
-    followers: "125K followers"
+    followers: "847 followers"
   },
   {
     name: "TikTok",
     handle: "@aurelia.private.concierge",
-    description: "Viral luxury content, exclusive access moments, and behind-the-scenes of the extraordinary.",
+    description: "Luxury content, exclusive access moments, and behind-the-scenes of the extraordinary.",
     icon: TikTokIcon,
     href: "https://www.tiktok.com/@aurelia.private.concierge",
     internalLink: "/tiktok",
     color: "from-gray-900 to-gray-800",
-    followers: "2.4M followers"
+    followers: "1.2K followers"
   },
   {
     name: "YouTube",
@@ -57,7 +57,7 @@ const socialPlatforms = [
     href: "https://youtube.com/@aureliaprivateconcierge",
     internalLink: "/youtube",
     color: "from-red-600 to-red-500",
-    followers: "892K subscribers"
+    followers: "1.2K subscribers"
   },
   {
     name: "LinkedIn",
@@ -67,17 +67,17 @@ const socialPlatforms = [
     href: "https://www.linkedin.com/company/aurelia-private-concierge",
     internalLink: "/linkedin",
     color: "from-blue-700 to-blue-600",
-    followers: "47.2K followers"
+    followers: "524 followers"
   },
   {
     name: "Facebook",
     handle: "Aurelia Private Concierge",
-    description: "Community updates, event announcements, and stories from our global network of discerning clients.",
+    description: "Community updates, event announcements, and stories from our growing community.",
     icon: Facebook,
     href: "https://facebook.com/aureliaprivateconcierge",
     internalLink: "/facebook",
     color: "from-blue-600 to-blue-500",
-    followers: "125K followers"
+    followers: "892 followers"
   },
   {
     name: "X (Twitter)",
@@ -87,7 +87,7 @@ const socialPlatforms = [
     href: "https://x.com/AureliaPrivate_",
     internalLink: "/twitter",
     color: "from-gray-800 to-gray-700",
-    followers: "89.2K followers"
+    followers: "1.2K followers"
   },
   {
     name: "WhatsApp",

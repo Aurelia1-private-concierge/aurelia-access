@@ -36,61 +36,61 @@ const videos = [
   {
     id: 1,
     thumbnail: "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=640&h=360&fit=crop",
-    title: "Inside the World's Most Exclusive Private Jet | Aurelia Documentary",
-    views: "2.4M views",
+    title: "Introducing Aurelia Private Concierge | The Art of Bespoke Living",
+    views: "2.4K views",
     uploaded: "2 weeks ago",
-    duration: "18:42",
-    description: "Take an exclusive tour inside a $65 million Gulfstream G700...",
+    duration: "4:32",
+    description: "Discover what makes Aurelia the new standard in luxury concierge...",
     videoSrc: heroJet
   },
   {
     id: 2,
     thumbnail: "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=640&h=360&fit=crop",
-    title: "24 Hours on a Superyacht in Monaco | Day in the Life",
-    views: "1.8M views",
-    uploaded: "1 month ago",
-    duration: "24:15",
-    description: "Experience 24 hours aboard a 60-meter superyacht in Monaco...",
+    title: "A Day in the Life | Private Yacht Experience",
+    views: "1.8K views",
+    uploaded: "1 week ago",
+    duration: "6:15",
+    description: "Experience the possibilities aboard a luxury superyacht...",
     videoSrc: heroYacht
   },
   {
     id: 3,
     thumbnail: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=640&h=360&fit=crop",
-    title: "The $50 Million Penthouse Tour | Off-Market London",
-    views: "3.1M views",
-    uploaded: "3 weeks ago",
-    duration: "15:28",
-    description: "An exclusive look at an off-market penthouse in Mayfair...",
+    title: "Meet Orla | Your AI Concierge",
+    views: "3.1K views",
+    uploaded: "1 week ago",
+    duration: "3:28",
+    description: "Introducing Orla, the AI that anticipates your every need...",
     videoSrc: heroPenthouse
   },
   {
     id: 4,
     thumbnail: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=640&h=360&fit=crop",
-    title: "Luxury Supercar Collection | Our Client's Garage Tour",
-    views: "987K views",
-    uploaded: "1 month ago",
-    duration: "12:34",
-    description: "An exclusive look at a private collection of hypercars...",
+    title: "Luxury Lifestyle Awaits | Aurelia Preview",
+    views: "987 views",
+    uploaded: "3 days ago",
+    duration: "2:34",
+    description: "A glimpse into the world of extraordinary experiences...",
     videoSrc: luxuryCar
   },
   {
     id: 5,
     thumbnail: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=640&h=360&fit=crop",
-    title: "The Ultimate Watch Collection | Haute Horlogerie",
-    views: "1.2M views",
-    uploaded: "2 months ago",
-    duration: "20:11",
-    description: "Inside the world of rare timepieces and bespoke watchmaking...",
+    title: "The Art of Collecting | Aurelia Services",
+    views: "1.2K views",
+    uploaded: "5 days ago",
+    duration: "5:11",
+    description: "Discover how we source rare timepieces and collectibles...",
     videoSrc: luxuryWatch
   },
   {
     id: 6,
     thumbnail: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=640&h=360&fit=crop",
-    title: "The World's Most Exclusive Hotels | Aurelia's Hidden Gems",
-    views: "845K views",
-    uploaded: "3 months ago",
-    duration: "22:45",
-    description: "Discover hidden luxury resorts only accessible through our network...",
+    title: "Exclusive Destinations | Coming Soon",
+    views: "845 views",
+    uploaded: "1 week ago",
+    duration: "4:45",
+    description: "Preview of hidden luxury resorts in our growing network...",
     videoSrc: luxuryHotel
   }
 ];
@@ -98,22 +98,22 @@ const videos = [
 const shorts = [
   {
     thumbnail: "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=400&h=700&fit=crop",
-    views: "4.2M",
+    views: "4.2K",
     videoSrc: heroJet
   },
   {
     thumbnail: "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=400&h=700&fit=crop",
-    views: "2.8M",
+    views: "2.8K",
     videoSrc: heroYacht
   },
   {
     thumbnail: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=400&h=700&fit=crop",
-    views: "5.1M",
+    views: "5.1K",
     videoSrc: heroPenthouse
   },
   {
     thumbnail: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&h=700&fit=crop",
-    views: "1.9M",
+    views: "1.9K",
     videoSrc: luxuryCar
   }
 ];
@@ -196,9 +196,9 @@ const YouTubeProfile = () => {
             <div className="flex flex-wrap gap-2 text-sm text-muted-foreground mb-3">
               <span>@aureliaprivateconcierge</span>
               <span>•</span>
-              <span>892K subscribers</span>
+              <span>1.2K subscribers</span>
               <span>•</span>
-              <span>127 videos</span>
+              <span>6 videos</span>
             </div>
             <p className="text-sm text-muted-foreground mb-4 max-w-2xl">
               The world's most exclusive private concierge service. Experience luxury through our lens — private jets, superyachts, off-market properties, and impossible experiences.

@@ -29,38 +29,38 @@ import aureliaSocialBanner from "@/assets/aurelia-social-banner.png";
 const posts = [
   {
     id: 1,
-    content: "Experience the extraordinary. Our latest yacht charter took clients through the crystal waters of the Mediterranean, stopping at exclusive ports accessible only to the privileged few. ✨🛥️",
+    content: "Experience the extraordinary. Discover what Aurelia can curate for you—from private yacht charters to exclusive Mediterranean destinations. ✨🛥️",
     image: "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&h=500&fit=crop",
-    likes: 2847,
-    comments: 156,
-    shares: 89,
+    likes: 84,
+    comments: 12,
+    shares: 8,
     time: "2 hours ago"
   },
   {
     id: 2,
     content: "When only the best will do. Private aviation redefined with Aurelia. From booking to landing, every moment is curated for perfection. ✈️",
     image: "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=800&h=500&fit=crop",
-    likes: 3521,
-    comments: 234,
-    shares: 167,
+    likes: 121,
+    comments: 18,
+    shares: 14,
     time: "5 hours ago"
   },
   {
     id: 3,
-    content: "Monaco Grand Prix 2026 - Our members enjoyed unprecedented access to the paddock, exclusive parties, and the best views on the circuit. Limited spots available for next year. 🏎️🏆",
+    content: "We're thrilled to announce the launch of Aurelia Private Concierge. A new standard in bespoke luxury lifestyle management is here. 🌟",
     image: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=800&h=500&fit=crop",
-    likes: 5234,
-    comments: 428,
-    shares: 312,
+    likes: 234,
+    comments: 42,
+    shares: 31,
     time: "1 day ago"
   },
   {
     id: 4,
-    content: "Fine dining elevated. Last night's private chef experience in a centuries-old Tuscan villa. Some experiences cannot be bought—they must be curated. 🍷",
+    content: "Fine dining elevated. Private chef experiences, centuries-old villas, and unforgettable moments—all within reach. 🍷",
     image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=500&fit=crop",
-    likes: 1892,
-    comments: 98,
-    shares: 45,
+    likes: 67,
+    comments: 9,
+    shares: 5,
     time: "2 days ago"
   }
 ];
@@ -79,22 +79,22 @@ const photos = [
 
 const reviews = [
   {
-    author: "Marcus Wellington",
+    author: "Marcus W.",
     rating: 5,
-    text: "Absolutely exceptional service. Aurelia arranged an impossible dinner reservation and private jet in under 24 hours. Worth every penny.",
+    text: "Impressed by the onboarding experience and the attention to detail. Looking forward to what Aurelia can deliver.",
     date: "January 2026"
   },
   {
-    author: "Victoria Chen",
+    author: "Victoria C.",
     rating: 5,
-    text: "The level of discretion and attention to detail is unmatched. My family has used Aurelia for two years now—couldn't imagine life without them.",
-    date: "December 2025"
+    text: "The AI concierge Orla is remarkable. Excited to see how this service evolves.",
+    date: "January 2026"
   },
   {
-    author: "Alexander Rothschild",
+    author: "Alexander R.",
     rating: 5,
-    text: "From yacht charters to securing tickets to sold-out events, Aurelia consistently delivers the extraordinary.",
-    date: "November 2025"
+    text: "Finally, a concierge service that understands modern luxury. Great first impression.",
+    date: "January 2026"
   }
 ];
 
@@ -173,11 +173,11 @@ const FacebookProfile = () => {
                 <div className="flex items-center justify-center md:justify-start gap-4 text-sm text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <ThumbsUp className="w-4 h-4" />
-                    125K followers
+                    892 followers
                   </span>
                   <span className="flex items-center gap-1">
                     <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-                    5.0 (847 reviews)
+                    5.0 (3 reviews)
                   </span>
                 </div>
               </div>
@@ -236,7 +236,7 @@ const FacebookProfile = () => {
                 <Card className="p-4 space-y-3">
                   <h3 className="font-semibold text-foreground">About</h3>
                   <p className="text-sm text-muted-foreground">
-                    The world's most exclusive private concierge for those who demand the extraordinary. Serving discerning clients worldwide since 2020.
+                    The world's most exclusive private concierge for those who demand the extraordinary. Launching in 2026.
                   </p>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground">

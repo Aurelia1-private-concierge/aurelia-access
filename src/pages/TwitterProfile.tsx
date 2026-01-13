@@ -29,48 +29,48 @@ const XIcon = ({ className }: { className?: string }) => (
 const tweets = [
   {
     id: 1,
-    content: "Just facilitated a last-minute private jet to Monaco for a client's anniversary surprise. From call to takeoff: 47 minutes. ✈️\n\nThis is what bespoke service looks like.",
+    content: "Aurelia Private Concierge is officially live. ✈️\n\nBespoke luxury lifestyle management, redefined for the modern era.\n\nWelcome to the beginning of something extraordinary.",
     timestamp: "2h",
-    replies: 127,
-    reposts: 342,
-    likes: 2841,
-    views: "45.2K"
+    replies: 12,
+    reposts: 34,
+    likes: 89,
+    views: "1.2K"
   },
   {
     id: 2,
     content: "The future of luxury isn't about having more. It's about having exactly what you need, precisely when you need it.\n\nMeet Orla, our AI concierge who learns your preferences before you even know them yourself.",
     timestamp: "8h",
-    replies: 89,
-    reposts: 198,
-    likes: 1567,
-    views: "28.4K"
+    replies: 8,
+    reposts: 19,
+    likes: 67,
+    views: "892"
   },
   {
     id: 3,
-    content: "Off-market property alert: 12,000 sq ft penthouse in Dubai with 360° views just came to our network.\n\nAlready 3 qualified buyers in conversation.\n\nThis is why access matters.",
+    content: "Private jets. Superyachts. Impossible reservations. Exclusive access.\n\nThis is what we do.\n\nWelcome to Aurelia.",
     timestamp: "1d",
-    replies: 234,
-    reposts: 567,
-    likes: 4521,
-    views: "89.1K"
+    replies: 23,
+    reposts: 56,
+    likes: 145,
+    views: "2.1K"
   },
   {
     id: 4,
-    content: "\"Money can't buy time.\"\n\nDisagree. Our members save 40+ hours per month on logistics, bookings, and arrangements.\n\nTime is the ultimate luxury. We give it back to you.",
+    content: "\"Money can't buy time.\"\n\nDisagree. Our members will save 40+ hours per month on logistics, bookings, and arrangements.\n\nTime is the ultimate luxury. We give it back to you.",
     timestamp: "2d",
-    replies: 312,
-    reposts: 891,
-    likes: 6234,
-    views: "124K"
+    replies: 31,
+    reposts: 89,
+    likes: 234,
+    views: "3.4K"
   },
   {
     id: 5,
-    content: "New partnership announcement: We've added 15 Michelin-starred restaurants in Tokyo to our priority access network.\n\n48-hour booking window for members.\n\nOmakase season is upon us. 🍣",
+    content: "Building our global partner network—from Michelin-starred restaurants to private aviation providers.\n\nThe access you deserve is coming. 🍣",
     timestamp: "3d",
-    replies: 156,
-    reposts: 423,
-    likes: 3421,
-    views: "67.8K"
+    replies: 15,
+    reposts: 42,
+    likes: 121,
+    views: "1.8K"
   }
 ];
 
@@ -218,11 +218,11 @@ const TwitterProfile = () => {
           {/* Stats */}
           <div className="flex gap-4 text-sm">
             <span className="hover:underline cursor-pointer">
-              <strong className="text-foreground">156</strong>{" "}
+              <strong className="text-foreground">56</strong>{" "}
               <span className="text-muted-foreground">Following</span>
             </span>
             <span className="hover:underline cursor-pointer">
-              <strong className="text-foreground">125.4K</strong>{" "}
+              <strong className="text-foreground">1,254</strong>{" "}
               <span className="text-muted-foreground">Followers</span>
             </span>
           </div>

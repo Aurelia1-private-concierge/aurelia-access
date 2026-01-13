@@ -17,12 +17,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import aureliaSocialLogo from "@/assets/aurelia-social-logo.png";
-import heroLuxuryHoliday from "@/assets/hero-luxury-holiday.mp4";
-import heroVideo from "@/assets/hero-video.mp4";
-import heroVideoExtended from "@/assets/hero-video-extended.mp4";
-import aureliaDemo from "@/assets/aurelia-demo.mp4";
-import orlaDemo from "@/assets/orla-demo.mp4";
-import demoWatch from "@/assets/demo-watch.mp4";
+import heroJet from "@/assets/hero-jet.mp4";
+import heroYacht from "@/assets/hero-yacht.mp4";
+import heroPenthouse from "@/assets/hero-penthouse.mp4";
+import luxuryCar from "@/assets/luxury-car.mp4";
+import luxuryWatch from "@/assets/luxury-watch.mp4";
+import luxuryHotel from "@/assets/luxury-hotel.mp4";
 
 // TikTok icon component
 const TikTokIcon = ({ className }: { className?: string }) => (
@@ -39,7 +39,7 @@ const videos = [
     likes: 2100,
     comments: 89,
     caption: "When your client needs a private jet in 2 hours ✈️ #luxury #concierge #privatejet",
-    videoSrc: heroLuxuryHoliday
+    videoSrc: heroJet
   },
   {
     id: 2,
@@ -48,7 +48,7 @@ const videos = [
     likes: 1560,
     comments: 67,
     caption: "POV: You're on a superyacht in Monaco 🛥️ #yacht #monaco #luxury",
-    videoSrc: heroVideo
+    videoSrc: heroYacht
   },
   {
     id: 3,
@@ -57,34 +57,34 @@ const videos = [
     likes: 2890,
     comments: 124,
     caption: "The view from our client's penthouse 🌆 #luxury #lifestyle #penthouse",
-    videoSrc: heroVideoExtended
+    videoSrc: heroPenthouse
   },
   {
     id: 4,
-    thumbnail: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=700&fit=crop",
+    thumbnail: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&h=700&fit=crop",
     views: 6800,
     likes: 980,
     comments: 43,
-    caption: "Backstage access at Fashion Week 👗 #exclusive #events #fashionweek",
-    videoSrc: aureliaDemo
+    caption: "Supercar delivery for the weekend 🏎️ #luxury #supercar #lifestyle",
+    videoSrc: luxuryCar
   },
   {
     id: 5,
-    thumbnail: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=700&fit=crop",
+    thumbnail: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400&h=700&fit=crop",
     views: 9500,
     likes: 1780,
     comments: 78,
-    caption: "3 Michelin star dinner for 2, arranged in 30 mins 🍽️ #finedining #michelin",
-    videoSrc: orlaDemo
+    caption: "When they ask for a vintage Patek Philippe ⌚ #watches #luxury #collector",
+    videoSrc: luxuryWatch
   },
   {
     id: 6,
-    thumbnail: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=700&fit=crop",
+    thumbnail: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=700&fit=crop",
     views: 11200,
     likes: 2340,
     comments: 96,
-    caption: "Secret spots only locals know about 🏔️ #travel #hidden #exclusive",
-    videoSrc: demoWatch
+    caption: "Your private villa awaits 🏝️ #travel #luxury #paradise",
+    videoSrc: luxuryHotel
   }
 ];
 

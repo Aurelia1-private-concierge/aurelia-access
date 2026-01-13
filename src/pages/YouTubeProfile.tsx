@@ -19,13 +19,12 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import aureliaSocialLogo from "@/assets/aurelia-social-logo.png";
 import aureliaSocialBanner from "@/assets/aurelia-social-banner.png";
-import heroLuxuryHoliday from "@/assets/hero-luxury-holiday.mp4";
-import heroVideo from "@/assets/hero-video.mp4";
-import heroVideoExtended from "@/assets/hero-video-extended.mp4";
-import aureliaDemo from "@/assets/aurelia-demo.mp4";
-import orlaDemo from "@/assets/orla-demo.mp4";
-import demoWatch from "@/assets/demo-watch.mp4";
-
+import heroJet from "@/assets/hero-jet.mp4";
+import heroYacht from "@/assets/hero-yacht.mp4";
+import heroPenthouse from "@/assets/hero-penthouse.mp4";
+import luxuryCar from "@/assets/luxury-car.mp4";
+import luxuryWatch from "@/assets/luxury-watch.mp4";
+import luxuryHotel from "@/assets/luxury-hotel.mp4";
 // YouTube icon component
 const YouTubeIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -42,7 +41,7 @@ const videos = [
     uploaded: "2 weeks ago",
     duration: "18:42",
     description: "Take an exclusive tour inside a $65 million Gulfstream G700...",
-    videoSrc: heroLuxuryHoliday
+    videoSrc: heroJet
   },
   {
     id: 2,
@@ -52,7 +51,7 @@ const videos = [
     uploaded: "1 month ago",
     duration: "24:15",
     description: "Experience 24 hours aboard a 60-meter superyacht in Monaco...",
-    videoSrc: heroVideo
+    videoSrc: heroYacht
   },
   {
     id: 3,
@@ -62,37 +61,37 @@ const videos = [
     uploaded: "3 weeks ago",
     duration: "15:28",
     description: "An exclusive look at an off-market penthouse in Mayfair...",
-    videoSrc: heroVideoExtended
+    videoSrc: heroPenthouse
   },
   {
     id: 4,
-    thumbnail: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=640&h=360&fit=crop",
-    title: "How the Ultra-Wealthy Dine | 3 Michelin Star Experience",
+    thumbnail: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=640&h=360&fit=crop",
+    title: "Luxury Supercar Collection | Our Client's Garage Tour",
     views: "987K views",
     uploaded: "1 month ago",
     duration: "12:34",
-    description: "Behind the scenes at the world's most exclusive restaurants...",
-    videoSrc: aureliaDemo
+    description: "An exclusive look at a private collection of hypercars...",
+    videoSrc: luxuryCar
   },
   {
     id: 5,
-    thumbnail: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=640&h=360&fit=crop",
-    title: "Fashion Week VIP Access | What Money Can't Buy",
+    thumbnail: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=640&h=360&fit=crop",
+    title: "The Ultimate Watch Collection | Haute Horlogerie",
     views: "1.2M views",
     uploaded: "2 months ago",
     duration: "20:11",
-    description: "Backstage access at Paris Fashion Week through Aurelia...",
-    videoSrc: orlaDemo
+    description: "Inside the world of rare timepieces and bespoke watchmaking...",
+    videoSrc: luxuryWatch
   },
   {
     id: 6,
-    thumbnail: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=640&h=360&fit=crop",
-    title: "The Art of Bespoke Travel | Aurelia's Secret Destinations",
+    thumbnail: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=640&h=360&fit=crop",
+    title: "The World's Most Exclusive Hotels | Aurelia's Hidden Gems",
     views: "845K views",
     uploaded: "3 months ago",
     duration: "22:45",
-    description: "Discover hidden destinations only accessible through our network...",
-    videoSrc: demoWatch
+    description: "Discover hidden luxury resorts only accessible through our network...",
+    videoSrc: luxuryHotel
   }
 ];
 
@@ -100,22 +99,22 @@ const shorts = [
   {
     thumbnail: "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=400&h=700&fit=crop",
     views: "4.2M",
-    videoSrc: heroLuxuryHoliday
+    videoSrc: heroJet
   },
   {
     thumbnail: "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=400&h=700&fit=crop",
     views: "2.8M",
-    videoSrc: heroVideo
+    videoSrc: heroYacht
   },
   {
     thumbnail: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=400&h=700&fit=crop",
     views: "5.1M",
-    videoSrc: aureliaDemo
+    videoSrc: heroPenthouse
   },
   {
-    thumbnail: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=700&fit=crop",
+    thumbnail: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&h=700&fit=crop",
     views: "1.9M",
-    videoSrc: orlaDemo
+    videoSrc: luxuryCar
   }
 ];
 

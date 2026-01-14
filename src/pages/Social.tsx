@@ -44,7 +44,7 @@ const socialPlatforms = [
     handle: "@aurelia.private.concierge",
     description: "Luxury content, exclusive access moments, and behind-the-scenes of the extraordinary.",
     icon: TikTokIcon,
-    href: "https://www.tiktok.com/@aurelia.private.concierge",
+    href: "https://www.tiktok.com/@aurelia.private.c",
     internalLink: "/tiktok",
     color: "from-gray-900 to-gray-800",
     followers: "1.2K followers"

@@ -99,7 +99,7 @@ const formatNumber = (num: number): string => {
   return num.toString();
 };
 
-const TIKTOK_URL = "https://www.tiktok.com/@aurelia.private.concierge";
+const TIKTOK_URL = "https://www.tiktok.com/@aurelia.private.c";
 
 const TikTokProfile = () => {
   const [selectedVideo, setSelectedVideo] = useState<typeof videos[0] | null>(null);

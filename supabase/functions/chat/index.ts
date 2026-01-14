@@ -7,6 +7,10 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Rate limiting configuration for anonymous users
+const ANON_RATE_LIMIT_MAX = 10; // Max requests per window
+const ANON_RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour window
+
 // Input validation schemas
 const messageSchema = z.object({
   role: z.enum(["user", "assistant", "system"]),
@@ -22,6 +26,67 @@ const requestSchema = z.object({
 interface Message {
   role: "user" | "assistant" | "system";
   content: string;
+}
+
+// Generate a fingerprint from request headers for anonymous rate limiting
+function generateRequestFingerprint(req: Request): string {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || 
+             req.headers.get("x-real-ip") || 
+             "unknown";
+  const userAgent = req.headers.get("user-agent") || "unknown";
+  const acceptLanguage = req.headers.get("accept-language") || "";
+  
+  // Create a simple hash-like identifier
+  const combined = `${ip}:${userAgent.slice(0, 50)}:${acceptLanguage.slice(0, 20)}`;
+  let hash = 0;
+  for (let i = 0; i < combined.length; i++) {
+    const char = combined.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return `anon_chat_${Math.abs(hash).toString(36)}`;
+}
+
+// Check rate limit for anonymous users
+async function checkAnonRateLimit(
+  supabaseClient: any,
+  identifier: string
+): Promise<{ allowed: boolean; remaining: number }> {
+  const windowStart = new Date(Date.now() - ANON_RATE_LIMIT_WINDOW_MS).toISOString();
+  
+  // Count requests in the current window
+  const { data, error } = await supabaseClient
+    .from("rate_limits")
+    .select("id")
+    .eq("identifier", identifier)
+    .eq("action_type", "chat_request")
+    .gte("created_at", windowStart);
+
+  if (error) {
+    console.error("Rate limit check error:", error);
+    // Fail open but log the error
+    return { allowed: true, remaining: ANON_RATE_LIMIT_MAX };
+  }
+
+  const currentCount = data?.length || 0;
+  const allowed = currentCount < ANON_RATE_LIMIT_MAX;
+  const remaining = Math.max(0, ANON_RATE_LIMIT_MAX - currentCount - 1);
+
+  if (allowed) {
+    // Record this request
+    const { error: insertError } = await supabaseClient
+      .from("rate_limits")
+      .insert({
+        identifier,
+        action_type: "chat_request",
+      });
+    
+    if (insertError) {
+      console.error("Rate limit insert error:", insertError);
+    }
+  }
+
+  return { allowed, remaining };
 }
 
 serve(async (req) => {
@@ -63,6 +128,34 @@ serve(async (req) => {
       if (token !== Deno.env.get("SUPABASE_ANON_KEY")) {
         const { data: { user } } = await supabase.auth.getUser(token);
         userId = user?.id || null;
+      }
+    }
+
+    // Rate limit anonymous users
+    if (!userId && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+      const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+      const fingerprint = generateRequestFingerprint(req);
+      const { allowed, remaining } = await checkAnonRateLimit(supabase, fingerprint);
+      
+      console.log(`[Chat] Anonymous request: fingerprint=${fingerprint}, allowed=${allowed}, remaining=${remaining}`);
+      
+      if (!allowed) {
+        return new Response(
+          JSON.stringify({ 
+            error: "You've reached the limit for guest conversations. Please sign in to continue chatting with Orla.",
+            code: "RATE_LIMITED"
+          }),
+          { 
+            status: 429, 
+            headers: { 
+              ...corsHeaders, 
+              "Content-Type": "application/json",
+              "X-RateLimit-Limit": String(ANON_RATE_LIMIT_MAX),
+              "X-RateLimit-Remaining": "0",
+              "Retry-After": "3600"
+            } 
+          }
+        );
       }
     }
 

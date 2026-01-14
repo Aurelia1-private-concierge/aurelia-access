@@ -41,6 +41,11 @@ export type AdminAction =
   // Notifications
   | "admin.notification_sent"
   | "admin.broadcast_sent"
+  // Campaigns & Outreach
+  | "admin.campaign_created"
+  | "admin.campaign_status_changed"
+  | "admin.outreach_sent"
+  | "admin.prospect_added"
   // Security
   | "admin.audit_log_accessed"
   | "admin.sensitive_data_accessed"
@@ -59,7 +64,9 @@ export type AdminResourceType =
   | "settings"
   | "audit_log"
   | "launch_signup"
-  | "crm_record";
+  | "crm_record"
+  | "campaign"
+  | "prospect";
 
 interface AuditLogDetails {
   resource_count?: number;

@@ -66,6 +66,7 @@ import AttributionAnalytics from "@/components/admin/AttributionAnalytics";
 import AuditLogsPanel from "@/components/admin/AuditLogsPanel";
 import PartnerDiscoveryPanel from "@/components/admin/PartnerDiscoveryPanel";
 import EncryptionManagementPanel from "@/components/admin/EncryptionManagementPanel";
+import ColdOutreachPanel from "@/components/admin/ColdOutreachPanel";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -317,6 +318,7 @@ const Admin = () => {
             <TabsTrigger value="commissions">Commissions</TabsTrigger>
             <TabsTrigger value="partners">Partners</TabsTrigger>
             <TabsTrigger value="discovery">Discovery</TabsTrigger>
+            <TabsTrigger value="outreach">Cold Outreach</TabsTrigger>
             <TabsTrigger value="signups">Signups</TabsTrigger>
             <TabsTrigger value="contacts">Contacts</TabsTrigger>
             <TabsTrigger value="requests">Requests</TabsTrigger>
@@ -328,6 +330,10 @@ const Admin = () => {
 
           <TabsContent value="discovery" className="space-y-6">
             <PartnerDiscoveryPanel />
+          </TabsContent>
+
+          <TabsContent value="outreach" className="space-y-6">
+            <ColdOutreachPanel />
           </TabsContent>
 
           <TabsContent value="auditlogs" className="space-y-6">

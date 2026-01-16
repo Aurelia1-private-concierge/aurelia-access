@@ -382,6 +382,26 @@ ${(r.description || r.markdown?.slice(0, 300) || 'No description').substring(0, 
     // Background cache save (fire and forget)
     setCachedSearch(supabase, cacheKey, cacheableResult).catch(console.error);
 
+    // Create admin notification for discovered partners
+    if (suggestions.length > 0) {
+      const highMatchCount = suggestions.filter((s: any) => s.priority === 'high').length;
+      try {
+        await supabase
+          .from('notifications')
+          .insert({
+            user_id: '00000000-0000-0000-0000-000000000000', // System notification (handled in app)
+            type: 'partner_discovery',
+            title: `${suggestions.length} Partners Discovered`,
+            description: `AI found ${suggestions.length} potential partners${highMatchCount > 0 ? ` (${highMatchCount} high-match)` : ''}. Category: ${category || 'Various'}`,
+            action_url: '/admin?tab=discovery',
+            read: false,
+          });
+        console.log('Admin notification created');
+      } catch (e) {
+        console.error('Failed to create notification:', e);
+      }
+    }
+
     // Step 4: Auto-outreach for high-match partners
     const autoOutreachResults: any[] = [];
     

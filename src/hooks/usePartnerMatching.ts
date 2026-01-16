@@ -203,6 +203,24 @@ export function usePartnerMatching() {
         
         toast.success(message);
         
+        // Browser notification (if permitted)
+        if ('Notification' in window && Notification.permission === 'granted') {
+          const highMatchCount = data.suggestions.filter((s: any) => s.priority === 'high').length;
+          new Notification('Partners Discovered!', {
+            body: `Found ${data.suggestions.length} potential partners${highMatchCount > 0 ? ` (${highMatchCount} high-match)` : ''}`,
+            icon: '/logos/aurelia-icon.svg',
+            tag: 'partner-discovery',
+          });
+        }
+        
+        // Play success sound
+        try {
+          const audio = new Audio('/audio/ambient-luxury.mp3');
+          audio.volume = 0.1;
+          audio.play().catch(() => {});
+          setTimeout(() => audio.pause(), 2000);
+        } catch {}
+        
         const suggestions = data.suggestions.map((s: any) => ({
           company_name: s.company_name,
           category: s.category,
@@ -211,13 +229,16 @@ export function usePartnerMatching() {
           website: s.website,
           coverage_regions: s.coverage_regions,
           priority: s.priority,
-          match_score: s.priority === 'high' ? 85 : s.priority === 'medium' ? 70 : 55,
-          match_reasons: [s.match_reason]
+          match_score: s.match_score || (s.priority === 'high' ? 85 : s.priority === 'medium' ? 70 : 55),
+          match_reasons: [s.match_reason],
+          validated_email: s.validated_email,
         }));
 
         return {
           suggestions,
-          autoOutreachResults: data.autoOutreachResults || []
+          autoOutreachResults: data.autoOutreachResults || [],
+          processingTime: data.processingTime,
+          cached: data.cached,
         };
       }
       return { suggestions: [], autoOutreachResults: [] };

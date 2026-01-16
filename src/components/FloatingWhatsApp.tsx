@@ -44,7 +44,7 @@ const FloatingWhatsApp = () => {
 
       {/* WhatsApp Button */}
       <motion.a
-        href="https://wa.me/+447309935106"
+        href="https://web.whatsapp.com/send?phone=447309935106&text=Hello%20Aurelia%20Concierge"
         target="_blank"
         rel="noopener noreferrer"
         initial={{ scale: 0, opacity: 0 }}

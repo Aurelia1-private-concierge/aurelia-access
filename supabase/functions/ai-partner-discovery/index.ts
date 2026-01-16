@@ -11,12 +11,132 @@ const PARTNER_CATEGORIES = [
   'security', 'real_estate', 'automotive', 'wellness', 'art_collectibles'
 ];
 
-const AUTO_OUTREACH_THRESHOLD = 80; // Match score threshold for auto-outreach
+const AUTO_OUTREACH_THRESHOLD = 80;
+const CACHE_TTL_HOURS = 24;
+
+// Enhanced search sources for better coverage
+const SEARCH_QUERIES_TEMPLATE = {
+  aviation: ['luxury private jet charter company', 'elite aircraft management firm', 'VIP aviation services'],
+  yacht: ['superyacht charter broker', 'luxury yacht management company', 'mega yacht charter services'],
+  hospitality: ['luxury hotel management company', 'five star resort operator', 'boutique luxury hotel group'],
+  dining: ['private chef services VIP', 'exclusive restaurant group luxury', 'michelin star catering'],
+  events: ['VIP event planning luxury', 'exclusive party planner celebrity', 'high-end event management'],
+  security: ['executive protection services VIP', 'celebrity security firm', 'luxury estate security'],
+  real_estate: ['luxury real estate broker', 'ultra high net worth property', 'exclusive mansion sales'],
+  automotive: ['exotic car rental VIP', 'luxury vehicle concierge', 'supercar experience provider'],
+  wellness: ['luxury wellness retreat', 'VIP medical concierge', 'exclusive spa resort'],
+  art_collectibles: ['fine art dealer private', 'rare collectibles broker', 'luxury auction specialist'],
+};
+
+// Simple in-memory cache (resets per invocation, but helps within same request)
+const searchCache = new Map<string, { data: any; timestamp: number }>();
+
+async function getCachedSearch(supabase: any, cacheKey: string): Promise<any | null> {
+  try {
+    const { data } = await supabase
+      .from('app_settings')
+      .select('value, updated_at')
+      .eq('key', `search_cache_${cacheKey}`)
+      .single();
+    
+    if (data?.value) {
+      const cached = JSON.parse(data.value);
+      const age = (Date.now() - new Date(data.updated_at).getTime()) / (1000 * 60 * 60);
+      if (age < CACHE_TTL_HOURS) {
+        console.log('Cache hit for:', cacheKey);
+        return cached;
+      }
+    }
+  } catch (e) {
+    // Cache miss
+  }
+  return null;
+}
+
+async function setCachedSearch(supabase: any, cacheKey: string, data: any): Promise<void> {
+  try {
+    await supabase
+      .from('app_settings')
+      .upsert({
+        key: `search_cache_${cacheKey}`,
+        value: JSON.stringify(data),
+        description: 'Partner discovery search cache',
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'key' });
+  } catch (e) {
+    console.error('Cache write error:', e);
+  }
+}
+
+function validateEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const invalidPatterns = ['noreply', 'no-reply', 'donotreply', 'mailer-daemon', 'postmaster'];
+  const lowercaseEmail = email.toLowerCase();
+  
+  if (!emailRegex.test(email)) return false;
+  if (invalidPatterns.some(p => lowercaseEmail.includes(p))) return false;
+  
+  return true;
+}
+
+function extractContactEmail(website: string, companyName: string): string | null {
+  if (!website) return null;
+  
+  try {
+    const url = new URL(website.startsWith('http') ? website : `https://${website}`);
+    const domain = url.hostname.replace('www.', '');
+    
+    // Common contact patterns in order of preference
+    const patterns = ['info', 'contact', 'hello', 'enquiries', 'partnerships', 'business'];
+    
+    for (const pattern of patterns) {
+      const email = `${pattern}@${domain}`;
+      if (validateEmail(email)) return email;
+    }
+    
+    return `info@${domain}`;
+  } catch {
+    return null;
+  }
+}
+
+async function parallelSearch(queries: string[], apiKey: string, limit: number = 5): Promise<any[]> {
+  const searchPromises = queries.map(async (query) => {
+    try {
+      const response = await fetch('https://api.firecrawl.dev/v1/search', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query,
+          limit,
+          scrapeOptions: { formats: ['markdown'] },
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.data || [];
+      }
+      return [];
+    } catch (e) {
+      console.error('Search error for query:', query, e);
+      return [];
+    }
+  });
+
+  const results = await Promise.all(searchPromises);
+  return results.flat();
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+  const startTime = Date.now();
 
   try {
     const { requirements, regions, category, autoOutreach } = await req.json();
@@ -42,10 +162,27 @@ serve(async (req) => {
       );
     }
 
-    console.log('Processing partner discovery request:', { requirements, regions, category });
+    console.log('Processing enhanced partner discovery:', { requirements, regions, category, autoOutreach });
 
-    // Step 1: Generate optimized search queries using AI
-    const searchQueryResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    // Create cache key from request params
+    const cacheKey = btoa(`${requirements}_${category || 'all'}_${(regions || []).join(',')}`).slice(0, 50);
+
+    // Check cache first
+    const cachedResult = await getCachedSearch(supabase, cacheKey);
+    if (cachedResult && !autoOutreach) {
+      console.log('Returning cached results');
+      return new Response(
+        JSON.stringify({
+          ...cachedResult,
+          cached: true,
+          processingTime: Date.now() - startTime
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Step 1: Generate search queries using AI (parallel with template queries)
+    const aiQueryPromise = fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${LOVABLE_API_KEY}`,
@@ -56,79 +193,61 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are an expert at finding luxury service providers globally. Generate 3 highly specific web search queries to find potential partners based on user requirements. Focus on finding established companies with excellent reputations.
-
-Categories available: ${PARTNER_CATEGORIES.join(', ')}
-
-Return ONLY a JSON array of search query strings, no explanation.`
+            content: `Generate 3 highly specific web search queries to find luxury service partners. Return ONLY a JSON array of strings.`
           },
           {
             role: 'user',
             content: `Requirements: ${requirements}
-${regions ? `Target regions: ${Array.isArray(regions) ? regions.join(', ') : regions}` : 'Global coverage preferred'}
+${regions ? `Regions: ${Array.isArray(regions) ? regions.join(', ') : regions}` : 'Global'}
 ${category ? `Category: ${category}` : ''}`
           }
         ],
-        temperature: 0.7,
+        temperature: 0.5,
       }),
     });
 
-    if (!searchQueryResponse.ok) {
-      console.error('AI query generation failed:', await searchQueryResponse.text());
-      throw new Error('Failed to generate search queries');
-    }
+    // Get template queries for the category
+    const templateQueries = category && SEARCH_QUERIES_TEMPLATE[category as keyof typeof SEARCH_QUERIES_TEMPLATE]
+      ? SEARCH_QUERIES_TEMPLATE[category as keyof typeof SEARCH_QUERIES_TEMPLATE]
+      : [];
 
-    const queryData = await searchQueryResponse.json();
-    let searchQueries: string[] = [];
-    
+    // Add region context to template queries
+    const regionContext = Array.isArray(regions) && regions.length > 0 ? regions[0] : '';
+    const enhancedTemplateQueries = templateQueries.map(q => 
+      regionContext ? `${q} ${regionContext}` : q
+    );
+
+    // Wait for AI queries
+    let aiQueries: string[] = [];
     try {
-      const content = queryData.choices?.[0]?.message?.content || '';
-      const jsonMatch = content.match(/\[[\s\S]*?\]/);
-      if (jsonMatch) {
-        searchQueries = JSON.parse(jsonMatch[0]);
-      }
-    } catch (e) {
-      console.error('Failed to parse search queries:', e);
-      searchQueries = [`luxury ${category || 'concierge'} services ${Array.isArray(regions) ? regions[0] : 'worldwide'}`];
-    }
-
-    console.log('Generated search queries:', searchQueries);
-
-    // Step 2: Search the web using Firecrawl (if available)
-    let searchResults: any[] = [];
-    
-    if (FIRECRAWL_API_KEY) {
-      for (const query of searchQueries.slice(0, 3)) {
-        try {
-          const searchResponse = await fetch('https://api.firecrawl.dev/v1/search', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${FIRECRAWL_API_KEY}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              query,
-              limit: 5,
-              scrapeOptions: { formats: ['markdown'] },
-            }),
-          });
-
-          if (searchResponse.ok) {
-            const data = await searchResponse.json();
-            if (data.data) {
-              searchResults.push(...data.data);
-            }
-          }
-        } catch (e) {
-          console.error('Search error for query:', query, e);
+      const aiResponse = await aiQueryPromise;
+      if (aiResponse.ok) {
+        const queryData = await aiResponse.json();
+        const content = queryData.choices?.[0]?.message?.content || '';
+        const jsonMatch = content.match(/\[[\s\S]*?\]/);
+        if (jsonMatch) {
+          aiQueries = JSON.parse(jsonMatch[0]);
         }
       }
-      console.log('Found', searchResults.length, 'web results');
+    } catch (e) {
+      console.error('AI query generation failed, using templates:', e);
+    }
+
+    // Combine and deduplicate queries
+    const allQueries = [...new Set([...aiQueries, ...enhancedTemplateQueries])].slice(0, 6);
+    console.log('Search queries:', allQueries);
+
+    // Step 2: Parallel web searches
+    let searchResults: any[] = [];
+    
+    if (FIRECRAWL_API_KEY && allQueries.length > 0) {
+      searchResults = await parallelSearch(allQueries, FIRECRAWL_API_KEY, 5);
+      console.log('Found', searchResults.length, 'web results in parallel');
     } else {
       console.log('Firecrawl not configured, using AI-only discovery');
     }
 
-    // Step 3: Analyze results and generate partner suggestions using AI
+    // Step 3: AI analysis with enhanced extraction
     const analysisResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -140,44 +259,45 @@ ${category ? `Category: ${category}` : ''}`
         messages: [
           {
             role: 'system',
-            content: `You are a luxury concierge partner acquisition specialist. Analyze the provided web search results and user requirements to identify potential partner companies.
+            content: `You are a luxury concierge partner acquisition specialist. Analyze search results and identify potential partners.
 
-For each potential partner, extract or infer:
-- company_name: The business name
+For each partner, extract:
+- company_name: Business name
 - category: One of [${PARTNER_CATEGORIES.join(', ')}]
-- subcategory: More specific service type
-- description: Brief description of their services
-- website: Their website URL if found
-- coverage_regions: Array of regions they operate in
-- priority: "high", "medium", or "low" based on fit
-- match_reason: Why they're a good fit
+- subcategory: More specific type
+- description: Brief service description (max 100 chars)
+- website: URL if found
+- coverage_regions: Array of regions
+- priority: "high", "medium", or "low"
+- match_reason: Why they're a good fit (max 50 chars)
+- contact_hints: Any contact info found (email, phone patterns)
 
-Return a JSON object with a "partners" array containing up to 8 partner objects. Be realistic and only include companies that appear legitimate.`
+Return up to 10 partners. Prioritize companies with clear websites and contact info.`
           },
           {
             role: 'user',
-            content: `User Requirements: ${requirements}
-Target Regions: ${Array.isArray(regions) ? regions.join(', ') : (regions || 'Global')}
-Category Focus: ${category || 'Any luxury service'}
+            content: `Requirements: ${requirements}
+Regions: ${Array.isArray(regions) ? regions.join(', ') : (regions || 'Global')}
+Category: ${category || 'Any luxury service'}
 
-Web Search Results:
+Search Results:
 ${searchResults.length > 0 
-  ? searchResults.map((r, i) => `
+  ? searchResults.slice(0, 15).map((r, i) => `
 [${i + 1}] ${r.title || 'Unknown'}
 URL: ${r.url || 'N/A'}
-${r.description || r.markdown?.slice(0, 500) || 'No description'}
+${(r.description || r.markdown?.slice(0, 300) || 'No description').substring(0, 300)}
 `).join('\n---\n')
-  : 'No web results available. Generate suggestions based on your knowledge of the luxury service industry for the specified requirements and regions.'}
+  : 'No web results. Generate suggestions from your knowledge of the luxury industry.'}
 `
           }
         ],
-        temperature: 0.5,
+        temperature: 0.4,
         tools: [
           {
             type: 'function',
             function: {
               name: 'return_partners',
-              description: 'Return the list of potential partner companies',
+              description: 'Return potential partner companies',
               parameters: {
                 type: 'object',
                 properties: {
@@ -193,7 +313,8 @@ ${r.description || r.markdown?.slice(0, 500) || 'No description'}
                         website: { type: 'string' },
                         coverage_regions: { type: 'array', items: { type: 'string' } },
                         priority: { type: 'string', enum: ['high', 'medium', 'low'] },
-                        match_reason: { type: 'string' }
+                        match_reason: { type: 'string' },
+                        contact_hints: { type: 'string' }
                       },
                       required: ['company_name', 'category', 'description', 'priority', 'match_reason']
                     }
@@ -220,7 +341,7 @@ ${r.description || r.markdown?.slice(0, 500) || 'No description'}
       }
       if (analysisResponse.status === 402) {
         return new Response(
-          JSON.stringify({ success: false, error: 'AI credits depleted. Please add credits to continue.' }),
+          JSON.stringify({ success: false, error: 'AI credits depleted. Please add credits.' }),
           { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
@@ -239,37 +360,44 @@ ${r.description || r.markdown?.slice(0, 500) || 'No description'}
       }
     } catch (e) {
       console.error('Failed to parse partner suggestions:', e);
-      try {
-        const content = analysisData.choices?.[0]?.message?.content || '';
-        const jsonMatch = content.match(/\{[\s\S]*"partners"[\s\S]*\}/);
-        if (jsonMatch) {
-          const parsed = JSON.parse(jsonMatch[0]);
-          suggestions = parsed.partners || [];
-        }
-      } catch (e2) {
-        console.error('Fallback parsing failed:', e2);
-      }
     }
 
-    console.log('Generated', suggestions.length, 'partner suggestions');
+    // Enhance suggestions with validated emails
+    suggestions = suggestions.map((s: any) => ({
+      ...s,
+      validated_email: s.website ? extractContactEmail(s.website, s.company_name) : null,
+      match_score: s.priority === 'high' ? 90 : s.priority === 'medium' ? 70 : 50,
+    }));
 
-    // Step 4: Auto-outreach for high-match partners (if enabled)
+    console.log('Generated', suggestions.length, 'enhanced partner suggestions');
+
+    // Cache the result (without auto-outreach data)
+    const cacheableResult = {
+      success: true,
+      suggestions,
+      searchQueries: allQueries,
+      webResultsCount: searchResults.length,
+    };
+    
+    // Background cache save (fire and forget)
+    setCachedSearch(supabase, cacheKey, cacheableResult).catch(console.error);
+
+    // Step 4: Auto-outreach for high-match partners
     const autoOutreachResults: any[] = [];
     
     if (autoOutreach) {
       const highMatchPartners = suggestions.filter((s: any) => 
-        s.priority === 'high' && s.website
+        s.priority === 'high' && (s.validated_email || s.website)
       );
 
-      console.log(`Auto-outreach enabled. Found ${highMatchPartners.length} high-priority partners`);
+      console.log(`Auto-outreach: ${highMatchPartners.length} high-priority partners`);
 
-      for (const partner of highMatchPartners.slice(0, 3)) { // Limit to 3 auto-outreaches
+      // Process auto-outreach (limit to 3 concurrent)
+      const outreachPromises = highMatchPartners.slice(0, 3).map(async (partner: any) => {
         try {
-          // Try to extract email from website or use a generic contact pattern
-          const domain = partner.website?.replace(/^https?:\/\//, '').replace(/\/$/, '').split('/')[0];
-          const contactEmail = domain ? `info@${domain}` : null;
-
-          if (contactEmail && domain) {
+          const contactEmail = partner.validated_email || extractContactEmail(partner.website, partner.company_name);
+          
+          if (contactEmail && validateEmail(contactEmail)) {
             const inviteResponse = await fetch(`${SUPABASE_URL}/functions/v1/partner-invite`, {
               method: 'POST',
               headers: {
@@ -284,7 +412,7 @@ ${r.description || r.markdown?.slice(0, 500) || 'No description'}
                 website: partner.website,
                 description: partner.description,
                 coverage_regions: partner.coverage_regions,
-                match_score: partner.priority === 'high' ? 90 : 70,
+                match_score: partner.match_score,
                 match_reason: partner.match_reason,
                 auto_outreach: true,
               }),
@@ -292,36 +420,41 @@ ${r.description || r.markdown?.slice(0, 500) || 'No description'}
 
             if (inviteResponse.ok) {
               const inviteResult = await inviteResponse.json();
-              autoOutreachResults.push({
+              return {
                 company: partner.company_name,
                 email: contactEmail,
                 success: true,
                 invite_link: inviteResult.invite_link,
-              });
-              console.log(`Auto-invited: ${partner.company_name} at ${contactEmail}`);
+              };
             }
           }
+          return null;
         } catch (e) {
           console.error(`Failed to auto-invite ${partner.company_name}:`, e);
-          autoOutreachResults.push({
+          return {
             company: partner.company_name,
             success: false,
-            error: e instanceof Error ? e.message : 'Failed',
-          });
+            error: 'Invite failed',
+          };
         }
-      }
+      });
+
+      const results = await Promise.all(outreachPromises);
+      autoOutreachResults.push(...results.filter(r => r !== null));
     }
+
+    const processingTime = Date.now() - startTime;
+    console.log(`Discovery completed in ${processingTime}ms`);
 
     return new Response(
       JSON.stringify({
         success: true,
         suggestions,
-        searchQueries,
+        searchQueries: allQueries,
         webResultsCount: searchResults.length,
         autoOutreachResults: autoOutreach ? autoOutreachResults : undefined,
-        message: FIRECRAWL_API_KEY 
-          ? `Found ${suggestions.length} potential partners from global web search${autoOutreachResults.length > 0 ? `. Auto-invited ${autoOutreachResults.filter(r => r.success).length} high-match partners.` : ''}`
-          : `Generated ${suggestions.length} AI-suggested partners`
+        processingTime,
+        message: `Found ${suggestions.length} partners in ${(processingTime / 1000).toFixed(1)}s${autoOutreachResults.length > 0 ? ` | ${autoOutreachResults.filter(r => r.success).length} auto-invited` : ''}`
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

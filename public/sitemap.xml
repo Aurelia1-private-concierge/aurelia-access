@@ -1,65 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://aurelia-privateconcierge.com/</loc>
-    <lastmod>2026-01-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://aurelia-privateconcierge.com/services</loc>
-    <lastmod>2026-01-12</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://aurelia-privateconcierge.com/security</loc>
-    <lastmod>2026-01-12</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://aurelia-privateconcierge.com/blog</loc>
-    <lastmod>2026-01-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://aurelia-privateconcierge.com/orla</loc>
-    <lastmod>2026-01-12</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://aurelia-privateconcierge.com/contact</loc>
-    <lastmod>2026-01-12</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://aurelia-privateconcierge.com/privacy</loc>
-    <lastmod>2026-01-12</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://aurelia-privateconcierge.com/terms</loc>
-    <lastmod>2026-01-12</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-</urlset>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
-        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 
                             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   
   <!-- Homepage / Coming Soon - Highest Priority -->
   <url>
     <loc>https://aurelia-privateconcierge.com/</loc>
-    <lastmod>2026-01-12</lastmod>
+    <lastmod>2026-01-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -72,7 +21,7 @@
   <!-- Launch Page (Full Site Preview) -->
   <url>
     <loc>https://aurelia-privateconcierge.com/launch</loc>
-    <lastmod>2026-01-12</lastmod>
+    <lastmod>2026-01-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
     <image:image>
@@ -85,7 +34,7 @@
   <!-- Blog / Journal - High SEO Value -->
   <url>
     <loc>https://aurelia-privateconcierge.com/blog</loc>
-    <lastmod>2026-01-12</lastmod>
+    <lastmod>2026-01-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
     <image:image>
@@ -98,45 +47,31 @@
   <!-- Core Service Pages -->
   <url>
     <loc>https://aurelia-privateconcierge.com/services</loc>
-    <lastmod>2026-01-12</lastmod>
+    <lastmod>2026-01-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
   
+  <!-- Security Page -->
   <url>
-    <loc>https://aurelia-privateconcierge.com/membership</loc>
-    <lastmod>2026-01-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
+    <loc>https://aurelia-privateconcierge.com/security</loc>
+    <lastmod>2026-01-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
   </url>
   
   <!-- AI Concierge -->
   <url>
     <loc>https://aurelia-privateconcierge.com/orla</loc>
-    <lastmod>2026-01-12</lastmod>
+    <lastmod>2026-01-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
-  </url>
-  
-  <!-- Discovery & Experiences -->
-  <url>
-    <loc>https://aurelia-privateconcierge.com/discover</loc>
-    <lastmod>2026-01-12</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.80</priority>
   </url>
   
   <!-- Contact & Application -->
   <url>
     <loc>https://aurelia-privateconcierge.com/contact</loc>
-    <lastmod>2026-01-12</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  
-  <url>
-    <loc>https://aurelia-privateconcierge.com/trial</loc>
-    <lastmod>2026-01-12</lastmod>
+    <lastmod>2026-01-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
@@ -144,15 +79,15 @@
   <!-- Referral Program -->
   <url>
     <loc>https://aurelia-privateconcierge.com/referral</loc>
-    <lastmod>2026-01-12</lastmod>
+    <lastmod>2026-01-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
   </url>
   
-  <!-- Partner Portal -->
+  <!-- Partner Recruitment -->
   <url>
-    <loc>https://aurelia-privateconcierge.com/partner/apply</loc>
-    <lastmod>2026-01-12</lastmod>
+    <loc>https://aurelia-privateconcierge.com/partners/join</loc>
+    <lastmod>2026-01-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
@@ -160,30 +95,80 @@
   <!-- Social Profiles -->
   <url>
     <loc>https://aurelia-privateconcierge.com/social</loc>
-    <lastmod>2026-01-12</lastmod>
+    <lastmod>2026-01-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.60</priority>
+  </url>
+  
+  <url>
+    <loc>https://aurelia-privateconcierge.com/linkedin</loc>
+    <lastmod>2026-01-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.55</priority>
+  </url>
+  
+  <url>
+    <loc>https://aurelia-privateconcierge.com/instagram</loc>
+    <lastmod>2026-01-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.55</priority>
+  </url>
+  
+  <url>
+    <loc>https://aurelia-privateconcierge.com/twitter</loc>
+    <lastmod>2026-01-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.55</priority>
+  </url>
+  
+  <url>
+    <loc>https://aurelia-privateconcierge.com/facebook</loc>
+    <lastmod>2026-01-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.55</priority>
+  </url>
+  
+  <url>
+    <loc>https://aurelia-privateconcierge.com/tiktok</loc>
+    <lastmod>2026-01-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.55</priority>
+  </url>
+  
+  <url>
+    <loc>https://aurelia-privateconcierge.com/youtube</loc>
+    <lastmod>2026-01-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.55</priority>
+  </url>
+  
+  <!-- Media Kit -->
+  <url>
+    <loc>https://aurelia-privateconcierge.com/media-kit</loc>
+    <lastmod>2026-01-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.50</priority>
   </url>
   
   <!-- Authentication -->
   <url>
     <loc>https://aurelia-privateconcierge.com/auth</loc>
-    <lastmod>2026-01-12</lastmod>
+    <lastmod>2026-01-16</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.50</priority>
+    <priority>0.45</priority>
   </url>
   
   <!-- Legal Pages -->
   <url>
     <loc>https://aurelia-privateconcierge.com/terms</loc>
-    <lastmod>2026-01-12</lastmod>
+    <lastmod>2026-01-16</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.30</priority>
   </url>
   
   <url>
     <loc>https://aurelia-privateconcierge.com/privacy</loc>
-    <lastmod>2026-01-12</lastmod>
+    <lastmod>2026-01-16</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.30</priority>
   </url>

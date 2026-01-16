@@ -98,3 +98,12 @@ verify_jwt = false
 
 [functions.check-login-rate-limit]
 verify_jwt = false
+
+[functions.ai-partner-discovery]
+verify_jwt = false
+
+[functions.firecrawl-search]
+verify_jwt = false
+
+[functions.partner-invite]
+verify_jwt = false

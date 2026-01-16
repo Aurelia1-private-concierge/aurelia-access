@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import { Building2, ArrowRight, Check, Sparkles } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Building2, ArrowRight, Check, Sparkles, Mail } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -38,11 +38,28 @@ const categories: { value: ServiceCategory; label: string }[] = [
   { value: "shopping", label: "Personal Shopping" },
 ];
 
+// Map discovery categories to form categories
+const categoryMapping: Record<string, ServiceCategory> = {
+  aviation: "private_aviation",
+  yacht: "yacht_charter",
+  hospitality: "travel",
+  dining: "dining",
+  events: "events_access",
+  security: "security",
+  real_estate: "real_estate",
+  automotive: "shopping",
+  wellness: "wellness",
+  art_collectibles: "collectibles",
+};
+
 const PartnerApply = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [step, setStep] = useState(1);
+  const [isInvited, setIsInvited] = useState(false);
+  const [inviteToken, setInviteToken] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     companyName: "",
@@ -53,6 +70,35 @@ const PartnerApply = () => {
     description: "",
     categories: [] as ServiceCategory[],
   });
+
+  // Pre-fill form from invite link
+  useEffect(() => {
+    const invite = searchParams.get('invite');
+    const company = searchParams.get('company');
+    const email = searchParams.get('email');
+    const name = searchParams.get('name');
+    const category = searchParams.get('category');
+    const website = searchParams.get('website');
+
+    if (invite) {
+      setInviteToken(invite);
+      setIsInvited(true);
+    }
+
+    if (company || email || name || category || website) {
+      setFormData(prev => ({
+        ...prev,
+        companyName: company || prev.companyName,
+        email: email || prev.email,
+        contactName: name || prev.contactName,
+        website: website || prev.website,
+        categories: category && categoryMapping[category] 
+          ? [categoryMapping[category]] 
+          : prev.categories,
+      }));
+      toast.success("Welcome! Your information has been pre-filled from the invitation.");
+    }
+  }, [searchParams]);
 
   const handleCategoryToggle = (category: ServiceCategory) => {
     setFormData(prev => ({
@@ -143,6 +189,14 @@ const PartnerApply = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
           >
+            {isInvited && (
+              <div className="inline-flex items-center space-x-2 border border-primary/30 bg-primary/10 backdrop-blur-sm rounded-full px-4 py-1.5 mb-4">
+                <Mail className="w-3 h-3 text-primary" />
+                <span className="text-xs uppercase tracking-[0.2em] text-primary font-medium">
+                  Exclusive Invitation
+                </span>
+              </div>
+            )}
             <div className="inline-flex items-center space-x-2 border border-border/30 bg-secondary/50 backdrop-blur-sm rounded-full px-4 py-1.5 mb-6">
               <Building2 className="w-3 h-3 text-primary" />
               <span className="text-xs uppercase tracking-[0.2em] text-primary font-medium">
@@ -151,11 +205,18 @@ const PartnerApply = () => {
             </div>
             
             <h1 className="text-4xl md:text-5xl font-serif text-foreground mb-4">
-              Join Our <span className="text-primary italic">Network</span>
+              {isInvited ? (
+                <>You're <span className="text-primary italic">Invited</span></>
+              ) : (
+                <>Join Our <span className="text-primary italic">Network</span></>
+              )}
             </h1>
             
             <p className="text-muted-foreground font-light">
-              Partner with Aurelia to serve the world's most discerning clientele.
+              {isInvited 
+                ? "Complete your application to join Aurelia's exclusive partner network."
+                : "Partner with Aurelia to serve the world's most discerning clientele."
+              }
             </p>
           </motion.div>
 

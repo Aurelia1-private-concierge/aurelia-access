@@ -58,7 +58,7 @@ const SocialShareButtons = ({
     {
       name: "WhatsApp",
       icon: MessageCircle,
-      url: `https://api.whatsapp.com/send?text=${encodedTitle}%20${encodedUrl}`,
+      url: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
       color: "hover:bg-[#25D366]/10 hover:text-[#25D366] hover:border-[#25D366]/30"
     },
     {

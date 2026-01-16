@@ -183,7 +183,7 @@ const TwitterProfile = () => {
               <h1 className="text-xl font-bold text-foreground">Aurelia Private Concierge</h1>
               <Verified className="w-5 h-5 text-primary fill-primary" />
             </div>
-            <p className="text-muted-foreground">@aureliaprivate</p>
+            <p className="text-muted-foreground">@AureliaPrivate_</p>
           </div>
 
           {/* Bio */}
@@ -282,7 +282,7 @@ const TwitterProfile = () => {
                       <div className="flex items-center gap-1 mb-1">
                         <span className="font-bold text-foreground truncate">Aurelia Private Concierge</span>
                         <Verified className="w-4 h-4 text-primary fill-primary flex-shrink-0" />
-                        <span className="text-muted-foreground truncate">@aureliaprivate · {tweet.timestamp}</span>
+                        <span className="text-muted-foreground truncate">@AureliaPrivate_ · {tweet.timestamp}</span>
                       </div>
 
                       {/* Content */}
@@ -331,7 +331,7 @@ const TwitterProfile = () => {
             <div className="py-20 text-center text-muted-foreground">
               <MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p className="font-medium mb-1">No replies yet</p>
-              <p className="text-sm">When @aureliaprivate replies, they'll show up here.</p>
+              <p className="text-sm">When @AureliaPrivate_ replies, they'll show up here.</p>
             </div>
           </TabsContent>
 
@@ -362,7 +362,7 @@ const TwitterProfile = () => {
             <div className="py-20 text-center text-muted-foreground">
               <Heart className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p className="font-medium mb-1">No likes yet</p>
-              <p className="text-sm">Posts @aureliaprivate likes will show up here.</p>
+              <p className="text-sm">Posts @AureliaPrivate_ likes will show up here.</p>
             </div>
           </TabsContent>
         </Tabs>

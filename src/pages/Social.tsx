@@ -177,11 +177,7 @@ const Social = () => {
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-4">
                       <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${platform.color} flex items-center justify-center shadow-lg`}>
-                        {typeof platform.icon === 'function' && platform.icon.toString().includes('svg') ? (
-                          <platform.icon className="w-6 h-6 text-white" />
-                        ) : (
-                          <platform.icon className="w-6 h-6 text-white" strokeWidth={1.5} />
-                        )}
+                        <platform.icon className="w-6 h-6 text-white" />
                       </div>
                       <ExternalLink className="w-4 h-4 text-muted-foreground/50 group-hover:text-primary transition-colors" />
                     </div>

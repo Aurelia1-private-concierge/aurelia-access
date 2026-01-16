@@ -28,10 +28,8 @@ const FloatingWhatsApp = () => {
     return () => clearTimeout(timer);
   }, [isDismissed]);
 
-  // Use different URLs for mobile (app) vs desktop (web)
-  const whatsappUrl = isMobile
-    ? "https://wa.me/447309935106?text=Hello%20Aurelia%20Concierge"
-    : "https://web.whatsapp.com/send?phone=447309935106&text=Hello%20Aurelia%20Concierge";
+  // Use wa.me for universal compatibility (works on both mobile and desktop)
+  const whatsappUrl = "https://wa.me/447309935106?text=Hello%20Aurelia%20Concierge";
 
   return (
     <div className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-40 flex flex-col items-end gap-3">

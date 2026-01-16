@@ -170,7 +170,7 @@ export function usePartnerMatching() {
 
   const generateAISuggestions = useCallback(async (
     requirements: string,
-    options?: { regions?: string[]; category?: string }
+    options?: { regions?: string[]; category?: string; autoOutreach?: boolean }
   ) => {
     setIsGenerating(true);
     try {
@@ -178,7 +178,8 @@ export function usePartnerMatching() {
         body: { 
           requirements,
           regions: options?.regions,
-          category: options?.category
+          category: options?.category,
+          autoOutreach: options?.autoOutreach
         },
       });
 
@@ -186,13 +187,23 @@ export function usePartnerMatching() {
 
       if (data?.success === false) {
         toast.error(data.error || 'Discovery failed');
-        return [];
+        return { suggestions: [], autoOutreachResults: [] };
       }
 
       if (data?.suggestions) {
-        const message = data.message || `Found ${data.suggestions.length} potential partners`;
+        let message = data.message || `Found ${data.suggestions.length} potential partners`;
+        
+        // Handle auto-outreach results
+        if (data.autoOutreachResults && data.autoOutreachResults.length > 0) {
+          const successCount = data.autoOutreachResults.filter((r: any) => r.success).length;
+          if (successCount > 0) {
+            message += ` | Sent ${successCount} auto-invites`;
+          }
+        }
+        
         toast.success(message);
-        return data.suggestions.map((s: any) => ({
+        
+        const suggestions = data.suggestions.map((s: any) => ({
           company_name: s.company_name,
           category: s.category,
           subcategory: s.subcategory,
@@ -203,8 +214,13 @@ export function usePartnerMatching() {
           match_score: s.priority === 'high' ? 85 : s.priority === 'medium' ? 70 : 55,
           match_reasons: [s.match_reason]
         }));
+
+        return {
+          suggestions,
+          autoOutreachResults: data.autoOutreachResults || []
+        };
       }
-      return [];
+      return { suggestions: [], autoOutreachResults: [] };
     } catch (error: any) {
       console.error('Error generating AI suggestions:', error);
       if (error?.message?.includes('429') || error?.status === 429) {
@@ -214,7 +230,7 @@ export function usePartnerMatching() {
       } else {
         toast.error('Failed to discover partners');
       }
-      return [];
+      return { suggestions: [], autoOutreachResults: [] };
     } finally {
       setIsGenerating(false);
     }

@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -10,13 +11,15 @@ const PARTNER_CATEGORIES = [
   'security', 'real_estate', 'automotive', 'wellness', 'art_collectibles'
 ];
 
+const AUTO_OUTREACH_THRESHOLD = 80; // Match score threshold for auto-outreach
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { requirements, regions, category } = await req.json();
+    const { requirements, regions, category, autoOutreach } = await req.json();
 
     if (!requirements) {
       return new Response(
@@ -27,6 +30,10 @@ serve(async (req) => {
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     const FIRECRAWL_API_KEY = Deno.env.get('FIRECRAWL_API_KEY');
+    const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+    const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
 
     if (!LOVABLE_API_KEY) {
       return new Response(
@@ -246,14 +253,74 @@ ${r.description || r.markdown?.slice(0, 500) || 'No description'}
 
     console.log('Generated', suggestions.length, 'partner suggestions');
 
+    // Step 4: Auto-outreach for high-match partners (if enabled)
+    const autoOutreachResults: any[] = [];
+    
+    if (autoOutreach) {
+      const highMatchPartners = suggestions.filter((s: any) => 
+        s.priority === 'high' && s.website
+      );
+
+      console.log(`Auto-outreach enabled. Found ${highMatchPartners.length} high-priority partners`);
+
+      for (const partner of highMatchPartners.slice(0, 3)) { // Limit to 3 auto-outreaches
+        try {
+          // Try to extract email from website or use a generic contact pattern
+          const domain = partner.website?.replace(/^https?:\/\//, '').replace(/\/$/, '').split('/')[0];
+          const contactEmail = domain ? `info@${domain}` : null;
+
+          if (contactEmail && domain) {
+            const inviteResponse = await fetch(`${SUPABASE_URL}/functions/v1/partner-invite`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                company_name: partner.company_name,
+                contact_email: contactEmail,
+                category: partner.category,
+                subcategory: partner.subcategory,
+                website: partner.website,
+                description: partner.description,
+                coverage_regions: partner.coverage_regions,
+                match_score: partner.priority === 'high' ? 90 : 70,
+                match_reason: partner.match_reason,
+                auto_outreach: true,
+              }),
+            });
+
+            if (inviteResponse.ok) {
+              const inviteResult = await inviteResponse.json();
+              autoOutreachResults.push({
+                company: partner.company_name,
+                email: contactEmail,
+                success: true,
+                invite_link: inviteResult.invite_link,
+              });
+              console.log(`Auto-invited: ${partner.company_name} at ${contactEmail}`);
+            }
+          }
+        } catch (e) {
+          console.error(`Failed to auto-invite ${partner.company_name}:`, e);
+          autoOutreachResults.push({
+            company: partner.company_name,
+            success: false,
+            error: e instanceof Error ? e.message : 'Failed',
+          });
+        }
+      }
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
         suggestions,
         searchQueries,
         webResultsCount: searchResults.length,
+        autoOutreachResults: autoOutreach ? autoOutreachResults : undefined,
         message: FIRECRAWL_API_KEY 
-          ? `Found ${suggestions.length} potential partners from global web search`
+          ? `Found ${suggestions.length} potential partners from global web search${autoOutreachResults.length > 0 ? `. Auto-invited ${autoOutreachResults.filter(r => r.success).length} high-match partners.` : ''}`
           : `Generated ${suggestions.length} AI-suggested partners`
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

@@ -93,6 +93,8 @@ export function AutoPartnerFinder({ onPartnerSelect }: AutoPartnerFinderProps) {
   const [aiRequirements, setAiRequirements] = useState('');
   const [aiCategory, setAiCategory] = useState<string>('');
   const [aiRegions, setAiRegions] = useState<string[]>([]);
+  const [autoOutreach, setAutoOutreach] = useState(false);
+  const [autoOutreachResults, setAutoOutreachResults] = useState<any[]>([]);
   const [aiSuggestions, setAiSuggestions] = useState<any[]>([]);
   const [selectedPartner, setSelectedPartner] = useState<PartnerMatch | null>(null);
 
@@ -112,11 +114,13 @@ export function AutoPartnerFinder({ onPartnerSelect }: AutoPartnerFinderProps) {
 
   const handleAIDiscovery = async () => {
     if (!aiRequirements.trim()) return;
-    const suggestions = await generateAISuggestions(aiRequirements, {
+    const result = await generateAISuggestions(aiRequirements, {
       regions: aiRegions.length > 0 ? aiRegions : undefined,
       category: aiCategory || undefined,
+      autoOutreach: autoOutreach,
     });
-    setAiSuggestions(suggestions);
+    setAiSuggestions(result.suggestions || []);
+    setAutoOutreachResults(result.autoOutreachResults || []);
   };
 
   const toggleAiRegion = (region: string) => {
@@ -358,6 +362,30 @@ export function AutoPartnerFinder({ onPartnerSelect }: AutoPartnerFinderProps) {
                 </div>
               </div>
 
+              {/* Auto-outreach Toggle */}
+              <div className="flex items-center justify-between p-4 rounded-lg bg-primary/5 border border-primary/20">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-full bg-primary/10">
+                    <Mail className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Auto-Invite High-Match Partners</p>
+                    <p className="text-xs text-muted-foreground">
+                      Automatically send partnership invitations to 80%+ match partners
+                    </p>
+                  </div>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={autoOutreach}
+                    onChange={(e) => setAutoOutreach(e.target.checked)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-muted rounded-full peer peer-checked:bg-primary after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full" />
+                </label>
+              </div>
+
               <Button
                 onClick={handleAIDiscovery}
                 disabled={isGenerating || !aiRequirements.trim()}
@@ -367,20 +395,52 @@ export function AutoPartnerFinder({ onPartnerSelect }: AutoPartnerFinderProps) {
                 {isGenerating ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Searching globally...
+                    {autoOutreach ? 'Discovering & Inviting...' : 'Searching globally...'}
                   </>
                 ) : (
                   <>
                     <Globe className="h-4 w-4 mr-2" />
                     <Sparkles className="h-4 w-4 mr-2" />
-                    Discover Partners Globally
+                    {autoOutreach ? 'Discover & Auto-Invite' : 'Discover Partners Globally'}
                   </>
                 )}
               </Button>
               
               <p className="text-xs text-muted-foreground text-center">
                 Powered by AI + Web Search • Finds real companies worldwide
+                {autoOutreach && ' • Auto-sends invite emails'}
               </p>
+
+              {/* Auto-outreach Results */}
+              <AnimatePresence>
+                {autoOutreachResults.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="space-y-2 p-4 rounded-lg bg-green-500/10 border border-green-500/30"
+                  >
+                    <h4 className="text-sm font-medium text-green-400 flex items-center gap-2">
+                      <Mail className="h-4 w-4" />
+                      Auto-Invites Sent
+                    </h4>
+                    <div className="space-y-1">
+                      {autoOutreachResults.map((result, index) => (
+                        <div key={index} className="flex items-center gap-2 text-xs">
+                          {result.success ? (
+                            <CheckCircle className="h-3 w-3 text-green-400" />
+                          ) : (
+                            <Clock className="h-3 w-3 text-yellow-400" />
+                          )}
+                          <span className={result.success ? 'text-green-300' : 'text-yellow-300'}>
+                            {result.company}: {result.success ? `Invited at ${result.email}` : result.error}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* AI Suggestions */}
               <AnimatePresence>

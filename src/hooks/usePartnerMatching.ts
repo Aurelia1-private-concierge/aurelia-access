@@ -168,23 +168,52 @@ export function usePartnerMatching() {
     }
   }, []);
 
-  const generateAISuggestions = useCallback(async (requirements: string) => {
+  const generateAISuggestions = useCallback(async (
+    requirements: string,
+    options?: { regions?: string[]; category?: string }
+  ) => {
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('ai-partner-discovery', {
-        body: { requirements },
+        body: { 
+          requirements,
+          regions: options?.regions,
+          category: options?.category
+        },
       });
 
       if (error) throw error;
 
+      if (data?.success === false) {
+        toast.error(data.error || 'Discovery failed');
+        return [];
+      }
+
       if (data?.suggestions) {
-        toast.success(`Found ${data.suggestions.length} AI-suggested partners`);
-        return data.suggestions;
+        const message = data.message || `Found ${data.suggestions.length} potential partners`;
+        toast.success(message);
+        return data.suggestions.map((s: any) => ({
+          company_name: s.company_name,
+          category: s.category,
+          subcategory: s.subcategory,
+          description: s.description,
+          website: s.website,
+          coverage_regions: s.coverage_regions,
+          priority: s.priority,
+          match_score: s.priority === 'high' ? 85 : s.priority === 'medium' ? 70 : 55,
+          match_reasons: [s.match_reason]
+        }));
       }
       return [];
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating AI suggestions:', error);
-      toast.error('Failed to generate AI suggestions');
+      if (error?.message?.includes('429') || error?.status === 429) {
+        toast.error('Rate limit exceeded. Please try again later.');
+      } else if (error?.message?.includes('402') || error?.status === 402) {
+        toast.error('AI credits depleted. Please add credits to continue.');
+      } else {
+        toast.error('Failed to discover partners');
+      }
       return [];
     } finally {
       setIsGenerating(false);

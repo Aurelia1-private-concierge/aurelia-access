@@ -1,188 +1,272 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
 const PARTNER_CATEGORIES = [
-  { id: 'aviation', name: 'Private Aviation', examples: ['Charter operators', 'FBO services', 'Aircraft management'] },
-  { id: 'yacht', name: 'Yacht & Marine', examples: ['Charter companies', 'Yacht management', 'Marina services'] },
-  { id: 'hospitality', name: 'Luxury Hospitality', examples: ['5-star hotels', 'Private villas', 'Resort properties'] },
-  { id: 'dining', name: 'Fine Dining', examples: ['Michelin restaurants', 'Private chefs', 'Catering services'] },
-  { id: 'events', name: 'Exclusive Events', examples: ['VIP event access', 'Private concerts', 'Art exhibitions'] },
-  { id: 'security', name: 'Security Services', examples: ['Executive protection', 'Residential security', 'Cybersecurity'] },
-  { id: 'real_estate', name: 'Luxury Real Estate', examples: ['Property acquisition', 'Estate management', 'Investment properties'] },
-  { id: 'automotive', name: 'Luxury Automotive', examples: ['Exotic car rental', 'Chauffeur services', 'Classic car acquisition'] },
-  { id: 'wellness', name: 'Wellness & Health', examples: ['Private medical', 'Wellness retreats', 'Personal trainers'] },
-  { id: 'art_collectibles', name: 'Art & Collectibles', examples: ['Art advisory', 'Auction services', 'Collection management'] },
+  'aviation', 'yacht', 'hospitality', 'dining', 'events',
+  'security', 'real_estate', 'automotive', 'wellness', 'art_collectibles'
 ];
 
 serve(async (req) => {
-  // Handle CORS preflight
-  if (req.method === "OPTIONS") {
+  if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { requirements } = await req.json();
+    const { requirements, regions, category } = await req.json();
 
-    if (!requirements || typeof requirements !== 'string') {
+    if (!requirements) {
       return new Response(
-        JSON.stringify({ error: 'Requirements text is required' }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ success: false, error: 'Requirements are required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Analyze requirements to determine category and generate suggestions
-    const reqLower = requirements.toLowerCase();
-    
-    // Determine primary category based on keywords
-    let primaryCategory = 'hospitality';
-    const categoryScores: Record<string, number> = {};
-    
-    PARTNER_CATEGORIES.forEach(cat => {
-      let score = 0;
-      if (reqLower.includes(cat.id)) score += 10;
-      if (reqLower.includes(cat.name.toLowerCase())) score += 8;
-      cat.examples.forEach(ex => {
-        if (reqLower.includes(ex.toLowerCase())) score += 5;
-      });
-      categoryScores[cat.id] = score;
-    });
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    const FIRECRAWL_API_KEY = Deno.env.get('FIRECRAWL_API_KEY');
 
-    const sortedCategories = Object.entries(categoryScores)
-      .sort(([, a], [, b]) => b - a)
-      .filter(([, score]) => score > 0);
-
-    if (sortedCategories.length > 0) {
-      primaryCategory = sortedCategories[0][0];
+    if (!LOVABLE_API_KEY) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'AI service not configured' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    // Detect regions mentioned
-    const regions: string[] = [];
-    const regionKeywords = {
-      'North America': ['america', 'usa', 'us', 'united states', 'canada', 'north america', 'new york', 'los angeles', 'miami'],
-      'Europe': ['europe', 'european', 'france', 'italy', 'uk', 'london', 'paris', 'monaco', 'mediterranean'],
-      'Middle East': ['middle east', 'dubai', 'uae', 'saudi', 'qatar', 'abu dhabi'],
-      'Asia Pacific': ['asia', 'pacific', 'japan', 'singapore', 'hong kong', 'australia', 'tokyo'],
-      'Latin America': ['latin america', 'caribbean', 'mexico', 'brazil', 'bahamas'],
-      'Africa': ['africa', 'south africa', 'morocco', 'kenya'],
-    };
+    console.log('Processing partner discovery request:', { requirements, regions, category });
 
-    Object.entries(regionKeywords).forEach(([region, keywords]) => {
-      if (keywords.some(kw => reqLower.includes(kw))) {
-        regions.push(region);
-      }
+    // Step 1: Generate optimized search queries using AI
+    const searchQueryResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'google/gemini-3-flash-preview',
+        messages: [
+          {
+            role: 'system',
+            content: `You are an expert at finding luxury service providers globally. Generate 3 highly specific web search queries to find potential partners based on user requirements. Focus on finding established companies with excellent reputations.
+
+Categories available: ${PARTNER_CATEGORIES.join(', ')}
+
+Return ONLY a JSON array of search query strings, no explanation.`
+          },
+          {
+            role: 'user',
+            content: `Requirements: ${requirements}
+${regions ? `Target regions: ${Array.isArray(regions) ? regions.join(', ') : regions}` : 'Global coverage preferred'}
+${category ? `Category: ${category}` : ''}`
+          }
+        ],
+        temperature: 0.7,
+      }),
     });
 
-    // Generate AI-style suggestions based on requirements
-    const suggestions = generateSuggestions(primaryCategory, regions, requirements);
+    if (!searchQueryResponse.ok) {
+      console.error('AI query generation failed:', await searchQueryResponse.text());
+      throw new Error('Failed to generate search queries');
+    }
+
+    const queryData = await searchQueryResponse.json();
+    let searchQueries: string[] = [];
+    
+    try {
+      const content = queryData.choices?.[0]?.message?.content || '';
+      const jsonMatch = content.match(/\[[\s\S]*?\]/);
+      if (jsonMatch) {
+        searchQueries = JSON.parse(jsonMatch[0]);
+      }
+    } catch (e) {
+      console.error('Failed to parse search queries:', e);
+      searchQueries = [`luxury ${category || 'concierge'} services ${Array.isArray(regions) ? regions[0] : 'worldwide'}`];
+    }
+
+    console.log('Generated search queries:', searchQueries);
+
+    // Step 2: Search the web using Firecrawl (if available)
+    let searchResults: any[] = [];
+    
+    if (FIRECRAWL_API_KEY) {
+      for (const query of searchQueries.slice(0, 3)) {
+        try {
+          const searchResponse = await fetch('https://api.firecrawl.dev/v1/search', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${FIRECRAWL_API_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              query,
+              limit: 5,
+              scrapeOptions: { formats: ['markdown'] },
+            }),
+          });
+
+          if (searchResponse.ok) {
+            const data = await searchResponse.json();
+            if (data.data) {
+              searchResults.push(...data.data);
+            }
+          }
+        } catch (e) {
+          console.error('Search error for query:', query, e);
+        }
+      }
+      console.log('Found', searchResults.length, 'web results');
+    } else {
+      console.log('Firecrawl not configured, using AI-only discovery');
+    }
+
+    // Step 3: Analyze results and generate partner suggestions using AI
+    const analysisResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'google/gemini-3-flash-preview',
+        messages: [
+          {
+            role: 'system',
+            content: `You are a luxury concierge partner acquisition specialist. Analyze the provided web search results and user requirements to identify potential partner companies.
+
+For each potential partner, extract or infer:
+- company_name: The business name
+- category: One of [${PARTNER_CATEGORIES.join(', ')}]
+- subcategory: More specific service type
+- description: Brief description of their services
+- website: Their website URL if found
+- coverage_regions: Array of regions they operate in
+- priority: "high", "medium", or "low" based on fit
+- match_reason: Why they're a good fit
+
+Return a JSON object with a "partners" array containing up to 8 partner objects. Be realistic and only include companies that appear legitimate.`
+          },
+          {
+            role: 'user',
+            content: `User Requirements: ${requirements}
+Target Regions: ${Array.isArray(regions) ? regions.join(', ') : (regions || 'Global')}
+Category Focus: ${category || 'Any luxury service'}
+
+Web Search Results:
+${searchResults.length > 0 
+  ? searchResults.map((r, i) => `
+[${i + 1}] ${r.title || 'Unknown'}
+URL: ${r.url || 'N/A'}
+${r.description || r.markdown?.slice(0, 500) || 'No description'}
+`).join('\n---\n')
+  : 'No web results available. Generate suggestions based on your knowledge of the luxury service industry for the specified requirements and regions.'}
+`
+          }
+        ],
+        temperature: 0.5,
+        tools: [
+          {
+            type: 'function',
+            function: {
+              name: 'return_partners',
+              description: 'Return the list of potential partner companies',
+              parameters: {
+                type: 'object',
+                properties: {
+                  partners: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        company_name: { type: 'string' },
+                        category: { type: 'string' },
+                        subcategory: { type: 'string' },
+                        description: { type: 'string' },
+                        website: { type: 'string' },
+                        coverage_regions: { type: 'array', items: { type: 'string' } },
+                        priority: { type: 'string', enum: ['high', 'medium', 'low'] },
+                        match_reason: { type: 'string' }
+                      },
+                      required: ['company_name', 'category', 'description', 'priority', 'match_reason']
+                    }
+                  }
+                },
+                required: ['partners']
+              }
+            }
+          }
+        ],
+        tool_choice: { type: 'function', function: { name: 'return_partners' } }
+      }),
+    });
+
+    if (!analysisResponse.ok) {
+      const errorText = await analysisResponse.text();
+      console.error('AI analysis failed:', errorText);
+      
+      if (analysisResponse.status === 429) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Rate limit exceeded. Please try again later.' }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      if (analysisResponse.status === 402) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'AI credits depleted. Please add credits to continue.' }),
+          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      throw new Error('Failed to analyze search results');
+    }
+
+    const analysisData = await analysisResponse.json();
+    let suggestions: any[] = [];
+
+    try {
+      const toolCall = analysisData.choices?.[0]?.message?.tool_calls?.[0];
+      if (toolCall?.function?.arguments) {
+        const parsed = JSON.parse(toolCall.function.arguments);
+        suggestions = parsed.partners || [];
+      }
+    } catch (e) {
+      console.error('Failed to parse partner suggestions:', e);
+      try {
+        const content = analysisData.choices?.[0]?.message?.content || '';
+        const jsonMatch = content.match(/\{[\s\S]*"partners"[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]);
+          suggestions = parsed.partners || [];
+        }
+      } catch (e2) {
+        console.error('Fallback parsing failed:', e2);
+      }
+    }
+
+    console.log('Generated', suggestions.length, 'partner suggestions');
 
     return new Response(
       JSON.stringify({
+        success: true,
         suggestions,
-        detectedCategory: primaryCategory,
-        detectedRegions: regions,
-        analysis: {
-          categoryScores: sortedCategories.slice(0, 3),
-          keywordsFound: extractKeywords(requirements),
-        }
+        searchQueries,
+        webResultsCount: searchResults.length,
+        message: FIRECRAWL_API_KEY 
+          ? `Found ${suggestions.length} potential partners from global web search`
+          : `Generated ${suggestions.length} AI-suggested partners`
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
-    console.error('AI Partner Discovery error:', error);
+    console.error('Partner discovery error:', error);
     return new Response(
-      JSON.stringify({ error: 'Failed to process discovery request' }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({ 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Discovery failed' 
+      }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });
-
-function extractKeywords(text: string): string[] {
-  const keywords: string[] = [];
-  const importantTerms = [
-    'luxury', 'premium', 'exclusive', 'vip', 'ultra', 'bespoke', 'private',
-    'charter', 'yacht', 'jet', 'villa', 'estate', 'concierge', 'butler',
-    'michelin', '5-star', 'five-star', 'boutique', 'elite', 'high-end',
-    'personalized', 'curated', 'tailored', 'white-glove', 'discreet'
-  ];
-  
-  const textLower = text.toLowerCase();
-  importantTerms.forEach(term => {
-    if (textLower.includes(term)) {
-      keywords.push(term);
-    }
-  });
-  
-  return keywords;
-}
-
-function generateSuggestions(category: string, regions: string[], requirements: string) {
-  const templates: Record<string, any[]> = {
-    aviation: [
-      { name: 'Elite Aviation Services', description: 'Premium private jet charter with global fleet access', specialty: 'Long-range intercontinental flights' },
-      { name: 'SkyLuxe Partners', description: 'Boutique aviation management and charter services', specialty: 'On-demand charter arrangements' },
-      { name: 'Apex Air Holdings', description: 'Ultra-luxury aircraft management and acquisitions', specialty: 'Aircraft ownership consultation' },
-    ],
-    yacht: [
-      { name: 'Azure Marine Charters', description: 'Superyacht charter specialists for Mediterranean and Caribbean', specialty: 'Crewed yacht charters' },
-      { name: 'Oceanic Prestige', description: 'Luxury yacht brokerage and management', specialty: 'New build supervision' },
-      { name: 'Marina Elite Services', description: 'Premium berth services and yacht concierge', specialty: 'Marina reservations worldwide' },
-    ],
-    hospitality: [
-      { name: 'Sovereign Stays', description: 'Private villa and estate rentals worldwide', specialty: 'Exclusive property access' },
-      { name: 'Grand Palace Partners', description: 'Luxury hotel reservations and VIP arrangements', specialty: 'Suite upgrades and amenities' },
-      { name: 'Retreat Masters', description: 'Curated wellness and luxury retreat experiences', specialty: 'Bespoke retreat planning' },
-    ],
-    dining: [
-      { name: 'Culinary Excellence Group', description: 'Michelin restaurant reservations and private chef services', specialty: 'Impossible reservations' },
-      { name: 'Table Exclusive', description: 'Private dining experiences and chef collaborations', specialty: 'Celebrity chef access' },
-      { name: 'Gastronomie Privée', description: 'Bespoke catering and private events', specialty: 'Estate dining services' },
-    ],
-    events: [
-      { name: 'VIP Access Collective', description: 'Exclusive event tickets and hospitality packages', specialty: 'Front-row experiences' },
-      { name: 'Premiere Events Group', description: 'Private concerts and exclusive entertainment', specialty: 'Artist bookings' },
-      { name: 'Cultural Elite', description: 'Art fair and exhibition private viewings', specialty: 'Collector previews' },
-    ],
-    security: [
-      { name: 'Guardian Executive Protection', description: 'Elite security services for HNW individuals', specialty: 'Travel security' },
-      { name: 'Fortress Security Solutions', description: 'Residential and estate protection services', specialty: 'Family security' },
-      { name: 'Cipher Cyber Defense', description: 'Premium cybersecurity for private clients', specialty: 'Privacy protection' },
-    ],
-    real_estate: [
-      { name: 'Prime Estates International', description: 'Ultra-luxury property acquisition worldwide', specialty: 'Off-market properties' },
-      { name: 'Heritage Property Group', description: 'Historic estate and castle acquisitions', specialty: 'European estates' },
-      { name: 'Urban Luxe Realty', description: 'Prime penthouse and city residence specialists', specialty: 'Trophy properties' },
-    ],
-    automotive: [
-      { name: 'Prestige Motors Elite', description: 'Exotic car rental and chauffeur services', specialty: 'Supercar collection access' },
-      { name: 'Classic Heritage Autos', description: 'Vintage and classic car acquisition', specialty: 'Collection curation' },
-      { name: 'Executive Drive Services', description: 'Premium chauffeur and limousine services', specialty: 'VIP transportation' },
-    ],
-    wellness: [
-      { name: 'Vitality Elite Concierge', description: 'Private medical coordination and wellness', specialty: 'Executive health programs' },
-      { name: 'Serenity Wellness Partners', description: 'Exclusive spa and wellness retreats', specialty: 'Longevity programs' },
-      { name: 'Peak Performance Group', description: 'Elite personal training and nutrition', specialty: 'Athletic optimization' },
-    ],
-    art_collectibles: [
-      { name: 'Artisan Advisory Group', description: 'Fine art acquisition and collection management', specialty: 'Blue-chip art access' },
-      { name: 'Legacy Collections', description: 'Rare collectibles and memorabilia sourcing', specialty: 'Auction representation' },
-      { name: 'Museum Quality Partners', description: 'Art storage, transport, and conservation', specialty: 'Collection care' },
-    ],
-  };
-
-  const categoryTemplates = templates[category] || templates.hospitality;
-  const effectiveRegions = regions.length > 0 ? regions : ['North America', 'Europe'];
-
-  return categoryTemplates.map((template, index) => ({
-    ...template,
-    category,
-    regions: effectiveRegions,
-    website: `https://www.${template.name.toLowerCase().replace(/\s+/g, '')}.com`,
-    matchScore: 85 - (index * 5),
-    source: 'AI Discovery',
-  }));
-}

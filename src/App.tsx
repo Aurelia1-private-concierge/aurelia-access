@@ -18,10 +18,9 @@ import SessionTimeoutProvider from "./components/auth/SessionTimeoutProvider";
 import "@/i18n";
 
 // Eagerly load the landing page for best LCP
-import UnderConstruction from "./pages/UnderConstruction";
+import Index from "./pages/Index";
 
 // Lazy load all other pages to reduce initial bundle
-const Index = lazy(() => import("./pages/Index"));
 const Waitlist = lazy(() => import("./pages/Waitlist"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Auth = lazy(() => import("./pages/Auth"));
@@ -76,18 +75,9 @@ const AnimatedRoutes = () => {
     <AnimatePresence mode="wait">
       <Suspense fallback={<PageLoader />}>
         <Routes location={location} key={location.pathname}>
-          {/* Under Construction landing page */}
+          {/* Main landing page */}
           <Route
             path="/"
-            element={
-              <PageTransition>
-                <UnderConstruction />
-              </PageTransition>
-            }
-          />
-          {/* Full site available at /launch when ready */}
-          <Route
-            path="/launch"
             element={
               <PageTransition>
                 <Index />

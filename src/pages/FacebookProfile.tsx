@@ -98,7 +98,7 @@ const reviews = [
   }
 ];
 
-const FACEBOOK_URL = "https://facebook.com/aureliaprivateconcierge";
+const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=61575227498498";
 
 const FacebookProfile = () => {
   const [isFollowing, setIsFollowing] = useState(false);
@@ -169,7 +169,7 @@ const FacebookProfile = () => {
                   <h1 className="text-2xl md:text-3xl font-bold text-foreground">Aurelia Private Concierge</h1>
                   <CheckCircle2 className="w-6 h-6 text-blue-500 fill-blue-500" />
                 </div>
-                <p className="text-muted-foreground mb-2">@aureliaprivateconcierge · Luxury Concierge Service</p>
+                <p className="text-muted-foreground mb-2">@aureliaprivate · Luxury Concierge Service</p>
                 <div className="flex items-center justify-center md:justify-start gap-4 text-sm text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <ThumbsUp className="w-4 h-4" />
@@ -483,7 +483,7 @@ const FacebookProfile = () => {
             <Button 
               size="lg"
               className="gap-2"
-              onClick={() => window.open('https://facebook.com/aureliaprivateconcierge', '_blank')}
+              onClick={() => window.open('https://www.facebook.com/profile.php?id=61575227498498', '_blank')}
             >
               <Facebook className="w-5 h-5" />
               Follow on Facebook

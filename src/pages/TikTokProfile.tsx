@@ -99,7 +99,7 @@ const formatNumber = (num: number): string => {
   return num.toString();
 };
 
-const TIKTOK_URL = "https://www.tiktok.com/@aurelia.private.c";
+const TIKTOK_URL = "https://www.tiktok.com/@aureliaprivate";
 
 const TikTokProfile = () => {
   const [selectedVideo, setSelectedVideo] = useState<typeof videos[0] | null>(null);
@@ -165,7 +165,7 @@ const TikTokProfile = () => {
           </div>
 
           {/* Username */}
-          <h1 className="text-xl font-bold text-foreground mb-1">@aurelia.private.concierge</h1>
+          <h1 className="text-xl font-bold text-foreground mb-1">@aureliaprivate</h1>
           <p className="text-muted-foreground text-sm mb-4">Aurelia Private Concierge</p>
 
           {/* Stats */}
@@ -270,7 +270,7 @@ const TikTokProfile = () => {
             <div className="py-20 text-center text-muted-foreground">
               <Heart className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p className="font-medium mb-1">Videos this user liked</p>
-              <p className="text-sm">Videos liked by aurelia.private.concierge</p>
+              <p className="text-sm">Videos liked by aureliaprivate</p>
             </div>
           </TabsContent>
 
@@ -397,7 +397,7 @@ const TikTokProfile = () => {
                   <img src={aureliaSocialLogo} alt="Aurelia" className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <p className="font-semibold text-foreground text-sm">@aurelia.private.concierge</p>
+                  <p className="font-semibold text-foreground text-sm">@aureliaprivate</p>
                 </div>
               </div>
               <p className="text-sm text-foreground">{selectedVideo.caption}</p>

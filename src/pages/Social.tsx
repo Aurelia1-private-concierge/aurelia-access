@@ -31,30 +31,30 @@ const YouTubeIcon = ({ className }: { className?: string }) => (
 const socialPlatforms = [
   {
     name: "Instagram",
-    handle: "@aurelia.private.concierge",
+    handle: "@aureliaprivate",
     description: "Behind-the-scenes glimpses of extraordinary experiences, curated aesthetics, and lifestyle inspiration.",
     icon: Instagram,
-    href: "https://www.instagram.com/aurelia.private.concierge",
+    href: "https://www.instagram.com/aureliaprivate",
     internalLink: "/instagram",
     color: "from-purple-500 via-pink-500 to-orange-400",
     followers: "847 followers"
   },
   {
     name: "TikTok",
-    handle: "@aurelia.private.concierge",
+    handle: "@aureliaprivate",
     description: "Luxury content, exclusive access moments, and behind-the-scenes of the extraordinary.",
     icon: TikTokIcon,
-    href: "https://www.tiktok.com/@aurelia.private.c",
+    href: "https://www.tiktok.com/@aureliaprivate",
     internalLink: "/tiktok",
     color: "from-gray-900 to-gray-800",
     followers: "1.2K followers"
   },
   {
     name: "YouTube",
-    handle: "@AureliaPrivateConcierge",
+    handle: "@AureliaPrivate",
     description: "Documentary-style content exploring the world of ultra-luxury travel, properties, and exclusive experiences.",
     icon: YouTubeIcon,
-    href: "https://youtube.com/@aureliaprivateconcierge",
+    href: "https://youtube.com/@AureliaPrivate",
     internalLink: "/youtube",
     color: "from-red-600 to-red-500",
     followers: "1.2K subscribers"
@@ -71,10 +71,10 @@ const socialPlatforms = [
   },
   {
     name: "Facebook",
-    handle: "Aurelia Private Concierge",
+    handle: "Aurelia Private",
     description: "Community updates, event announcements, and stories from our growing community.",
     icon: Facebook,
-    href: "https://facebook.com/aureliaprivateconcierge",
+    href: "https://www.facebook.com/profile.php?id=61575227498498",
     internalLink: "/facebook",
     color: "from-blue-600 to-blue-500",
     followers: "892 followers"

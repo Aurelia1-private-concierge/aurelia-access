@@ -119,7 +119,7 @@ const shorts = [
 ];
 
 
-const YOUTUBE_URL = "https://youtube.com/@aureliaprivateconcierge";
+const YOUTUBE_URL = "https://youtube.com/@AureliaPrivate";
 
 const YouTubeProfile = () => {
   const [selectedVideo, setSelectedVideo] = useState<typeof videos[0] | null>(null);
@@ -194,7 +194,7 @@ const YouTubeProfile = () => {
               </svg>
             </div>
             <div className="flex flex-wrap gap-2 text-sm text-muted-foreground mb-3">
-              <span>@aureliaprivateconcierge</span>
+              <span>@AureliaPrivate</span>
               <span>•</span>
               <span>1.2K subscribers</span>
               <span>•</span>

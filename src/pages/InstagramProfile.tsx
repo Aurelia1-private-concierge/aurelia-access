@@ -108,7 +108,7 @@ const posts = [
   }
 ];
 
-const INSTAGRAM_URL = "https://www.instagram.com/aurelia.private.concierge";
+const INSTAGRAM_URL = "https://www.instagram.com/aureliaprivate";
 
 const InstagramProfile = () => {
   const [selectedPost, setSelectedPost] = useState<typeof posts[0] | null>(null);
@@ -180,7 +180,7 @@ const InstagramProfile = () => {
           {/* Profile Info */}
           <div className="flex-1 text-center md:text-left">
             <div className="flex flex-col md:flex-row items-center gap-4 mb-4">
-              <h1 className="text-xl font-medium text-foreground">aurelia.private.concierge</h1>
+              <h1 className="text-xl font-medium text-foreground">aureliaprivate</h1>
               <div className="flex items-center gap-2">
                 <Button 
                   size="sm" 
@@ -426,7 +426,7 @@ const InstagramProfile = () => {
                   <img src={aureliaSocialLogo} alt="Aurelia" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1">
-                  <span className="font-semibold text-foreground">aurelia.private.concierge</span>
+                    <span className="font-semibold text-foreground">aureliaprivate</span>
                 </div>
                 <Button variant="ghost" size="icon">
                   <MoreHorizontal className="w-5 h-5" />
@@ -439,7 +439,7 @@ const InstagramProfile = () => {
                     <img src={aureliaSocialLogo} alt="Aurelia" className="w-full h-full object-cover" />
                   </div>
                   <div>
-                    <span className="font-semibold text-foreground">aurelia.private.concierge</span>
+                    <span className="font-semibold text-foreground">aureliaprivate</span>
                     <p className="text-foreground mt-1">{selectedPost?.caption}</p>
                   </div>
                 </div>

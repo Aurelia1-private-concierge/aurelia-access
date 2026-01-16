@@ -46,6 +46,10 @@ const REGIONS = [
   'Asia Pacific',
   'Latin America',
   'Africa',
+  'Caribbean',
+  'Mediterranean',
+  'Scandinavia',
+  'Southeast Asia',
 ];
 
 const STATUS_COLORS: Record<string, string> = {
@@ -79,7 +83,7 @@ export function AutoPartnerFinder({ onPartnerSelect }: AutoPartnerFinderProps) {
     categories,
   } = usePartnerMatching();
 
-  const [activeTab, setActiveTab] = useState('search');
+  const [activeTab, setActiveTab] = useState('ai');
   const [criteria, setCriteria] = useState<PartnerSearchCriteria>({
     limit: 20,
     minScore: 30,
@@ -87,6 +91,8 @@ export function AutoPartnerFinder({ onPartnerSelect }: AutoPartnerFinderProps) {
   const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
   const [keywords, setKeywords] = useState('');
   const [aiRequirements, setAiRequirements] = useState('');
+  const [aiCategory, setAiCategory] = useState<string>('');
+  const [aiRegions, setAiRegions] = useState<string[]>([]);
   const [aiSuggestions, setAiSuggestions] = useState<any[]>([]);
   const [selectedPartner, setSelectedPartner] = useState<PartnerMatch | null>(null);
 
@@ -106,17 +112,30 @@ export function AutoPartnerFinder({ onPartnerSelect }: AutoPartnerFinderProps) {
 
   const handleAIDiscovery = async () => {
     if (!aiRequirements.trim()) return;
-    const suggestions = await generateAISuggestions(aiRequirements);
+    const suggestions = await generateAISuggestions(aiRequirements, {
+      regions: aiRegions.length > 0 ? aiRegions : undefined,
+      category: aiCategory || undefined,
+    });
     setAiSuggestions(suggestions);
+  };
+
+  const toggleAiRegion = (region: string) => {
+    setAiRegions(prev => 
+      prev.includes(region) 
+        ? prev.filter(r => r !== region)
+        : [...prev, region]
+    );
   };
 
   const handleAddSuggestion = async (suggestion: any) => {
     await addProspect({
-      company_name: suggestion.name,
+      company_name: suggestion.company_name || suggestion.name,
       description: suggestion.description,
       category: suggestion.category,
+      subcategory: suggestion.subcategory,
       website: suggestion.website,
-      coverage_regions: suggestion.regions,
+      coverage_regions: suggestion.coverage_regions || suggestion.regions,
+      priority: suggestion.priority,
     });
   };
 
@@ -280,36 +299,88 @@ export function AutoPartnerFinder({ onPartnerSelect }: AutoPartnerFinderProps) {
 
         {/* AI Discovery Tab */}
         <TabsContent value="ai" className="space-y-4">
-          <Card className="bg-card/50 border-border/50">
+          <Card className="bg-card/50 border-border/50 border-primary/20">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
+                <Globe className="h-5 w-5 text-primary" />
                 <Zap className="h-5 w-5 text-primary" />
-                AI-Powered Discovery
+                Global AI-Powered Discovery
               </CardTitle>
               <CardDescription>
-                Describe your requirements and let AI find the perfect partners
+                Describe your requirements and let AI search globally for the perfect partners
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Textarea
-                placeholder="Describe your ideal partner... e.g., 'We need a luxury yacht charter company operating in the Mediterranean with experience serving ultra-high-net-worth clients. Must have vessels over 50m and offer full crew services.'"
-                value={aiRequirements}
-                onChange={(e) => setAiRequirements(e.target.value)}
-                rows={4}
-                className="resize-none"
-              />
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Describe Your Ideal Partner</label>
+                <Textarea
+                  placeholder="E.g., Looking for luxury yacht charter companies operating in the Mediterranean with a fleet of superyachts over 50 meters, excellent crew, and experience with celebrity clients..."
+                  value={aiRequirements}
+                  onChange={(e) => setAiRequirements(e.target.value)}
+                  rows={4}
+                  className="resize-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Category Focus</label>
+                  <Select value={aiCategory} onValueChange={setAiCategory}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Any category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">Any category</SelectItem>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat} value={cat}>
+                          {cat.charAt(0).toUpperCase() + cat.slice(1).replace('_', ' ')}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Target Regions (Global if none selected)</label>
+                <div className="flex flex-wrap gap-2">
+                  {REGIONS.map((region) => (
+                    <Badge
+                      key={region}
+                      variant={aiRegions.includes(region) ? "default" : "outline"}
+                      className="cursor-pointer hover:bg-primary/20 transition-colors"
+                      onClick={() => toggleAiRegion(region)}
+                    >
+                      {aiRegions.includes(region) && <CheckCircle className="w-3 h-3 mr-1" />}
+                      {region}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
               <Button
                 onClick={handleAIDiscovery}
                 disabled={isGenerating || !aiRequirements.trim()}
                 className="w-full"
+                size="lg"
               >
                 {isGenerating ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Searching globally...
+                  </>
                 ) : (
-                  <Sparkles className="h-4 w-4 mr-2" />
+                  <>
+                    <Globe className="h-4 w-4 mr-2" />
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Discover Partners Globally
+                  </>
                 )}
-                Generate Suggestions
               </Button>
+              
+              <p className="text-xs text-muted-foreground text-center">
+                Powered by AI + Web Search • Finds real companies worldwide
+              </p>
 
               {/* AI Suggestions */}
               <AnimatePresence>
@@ -320,8 +391,10 @@ export function AutoPartnerFinder({ onPartnerSelect }: AutoPartnerFinderProps) {
                     exit={{ opacity: 0, y: -20 }}
                     className="space-y-3 mt-4"
                   >
-                    <h4 className="font-medium text-sm text-muted-foreground">
-                      AI Suggestions ({aiSuggestions.length})
+                    <Separator />
+                    <h4 className="font-medium text-sm text-muted-foreground flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      Found {aiSuggestions.length} Potential Partners
                     </h4>
                     {aiSuggestions.map((suggestion, index) => (
                       <motion.div
@@ -329,27 +402,56 @@ export function AutoPartnerFinder({ onPartnerSelect }: AutoPartnerFinderProps) {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className="p-4 rounded-lg bg-muted/30 border border-border/50"
+                        className="p-4 rounded-lg bg-muted/30 border border-border/50 hover:border-primary/50 transition-colors"
                       >
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h5 className="font-medium">{suggestion.name}</h5>
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <h5 className="font-medium">{suggestion.company_name || suggestion.name}</h5>
+                              <Badge 
+                                variant={suggestion.priority === 'high' ? 'default' : 'outline'}
+                                className={suggestion.priority === 'high' ? 'bg-green-500/20 text-green-400' : ''}
+                              >
+                                {suggestion.priority}
+                              </Badge>
+                            </div>
                             <p className="text-sm text-muted-foreground mt-1">
                               {suggestion.description}
                             </p>
-                            <div className="flex items-center gap-2 mt-2">
+                            {suggestion.match_reason && (
+                              <p className="text-xs text-primary mt-1 italic">
+                                ✓ {suggestion.match_reason}
+                              </p>
+                            )}
+                            <div className="flex flex-wrap items-center gap-2 mt-2">
                               <Badge variant="outline">{suggestion.category}</Badge>
-                              {suggestion.regions?.map((region: string) => (
+                              {suggestion.subcategory && (
+                                <Badge variant="secondary" className="text-xs">{suggestion.subcategory}</Badge>
+                              )}
+                              {(suggestion.coverage_regions || suggestion.regions)?.slice(0, 3).map((region: string) => (
                                 <Badge key={region} variant="secondary" className="text-xs">
+                                  <MapPin className="w-3 h-3 mr-1" />
                                   {region}
                                 </Badge>
                               ))}
                             </div>
+                            {suggestion.website && (
+                              <a 
+                                href={suggestion.website} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-xs text-primary hover:underline mt-2 inline-flex items-center gap-1"
+                              >
+                                <ExternalLink className="w-3 h-3" />
+                                {suggestion.website}
+                              </a>
+                            )}
                           </div>
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => handleAddSuggestion(suggestion)}
+                            className="shrink-0"
                           >
                             <UserPlus className="h-4 w-4 mr-1" />
                             Add

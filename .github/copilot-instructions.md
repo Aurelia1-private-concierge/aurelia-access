@@ -466,4 +466,90 @@ if (error) throw error;
 
 ---
 
+## API Keys & Secrets Management
+
+### Private Keys (CRITICAL)
+
+```typescript
+// ❌ NEVER store private API keys in client code
+const stripeSecret = 'sk_live_...';  // NEVER DO THIS
+
+// ✅ Store secrets in Lovable Cloud / Supabase Secrets
+// Access them ONLY in Edge Functions:
+const apiKey = Deno.env.get('STRIPE_SECRET_KEY');
+```
+
+### Publishable Keys
+
+```typescript
+// ✅ Publishable keys CAN be in client code
+const stripePublic = 'pk_live_...';  // This is OK
+
+// ✅ Use environment variables for flexibility
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+```
+
+### Edge Function Secret Access
+
+```typescript
+// Edge functions can access secrets via Deno.env
+serve(async (req) => {
+  const apiKey = Deno.env.get('PERPLEXITY_API_KEY');
+  if (!apiKey) {
+    return new Response(JSON.stringify({ error: 'API key not configured' }), { 
+      status: 500 
+    });
+  }
+  // Use the key...
+});
+```
+
+---
+
+## File Storage Policy (CRITICAL)
+
+### NEVER Store Files in Database
+
+```typescript
+// ❌ NEVER store base64 or binary data in database
+await supabase.from('users').update({ 
+  avatar: 'data:image/png;base64,iVBORw0KGgo...'  // NEVER!
+});
+
+// ❌ NEVER store file contents in TEXT/BLOB columns
+await supabase.from('documents').insert({
+  content: fileBuffer  // NEVER!
+});
+```
+
+### ALWAYS Use Blob Storage
+
+```typescript
+// ✅ Upload to Supabase Storage
+const { data, error } = await supabase.storage
+  .from('avatars')
+  .upload(`${userId}/avatar.png`, file);
+
+// ✅ Store only the URL reference in database
+await supabase.from('profiles').update({
+  avatar_url: data?.path  // Store URL, not file!
+});
+```
+
+### Why This Matters
+
+- Database storage is expensive and limited
+- Binary data degrades query performance
+- Files can exhaust disk space quickly
+- Blob storage is designed for files, databases are not
+
+### Correct Pattern
+
+1. Upload file to Supabase Storage bucket
+2. Get the URL/path back
+3. Store ONLY the URL string in database
+4. Retrieve URL from database, load file from Storage
+
+---
+
 *Last updated: January 2026*

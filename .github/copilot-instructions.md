@@ -297,8 +297,10 @@ className="border-border"
 
 ### Animation Guidelines
 
+Use Framer Motion for complex animations, or built-in Tailwind animation utilities:
+
 ```tsx
-// Use Framer Motion for animations
+// Framer Motion for complex animations
 import { motion } from 'framer-motion';
 
 // Respect reduced motion preferences
@@ -309,6 +311,43 @@ const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)
   animate={{ opacity: 1, y: 0 }}
   transition={{ duration: prefersReducedMotion ? 0 : 0.3 }}
 />
+```
+
+### Built-in Animation Classes
+
+```tsx
+// Fade animations
+className="animate-fade-in"   // Fade in with slight upward motion
+className="animate-fade-out"  // Fade out with downward motion
+
+// Scale animations
+className="animate-scale-in"  // Scale up from 0.95
+className="animate-scale-out" // Scale down to 0.95
+
+// Slide animations
+className="animate-slide-in-right"  // Slide in from right
+className="animate-slide-out-right" // Slide out to right
+
+// Combined animations
+className="animate-enter"  // Fade + scale in
+className="animate-exit"   // Fade + scale out
+
+// Accordion (for expandable content)
+className="animate-accordion-down"
+className="animate-accordion-up"
+```
+
+### Interactive Utility Classes
+
+```tsx
+// Hover scale effect
+className="hover-scale"  // Scales to 1.05 on hover
+
+// Animated underline for links
+className="story-link"   // Underline animation on hover
+
+// Pulse effect
+className="pulse"        // Continuous pulse animation
 ```
 
 ---

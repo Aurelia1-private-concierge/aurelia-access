@@ -13,27 +13,39 @@ export const useVoiceSession = (userId: string | undefined) => {
   const [messageCount, setMessageCount] = useState(0);
 
   const startSession = useCallback(async () => {
-    if (!userId) return null;
-
-    const { data, error } = await supabase
-      .from("conversations")
-      .insert({
-        user_id: userId,
-        channel: "voice",
-        started_at: new Date().toISOString(),
-        title: `Voice Session - ${new Date().toLocaleDateString()}`,
-      })
-      .select("id")
-      .single();
-
-    if (error) {
-      console.error("Failed to create voice session:", error);
+    if (!userId) {
+      console.log("useVoiceSession: No userId provided, skipping session creation");
       return null;
     }
 
-    setCurrentSessionId(data.id);
-    setMessageCount(0);
-    return data.id;
+    console.log("useVoiceSession: Creating conversation for user", userId);
+    
+    try {
+      const { data, error } = await supabase
+        .from("conversations")
+        .insert({
+          user_id: userId,
+          channel: "voice",
+          started_at: new Date().toISOString(),
+          title: `Voice Session - ${new Date().toLocaleDateString()}`,
+        })
+        .select("id")
+        .single();
+
+      if (error) {
+        console.error("useVoiceSession: Failed to create voice session:", error);
+        // Don't throw - session tracking is optional, conversation can continue
+        return null;
+      }
+
+      console.log("useVoiceSession: Session created successfully:", data.id);
+      setCurrentSessionId(data.id);
+      setMessageCount(0);
+      return data.id;
+    } catch (err) {
+      console.error("useVoiceSession: Unexpected error:", err);
+      return null;
+    }
   }, [userId]);
 
   const addMessage = useCallback(async (entry: TranscriptEntry) => {

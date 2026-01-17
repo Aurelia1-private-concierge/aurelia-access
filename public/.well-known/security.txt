@@ -1,0 +1,11 @@
+# Aurelia Private Concierge Security Policy
+# https://securitytxt.org/
+
+Contact: mailto:security@aurelia-privateconcierge.com
+Expires: 2027-01-17T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://aurelia-privateconcierge.com/.well-known/security.txt
+Policy: https://aurelia-privateconcierge.com/security
+
+# We take security seriously. If you discover a vulnerability,
+# please report it responsibly to our security team.

@@ -15,44 +15,44 @@
 
 @layer base {
   :root {
-    /* Refined palette - Deeper, richer, more sophisticated */
-    --background: 220 60% 2%;
-    --foreground: 210 20% 80%;
+    /* Refined palette - Brighter, elegant luxury aesthetic */
+    --background: 220 40% 8%;
+    --foreground: 210 25% 92%;
 
-    --card: 220 50% 4%;
-    --card-foreground: 210 20% 80%;
+    --card: 220 35% 12%;
+    --card-foreground: 210 25% 92%;
 
-    --popover: 220 50% 4%;
-    --popover-foreground: 210 20% 80%;
+    --popover: 220 35% 12%;
+    --popover-foreground: 210 25% 92%;
 
     /* Gold as primary - warmer, more refined champagne gold */
-    --primary: 43 70% 52%;
-    --primary-foreground: 220 60% 3%;
+    --primary: 43 75% 55%;
+    --primary-foreground: 220 50% 6%;
 
-    --secondary: 220 30% 8%;
-    --secondary-foreground: 210 20% 80%;
+    --secondary: 220 25% 16%;
+    --secondary-foreground: 210 25% 92%;
 
-    --muted: 220 20% 12%;
-    --muted-foreground: 215 15% 50%;
+    --muted: 220 18% 20%;
+    --muted-foreground: 215 20% 60%;
 
-    --accent: 220 30% 10%;
-    --accent-foreground: 43 70% 52%;
+    --accent: 220 25% 18%;
+    --accent-foreground: 43 75% 55%;
 
     --destructive: 0 62% 50%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 20% 12%;
-    --input: 220 20% 12%;
-    --ring: 43 70% 52%;
+    --border: 220 18% 20%;
+    --input: 220 18% 20%;
+    --ring: 43 75% 55%;
 
     --radius: 2.125rem;
 
     /* Premium Aurelia tokens */
-    --gold: 43 70% 52%;
-    --gold-light: 43 50% 70%;
-    --gold-muted: 43 40% 40%;
-    --navy-deep: 220 60% 2%;
-    --navy-light: 220 50% 6%;
+    --gold: 43 75% 55%;
+    --gold-light: 43 55% 72%;
+    --gold-muted: 43 45% 45%;
+    --navy-deep: 220 40% 8%;
+    --navy-light: 220 35% 14%;
     --ivory: 45 30% 96%;
     --champagne: 40 25% 85%;
 
@@ -89,31 +89,31 @@
   }
 
   .dark {
-    --background: 220 60% 2%;
-    --foreground: 210 20% 80%;
-    --card: 220 50% 4%;
-    --card-foreground: 210 20% 80%;
-    --popover: 220 50% 4%;
-    --popover-foreground: 210 20% 80%;
-    --primary: 43 70% 52%;
-    --primary-foreground: 220 60% 3%;
-    --secondary: 220 30% 8%;
-    --secondary-foreground: 210 20% 80%;
-    --muted: 220 20% 12%;
-    --muted-foreground: 215 15% 50%;
-    --accent: 220 30% 10%;
-    --accent-foreground: 43 70% 52%;
+    --background: 220 40% 8%;
+    --foreground: 210 25% 92%;
+    --card: 220 35% 12%;
+    --card-foreground: 210 25% 92%;
+    --popover: 220 35% 12%;
+    --popover-foreground: 210 25% 92%;
+    --primary: 43 75% 55%;
+    --primary-foreground: 220 50% 6%;
+    --secondary: 220 25% 16%;
+    --secondary-foreground: 210 25% 92%;
+    --muted: 220 18% 20%;
+    --muted-foreground: 215 20% 60%;
+    --accent: 220 25% 18%;
+    --accent-foreground: 43 75% 55%;
     --destructive: 0 62% 50%;
     --destructive-foreground: 210 40% 98%;
-    --border: 220 20% 12%;
-    --input: 220 20% 12%;
-    --ring: 43 70% 52%;
+    --border: 220 18% 20%;
+    --input: 220 18% 20%;
+    --ring: 43 75% 55%;
     --radius: 2.125rem;
     --chart-1: 45 96% 64%;
     --chart-2: 48 96% 76%;
     --chart-3: 43 96% 56%;
     --chart-4: 37 92% 50%;
-    --chart-5: 33 5% 32%;
+    --chart-5: 33 10% 40%;
     --sidebar: 12 6% 15%;
     --sidebar-foreground: 60 9% 97%;
     --sidebar-primary: 43 96% 56%;

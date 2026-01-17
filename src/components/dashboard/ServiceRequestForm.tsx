@@ -15,18 +15,20 @@ import {
   DollarSign,
   AlertTriangle,
   CheckCircle,
+  Moon,
+  Fingerprint,
+  Shield,
+  BookOpen,
+  Brain,
+  Flower2,
+  Users,
+  Cloud,
+  Key,
 } from "lucide-react";
 import { useServiceWorkflow } from "@/hooks/useServiceWorkflow";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -35,8 +37,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
+import DiscoveryIntakeQuestions from "@/components/services/DiscoveryIntakeQuestions";
+import { isDiscoveryService } from "@/lib/discovery-intake-config";
 
-const categories = [
+// Core service categories
+const coreCategories = [
   { id: "travel", name: "Travel & Aviation", icon: Plane },
   { id: "yacht", name: "Yacht & Marine", icon: Ship },
   { id: "property", name: "Real Estate", icon: Home },
@@ -47,6 +52,22 @@ const categories = [
   { id: "transport", name: "Transportation", icon: Car },
   { id: "other", name: "Bespoke Request", icon: Sparkles },
 ];
+
+// Discovery service categories (matches discovery-intake-config.ts)
+const discoveryCategories = [
+  { id: "sleep-architecture", name: "Sleep Architecture", icon: Moon },
+  { id: "digital-estate", name: "Digital Estate Planning", icon: Fingerprint },
+  { id: "reputation-sentinel", name: "Reputation Sentinel", icon: Shield },
+  { id: "legacy-curation", name: "Legacy Curation", icon: BookOpen },
+  { id: "longevity-concierge", name: "Longevity Concierge", icon: Brain },
+  { id: "signature-scent", name: "Signature Scent", icon: Flower2 },
+  { id: "companion-matching", name: "Companion Matching", icon: Users },
+  { id: "private-meteorology", name: "Private Meteorology", icon: Cloud },
+  { id: "second-passport", name: "Second Passport Advisory", icon: Key },
+  { id: "household-optimization", name: "Household Optimization", icon: Home },
+];
+
+const allCategories = [...coreCategories, ...discoveryCategories];
 
 const priorities = [
   { id: "low", name: "Standard", description: "Within 48 hours" },
@@ -66,6 +87,7 @@ export const ServiceRequestForm = ({
 }: ServiceRequestFormProps) => {
   const { createRequest, isSubmitting } = useServiceWorkflow();
   const [step, setStep] = useState(1);
+  const [categoryTab, setCategoryTab] = useState<"core" | "discovery">("core");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -73,10 +95,16 @@ export const ServiceRequestForm = ({
   const [deadline, setDeadline] = useState("");
   const [budgetMin, setBudgetMin] = useState("");
   const [budgetMax, setBudgetMax] = useState("");
+  const [intakeAnswers, setIntakeAnswers] = useState<Record<string, string | string[]>>({});
   const [isSuccess, setIsSuccess] = useState(false);
+
+  const isDiscovery = isDiscoveryService(selectedCategory);
+  const totalSteps = isDiscovery ? 4 : 3;
 
   const handleSubmit = async () => {
     try {
+      const requirements = Object.keys(intakeAnswers).length > 0 ? intakeAnswers : undefined;
+      
       await createRequest({
         title,
         description,
@@ -85,6 +113,7 @@ export const ServiceRequestForm = ({
         deadline: deadline || undefined,
         budget_min: budgetMin ? parseFloat(budgetMin) : undefined,
         budget_max: budgetMax ? parseFloat(budgetMax) : undefined,
+        requirements,
       });
 
       setIsSuccess(true);
@@ -97,6 +126,7 @@ export const ServiceRequestForm = ({
       setTimeout(() => {
         setIsSuccess(false);
         setStep(1);
+        setCategoryTab("core");
         setSelectedCategory("");
         setTitle("");
         setDescription("");
@@ -104,6 +134,7 @@ export const ServiceRequestForm = ({
         setDeadline("");
         setBudgetMin("");
         setBudgetMax("");
+        setIntakeAnswers({});
         onOpenChange(false);
       }, 2000);
     } catch (error) {
@@ -150,7 +181,7 @@ export const ServiceRequestForm = ({
 
             {/* Progress Indicator */}
             <div className="flex items-center gap-2 my-4">
-              {[1, 2, 3].map((s) => (
+              {Array.from({ length: totalSteps }, (_, i) => i + 1).map((s) => (
                 <div
                   key={s}
                   className={`flex-1 h-1 rounded-full transition-colors ${
@@ -167,11 +198,44 @@ export const ServiceRequestForm = ({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
               >
-                <Label className="text-sm mb-4 block">
-                  Select Service Category
+                {/* Category tabs */}
+                <div className="flex gap-2 mb-4">
+                  <button
+                    onClick={() => {
+                      setCategoryTab("core");
+                      setSelectedCategory("");
+                    }}
+                    className={`flex-1 py-2 px-4 text-sm font-medium rounded-lg transition-colors ${
+                      categoryTab === "core"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Core Services
+                  </button>
+                  <button
+                    onClick={() => {
+                      setCategoryTab("discovery");
+                      setSelectedCategory("");
+                    }}
+                    className={`flex-1 py-2 px-4 text-sm font-medium rounded-lg transition-colors ${
+                      categoryTab === "discovery"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Discovery
+                  </button>
+                </div>
+
+                <Label className="text-sm mb-4 block text-muted-foreground">
+                  {categoryTab === "core" 
+                    ? "Essential services for extraordinary living" 
+                    : "Specialized services you never knew you needed"}
                 </Label>
-                <div className="grid grid-cols-3 gap-3">
-                  {categories.map((cat) => {
+                
+                <div className="grid grid-cols-3 gap-3 max-h-[300px] overflow-y-auto pr-1">
+                  {(categoryTab === "core" ? coreCategories : discoveryCategories).map((cat) => {
                     const Icon = cat.icon;
                     const isSelected = selectedCategory === cat.id;
                     return (
@@ -190,7 +254,7 @@ export const ServiceRequestForm = ({
                           }`}
                         />
                         <p
-                          className={`text-sm font-medium ${
+                          className={`text-xs font-medium ${
                             isSelected ? "text-foreground" : "text-muted-foreground"
                           }`}
                         >
@@ -202,7 +266,7 @@ export const ServiceRequestForm = ({
                 </div>
                 <div className="flex justify-end mt-6">
                   <Button
-                    onClick={() => setStep(2)}
+                    onClick={() => setStep(isDiscovery ? 2 : 2)}
                     disabled={!canProceedStep1}
                   >
                     Continue
@@ -211,8 +275,20 @@ export const ServiceRequestForm = ({
               </motion.div>
             )}
 
-            {/* Step 2: Request Details */}
-            {step === 2 && (
+            {/* Step 2 for Discovery: Specialized Intake Questions */}
+            {step === 2 && isDiscovery && (
+              <DiscoveryIntakeQuestions
+                categoryId={selectedCategory}
+                onComplete={(answers) => {
+                  setIntakeAnswers(answers);
+                  setStep(3);
+                }}
+                onBack={() => setStep(1)}
+              />
+            )}
+
+            {/* Step 2/3: Request Details */}
+            {((step === 2 && !isDiscovery) || (step === 3 && isDiscovery)) && (
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -273,11 +349,11 @@ export const ServiceRequestForm = ({
                 </div>
 
                 <div className="flex gap-4 justify-between mt-6">
-                  <Button variant="ghost" onClick={() => setStep(1)}>
+                  <Button variant="ghost" onClick={() => setStep(isDiscovery ? 2 : 1)}>
                     Back
                   </Button>
                   <Button
-                    onClick={() => setStep(3)}
+                    onClick={() => setStep(isDiscovery ? 4 : 3)}
                     disabled={!canProceedStep2}
                   >
                     Continue
@@ -286,8 +362,8 @@ export const ServiceRequestForm = ({
               </motion.div>
             )}
 
-            {/* Step 3: Budget & Timeline */}
-            {step === 3 && (
+            {/* Step 3/4: Budget & Timeline */}
+            {((step === 3 && !isDiscovery) || (step === 4 && isDiscovery)) && (
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -347,7 +423,7 @@ export const ServiceRequestForm = ({
                 </div>
 
                 <div className="flex gap-4 justify-between mt-6">
-                  <Button variant="ghost" onClick={() => setStep(2)}>
+                  <Button variant="ghost" onClick={() => setStep(isDiscovery ? 3 : 2)}>
                     Back
                   </Button>
                   <Button onClick={handleSubmit} disabled={isSubmitting}>

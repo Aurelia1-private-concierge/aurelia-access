@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, Clock, CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { Plus, Clock, CheckCircle, XCircle, Loader2, ChevronDown } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useServiceWorkflow } from "@/hooks/useServiceWorkflow";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import ServiceRequestForm from "./ServiceRequestForm";
 import ServiceRequestTimeline from "./ServiceRequestTimeline";
+import ServiceProcessTimeline from "./ServiceProcessTimeline";
 
 const getStatusVariant = (status: string) => {
   switch (status) {
@@ -45,6 +46,7 @@ export const ServiceRequestsView = () => {
   const { requests, isLoading } = useServiceWorkflow();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+  const [expandedTimeline, setExpandedTimeline] = useState<string | null>(null);
 
   if (selectedRequestId) {
     return (
@@ -109,34 +111,71 @@ export const ServiceRequestsView = () => {
                 transition={{ delay: index * 0.05 }}
               >
                 <Card
-                  className="p-6 hover:bg-muted/30 transition-colors cursor-pointer"
-                  onClick={() => setSelectedRequestId(request.id)}
+                  className="hover:bg-muted/30 transition-colors"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="font-medium text-foreground truncate">
-                          {request.title}
-                        </h3>
-                        <Badge variant="outline" className={getStatusVariant(request.status)}>
-                          <StatusIcon className={`w-3 h-3 mr-1 ${request.status === "in_progress" ? "animate-spin" : ""}`} />
-                          {request.status.replace(/_/g, " ")}
-                        </Badge>
+                  <div
+                    className="p-6 cursor-pointer"
+                    onClick={() => setSelectedRequestId(request.id)}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="font-medium text-foreground truncate">
+                            {request.title}
+                          </h3>
+                          <Badge variant="outline" className={getStatusVariant(request.status)}>
+                            <StatusIcon className={`w-3 h-3 mr-1 ${request.status === "in_progress" ? "animate-spin" : ""}`} />
+                            {request.status.replace(/_/g, " ")}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {request.description}
+                        </p>
+                        <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+                          <span className="capitalize">
+                            {request.category?.replace(/_/g, " ")}
+                          </span>
+                          <span>•</span>
+                          <span>
+                            {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
+                          </span>
+                        </div>
                       </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2">
-                        {request.description}
-                      </p>
-                      <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
-                        <span className="capitalize">
-                          {request.category?.replace(/_/g, " ")}
-                        </span>
-                        <span>•</span>
-                        <span>
-                          {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
-                        </span>
-                      </div>
+                      
+                      {/* Timeline toggle */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setExpandedTimeline(expandedTimeline === request.id ? null : request.id);
+                        }}
+                        className="p-2 rounded-lg hover:bg-muted transition-colors"
+                      >
+                        <motion.div
+                          animate={{ rotate: expandedTimeline === request.id ? 180 : 0 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                        </motion.div>
+                      </button>
                     </div>
                   </div>
+                  
+                  {/* Expandable process timeline */}
+                  {expandedTimeline === request.id && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="px-6 pb-6 border-t border-border/50"
+                    >
+                      <div className="pt-4">
+                        <ServiceProcessTimeline 
+                          currentStatus={request.status} 
+                          showEstimates={true}
+                        />
+                      </div>
+                    </motion.div>
+                  )}
                 </Card>
               </motion.div>
             );

@@ -29,6 +29,7 @@ import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
+import ServiceProcessSteps from "@/components/services/ServiceProcessSteps";
 
 const services = [
   {
@@ -289,6 +290,9 @@ const Services = () => {
           </motion.p>
         </div>
       </section>
+
+      {/* How It Works Section */}
+      <ServiceProcessSteps />
 
       {/* Services Grid */}
       <section className="py-12 px-6">

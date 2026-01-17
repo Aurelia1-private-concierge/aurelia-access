@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/react";
+import { toast } from "@/hooks/use-toast";
 
 // Initialize Sentry for error monitoring
 export const initSentry = () => {
@@ -101,6 +102,26 @@ export const captureFeedback = (
     extra: { contact },
     level: "info",
   });
+};
+
+// Capture error and show user-facing notification with event ID
+export const captureErrorWithNotification = (
+  error: Error,
+  context?: Record<string, unknown>
+): string | undefined => {
+  const eventId = Sentry.captureException(error, {
+    extra: context,
+  });
+
+  if (eventId) {
+    toast({
+      title: "An error occurred",
+      description: `Reference ID: ${eventId}`,
+      variant: "destructive",
+    });
+  }
+
+  return eventId;
 };
 
 export default Sentry;

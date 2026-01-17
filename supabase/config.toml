@@ -116,3 +116,6 @@ verify_jwt = false
 
 [functions.voice-events-webhook]
 verify_jwt = false
+
+[functions.perplexity-search]
+verify_jwt = false

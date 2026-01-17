@@ -15,6 +15,7 @@ import AdminRoute from "./components/AdminRoute";
 import GlobalElements from "./components/GlobalElements";
 import ErrorBoundary from "./components/ErrorBoundary";
 import SessionTimeoutProvider from "./components/auth/SessionTimeoutProvider";
+import SentryTestButton from "./components/SentryTestButton";
 import "@/i18n";
 
 // Eagerly load the landing page for best LCP
@@ -419,6 +420,7 @@ const App = () => (
                 <GlobalElements />
                 <BackToTop />
                 <CookieConsent />
+                <SentryTestButton />
               </SessionTimeoutProvider>
             </AuthProvider>
           </BrowserRouter>

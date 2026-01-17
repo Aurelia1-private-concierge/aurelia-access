@@ -41,10 +41,15 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2,jpg,jpeg,webp}"],
-        // Exclude large video files from precaching - they'll use runtime caching
-        globIgnores: ["**/*.mp4"],
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        // Exclude large files from precaching - they'll use runtime caching
+        globIgnores: ["**/*.mp4", "**/*.jpg", "**/*.jpeg", "**/*.webp", "**/*.png"],
+        maximumFileSizeToCacheInBytes: 2 * 1024 * 1024, // 2MB - reduced to avoid cache issues
+        // Skip waiting and claim clients immediately
+        skipWaiting: true,
+        clientsClaim: true,
+        // Clean up old caches
+        cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -54,6 +59,9 @@ export default defineConfig(({ mode }) => ({
               expiration: {
                 maxEntries: 10,
                 maxAgeSeconds: 60 * 60 * 24 * 365,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
               },
             },
           },
@@ -65,6 +73,9 @@ export default defineConfig(({ mode }) => ({
               expiration: {
                 maxEntries: 10,
                 maxAgeSeconds: 60 * 60 * 24 * 365,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
               },
             },
           },
@@ -79,32 +90,30 @@ export default defineConfig(({ mode }) => ({
                 maxAgeSeconds: 60 * 60 * 24,
               },
               networkTimeoutSeconds: 10,
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
             },
           },
           {
-            // Cache images with cache-first
+            // Cache images with stale-while-revalidate for better reliability
             urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
-            handler: "CacheFirst",
+            handler: "StaleWhileRevalidate",
             options: {
               cacheName: "image-cache",
               expiration: {
-                maxEntries: 100,
+                maxEntries: 60,
                 maxAgeSeconds: 60 * 60 * 24 * 30,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
               },
             },
           },
           {
-            // Cache videos with network-first (don't precache large files)
+            // Videos: network only to avoid cache storage issues
             urlPattern: /\.(?:mp4|webm)$/i,
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "video-cache",
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 7,
-              },
-              networkTimeoutSeconds: 30,
-            },
+            handler: "NetworkOnly",
           },
           {
             // Cache page navigations for offline support
@@ -113,10 +122,13 @@ export default defineConfig(({ mode }) => ({
             options: {
               cacheName: "page-cache",
               expiration: {
-                maxEntries: 20,
+                maxEntries: 10,
                 maxAgeSeconds: 60 * 60 * 24 * 7,
               },
               networkTimeoutSeconds: 5,
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
             },
           },
         ],

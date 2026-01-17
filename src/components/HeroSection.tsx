@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useCampaignPersonalization } from "@/hooks/useCampaignPersonalization";
 
 
 interface HeroSectionProps {
@@ -12,6 +13,7 @@ interface HeroSectionProps {
 
 const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
   const { t } = useTranslation();
+  const campaign = useCampaignPersonalization();
   const ref = useRef<HTMLElement>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [videoError, setVideoError] = useState(false);
@@ -127,7 +129,7 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
         >
           <span className="w-8 h-px bg-primary/40" />
           <span className="text-[11px] uppercase tracking-[0.4em] text-primary/80 font-medium">
-            {t("hero.badge")}
+            {campaign.badge || t("hero.badge")}
           </span>
           <span className="w-8 h-px bg-primary/40" />
         </motion.div>
@@ -140,7 +142,7 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
           className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl text-foreground font-normal tracking-[-0.03em] leading-[0.95] mb-6 sm:mb-8 px-2"
           style={{ fontFamily: "'Cormorant Garamond', serif" }}
         >
-          {t("hero.title")}
+          {campaign.title || t("hero.title")}
         </motion.h1>
 
         {/* Subtitle with refined spacing */}
@@ -150,7 +152,7 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
           transition={{ duration: 0.8, delay: 0.7 }}
           className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground font-light tracking-wide max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-12 px-4"
         >
-          {t("hero.subtitle")}
+          {campaign.subtitle || t("hero.subtitle")}
         </motion.p>
 
         {/* Premium CTAs */}
@@ -164,7 +166,7 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
             to="/auth" 
             className="group relative w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 bg-primary text-primary-foreground text-xs font-medium tracking-[0.25em] uppercase transition-all duration-500 hover:bg-primary/90 btn-luxury gold-glow-hover overflow-hidden text-center"
           >
-            <span className="relative z-10">{t("hero.joinButton")}</span>
+            <span className="relative z-10">{campaign.ctaText || t("hero.joinButton")}</span>
           </Link>
 
           <a 

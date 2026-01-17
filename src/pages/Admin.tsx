@@ -49,6 +49,9 @@ import ServiceRequestsPanel from "@/components/admin/ServiceRequestsPanel";
 import ConciergeRequestsPanel from "@/components/admin/ConciergeRequestsPanel";
 import PartnerApplicationsPanel from "@/components/admin/PartnerApplicationsPanel";
 import AnalyticsDashboard from "@/components/admin/AnalyticsDashboard";
+import VisitorAnalytics from "@/components/admin/VisitorAnalytics";
+import ConversionFunnelAnalytics from "@/components/admin/ConversionFunnelAnalytics";
+import TrafficAttributionAnalytics from "@/components/admin/TrafficAttributionAnalytics";
 import CampaignAnalytics from "@/components/admin/CampaignAnalytics";
 import ABTestingPanel from "@/components/admin/ABTestingPanel";
 import MarketingPackagesPanel from "@/components/admin/MarketingPackagesPanel";
@@ -307,8 +310,10 @@ const Admin = () => {
       <main className="container mx-auto px-6 py-8">
         <Tabs defaultValue="analytics" className="space-y-6">
           <TabsList className="bg-card border border-border/50 flex-wrap h-auto gap-1 p-1">
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="analytics">Overview</TabsTrigger>
+            <TabsTrigger value="visitors">Visitors</TabsTrigger>
             <TabsTrigger value="funnel">Funnel</TabsTrigger>
+            <TabsTrigger value="attribution">Attribution</TabsTrigger>
             <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
             <TabsTrigger value="urlbuilder">URL Builder</TabsTrigger>
             <TabsTrigger value="abtesting">A/B Tests</TabsTrigger>
@@ -364,13 +369,20 @@ const Admin = () => {
             <AnalyticsDashboard />
           </TabsContent>
 
+          <TabsContent value="visitors" className="space-y-6">
+            <VisitorAnalytics />
+          </TabsContent>
+
           <TabsContent value="funnel" className="space-y-6">
-            <ConversionFunnelDashboard />
+            <ConversionFunnelAnalytics />
+          </TabsContent>
+
+          <TabsContent value="attribution" className="space-y-6">
+            <TrafficAttributionAnalytics />
           </TabsContent>
 
           <TabsContent value="campaigns" className="space-y-6">
             <CampaignAnalytics />
-            <AttributionAnalytics />
           </TabsContent>
 
           <TabsContent value="urlbuilder" className="space-y-6">

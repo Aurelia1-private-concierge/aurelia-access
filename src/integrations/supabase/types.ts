@@ -714,6 +714,116 @@ export type Database = {
         }
         Relationships: []
       }
+      impact_investments: {
+        Row: {
+          amount: number
+          carbon_offset_tons: number | null
+          created_at: string
+          currency: string | null
+          id: string
+          investment_date: string | null
+          notes: string | null
+          people_impacted: number | null
+          project_id: string | null
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          carbon_offset_tons?: number | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          investment_date?: string | null
+          notes?: string | null
+          people_impacted?: number | null
+          project_id?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          carbon_offset_tons?: number | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          investment_date?: string | null
+          notes?: string | null
+          people_impacted?: number | null
+          project_id?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "impact_investments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "impact_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      impact_projects: {
+        Row: {
+          carbon_offset_tons: number | null
+          category: string
+          created_at: string
+          current_amount: number | null
+          description: string | null
+          end_date: string | null
+          id: string
+          image_url: string | null
+          partner_name: string | null
+          people_helped: number | null
+          region: string
+          start_date: string | null
+          status: string | null
+          target_amount: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          carbon_offset_tons?: number | null
+          category: string
+          created_at?: string
+          current_amount?: number | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          image_url?: string | null
+          partner_name?: string | null
+          people_helped?: number | null
+          region: string
+          start_date?: string | null
+          status?: string | null
+          target_amount?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          carbon_offset_tons?: number | null
+          category?: string
+          created_at?: string
+          current_amount?: number | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          image_url?: string | null
+          partner_name?: string | null
+          people_helped?: number | null
+          region?: string
+          start_date?: string | null
+          status?: string | null
+          target_amount?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ip_login_attempts: {
         Row: {
           attempt_type: string

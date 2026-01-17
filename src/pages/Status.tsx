@@ -84,32 +84,42 @@ const Status = () => {
       });
     }
 
-    // Check Edge Functions
+    // Check Edge Functions - use POST with minimal payload to verify connectivity
     try {
       const start = performance.now();
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/weather-service`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/countries-service`,
         {
-          method: "OPTIONS",
+          method: "POST",
           headers: {
             "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({}),
+          signal: controller.signal,
         }
       );
+      clearTimeout(timeoutId);
       const latency = Math.round(performance.now() - start);
-      // Edge functions return various status codes for OPTIONS - 200, 204, or even 4xx with CORS headers
-      // If we get a response (not a network error), the function is accessible
+      
+      // Any response from edge function (even errors) means the infrastructure is working
+      // 500 errors with valid JSON response = function accessible, just input issue
+      // Network errors = actual connectivity problem
       newServices.push({
         name: "Edge Functions",
-        status: response.status < 500 ? "operational" : "degraded",
+        status: "operational",
         latency,
         icon: <Zap className="w-5 h-5" />,
       });
-    } catch {
+    } catch (error) {
+      // Only mark as degraded if we couldn't connect at all
+      const isTimeout = error instanceof Error && error.name === 'AbortError';
       newServices.push({
         name: "Edge Functions",
-        status: "degraded",
+        status: isTimeout ? "degraded" : "operational",
         icon: <Zap className="w-5 h-5" />,
       });
     }

@@ -93,13 +93,16 @@ const Status = () => {
           method: "OPTIONS",
           headers: {
             "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            "Content-Type": "application/json",
           },
         }
       );
       const latency = Math.round(performance.now() - start);
+      // Edge functions return various status codes for OPTIONS - 200, 204, or even 4xx with CORS headers
+      // If we get a response (not a network error), the function is accessible
       newServices.push({
         name: "Edge Functions",
-        status: response.ok || response.status === 204 ? "operational" : "degraded",
+        status: response.status < 500 ? "operational" : "degraded",
         latency,
         icon: <Zap className="w-5 h-5" />,
       });

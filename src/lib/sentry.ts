@@ -54,12 +54,12 @@ export const initSentry = () => {
   });
 };
 
-// Capture custom error with context
+// Capture custom error with context and return event ID
 export const captureError = (
   error: Error,
   context?: Record<string, unknown>
-) => {
-  Sentry.captureException(error, {
+): string | undefined => {
+  return Sentry.captureException(error, {
     extra: context,
   });
 };

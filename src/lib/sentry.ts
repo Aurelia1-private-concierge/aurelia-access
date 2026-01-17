@@ -124,4 +124,63 @@ export const captureErrorWithNotification = (
   return eventId;
 };
 
+// Manual event sending (low-level API)
+// Useful for edge cases where SDK isn't available
+export const sendManualEvent = async (
+  message: string,
+  level: "error" | "warning" | "info" = "error",
+  extra?: Record<string, unknown>
+): Promise<string | null> => {
+  const dsn = import.meta.env.VITE_SENTRY_DSN;
+  if (!dsn) return null;
+
+  // Parse DSN: https://PUBLIC_KEY@HOST/PROJECT_ID
+  const dsnMatch = dsn.match(/https:\/\/([^@]+)@([^/]+)\/(\d+)/);
+  if (!dsnMatch) return null;
+
+  const [, publicKey, host, projectId] = dsnMatch;
+  const eventId = crypto.randomUUID().replace(/-/g, "");
+  const timestamp = new Date().toISOString();
+
+  const event = {
+    event_id: eventId,
+    timestamp,
+    level,
+    message: { formatted: message },
+    extra,
+    platform: "javascript",
+    sdk: { name: "sentry.javascript.browser", version: "manual" },
+  };
+
+  // Method 1: X-Sentry-Auth header
+  const authHeader = `Sentry sentry_version=7, sentry_client=manual/1.0, sentry_key=${publicKey}`;
+
+  try {
+    await fetch(`https://${host}/api/${projectId}/store/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Sentry-Auth": authHeader,
+      },
+      body: JSON.stringify(event),
+    });
+    return eventId;
+  } catch {
+    // Method 2: Query string auth (fallback)
+    try {
+      await fetch(
+        `https://${host}/api/${projectId}/store/?sentry_version=7&sentry_key=${publicKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(event),
+        }
+      );
+      return eventId;
+    } catch {
+      return null;
+    }
+  }
+};
+
 export default Sentry;

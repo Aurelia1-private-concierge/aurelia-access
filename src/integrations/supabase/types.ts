@@ -552,6 +552,39 @@ export type Database = {
           },
         ]
       }
+      discovery_logs: {
+        Row: {
+          created_at: string | null
+          error: string | null
+          id: string
+          kind: string
+          metadata: Json | null
+          partners_found: number | null
+          source: string | null
+          users_found: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          error?: string | null
+          id?: string
+          kind: string
+          metadata?: Json | null
+          partners_found?: number | null
+          source?: string | null
+          users_found?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          error?: string | null
+          id?: string
+          kind?: string
+          metadata?: Json | null
+          partners_found?: number | null
+          source?: string | null
+          users_found?: number | null
+        }
+        Relationships: []
+      }
       discovery_service_analytics: {
         Row: {
           created_at: string
@@ -1494,6 +1527,120 @@ export type Database = {
           user_id?: string
           verification_documents?: string[] | null
           website?: string | null
+        }
+        Relationships: []
+      }
+      potential_partners: {
+        Row: {
+          category: string
+          company_name: string
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string | null
+          description: string | null
+          discovered_at: string | null
+          id: string
+          last_verified_at: string | null
+          metadata: Json | null
+          score: number | null
+          source: string | null
+          status: string | null
+          subcategory: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          category: string
+          company_name: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          description?: string | null
+          discovered_at?: string | null
+          id?: string
+          last_verified_at?: string | null
+          metadata?: Json | null
+          score?: number | null
+          source?: string | null
+          status?: string | null
+          subcategory?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          category?: string
+          company_name?: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          description?: string | null
+          discovered_at?: string | null
+          id?: string
+          last_verified_at?: string | null
+          metadata?: Json | null
+          score?: number | null
+          source?: string | null
+          status?: string | null
+          subcategory?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
+      potential_users: {
+        Row: {
+          company: string | null
+          created_at: string | null
+          discovered_at: string | null
+          email: string | null
+          estimated_net_worth: string | null
+          full_name: string | null
+          id: string
+          interests: string[] | null
+          linkedin_url: string | null
+          metadata: Json | null
+          phone: string | null
+          score: number | null
+          source: string | null
+          status: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string | null
+          discovered_at?: string | null
+          email?: string | null
+          estimated_net_worth?: string | null
+          full_name?: string | null
+          id?: string
+          interests?: string[] | null
+          linkedin_url?: string | null
+          metadata?: Json | null
+          phone?: string | null
+          score?: number | null
+          source?: string | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company?: string | null
+          created_at?: string | null
+          discovered_at?: string | null
+          email?: string | null
+          estimated_net_worth?: string | null
+          full_name?: string | null
+          id?: string
+          interests?: string[] | null
+          linkedin_url?: string | null
+          metadata?: Json | null
+          phone?: string | null
+          score?: number | null
+          source?: string | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }

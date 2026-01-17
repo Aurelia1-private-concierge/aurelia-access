@@ -13,6 +13,7 @@ const viewTitles: Record<ActiveView, string> = {
   portfolio: "Portfolio Overview",
   concierge: "Concierge Chat",
   requests: "Service Requests",
+  impact: "Global Impact",
   messaging: "Secure Messaging",
   documents: "Document Vault",
   referrals: "Referral Program",

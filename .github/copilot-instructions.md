@@ -75,6 +75,61 @@ src/
 
 ## Security Requirements (CRITICAL)
 
+### Input Validation (MANDATORY)
+
+All user inputs MUST be validated both client-side AND server-side to prevent injection attacks.
+
+```typescript
+import { z } from 'zod';
+
+// ✅ Complete form validation schema
+const contactSchema = z.object({
+  name: z.string()
+    .trim()
+    .min(1, { message: "Name cannot be empty" })
+    .max(100, { message: "Name must be less than 100 characters" }),
+  email: z.string()
+    .trim()
+    .email({ message: "Invalid email address" })
+    .max(255, { message: "Email must be less than 255 characters" }),
+  message: z.string()
+    .trim()
+    .min(1, { message: "Message cannot be empty" })
+    .max(1000, { message: "Message must be less than 1000 characters" }),
+  phone: z.string()
+    .regex(/^[+]?[\d\s\-()]+$/, { message: "Invalid phone format" })
+    .optional(),
+});
+
+// ✅ Validate before processing
+const result = contactSchema.safeParse(formData);
+if (!result.success) {
+  return { errors: result.error.flatten().fieldErrors };
+}
+```
+
+### Security Checklist for Forms
+
+- ✅ Client-side validation with proper error messages
+- ✅ Server-side validation (never trust client)
+- ✅ Input length limits and character restrictions
+- ✅ Proper encoding for external API calls (`encodeURIComponent`)
+- ✅ No logging of sensitive form data to console
+- ✅ Sanitize HTML if rendering user content (use DOMPurify)
+
+### External URL Security
+
+```typescript
+// ❌ NEVER pass unvalidated input to URLs
+const whatsappUrl = `https://wa.me/?text=${userInput}`;
+
+// ✅ ALWAYS encode user input
+const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(validatedMessage)}`;
+
+// ✅ Validate URLs before use
+const urlSchema = z.string().url().startsWith('https://');
+```
+
 ### End-to-End Encryption
 
 ```typescript
@@ -90,14 +145,18 @@ console.log('User authenticated'); // ✅ GOOD
 
 ```typescript
 // Always validate on the server, never trust client input
-// Use Zod for input validation
-
-import { z } from 'zod';
-
 const requestSchema = z.object({
   userId: z.string().uuid(),
-  amount: z.number().positive(),
+  amount: z.number().positive().max(1000000),
+  currency: z.enum(['USD', 'EUR', 'GBP']),
 });
+
+// Validate in edge functions
+const body = await req.json();
+const parsed = requestSchema.safeParse(body);
+if (!parsed.success) {
+  return new Response(JSON.stringify({ error: 'Invalid input' }), { status: 400 });
+}
 ```
 
 ### Row Level Security (RLS)
@@ -110,6 +169,9 @@ ALTER TABLE service_requests ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view own requests"
   ON service_requests FOR SELECT
   USING (auth.uid() = user_id);
+
+-- Add input length constraints at database level
+ALTER TABLE profiles ADD CONSTRAINT display_name_length CHECK (char_length(display_name) <= 100);
 ```
 
 ### Authentication Best Practices
@@ -135,6 +197,21 @@ if (!authHeader) {
 
 // Rate limit sensitive endpoints
 // Log security events to audit_logs table
+// Validate ALL input before processing
+```
+
+### HTML Sanitization
+
+```typescript
+// ❌ NEVER render unsanitized user content
+<div dangerouslySetInnerHTML={{ __html: userContent }} />
+
+// ✅ Sanitize if HTML rendering is required
+import DOMPurify from 'dompurify';
+<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userContent) }} />
+
+// ✅ Prefer plain text rendering when possible
+<p>{userContent}</p>
 ```
 
 ---

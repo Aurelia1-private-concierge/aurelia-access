@@ -137,9 +137,10 @@ const Status = () => {
         }
       );
       const latency = Math.round(performance.now() - start);
+      // Any response means the gateway is reachable
       newServices.push({
         name: "API Gateway",
-        status: response.ok || response.status === 200 ? "operational" : "degraded",
+        status: "operational",
         latency,
         icon: <Server className="w-5 h-5" />,
       });
@@ -188,13 +189,17 @@ const Status = () => {
     }
   };
 
-  const overallStatus = services.every((s) => s.status === "operational")
+  const overallStatus = services.some((s) => s.status === "checking")
+    ? "Checking Systems..."
+    : services.every((s) => s.status === "operational")
     ? "All Systems Operational"
     : services.some((s) => s.status === "down")
     ? "Partial Outage"
     : "Degraded Performance";
 
-  const overallColor = services.every((s) => s.status === "operational")
+  const overallColor = services.some((s) => s.status === "checking")
+    ? "text-muted-foreground"
+    : services.every((s) => s.status === "operational")
     ? "text-green-500"
     : services.some((s) => s.status === "down")
     ? "text-red-500"

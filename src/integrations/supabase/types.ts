@@ -2161,6 +2161,39 @@ export type Database = {
         }
         Relationships: []
       }
+      visitor_logs: {
+        Row: {
+          id: string
+          ip_address: string | null
+          path: string
+          referrer: string | null
+          session_id: string | null
+          timestamp: string
+          user_agent: string | null
+          visit_date: string
+        }
+        Insert: {
+          id?: string
+          ip_address?: string | null
+          path: string
+          referrer?: string | null
+          session_id?: string | null
+          timestamp?: string
+          user_agent?: string | null
+          visit_date?: string
+        }
+        Update: {
+          id?: string
+          ip_address?: string | null
+          path?: string
+          referrer?: string | null
+          session_id?: string | null
+          timestamp?: string
+          user_agent?: string | null
+          visit_date?: string
+        }
+        Relationships: []
+      }
       wearable_connections: {
         Row: {
           access_token: string

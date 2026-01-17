@@ -107,3 +107,6 @@ verify_jwt = false
 
 [functions.partner-invite]
 verify_jwt = false
+
+[functions.visitor-tracking]
+verify_jwt = false

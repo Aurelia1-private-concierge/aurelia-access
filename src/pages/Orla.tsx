@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useConversation } from "@elevenlabs/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Phone, PhoneOff, ArrowLeft, Volume2, Clock, History, Trash2, MessageSquare, X } from "lucide-react";
+import { Phone, PhoneOff, ArrowLeft, Volume2, Clock, History, Trash2, MessageSquare, X, Camera } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import { toast } from "sonner";
@@ -14,7 +14,7 @@ import { useVoiceSession } from "@/hooks/useVoiceSession";
 import { useConversationHistory } from "@/hooks/useConversationHistory";
 import orlaAvatar from "@/assets/orla-avatar.png";
 import { format } from "date-fns";
-
+import { OrlaVideoPreview } from "@/components/video";
 interface TranscriptEntry {
   id: string;
   role: "user" | "agent";
@@ -368,6 +368,12 @@ const Orla = () => {
           {micPermission === "denied" && (
             <p className="mt-4 text-sm text-destructive">Microphone access denied. Please enable it in your browser settings.</p>
           )}
+
+          {/* Camera Preview for Orla */}
+          <OrlaVideoPreview
+            isConversationActive={isConnected}
+            isSpeaking={isSpeaking}
+          />
         </main>
 
         {/* Transcript Panel */}

@@ -59,6 +59,7 @@ const Security = lazy(() => import("./pages/Security"));
 const AdCreatives = lazy(() => import("./pages/AdCreatives"));
 const DirectorySubmissions = lazy(() => import("./pages/DirectorySubmissions"));
 const Status = lazy(() => import("./pages/Status"));
+const VideoRoom = lazy(() => import("./pages/VideoRoom"));
 
 // Minimal loading fallback
 const PageLoader = () => (
@@ -397,6 +398,16 @@ const AnimatedRoutes = () => {
               <PageTransition>
                 <Status />
               </PageTransition>
+            }
+          />
+          <Route
+            path="/room/:roomId"
+            element={
+              <ProtectedRoute>
+                <PageTransition>
+                  <VideoRoom />
+                </PageTransition>
+              </ProtectedRoute>
             }
           />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

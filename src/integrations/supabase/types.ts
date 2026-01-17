@@ -110,6 +110,107 @@ export type Database = {
         }
         Relationships: []
       }
+      boardroom_participants: {
+        Row: {
+          created_at: string
+          display_name: string
+          email: string | null
+          id: string
+          joined_at: string | null
+          left_at: string | null
+          role: string
+          session_id: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          display_name: string
+          email?: string | null
+          id?: string
+          joined_at?: string | null
+          left_at?: string | null
+          role?: string
+          session_id: string
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          email?: string | null
+          id?: string
+          joined_at?: string | null
+          left_at?: string | null
+          role?: string
+          session_id?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "boardroom_participants_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "boardroom_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      boardroom_sessions: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration_minutes: number
+          host_id: string
+          id: string
+          is_recording_enabled: boolean | null
+          is_waiting_room_enabled: boolean | null
+          max_participants: number | null
+          metadata: Json | null
+          participant_emails: string[] | null
+          room_code: string
+          scheduled_at: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          host_id: string
+          id?: string
+          is_recording_enabled?: boolean | null
+          is_waiting_room_enabled?: boolean | null
+          max_participants?: number | null
+          metadata?: Json | null
+          participant_emails?: string[] | null
+          room_code?: string
+          scheduled_at: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          host_id?: string
+          id?: string
+          is_recording_enabled?: boolean | null
+          is_waiting_room_enabled?: boolean | null
+          max_participants?: number | null
+          metadata?: Json | null
+          participant_emails?: string[] | null
+          room_code?: string
+          scheduled_at?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       calendar_events: {
         Row: {
           created_at: string

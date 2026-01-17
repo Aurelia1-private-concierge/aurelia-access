@@ -60,6 +60,8 @@ const AdCreatives = lazy(() => import("./pages/AdCreatives"));
 const DirectorySubmissions = lazy(() => import("./pages/DirectorySubmissions"));
 const Status = lazy(() => import("./pages/Status"));
 const VideoRoom = lazy(() => import("./pages/VideoRoom"));
+const Boardroom = lazy(() => import("./pages/Boardroom"));
+const BoardroomSession = lazy(() => import("./pages/BoardroomSession"));
 
 // Minimal loading fallback
 const PageLoader = () => (
@@ -406,6 +408,26 @@ const AnimatedRoutes = () => {
               <ProtectedRoute>
                 <PageTransition>
                   <VideoRoom />
+                </PageTransition>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/boardroom"
+            element={
+              <ProtectedRoute>
+                <PageTransition>
+                  <Boardroom />
+                </PageTransition>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/boardroom/:roomCode"
+            element={
+              <ProtectedRoute>
+                <PageTransition>
+                  <BoardroomSession />
                 </PageTransition>
               </ProtectedRoute>
             }

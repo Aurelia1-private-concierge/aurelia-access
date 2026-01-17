@@ -55,11 +55,13 @@ const Orla = () => {
       console.log("Connected to Orla");
       toast.success("Connected to Orla");
       setConnectionStartTime(new Date());
+      setIsConnecting(false); // Reset connecting state on successful connection
     },
     onDisconnect: () => {
       console.log("Disconnected from Orla");
       setConnectionStartTime(null);
       setConnectionDuration(0);
+      setIsConnecting(false); // Ensure we reset if disconnected
     },
     onMessage: (message) => {
       console.log("Message received:", message);
@@ -164,7 +166,10 @@ const Orla = () => {
   }, []);
 
   const startConversation = useCallback(async () => {
+    console.log("Starting conversation...");
+    
     if (!user) {
+      console.log("No user found, redirecting to auth");
       toast.error("Please sign in to speak with Orla", {
         action: { label: "Sign In", onClick: () => navigate("/auth") },
       });
@@ -173,34 +178,63 @@ const Orla = () => {
 
     setIsConnecting(true);
     setTranscript([]);
+    
     try {
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      setMicPermission("granted");
+      // Step 1: Request microphone permission
+      console.log("Requesting microphone permission...");
+      try {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        console.log("Microphone permission granted");
+        setMicPermission("granted");
+      } catch (micError) {
+        console.error("Microphone permission error:", micError);
+        if ((micError as Error).name === "NotAllowedError") {
+          toast.error("Microphone access is required to speak with Orla");
+          setMicPermission("denied");
+        } else {
+          toast.error("Could not access microphone: " + (micError as Error).message);
+        }
+        setIsConnecting(false);
+        return;
+      }
+      
+      // Step 2: Start session tracking
+      console.log("Starting voice session...");
       await startSession();
 
+      // Step 3: Get signed URL from edge function
+      console.log("Fetching conversation token...");
       const { data, error } = await supabase.functions.invoke("elevenlabs-conversation-token", {
         body: { language: i18n.language },
       });
 
-      if (error || !data?.signed_url) {
-        throw new Error(error?.message || data?.error || "Failed to get conversation token");
+      console.log("Token response:", { data, error });
+
+      if (error) {
+        console.error("Edge function error:", error);
+        throw new Error(error.message || "Failed to get conversation token");
+      }
+      
+      if (!data?.signed_url) {
+        console.error("No signed URL in response:", data);
+        throw new Error(data?.error || "No signed URL received from server");
       }
 
       // Store agent ID for cleanup
       if (data.agent_id) {
+        console.log("Agent ID received:", data.agent_id);
         setCurrentAgentId(data.agent_id);
       }
 
+      // Step 4: Start ElevenLabs conversation
+      console.log("Starting ElevenLabs session with signed URL...");
       await conversation.startSession({ signedUrl: data.signed_url });
+      console.log("Conversation started successfully");
+      
     } catch (error) {
       console.error("Failed to start conversation:", error);
-      if ((error as Error).name === "NotAllowedError") {
-        toast.error("Microphone access is required to speak with Orla");
-        setMicPermission("denied");
-      } else {
-        toast.error((error as Error).message || "Failed to connect to Orla");
-      }
-    } finally {
+      const errorMessage = (error as Error).message || "Failed to connect to Orla";
+      toast.error(errorMessage);
       setIsConnecting(false);
     }
   }, [conversation, user, navigate, startSession, i18n.language]);

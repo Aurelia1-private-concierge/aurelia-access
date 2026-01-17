@@ -198,17 +198,24 @@ const Orla = () => {
         return;
       }
       
-      // Step 2: Start session tracking
+      // Step 2: Start session tracking (optional - don't block on failure)
       console.log("Starting voice session...");
-      await startSession();
+      startSession().catch(err => console.warn("Session tracking unavailable:", err));
 
       // Step 3: Get signed URL from edge function
-      console.log("Fetching conversation token...");
-      const { data, error } = await supabase.functions.invoke("elevenlabs-conversation-token", {
-        body: { language: i18n.language },
-      });
-
-      console.log("Token response:", { data, error });
+      console.log("Fetching conversation token from edge function...");
+      let data, error;
+      try {
+        const response = await supabase.functions.invoke("elevenlabs-conversation-token", {
+          body: { language: i18n.language },
+        });
+        data = response.data;
+        error = response.error;
+        console.log("Token response received:", { data, error, hasSignedUrl: !!data?.signed_url });
+      } catch (invokeError) {
+        console.error("Edge function invocation failed:", invokeError);
+        throw new Error("Failed to connect to voice service. Please try again.");
+      }
 
       if (error) {
         console.error("Edge function error:", error);
@@ -227,9 +234,14 @@ const Orla = () => {
       }
 
       // Step 4: Start ElevenLabs conversation
-      console.log("Starting ElevenLabs session with signed URL...");
-      await conversation.startSession({ signedUrl: data.signed_url });
-      console.log("Conversation started successfully");
+      console.log("Starting ElevenLabs session with signed URL:", data.signed_url.substring(0, 50) + "...");
+      try {
+        await conversation.startSession({ signedUrl: data.signed_url });
+        console.log("Conversation started successfully!");
+      } catch (sessionError) {
+        console.error("ElevenLabs session start failed:", sessionError);
+        throw new Error("Failed to start voice session. Please try again.");
+      }
       
     } catch (error) {
       console.error("Failed to start conversation:", error);

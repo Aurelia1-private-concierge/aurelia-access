@@ -90,17 +90,19 @@ export const useServiceWorkflow = (serviceRequestId?: string) => {
       budget_min?: number;
       budget_max?: number;
       deadline?: string;
+      requirements?: Record<string, string | string[]>;
     }) => {
       if (!user) throw new Error("Must be logged in");
 
       setIsSubmitting(true);
       try {
-      const insertData = {
+        const insertData = {
           client_id: user.id,
           title: data.title,
           description: data.description,
           category: data.category as "chauffeur" | "collectibles" | "dining" | "events_access" | "private_aviation" | "real_estate" | "security" | "shopping" | "travel" | "wellness" | "yacht_charter",
           status: "pending" as const,
+          requirements: data.requirements || null,
         };
 
         const { data: newRequest, error } = await supabase

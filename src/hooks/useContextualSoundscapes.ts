@@ -114,83 +114,22 @@ export const useContextualSoundscapes = () => {
     }, 50);
   }, [volume]);
 
-  const generateMusic = async (genre: string): Promise<string | null> => {
-    try {
-      console.log(`Generating ${genre} music...`);
-      
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-ambient-music`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({ genre, duration: 45 }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('Music generation failed:', response.status, errorData);
-        return null;
-      }
-
-      const data = await response.json();
-      
-      if (data.audioContent) {
-        // Return data URI for base64 audio
-        return `data:audio/mpeg;base64,${data.audioContent}`;
-      }
-      
-      return null;
-    } catch (error) {
-      console.error('Error generating music:', error);
-      return null;
-    }
-  };
-
   const initializeAudio = useCallback(async () => {
     setIsLoading(true);
     
     try {
-      // Try to generate AI music first
-      const sectionConfig = SECTION_SOUNDSCAPES.find(s => s.section === currentSection);
-      const genre = sectionConfig?.style || 'luxury';
-      
-      const audioUrl = await generateMusic(genre);
-      
-      if (audioUrl) {
-        audioCache.current.set(currentSection, audioUrl);
-        audioRef.current = new Audio(audioUrl);
-        audioRef.current.loop = true;
-        audioRef.current.volume = volume;
-        setUseFallback(false);
-        console.log('Using AI-generated music');
-      } else {
-        // Fallback to static audio
-        console.log('Falling back to static audio');
-        audioRef.current = new Audio(FALLBACK_AUDIO);
-        audioRef.current.loop = true;
-        audioRef.current.volume = volume;
-        setUseFallback(true);
-        toast.info('Using ambient music', {
-          description: 'AI music generation unavailable, using fallback track',
-          duration: 3000,
-        });
-      }
-    } catch (error) {
-      console.error('Error initializing audio:', error);
-      // Fallback to static audio
+      // Use static fallback audio (ElevenLabs music API requires special permissions)
+      console.log('Initializing ambient audio...');
       audioRef.current = new Audio(FALLBACK_AUDIO);
       audioRef.current.loop = true;
       audioRef.current.volume = volume;
       setUseFallback(true);
+    } catch (error) {
+      console.error('Error initializing audio:', error);
     } finally {
       setIsLoading(false);
     }
-  }, [currentSection, volume]);
+  }, [volume]);
 
   const toggleSoundscapes = useCallback(async () => {
     if (!isEnabled) {

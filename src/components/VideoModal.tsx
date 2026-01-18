@@ -10,16 +10,28 @@ interface VideoModalProps {
 }
 
 const VideoModal = ({ isOpen, onClose, videoSrc, title = "Experience Aurelia" }: VideoModalProps) => {
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     if (isOpen && videoRef.current) {
-      videoRef.current.play();
-      setIsPlaying(true);
+      // Start muted to comply with autoplay policy, then unmute after user interaction
+      videoRef.current.muted = true;
+      videoRef.current.play().then(() => {
+        setIsPlaying(true);
+      }).catch(console.error);
     }
   }, [isOpen]);
+
+  const handleUnmute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = false;
+      setIsMuted(false);
+      setHasUserInteracted(true);
+    }
+  };
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -42,8 +54,10 @@ const VideoModal = ({ isOpen, onClose, videoSrc, title = "Experience Aurelia" }:
 
   const toggleMute = () => {
     if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
+      const newMuted = !isMuted;
+      videoRef.current.muted = newMuted;
+      setIsMuted(newMuted);
+      if (!newMuted) setHasUserInteracted(true);
     }
   };
 
@@ -135,6 +149,20 @@ const VideoModal = ({ isOpen, onClose, videoSrc, title = "Experience Aurelia" }:
                     <Play className="w-8 h-8 text-primary ml-1" fill="currentColor" />
                   </motion.div>
                 </motion.div>
+              )}
+
+              {/* Unmute banner - shows when muted and playing */}
+              {isMuted && isPlaying && (
+                <motion.button
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  onClick={handleUnmute}
+                  className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-4 py-2 rounded-full bg-primary/90 text-primary-foreground text-sm font-medium backdrop-blur-sm hover:bg-primary transition-colors"
+                >
+                  <VolumeX className="w-4 h-4" />
+                  Tap to enable sound
+                </motion.button>
               )}
 
               {/* Controls */}

@@ -12,17 +12,59 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     sourcemap: true,
+    target: 'esnext',
+    minify: 'esbuild',
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Split heavy vendor libraries into separate chunks
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-motion': ['framer-motion'],
-          'vendor-query': ['@tanstack/react-query'],
-          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-popover', '@radix-ui/react-tooltip', '@radix-ui/react-tabs'],
-          'vendor-charts': ['recharts'],
-          'vendor-supabase': ['@supabase/supabase-js'],
-          'vendor-i18n': ['i18next', 'react-i18next', 'i18next-browser-languagedetector'],
+        manualChunks: (id) => {
+          // Core React - always needed
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
+            return 'vendor-react';
+          }
+          // React Router - needed for navigation
+          if (id.includes('node_modules/react-router')) {
+            return 'vendor-router';
+          }
+          // Framer Motion - heavy animation library, defer loading
+          if (id.includes('node_modules/framer-motion')) {
+            return 'vendor-motion';
+          }
+          // React Query - data fetching
+          if (id.includes('node_modules/@tanstack/react-query')) {
+            return 'vendor-query';
+          }
+          // Radix UI components - split by usage frequency
+          if (id.includes('node_modules/@radix-ui')) {
+            return 'vendor-radix';
+          }
+          // Charts - only needed on specific pages
+          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3')) {
+            return 'vendor-charts';
+          }
+          // Supabase - backend operations
+          if (id.includes('node_modules/@supabase')) {
+            return 'vendor-supabase';
+          }
+          // i18n - internationalization
+          if (id.includes('node_modules/i18next') || id.includes('node_modules/react-i18next')) {
+            return 'vendor-i18n';
+          }
+          // Date utilities
+          if (id.includes('node_modules/date-fns')) {
+            return 'vendor-date';
+          }
+          // Form handling
+          if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/zod')) {
+            return 'vendor-forms';
+          }
+          // Sentry - error tracking
+          if (id.includes('node_modules/@sentry')) {
+            return 'vendor-sentry';
+          }
+          // All other vendor modules
+          if (id.includes('node_modules/')) {
+            return 'vendor-misc';
+          }
         },
       },
     },

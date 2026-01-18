@@ -2575,6 +2575,42 @@ export type Database = {
         }
         Relationships: []
       }
+      wearable_connections_public: {
+        Row: {
+          created_at: string | null
+          device_name: string | null
+          expires_at: string | null
+          id: string | null
+          last_sync_at: string | null
+          provider: string | null
+          sync_enabled: boolean | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          device_name?: string | null
+          expires_at?: string | null
+          id?: string | null
+          last_sync_at?: string | null
+          provider?: string | null
+          sync_enabled?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          device_name?: string | null
+          expires_at?: string | null
+          id?: string | null
+          last_sync_at?: string | null
+          provider?: string | null
+          sync_enabled?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       check_ip_rate_limit: {

@@ -33,7 +33,7 @@ export function useWearables() {
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState<WearableProvider | null>(null);
 
-  // Fetch connections
+  // Fetch connections (only selecting safe columns - tokens never exposed to client)
   const fetchConnections = useCallback(async () => {
     if (!user) return;
 
@@ -44,7 +44,7 @@ export function useWearables() {
         .eq("user_id", user.id);
 
       if (error) throw error;
-      setConnections((data as WearableConnection[]) || []);
+      setConnections((data as unknown as WearableConnection[]) || []);
     } catch (error) {
       console.error("Failed to fetch connections:", error);
     } finally {

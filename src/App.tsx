@@ -68,6 +68,7 @@ const BoardroomSession = lazy(() => import("./pages/BoardroomSession"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const PartnerDetail = lazy(() => import("./pages/PartnerDetail"));
 const SurpriseMe = lazy(() => import("./pages/SurpriseMe"));
+const UnderConstruction = lazy(() => import("./pages/UnderConstruction"));
 
 // Premium loading fallback with better UX
 const PageLoader = () => (
@@ -471,6 +472,14 @@ const AnimatedRoutes = () => {
                   <BoardroomSession />
                 </PageTransition>
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/coming-soon"
+            element={
+              <PageTransition>
+                <UnderConstruction />
+              </PageTransition>
             }
           />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

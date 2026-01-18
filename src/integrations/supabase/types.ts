@@ -2145,6 +2145,77 @@ export type Database = {
           },
         ]
       }
+      surprise_me_requests: {
+        Row: {
+          created_at: string
+          credits_spent: number
+          estimated_value_max: number | null
+          estimated_value_min: number | null
+          experience_description: string | null
+          experience_title: string | null
+          fulfilled_at: string | null
+          id: string
+          metadata: Json | null
+          package_id: string
+          package_name: string
+          partner_id: string | null
+          revealed_at: string | null
+          status: string
+          updated_at: string
+          user_feedback: string | null
+          user_id: string
+          user_rating: number | null
+        }
+        Insert: {
+          created_at?: string
+          credits_spent: number
+          estimated_value_max?: number | null
+          estimated_value_min?: number | null
+          experience_description?: string | null
+          experience_title?: string | null
+          fulfilled_at?: string | null
+          id?: string
+          metadata?: Json | null
+          package_id: string
+          package_name: string
+          partner_id?: string | null
+          revealed_at?: string | null
+          status?: string
+          updated_at?: string
+          user_feedback?: string | null
+          user_id: string
+          user_rating?: number | null
+        }
+        Update: {
+          created_at?: string
+          credits_spent?: number
+          estimated_value_max?: number | null
+          estimated_value_min?: number | null
+          experience_description?: string | null
+          experience_title?: string | null
+          fulfilled_at?: string | null
+          id?: string
+          metadata?: Json | null
+          package_id?: string
+          package_name?: string
+          partner_id?: string | null
+          revealed_at?: string | null
+          status?: string
+          updated_at?: string
+          user_feedback?: string | null
+          user_id?: string
+          user_rating?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "surprise_me_requests_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       travel_dna_profile: {
         Row: {
           accommodation_tier: string | null
@@ -2405,6 +2476,54 @@ export type Database = {
           created_at?: string
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_surprise_preferences: {
+        Row: {
+          accessibility_needs: string | null
+          budget_comfort_level: string | null
+          created_at: string
+          dietary_restrictions: string[] | null
+          excluded_categories: string[] | null
+          id: string
+          notes: string | null
+          preferred_categories: string[] | null
+          preferred_days: string[] | null
+          surprise_frequency: string | null
+          travel_radius_km: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accessibility_needs?: string | null
+          budget_comfort_level?: string | null
+          created_at?: string
+          dietary_restrictions?: string[] | null
+          excluded_categories?: string[] | null
+          id?: string
+          notes?: string | null
+          preferred_categories?: string[] | null
+          preferred_days?: string[] | null
+          surprise_frequency?: string | null
+          travel_radius_km?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accessibility_needs?: string | null
+          budget_comfort_level?: string | null
+          created_at?: string
+          dietary_restrictions?: string[] | null
+          excluded_categories?: string[] | null
+          id?: string
+          notes?: string | null
+          preferred_categories?: string[] | null
+          preferred_days?: string[] | null
+          surprise_frequency?: string | null
+          travel_radius_km?: number | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []

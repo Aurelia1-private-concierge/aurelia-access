@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Plane, Ship, Shield, Truck, Globe, Utensils, ArrowRight } from "lucide-react";
-import { partnersData, getAllCategories } from "@/lib/partners-data";
+import { partnersData, getCategories } from "@/lib/partners-data";
 
 const categoryIcons: Record<string, typeof Plane> = {
   "Private Aviation": Plane,
@@ -13,7 +13,7 @@ const categoryIcons: Record<string, typeof Plane> = {
 };
 
 const PartnersSection = () => {
-  const categories = getAllCategories();
+  const categories = getCategories();
 
   return (
     <section id="partners" className="py-24 md:py-32 relative overflow-hidden">

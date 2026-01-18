@@ -169,17 +169,17 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
         >
           <Link 
             to="/auth" 
-            className="group relative w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 bg-primary text-primary-foreground text-xs font-medium tracking-[0.25em] uppercase transition-all duration-500 hover:bg-primary/90 btn-luxury gold-glow-hover overflow-hidden text-center"
+            className="group relative w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 bg-primary text-primary-foreground text-xs font-medium tracking-[0.25em] uppercase transition-all duration-300 hover:bg-primary/90 hover:scale-105 hover:shadow-[0_8px_30px_-6px_hsl(var(--primary)/0.5)] active:scale-95 btn-luxury gold-glow-hover overflow-hidden text-center rounded-sm"
           >
             <span className="relative z-10">{campaign.ctaText || t("hero.joinButton")}</span>
           </Link>
 
           <a 
             href="#experiences" 
-            className="group w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 border border-foreground/20 text-foreground text-xs font-medium tracking-[0.25em] uppercase hover:border-primary/40 hover:bg-primary/5 transition-all duration-500 flex items-center justify-center gap-3"
+            className="group w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 border-2 border-foreground/30 text-foreground text-xs font-medium tracking-[0.25em] uppercase hover:border-primary hover:bg-primary/10 hover:scale-105 hover:shadow-[0_8px_30px_-6px_hsl(var(--primary)/0.3)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 rounded-sm"
           >
             <span>{t("hero.discoverButton")}</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-500" />
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
           </a>
         </motion.div>
 
@@ -192,11 +192,11 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
         >
           <Link 
             to="/waitlist" 
-            className="inline-flex items-center gap-2 text-xs text-foreground/50 hover:text-primary transition-colors duration-300 tracking-wide"
+            className="inline-flex items-center gap-2 text-xs text-foreground/60 hover:text-primary transition-all duration-300 tracking-wide group px-4 py-2 rounded-full hover:bg-primary/10 border border-transparent hover:border-primary/30"
           >
             <span>Not ready to join?</span>
-            <span className="text-primary/80 hover:text-primary">Join the waitlist</span>
-            <ArrowRight className="w-3 h-3" />
+            <span className="text-primary font-medium underline underline-offset-4 decoration-primary/50 group-hover:decoration-primary">Join the waitlist</span>
+            <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>
 

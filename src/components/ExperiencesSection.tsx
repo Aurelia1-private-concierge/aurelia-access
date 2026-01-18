@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { Check, ArrowRight } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -41,7 +41,10 @@ const ExperiencesSection = () => {
               </motion.li>
             ))}
           </ul>
-          <Link to="/services" className="inline-block text-foreground text-sm tracking-widest uppercase border-b border-primary pb-1 hover:text-primary transition-colors pt-6">{t("experiences.viewAcquisitions")}</Link>
+          <Link to="/services" className="group inline-flex items-center gap-2 text-foreground text-sm tracking-widest uppercase border-2 border-primary/50 px-6 py-3 mt-6 hover:bg-primary hover:text-primary-foreground hover:scale-105 hover:shadow-[0_8px_30px_-6px_hsl(var(--primary)/0.4)] active:scale-95 transition-all duration-300 rounded-sm">
+            {t("experiences.viewAcquisitions")}
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </Link>
         </motion.div>
         <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} style={{ y: imagesY }} className="relative order-1 lg:order-2">
           <div className="grid grid-cols-2 gap-4">

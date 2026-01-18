@@ -1903,6 +1903,101 @@ export type Database = {
         }
         Relationships: []
       }
+      scheduled_scrape_jobs: {
+        Row: {
+          created_at: string
+          extraction_schema: Json | null
+          extraction_type: string | null
+          id: string
+          is_active: boolean | null
+          last_result: Json | null
+          last_run_at: string | null
+          next_run_at: string
+          run_count: number | null
+          schedule_type: string
+          updated_at: string
+          url: string
+          user_id: string
+          webhook_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          extraction_schema?: Json | null
+          extraction_type?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_result?: Json | null
+          last_run_at?: string | null
+          next_run_at: string
+          run_count?: number | null
+          schedule_type: string
+          updated_at?: string
+          url: string
+          user_id: string
+          webhook_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          extraction_schema?: Json | null
+          extraction_type?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_result?: Json | null
+          last_run_at?: string | null
+          next_run_at?: string
+          run_count?: number | null
+          schedule_type?: string
+          updated_at?: string
+          url?: string
+          user_id?: string
+          webhook_url?: string | null
+        }
+        Relationships: []
+      }
+      scrape_results: {
+        Row: {
+          created_at: string
+          extracted_data: Json | null
+          extraction_type: string | null
+          id: string
+          job_id: string | null
+          metadata: Json | null
+          raw_data: Json | null
+          url: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          extracted_data?: Json | null
+          extraction_type?: string | null
+          id?: string
+          job_id?: string | null
+          metadata?: Json | null
+          raw_data?: Json | null
+          url: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          extracted_data?: Json | null
+          extraction_type?: string | null
+          id?: string
+          job_id?: string | null
+          metadata?: Json | null
+          raw_data?: Json | null
+          url?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scrape_results_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "scheduled_scrape_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       secure_messages: {
         Row: {
           attachments: string[] | null

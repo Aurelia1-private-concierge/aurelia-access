@@ -343,10 +343,47 @@ const UnderConstruction = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-lg md:text-xl lg:text-2xl text-white/50 mb-16 max-w-2xl mx-auto font-light leading-relaxed"
+            className="text-lg md:text-xl lg:text-2xl text-white/50 mb-8 max-w-3xl mx-auto font-light leading-relaxed"
           >
-            A bespoke experience is being curated for the most discerning individuals. 
-            <span className="text-primary/80"> Reserve your place.</span>
+            The world's most comprehensive ultra-premium concierge service, 
+            crafted for those who demand nothing less than perfection.
+          </motion.p>
+          
+          {/* Service highlights */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.65 }}
+            className="flex flex-wrap justify-center gap-4 md:gap-6 mb-16 max-w-4xl mx-auto"
+          >
+            {[
+              "Private Aviation",
+              "Superyacht Charters", 
+              "Elite Security",
+              "Luxury Real Estate",
+              "Global Access",
+              "24/7 Dedicated Team"
+            ].map((service, i) => (
+              <motion.span
+                key={service}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.7 + i * 0.1 }}
+                className="px-4 py-2 text-xs md:text-sm tracking-widest uppercase text-white/40 border border-white/10 rounded-full bg-white/5 backdrop-blur-sm hover:text-primary/80 hover:border-primary/30 transition-colors duration-300"
+              >
+                {service}
+              </motion.span>
+            ))}
+          </motion.div>
+          
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.75 }}
+            className="text-base md:text-lg text-white/30 mb-16 max-w-2xl mx-auto font-light"
+          >
+            From impossible reservations to seamless global travel—your every desire, 
+            <span className="text-primary/70"> anticipated and fulfilled.</span>
           </motion.p>
 
           {/* Countdown Timer - Luxury style */}

@@ -79,9 +79,9 @@ const Footer = () => {
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
             >
-              <h4 className="text-xs font-medium tracking-[0.2em] uppercase text-foreground mb-6">
+              <p className="text-xs font-medium tracking-[0.2em] uppercase text-foreground mb-6" role="heading" aria-level={2}>
                 {t("footer.navigate")}
-              </h4>
+              </p>
               <ul className="space-y-3">
                 <li>
                   <Link to="/services" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
@@ -123,9 +123,9 @@ const Footer = () => {
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
             >
-              <h4 className="text-xs font-medium tracking-[0.2em] uppercase text-foreground mb-6">
+              <p className="text-xs font-medium tracking-[0.2em] uppercase text-foreground mb-6" role="heading" aria-level={2}>
                 {t("footer.contact")}
-              </h4>
+              </p>
               <ul className="space-y-3 text-sm text-muted-foreground">
                 <li>
                   <a href="mailto:concierge@aurelia-privateconcierge.com" className="hover:text-foreground transition-colors duration-300">

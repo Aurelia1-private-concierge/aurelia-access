@@ -33,7 +33,8 @@ serve(async (req) => {
     
     if (!response.ok) {
       if (response.status === 404) {
-        throw new Error(`Country or region not found`);
+        const searchTerm = country || region;
+        throw new Error(`"${searchTerm}" not found. Please enter a country name (e.g., "United Kingdom", "France", "Japan") — not a city.`);
       }
       throw new Error(`Failed to fetch country data: ${response.statusText}`);
     }

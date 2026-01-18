@@ -116,6 +116,11 @@ export function useSmartIntegrations() {
       
       if (error) throw error;
       
+      // Check if the response contains an error message
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+      
       if (data.country) {
         setCountryData(data.country);
       }
@@ -123,8 +128,8 @@ export function useSmartIntegrations() {
     } catch (error: any) {
       console.error('Country fetch error:', error);
       toast({
-        title: 'Country Error',
-        description: error.message || 'Failed to fetch country data',
+        title: 'Country Not Found',
+        description: error.message || 'Failed to fetch country data. Please enter a valid country name.',
         variant: 'destructive',
       });
       return null;

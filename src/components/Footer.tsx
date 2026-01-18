@@ -133,7 +133,7 @@ const Footer = () => {
                   </a>
                 </li>
                 <li>London • Geneva • Singapore</li>
-                <li className="text-xs text-muted-foreground/80">
+                <li className="text-xs text-muted-foreground">
                   Aurelia Holdings Ltd.<br />
                   London, United Kingdom
                 </li>

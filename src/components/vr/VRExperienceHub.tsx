@@ -13,8 +13,9 @@ import {
 } from "@react-three/drei";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Maximize2, RotateCcw, Plane, Anchor, Building2, Gem, Sparkles as SparklesIcon } from "lucide-react";
+import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import * as THREE from "three";
-
 // Floating luxury orb
 const LuxuryOrb = ({ position, color, scale = 1 }: { position: [number, number, number]; color: string; scale?: number }) => {
   const meshRef = useRef<THREE.Mesh>(null);
@@ -278,7 +279,14 @@ const VRExperienceHub = ({ isOpen, onClose }: VRExperienceHubProps) => {
                 <p className="text-xs text-muted-foreground mb-4">
                   {experiences.find(e => e.id === activeExperience)?.description}
                 </p>
-                <button className="w-full py-2 px-4 bg-primary text-primary-foreground text-xs font-medium rounded-lg hover:bg-primary/90 transition-colors">
+                <button 
+                  onClick={() => {
+                    toast.success("VR Experience launching...", {
+                      description: "Please ensure your VR headset is connected or continue in browser mode."
+                    });
+                  }}
+                  className="w-full py-2 px-4 bg-primary text-primary-foreground text-xs font-medium rounded-lg hover:bg-primary/90 transition-colors"
+                >
                   Enter VR Experience
                 </button>
               </motion.div>

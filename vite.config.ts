@@ -41,14 +41,12 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
-        // Exclude large files from precaching - they'll use runtime caching
-        globIgnores: ["**/*.mp4", "**/*.jpg", "**/*.jpeg", "**/*.webp", "**/*.png"],
-        maximumFileSizeToCacheInBytes: 2 * 1024 * 1024, // 2MB - reduced to avoid cache issues
-        // Skip waiting and claim clients immediately
+        globPatterns: ["**/*.{js,css,html,ico,svg,woff2}"],
+        // Exclude large files from precaching
+        globIgnores: ["**/*.mp4", "**/*.jpg", "**/*.jpeg", "**/*.webp", "**/*.png", "**/*.gif"],
+        maximumFileSizeToCacheInBytes: 500 * 1024, // 500KB max
         skipWaiting: true,
         clientsClaim: true,
-        // Clean up old caches
         cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
@@ -57,8 +55,9 @@ export default defineConfig(({ mode }) => ({
             options: {
               cacheName: "google-fonts-cache",
               expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365,
+                maxEntries: 5,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+                purgeOnQuotaError: true,
               },
               cacheableResponse: {
                 statuses: [0, 200],
@@ -71,8 +70,9 @@ export default defineConfig(({ mode }) => ({
             options: {
               cacheName: "gstatic-fonts-cache",
               expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365,
+                maxEntries: 5,
+                maxAgeSeconds: 60 * 60 * 24 * 30,
+                purgeOnQuotaError: true,
               },
               cacheableResponse: {
                 statuses: [0, 200],
@@ -80,14 +80,14 @@ export default defineConfig(({ mode }) => ({
             },
           },
           {
-            // Cache API responses with network-first strategy
             urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
             handler: "NetworkFirst",
             options: {
               cacheName: "api-cache",
               expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24,
+                maxEntries: 20,
+                maxAgeSeconds: 60 * 60, // 1 hour
+                purgeOnQuotaError: true,
               },
               networkTimeoutSeconds: 10,
               cacheableResponse: {
@@ -96,14 +96,14 @@ export default defineConfig(({ mode }) => ({
             },
           },
           {
-            // Cache images with stale-while-revalidate for better reliability
             urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
-            handler: "StaleWhileRevalidate",
+            handler: "NetworkFirst", // Changed from StaleWhileRevalidate
             options: {
               cacheName: "image-cache",
               expiration: {
-                maxEntries: 60,
-                maxAgeSeconds: 60 * 60 * 24 * 30,
+                maxEntries: 20,
+                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+                purgeOnQuotaError: true,
               },
               cacheableResponse: {
                 statuses: [0, 200],
@@ -111,19 +111,18 @@ export default defineConfig(({ mode }) => ({
             },
           },
           {
-            // Videos: network only to avoid cache storage issues
-            urlPattern: /\.(?:mp4|webm)$/i,
+            urlPattern: /\.(?:mp4|webm|mp3|wav)$/i,
             handler: "NetworkOnly",
           },
           {
-            // Cache page navigations for offline support
             urlPattern: ({ request }) => request.mode === 'navigate',
             handler: "NetworkFirst",
             options: {
               cacheName: "page-cache",
               expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 7,
+                maxEntries: 5,
+                maxAgeSeconds: 60 * 60 * 24,
+                purgeOnQuotaError: true,
               },
               networkTimeoutSeconds: 5,
               cacheableResponse: {

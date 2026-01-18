@@ -109,7 +109,7 @@ export const partnersData: Partner[] = [
     ],
     contactMethod: "Priority Aurelia booking portal",
     icon: Truck,
-    heroImage: "https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?w=3840&q=100&auto=format&fit=crop",
+    heroImage: "https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=3840&q=100&auto=format&fit=crop",
     heroVideo: ontargetDeliveryVideo,
     galleryImages: [
       homeRelocation,

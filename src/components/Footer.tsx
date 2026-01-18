@@ -171,7 +171,7 @@ const Footer = () => {
         {/* Legal Text Strip */}
         <div className="border-t border-border/10">
           <div className="max-w-7xl mx-auto px-6 py-4">
-            <p className="text-[10px] text-muted-foreground/80 text-center leading-relaxed">
+            <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
               {BRAND.legal.trademark} {BRAND.legal.jurisdiction}
             </p>
           </div>

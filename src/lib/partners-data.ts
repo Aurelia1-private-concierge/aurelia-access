@@ -39,8 +39,9 @@ export const partnersData: Partner[] = [
     heroVideo: chauffeurLuxuryVideo,
     galleryImages: [
       "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1920&q=100&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1920&q=100&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1920&q=100&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=100&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=100&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1920&q=100&auto=format&fit=crop",
     ],
     tagline: "Arrive in Absolute Security",
     stats: [

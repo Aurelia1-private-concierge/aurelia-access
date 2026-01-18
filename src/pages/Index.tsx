@@ -1,12 +1,13 @@
-import { useState, useCallback, useRef, lazy, Suspense, useEffect } from "react";
+import { useState, useCallback, useRef, lazy, Suspense, useEffect, startTransition } from "react";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import heroVideo from "@/assets/hero-yacht.mp4";
-import LoadingScreen from "@/components/LoadingScreen";
 import ScrollProgress from "@/components/ScrollProgress";
 import SectionDivider from "@/components/SectionDivider";
-import GA4Script from "@/components/GA4Script";
-import useBehaviorTracking from "@/hooks/useBehaviorTracking";
+
+// Defer loading screen to reduce TBT - it's not critical for LCP
+const LoadingScreen = lazy(() => import("@/components/LoadingScreen"));
+const GA4Script = lazy(() => import("@/components/GA4Script"));
 
 // Lazy load below-the-fold components to reduce initial bundle size
 const MetricsStrip = lazy(() => import("@/components/MetricsStrip"));
@@ -39,6 +40,9 @@ const ContextualSoundscapeIndicator = lazy(() => import("@/components/Contextual
 const MusicControlFAB = lazy(() => import("@/components/MusicControlFAB"));
 const PartnersSection = lazy(() => import("@/components/PartnersSection"));
 
+// Defer behavior tracking hook loading
+const useBehaviorTrackingModule = () => import("@/hooks/useBehaviorTracking");
+
 // Lazy load soundscapes hook
 const useContextualSoundscapes = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -70,20 +74,45 @@ const SectionLoader = () => (
 const Index = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [isPipEnabled, setIsPipEnabled] = useState(true);
+  const [showAmbient, setShowAmbient] = useState(false);
   const soundscapes = useContextualSoundscapes();
   const musicToggleRef = useRef<(() => void) | null>(null);
   const narratorToggleRef = useRef<(() => void) | null>(null);
 
-  // Defer behavior tracking to reduce FID - run after paint
+  // Defer ambient effects and behavior tracking to reduce TBT
   useEffect(() => {
-    const timer = requestAnimationFrame(() => {
-      // Behavior tracking will initialize on next idle
-    });
-    return () => cancelAnimationFrame(timer);
-  }, []);
+    // Use requestIdleCallback to defer non-critical initialization
+    const scheduleIdle = (callback: () => void) => {
+      if ('requestIdleCallback' in window) {
+        return (window as typeof window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback(callback, { timeout: 2000 });
+      }
+      return setTimeout(callback, 100) as unknown as number;
+    };
 
-  // Initialize behavior tracking after initial render
-  useBehaviorTracking();
+    // Defer showing ambient effects
+    const ambientId = scheduleIdle(() => {
+      startTransition(() => {
+        setShowAmbient(true);
+      });
+    });
+
+    // Defer behavior tracking initialization
+    const trackingId = scheduleIdle(() => {
+      useBehaviorTrackingModule().then(module => {
+        // Module loaded but tracking will self-initialize
+      });
+    });
+
+    return () => {
+      if ('cancelIdleCallback' in window) {
+        (window as typeof window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(ambientId);
+        (window as typeof window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(trackingId);
+      } else {
+        clearTimeout(ambientId);
+        clearTimeout(trackingId);
+      }
+    };
+  }, []);
 
   // Callbacks for voice commands
   const handleToggleMusic = useCallback(() => {
@@ -96,19 +125,27 @@ const Index = () => {
 
   return (
     <div className="min-h-[100dvh] bg-background overflow-x-hidden relative" style={{ contain: 'layout style' }}>
-      {/* GA4 Analytics */}
-      <GA4Script />
-      
-      {/* Ambient Effects - Lazy loaded */}
+      {/* GA4 Analytics - Deferred */}
       <Suspense fallback={null}>
-        <AmbientParticles />
-        <GlowingOrb className="top-1/4 -left-48" size="xl" color="gold" intensity="soft" />
-        <GlowingOrb className="top-1/2 -right-32" size="lg" color="gold" intensity="soft" />
-        <GlowingOrb className="bottom-1/4 left-1/3" size="md" color="gold" intensity="soft" />
-        <CustomCursor />
+        <GA4Script />
       </Suspense>
       
-      <LoadingScreen />
+      {/* Ambient Effects - Deferred to reduce TBT */}
+      {showAmbient && (
+        <Suspense fallback={null}>
+          <AmbientParticles />
+          <GlowingOrb className="top-1/4 -left-48" size="xl" color="gold" intensity="soft" />
+          <GlowingOrb className="top-1/2 -right-32" size="lg" color="gold" intensity="soft" />
+          <GlowingOrb className="bottom-1/4 left-1/3" size="md" color="gold" intensity="soft" />
+          <CustomCursor />
+        </Suspense>
+      )}
+      
+      {/* Loading Screen - Deferred */}
+      <Suspense fallback={null}>
+        <LoadingScreen />
+      </Suspense>
+      
       <ScrollProgress />
       <Navigation />
       

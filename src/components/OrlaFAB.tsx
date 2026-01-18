@@ -1,6 +1,6 @@
 import { motion, useAnimation } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, startTransition } from "react";
 import OrlaMiniAvatar from "@/components/orla/OrlaMiniAvatar";
 import { useAvatarStyle } from "@/hooks/useAvatarStyle";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 const OrlaFAB = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isReady, setIsReady] = useState(false);
   const { currentStyle } = useAvatarStyle();
   const { user } = useAuth();
   const controls = useAnimation();
@@ -16,9 +17,33 @@ const OrlaFAB = () => {
   
   const hasUnreadNotifications = unreadCount > 0;
 
-  // Fetch unread notifications
+  // Defer initialization to reduce TBT
   useEffect(() => {
-    if (!user) {
+    const scheduleIdle = (callback: () => void) => {
+      if ('requestIdleCallback' in window) {
+        return (window as typeof window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback(callback, { timeout: 1000 });
+      }
+      return setTimeout(callback, 50) as unknown as number;
+    };
+
+    const idleId = scheduleIdle(() => {
+      startTransition(() => {
+        setIsReady(true);
+      });
+    });
+
+    return () => {
+      if ('cancelIdleCallback' in window) {
+        (window as typeof window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(idleId);
+      } else {
+        clearTimeout(idleId);
+      }
+    };
+  }, []);
+
+  // Fetch unread notifications - defer until ready
+  useEffect(() => {
+    if (!user || !isReady) {
       setUnreadCount(0);
       return;
     }
@@ -65,15 +90,19 @@ const OrlaFAB = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user, controls]);
+  }, [user, controls, isReady]);
 
   // Trigger initial entrance animation
   useEffect(() => {
+    if (!isReady) return;
     const timer = setTimeout(() => {
       controls.start({ scale: 1 });
-    }, 2500);
+    }, 500);
     return () => clearTimeout(timer);
-  }, [controls]);
+  }, [controls, isReady]);
+
+  // Don't render until ready to avoid blocking main thread
+  if (!isReady) return null;
   
   return (
     <Link to="/orla">
@@ -88,6 +117,7 @@ const OrlaFAB = () => {
         style={{
           background: `linear-gradient(135deg, ${currentStyle.colors.primary}E6, ${currentStyle.colors.primary})`,
           boxShadow: `0 0 40px ${currentStyle.colors.glow}`,
+          willChange: 'transform',
         }}
       >
         {/* Notification pulse ring effect */}

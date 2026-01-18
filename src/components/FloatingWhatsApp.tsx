@@ -1,14 +1,41 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react";
 
 const FloatingWhatsApp = () => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
-  // Detect mobile device
+  // Defer initialization to reduce TBT
   useEffect(() => {
+    const scheduleIdle = (callback: () => void) => {
+      if ('requestIdleCallback' in window) {
+        return (window as typeof window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback(callback, { timeout: 1500 });
+      }
+      return setTimeout(callback, 100) as unknown as number;
+    };
+
+    const idleId = scheduleIdle(() => {
+      startTransition(() => {
+        setIsReady(true);
+      });
+    });
+
+    return () => {
+      if ('cancelIdleCallback' in window) {
+        (window as typeof window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(idleId);
+      } else {
+        clearTimeout(idleId);
+      }
+    };
+  }, []);
+
+  // Detect mobile device - only when ready
+  useEffect(() => {
+    if (!isReady) return;
+    
     const checkMobile = () => {
       const userAgent = navigator.userAgent || navigator.vendor;
       const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
@@ -16,17 +43,22 @@ const FloatingWhatsApp = () => {
     };
     
     checkMobile();
-    window.addEventListener('resize', checkMobile);
+    window.addEventListener('resize', checkMobile, { passive: true });
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  }, [isReady]);
 
-  // Show tooltip after 5 seconds
+  // Show tooltip after 5 seconds - only when ready
   useEffect(() => {
+    if (!isReady) return;
+    
     const timer = setTimeout(() => {
       if (!isDismissed) setIsTooltipVisible(true);
     }, 5000);
     return () => clearTimeout(timer);
-  }, [isDismissed]);
+  }, [isDismissed, isReady]);
+
+  // Don't render until ready to avoid blocking main thread
+  if (!isReady) return null;
 
   // Use wa.me for universal compatibility (works on both mobile and desktop)
   const whatsappUrl = "https://wa.me/447309935106?text=Hello%20Aurelia%20Concierge";
@@ -67,10 +99,11 @@ const FloatingWhatsApp = () => {
         rel="noopener noreferrer"
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 2, type: "spring", stiffness: 260, damping: 20 }}
+        transition={{ delay: 0.5, type: "spring", stiffness: 260, damping: 20 }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         className="relative group"
+        style={{ willChange: 'transform' }}
         onMouseEnter={() => !isDismissed && setIsTooltipVisible(true)}
         aria-label="Contact us on WhatsApp"
       >

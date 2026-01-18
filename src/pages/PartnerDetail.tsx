@@ -1,26 +1,30 @@
 import { useParams, Link } from "react-router-dom";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowLeft, MapPin, Clock, Star, CheckCircle, ArrowRight, Sparkles, Shield, Globe2 } from "lucide-react";
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import { ArrowLeft, MapPin, Clock, Star, CheckCircle, ArrowRight, Sparkles, Shield, Globe2, Play, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { getPartnerById, getPartnersByCategory } from "@/lib/partners-data";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 const PartnerDetail = () => {
   const { partnerId } = useParams<{ partnerId: string }>();
   const partner = partnerId ? getPartnerById(partnerId) : undefined;
   const heroRef = useRef<HTMLDivElement>(null);
+  const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
   
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"]
   });
   
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.1]);
-  const textY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+  const heroOpacity = useTransform(smoothProgress, [0, 0.5], [1, 0]);
+  const heroScale = useTransform(smoothProgress, [0, 0.5], [1, 1.15]);
+  const textY = useTransform(smoothProgress, [0, 0.5], [0, 80]);
+  const overlayOpacity = useTransform(smoothProgress, [0, 0.4], [0.4, 0.9]);
 
   if (!partner) {
     return (
@@ -53,16 +57,28 @@ const PartnerDetail = () => {
           className="absolute inset-0"
         >
           {partner.heroVideo ? (
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="absolute inset-0 w-full h-full object-cover"
-              poster={partner.heroImage}
-            >
-              <source src={partner.heroVideo} type="video/mp4" />
-            </video>
+            <>
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+                poster={partner.heroImage}
+              >
+                <source src={partner.heroVideo} type="video/mp4" />
+              </video>
+              {/* Video play indicator */}
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1 }}
+                onClick={() => setIsVideoPlaying(!isVideoPlaying)}
+                className="absolute bottom-8 right-8 z-30 w-12 h-12 rounded-full bg-background/30 backdrop-blur-md border border-primary/20 flex items-center justify-center hover:bg-background/50 transition-all group"
+              >
+                <Play className={`w-5 h-5 text-primary transition-transform ${isVideoPlaying ? 'opacity-50' : ''}`} fill={isVideoPlaying ? 'currentColor' : 'none'} />
+              </motion.button>
+            </>
           ) : (
             <img 
               src={partner.heroImage}
@@ -71,31 +87,53 @@ const PartnerDetail = () => {
             />
           )}
           {/* Sophisticated Gradient Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/20 to-background" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-transparent to-transparent" />
+          <motion.div 
+            style={{ opacity: overlayOpacity }}
+            className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/30 to-background" 
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/20 to-transparent" />
+          
+          {/* Film grain effect */}
+          <div className="absolute inset-0 film-grain pointer-events-none" />
         </motion.div>
         
-        {/* Floating Particles Effect */}
+        {/* Floating Particles Effect - Enhanced */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(20)].map((_, i) => (
+          {[...Array(30)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-1 h-1 bg-primary/30 rounded-full"
+              className="absolute rounded-full"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
+                width: `${2 + Math.random() * 4}px`,
+                height: `${2 + Math.random() * 4}px`,
+                background: `radial-gradient(circle, hsl(var(--primary) / ${0.3 + Math.random() * 0.4}), transparent)`,
               }}
               animate={{
-                y: [-20, 20],
-                opacity: [0.2, 0.8, 0.2],
+                y: [-30, 30],
+                x: [-10, 10],
+                opacity: [0.2, 0.6, 0.2],
+                scale: [1, 1.2, 1],
               }}
               transition={{
-                duration: 3 + Math.random() * 2,
+                duration: 4 + Math.random() * 4,
                 repeat: Infinity,
-                delay: Math.random() * 2,
+                delay: Math.random() * 3,
+                ease: "easeInOut",
               }}
             />
           ))}
+        </div>
+
+        {/* Decorative corner accents */}
+        <div className="absolute top-0 left-0 w-40 h-40 z-20 pointer-events-none">
+          <div className="absolute top-8 left-8 w-px h-16 bg-gradient-to-b from-primary/40 to-transparent" />
+          <div className="absolute top-8 left-8 w-16 h-px bg-gradient-to-r from-primary/40 to-transparent" />
+        </div>
+        <div className="absolute top-0 right-0 w-40 h-40 z-20 pointer-events-none">
+          <div className="absolute top-8 right-8 w-px h-16 bg-gradient-to-b from-primary/40 to-transparent" />
+          <div className="absolute top-8 right-8 w-16 h-px bg-gradient-to-l from-primary/40 to-transparent" />
         </div>
 
         {/* Hero Content */}
@@ -246,33 +284,65 @@ const PartnerDetail = () => {
                 </div>
               </motion.div>
 
-              {/* Gallery Grid */}
+              {/* Interactive Gallery Grid */}
               <motion.div
                 initial={{ opacity: 0, x: 50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8 }}
-                className="grid grid-cols-2 gap-4"
+                className="space-y-4"
               >
-                {partner.galleryImages.map((img, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    className={`relative overflow-hidden rounded-2xl ${
-                      index === 0 ? 'col-span-2 aspect-[16/9]' : 'aspect-square'
-                    }`}
-                  >
-                    <img
-                      src={img}
-                      alt={`${partner.name} gallery ${index + 1}`}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
-                  </motion.div>
-                ))}
+                {/* Main featured image */}
+                <motion.div
+                  key={activeGalleryIndex}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="relative aspect-[16/10] overflow-hidden rounded-3xl"
+                >
+                  <img
+                    src={partner.galleryImages[activeGalleryIndex]}
+                    alt={`${partner.name} gallery ${activeGalleryIndex + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
+                  
+                  {/* Image counter */}
+                  <div className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full bg-background/60 backdrop-blur-md border border-primary/20">
+                    <span className="text-xs font-medium text-primary">
+                      {activeGalleryIndex + 1} / {partner.galleryImages.length}
+                    </span>
+                  </div>
+                </motion.div>
+                
+                {/* Thumbnail strip */}
+                <div className="grid grid-cols-4 gap-3">
+                  {partner.galleryImages.map((img, index) => (
+                    <motion.button
+                      key={index}
+                      onClick={() => setActiveGalleryIndex(index)}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`relative aspect-square overflow-hidden rounded-xl transition-all duration-300 ${
+                        index === activeGalleryIndex 
+                          ? 'ring-2 ring-primary ring-offset-2 ring-offset-background' 
+                          : 'opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      <img
+                        src={img}
+                        alt={`${partner.name} thumbnail ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                      {index === activeGalleryIndex && (
+                        <motion.div 
+                          layoutId="activeIndicator"
+                          className="absolute inset-0 bg-primary/10"
+                        />
+                      )}
+                    </motion.button>
+                  ))}
+                </div>
               </motion.div>
             </div>
           </div>
@@ -375,6 +445,24 @@ const PartnerDetail = () => {
               backgroundSize: '40px 40px'
             }} />
           </div>
+          
+          {/* Animated gradient orbs */}
+          <motion.div
+            animate={{ 
+              scale: [1, 1.2, 1],
+              opacity: [0.1, 0.2, 0.1],
+            }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl"
+          />
+          <motion.div
+            animate={{ 
+              scale: [1.2, 1, 1.2],
+              opacity: [0.15, 0.1, 0.15],
+            }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute bottom-1/4 -right-32 w-80 h-80 bg-primary/10 rounded-full blur-3xl"
+          />
 
           <div className="container mx-auto px-4 lg:px-8">
             <motion.div
@@ -385,16 +473,24 @@ const PartnerDetail = () => {
               className="relative max-w-4xl mx-auto text-center"
             >
               {/* Glowing Orb */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+              <motion.div 
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl" 
+              />
               
               <div className="relative">
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 mb-8">
-                  <Icon className="w-10 h-10 text-primary" />
-                </div>
+                <motion.div 
+                  whileHover={{ scale: 1.05, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-primary/30 to-primary/5 mb-8 border border-primary/20"
+                >
+                  <Icon className="w-12 h-12 text-primary" />
+                </motion.div>
                 
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-extralight text-foreground mb-6 leading-tight">
                   Ready to Experience <br />
-                  <span className="text-primary">{partner.name}</span>?
+                  <span className="text-gradient-gold">{partner.name}</span>?
                 </h2>
                 
                 <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto font-light">
@@ -403,13 +499,15 @@ const PartnerDetail = () => {
                 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link to="/contact">
-                    <Button size="lg" className="bg-primary hover:bg-primary/90 min-w-[200px] h-14 text-base group">
+                    <Button size="lg" className="bg-primary hover:bg-primary/90 min-w-[220px] h-16 text-base group btn-luxury gold-glow-hover">
+                      <Phone className="w-5 h-5 mr-3" />
                       Contact Concierge
                       <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </Link>
                   <Link to="/orla">
-                    <Button size="lg" variant="outline" className="border-primary/30 hover:bg-primary/10 min-w-[200px] h-14 text-base">
+                    <Button size="lg" variant="outline" className="border-primary/30 hover:bg-primary/10 min-w-[220px] h-16 text-base group">
+                      <Sparkles className="w-5 h-5 mr-3" />
                       Speak with Orla AI
                     </Button>
                   </Link>

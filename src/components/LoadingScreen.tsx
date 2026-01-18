@@ -46,12 +46,13 @@ const LoadingScreen = () => {
     // Set loading to false after animation completes
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 3200);
+    }, 2500);
 
-    // Fallback: force unmount after 5 seconds if animation doesn't complete
+    // Fallback: force unmount after 3.5 seconds if animation doesn't complete
     const fallbackTimer = setTimeout(() => {
+      setIsLoading(false);
       setShouldRender(false);
-    }, 5000);
+    }, 3500);
 
     return () => {
       clearTimeout(timer);

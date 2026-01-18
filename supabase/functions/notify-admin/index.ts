@@ -2,7 +2,15 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
-const ADMIN_EMAIL = "Tye3to1@outlook.com";
+
+// Get admin email from environment variable
+const getAdminEmail = (): string => {
+  const email = Deno.env.get("ADMIN_NOTIFICATION_EMAIL");
+  if (!email) {
+    throw new Error("ADMIN_NOTIFICATION_EMAIL environment variable is not configured");
+  }
+  return email;
+};
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -23,6 +31,28 @@ interface NotifyAdminRequest {
     description?: string;
   };
 }
+
+// HTML escape function to prevent XSS attacks
+const escapeHtml = (text: string | undefined | null): string => {
+  if (!text) return "";
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+};
+
+// Sanitize URL to prevent javascript: protocol injection
+const sanitizeUrl = (url: string | undefined | null): string => {
+  if (!url) return "";
+  const sanitized = escapeHtml(url);
+  // Only allow http/https URLs
+  if (sanitized.match(/^https?:\/\//i)) {
+    return sanitized;
+  }
+  return "";
+};
 
 const getContactFormHtml = (data: NotifyAdminRequest["data"]) => `
   <!DOCTYPE html>
@@ -52,21 +82,21 @@ const getContactFormHtml = (data: NotifyAdminRequest["data"]) => `
         <h1>New Contact Form Submission</h1>
         <div class="field">
           <div class="field-label">Name</div>
-          <div class="field-value">${data.name || "N/A"}</div>
+          <div class="field-value">${escapeHtml(data.name) || "N/A"}</div>
         </div>
         <div class="field">
           <div class="field-label">Email</div>
-          <div class="field-value">${data.email || "N/A"}</div>
+          <div class="field-value">${escapeHtml(data.email) || "N/A"}</div>
         </div>
         ${data.phone ? `
         <div class="field">
           <div class="field-label">Phone</div>
-          <div class="field-value">${data.phone}</div>
+          <div class="field-value">${escapeHtml(data.phone)}</div>
         </div>
         ` : ''}
         <div class="field">
           <div class="field-label">Message</div>
-          <div class="message-box">${data.message || "No message provided"}</div>
+          <div class="message-box">${escapeHtml(data.message) || "No message provided"}</div>
         </div>
       </div>
       <div class="footer">
@@ -77,7 +107,10 @@ const getContactFormHtml = (data: NotifyAdminRequest["data"]) => `
   </html>
 `;
 
-const getPartnerApplicationHtml = (data: NotifyAdminRequest["data"]) => `
+const getPartnerApplicationHtml = (data: NotifyAdminRequest["data"]) => {
+  const websiteUrl = sanitizeUrl(data.website);
+  
+  return `
   <!DOCTYPE html>
   <html>
   <head>
@@ -108,38 +141,38 @@ const getPartnerApplicationHtml = (data: NotifyAdminRequest["data"]) => `
         <h1>New Partner Application</h1>
         <div class="field">
           <div class="field-label">Company Name</div>
-          <div class="field-value">${data.companyName || "N/A"}</div>
+          <div class="field-value">${escapeHtml(data.companyName) || "N/A"}</div>
         </div>
         <div class="field">
           <div class="field-label">Contact Name</div>
-          <div class="field-value">${data.contactName || "N/A"}</div>
+          <div class="field-value">${escapeHtml(data.contactName) || "N/A"}</div>
         </div>
         <div class="field">
           <div class="field-label">Email</div>
-          <div class="field-value">${data.email || "N/A"}</div>
+          <div class="field-value">${escapeHtml(data.email) || "N/A"}</div>
         </div>
         ${data.phone ? `
         <div class="field">
           <div class="field-label">Phone</div>
-          <div class="field-value">${data.phone}</div>
+          <div class="field-value">${escapeHtml(data.phone)}</div>
         </div>
         ` : ''}
-        ${data.website ? `
+        ${websiteUrl ? `
         <div class="field">
           <div class="field-label">Website</div>
-          <div class="field-value"><a href="${data.website}" style="color: #D4AF37;">${data.website}</a></div>
+          <div class="field-value"><a href="${websiteUrl}" style="color: #D4AF37;">${websiteUrl}</a></div>
         </div>
         ` : ''}
         <div class="field">
           <div class="field-label">Service Categories</div>
           <div class="categories">
-            ${(data.categories || []).map(cat => `<span class="category-tag">${cat.replace(/_/g, ' ')}</span>`).join('')}
+            ${(data.categories || []).map(cat => `<span class="category-tag">${escapeHtml(cat.replace(/_/g, ' '))}</span>`).join('')}
           </div>
         </div>
         ${data.description ? `
         <div class="field">
           <div class="field-label">Company Description</div>
-          <div class="description-box">${data.description}</div>
+          <div class="description-box">${escapeHtml(data.description)}</div>
         </div>
         ` : ''}
         <center>
@@ -153,6 +186,7 @@ const getPartnerApplicationHtml = (data: NotifyAdminRequest["data"]) => `
   </body>
   </html>
 `;
+};
 
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
@@ -160,6 +194,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    const adminEmail = getAdminEmail();
     const { type, data }: NotifyAdminRequest = await req.json();
 
     if (!type || !data) {
@@ -174,11 +209,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     switch (type) {
       case "contact_form":
-        subject = `New Contact Form Submission from ${data.name || "Unknown"}`;
+        subject = `New Contact Form Submission from ${escapeHtml(data.name) || "Unknown"}`;
         html = getContactFormHtml(data);
         break;
       case "partner_application":
-        subject = `New Partner Application: ${data.companyName || "Unknown Company"}`;
+        subject = `New Partner Application: ${escapeHtml(data.companyName) || "Unknown Company"}`;
         html = getPartnerApplicationHtml(data);
         break;
       default:
@@ -188,11 +223,11 @@ const handler = async (req: Request): Promise<Response> => {
         );
     }
 
-    console.log(`Sending ${type} notification to admin: ${ADMIN_EMAIL}`);
+    console.log(`Sending ${type} notification to admin`);
 
     const emailResponse = await resend.emails.send({
       from: "Aurelia <notifications@aurelia-privateconcierge.com>",
-      to: [ADMIN_EMAIL],
+      to: [adminEmail],
       subject: subject,
       html: html,
     });

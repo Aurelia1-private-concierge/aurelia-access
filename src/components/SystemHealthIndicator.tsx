@@ -52,6 +52,7 @@ export const SystemHealthIndicator = () => {
       {/* Compact indicator - positioned at bottom left, above other elements */}
       <motion.button
         onClick={() => setIsExpanded(true)}
+        aria-label="View system health status"
         className={`fixed bottom-32 left-4 z-40 p-2.5 rounded-full border backdrop-blur-xl shadow-lg ${healthColors[overallHealth]} hidden md:flex items-center gap-2`}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}

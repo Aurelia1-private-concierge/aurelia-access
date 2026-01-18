@@ -89,6 +89,7 @@ const VideoPreviewModal = ({
                 {/* Play/Pause Button */}
                 <button
                   onClick={togglePlay}
+                  aria-label={isPlaying ? "Pause video" : "Play video"}
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-primary hover:bg-primary/30 transition-colors"
                 >
                   {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 fill-current" />}
@@ -98,6 +99,7 @@ const VideoPreviewModal = ({
                 <div className="absolute bottom-4 right-4 flex gap-2">
                   <button
                     onClick={toggleMute}
+                    aria-label={isMuted ? "Unmute video" : "Mute video"}
                     className="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors"
                   >
                     {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
@@ -113,6 +115,7 @@ const VideoPreviewModal = ({
               {/* Close Button */}
               <button
                 onClick={onClose}
+                aria-label="Close video modal"
                 className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors"
               >
                 <X className="w-4 h-4" />
@@ -205,7 +208,7 @@ const ComingSoonCard = ({
             onChange={(e) => setEmail(e.target.value)}
             className="h-8 text-xs bg-secondary/50 border-border/30"
           />
-          <Button type="submit" size="sm" variant="outline" className="h-8 px-3 text-xs border-primary/30 text-primary hover:bg-primary/10">
+          <Button type="submit" size="sm" variant="outline" className="h-8 px-3 text-xs border-primary/30 text-primary hover:bg-primary/10" aria-label="Subscribe for early access">
             <Bell className="w-3 h-3" />
           </Button>
         </form>

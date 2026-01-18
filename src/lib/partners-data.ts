@@ -65,12 +65,12 @@ export const partnersData: Partner[] = [
     highlights: ["1-4 hour metropolitan delivery", "Real-time AI tracking", "Guaranteed discretion"],
     contactMethod: "API integration or concierge",
     icon: Truck,
-    heroImage: "https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=3840&q=100&auto=format&fit=crop",
-    heroVideo: heroVideoExtended,
+    heroImage: "https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=3840&q=100&auto=format&fit=crop",
     galleryImages: [
       "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=1920&q=100&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1580674285054-bed31e145f59?w=1920&q=100&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=1920&q=100&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=1920&q=100&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=100&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=100&auto=format&fit=crop",
     ],
     tagline: "Precision. Discretion. Delivered.",
     stats: [

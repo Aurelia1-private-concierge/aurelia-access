@@ -176,10 +176,10 @@ const MembershipTiersPreview = () => {
               {/* CTA */}
               <Link
                 to="/auth"
-                className={`block w-full py-3 text-center text-xs tracking-[0.2em] uppercase transition-all duration-300 ${
+                className={`block w-full py-4 text-center text-sm font-semibold tracking-[0.15em] uppercase transition-all duration-300 rounded-md cursor-pointer ${
                   tier.highlighted
-                    ? 'bg-primary text-primary-foreground hover:bg-primary/90 gold-glow-hover'
-                    : 'border border-border/30 text-foreground hover:border-primary/40 hover:bg-primary/5'
+                    ? 'bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] hover:-translate-y-0.5 shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.6)] hover:shadow-[0_8px_30px_-4px_hsl(var(--primary)/0.7)] active:scale-[0.98]'
+                    : 'bg-foreground/10 border-2 border-foreground/30 text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary hover:scale-[1.02] hover:-translate-y-0.5 shadow-[0_4px_15px_-4px_hsl(var(--foreground)/0.2)] hover:shadow-[0_8px_25px_-4px_hsl(var(--primary)/0.5)] active:scale-[0.98]'
                 }`}
               >
                 {tier.basePrice === 0 ? (t("membership.requestAccess") || "Request Access") : (t("membership.applyNow") || "Apply Now")}

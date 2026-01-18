@@ -70,6 +70,7 @@ import AuditLogsPanel from "@/components/admin/AuditLogsPanel";
 import PartnerDiscoveryPanel from "@/components/admin/PartnerDiscoveryPanel";
 import EncryptionManagementPanel from "@/components/admin/EncryptionManagementPanel";
 import ColdOutreachPanel from "@/components/admin/ColdOutreachPanel";
+import { WebCrawlerPanel } from "@/components/admin/WebCrawlerPanel";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -329,6 +330,7 @@ const Admin = () => {
             <TabsTrigger value="requests">Requests</TabsTrigger>
             <TabsTrigger value="scheduler">Scheduler</TabsTrigger>
             <TabsTrigger value="integrations">Integrations</TabsTrigger>
+            <TabsTrigger value="crawler">Crawler</TabsTrigger>
             <TabsTrigger value="auditlogs">Audit Logs</TabsTrigger>
             <TabsTrigger value="encryption">Encryption</TabsTrigger>
           </TabsList>
@@ -339,6 +341,14 @@ const Admin = () => {
 
           <TabsContent value="outreach" className="space-y-6">
             <ColdOutreachPanel />
+          </TabsContent>
+
+          <TabsContent value="crawler" className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-serif text-3xl text-foreground mb-2">Web Crawler</h1>
+              <p className="text-muted-foreground">Scrape, search, map, and crawl websites using Firecrawl</p>
+            </motion.div>
+            <WebCrawlerPanel />
           </TabsContent>
 
           <TabsContent value="auditlogs" className="space-y-6">

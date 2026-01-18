@@ -72,9 +72,10 @@ const PreLaunchGate = ({ children }: PreLaunchGateProps) => {
     }
   }, [isPreLaunch, isAdmin, loading, checkingAdmin, location.pathname, navigate]);
 
-  // Show nothing while checking (prevents flash)
+  // Show children while checking to prevent black screen
+  // The redirect will happen after checks complete if needed
   if (loading || checkingAdmin) {
-    return null;
+    return <>{children}</>;
   }
 
   return <>{children}</>;

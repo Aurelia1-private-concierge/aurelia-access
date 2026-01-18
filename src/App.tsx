@@ -3,8 +3,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { GlobalProvider } from "@/contexts/GlobalContext";
 import PageTransition from "@/components/PageTransition";
@@ -15,6 +16,8 @@ import AdminRoute from "./components/AdminRoute";
 import GlobalElements from "./components/GlobalElements";
 import ErrorBoundary from "./components/ErrorBoundary";
 import SessionTimeoutProvider from "./components/auth/SessionTimeoutProvider";
+import SkipLink from "./components/a11y/SkipLink";
+import { ReducedMotionProvider } from "./components/a11y/ReducedMotionProvider";
 import "@/i18n";
 
 // Eagerly load the landing page for best LCP
@@ -65,11 +68,20 @@ const BoardroomSession = lazy(() => import("./pages/BoardroomSession"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const PartnerDetail = lazy(() => import("./pages/PartnerDetail"));
 
-// Minimal loading fallback
+// Premium loading fallback with better UX
 const PageLoader = () => (
-  <div className="min-h-screen bg-background flex items-center justify-center">
-    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-  </div>
+  <motion.div 
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    className="min-h-screen bg-background flex flex-col items-center justify-center gap-4"
+  >
+    <div className="relative">
+      <div className="w-12 h-12 border border-primary/30 rounded-full" />
+      <div className="absolute inset-0 w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+    </div>
+    <p className="text-xs text-muted-foreground/50 uppercase tracking-widest">Loading</p>
+  </motion.div>
 );
 
 const queryClient = new QueryClient();
@@ -467,24 +479,31 @@ const AnimatedRoutes = () => {
 
 const App = () => (
   <ErrorBoundary>
-    <QueryClientProvider client={queryClient}>
-      <GlobalProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <AuthProvider>
-              <SessionTimeoutProvider timeoutMinutes={30} warningMinutes={5}>
-                <AnimatedRoutes />
-                <GlobalElements />
-                <BackToTop />
-                <CookieConsent />
-              </SessionTimeoutProvider>
-            </AuthProvider>
-          </BrowserRouter>
-        </TooltipProvider>
-      </GlobalProvider>
-    </QueryClientProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <GlobalProvider>
+          <ReducedMotionProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner position="top-right" richColors closeButton />
+              <BrowserRouter>
+                <AuthProvider>
+                  <SessionTimeoutProvider timeoutMinutes={30} warningMinutes={5}>
+                    <SkipLink />
+                    <main id="main-content">
+                      <AnimatedRoutes />
+                    </main>
+                    <GlobalElements />
+                    <BackToTop />
+                    <CookieConsent />
+                  </SessionTimeoutProvider>
+                </AuthProvider>
+              </BrowserRouter>
+            </TooltipProvider>
+          </ReducedMotionProvider>
+        </GlobalProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
   </ErrorBoundary>
 );
 

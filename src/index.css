@@ -583,4 +583,194 @@
   .scroll-smooth-touch {
     -webkit-overflow-scrolling: touch;
   }
+
+  /* ========================================
+     GLOBAL ENHANCEMENTS - Premium Polish
+     ======================================== */
+
+  /* Enhanced shimmer animation for skeletons */
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 1.5s infinite;
+  }
+
+  /* Premium focus states for accessibility */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--primary) / 0.5);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Skip focus ring for mouse users */
+  *:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Enhanced link underline animation */
+  .link-hover-effect {
+    position: relative;
+    text-decoration: none;
+  }
+
+  .link-hover-effect::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, hsl(var(--primary) / 0.5), hsl(var(--primary)), hsl(var(--primary) / 0.5));
+    transform: scaleX(0);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: right;
+  }
+
+  .link-hover-effect:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  /* Premium scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border) / 0.5);
+    border-radius: 4px;
+    border: 2px solid hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.5);
+  }
+
+  /* Text selection styling */
+  ::selection {
+    background: hsl(var(--primary) / 0.3);
+    color: hsl(var(--foreground));
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    .animate-shimmer,
+    .animate-pulse,
+    .animate-float,
+    .animate-glow-pulse,
+    .animate-breathe {
+      animation: none !important;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .glass, .glass-subtle, .glass-premium {
+      background: hsl(var(--card)) !important;
+      border-color: hsl(var(--border)) !important;
+    }
+
+    .text-gradient-gold {
+      background: none !important;
+      -webkit-background-clip: unset !important;
+      background-clip: unset !important;
+      color: hsl(var(--primary)) !important;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+
+    body {
+      background: white !important;
+      color: black !important;
+    }
+
+    .glass, .glass-subtle {
+      background: white !important;
+      border: 1px solid #ddd !important;
+    }
+  }
+
+  /* Enhanced button active states */
+  button:active:not(:disabled), 
+  [role="button"]:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  /* Smooth page transitions */
+  .page-enter {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  .page-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  }
+
+  .page-exit {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .page-exit-active {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.2s ease-in, transform 0.2s ease-in;
+  }
+
+  /* Loading state overlay */
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: hsl(var(--background) / 0.8);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+
+  /* Premium image reveal */
+  .image-reveal {
+    clip-path: inset(0 100% 0 0);
+    animation: reveal-image 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes reveal-image {
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  /* Elegant fade-up for sections */
+  .fade-up-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+
+  .fade-up-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

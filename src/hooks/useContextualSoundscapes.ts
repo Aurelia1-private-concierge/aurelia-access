@@ -31,29 +31,43 @@ export const useContextualSoundscapes = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioCache = useRef<Map<string, string>>(new Map());
   const lastSectionRef = useRef<string>('');
+  const sectionPositionsRef = useRef<Map<string, { top: number; bottom: number }>>(new Map());
+
+  // Cache section positions to avoid forced reflows on scroll
+  const updateSectionPositions = useCallback(() => {
+    const sections = ['hero', 'experiences', 'services', 'security', 'testimonials', 'membership', 'contact', 'global'];
+    const positions = new Map<string, { top: number; bottom: number }>();
+    
+    sections.forEach(sectionId => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        positions.set(sectionId, {
+          top: rect.top + scrollTop,
+          bottom: rect.top + scrollTop + rect.height
+        });
+      }
+    });
+    
+    sectionPositionsRef.current = positions;
+  }, []);
 
   // Monitor scroll position to detect current section
   useEffect(() => {
     if (!isEnabled) return;
 
     const handleScroll = () => {
-      const sections = ['hero', 'experiences', 'services', 'security', 'testimonials', 'membership', 'contact', 'global'];
       const scrollY = window.scrollY + window.innerHeight / 2;
 
-      for (const sectionId of sections) {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          const absoluteTop = rect.top + window.scrollY;
-          const absoluteBottom = absoluteTop + rect.height;
-
-          if (scrollY >= absoluteTop && scrollY < absoluteBottom) {
-            if (sectionId !== lastSectionRef.current) {
-              setCurrentSection(sectionId);
-              lastSectionRef.current = sectionId;
-            }
-            break;
+      // Use cached positions instead of reading from DOM
+      for (const [sectionId, position] of sectionPositionsRef.current) {
+        if (scrollY >= position.top && scrollY < position.bottom) {
+          if (sectionId !== lastSectionRef.current) {
+            setCurrentSection(sectionId);
+            lastSectionRef.current = sectionId;
           }
+          break;
         }
       }
     };
@@ -70,11 +84,26 @@ export const useContextualSoundscapes = () => {
       }
     };
 
-    window.addEventListener('scroll', throttledScroll);
+    // Initial position calculation
+    updateSectionPositions();
+    
+    // Recalculate on resize
+    let resizeTimeout: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(updateSectionPositions, 150);
+    };
+
+    window.addEventListener('scroll', throttledScroll, { passive: true });
+    window.addEventListener('resize', handleResize, { passive: true });
     handleScroll(); // Initial check
 
-    return () => window.removeEventListener('scroll', throttledScroll);
-  }, [isEnabled]);
+    return () => {
+      window.removeEventListener('scroll', throttledScroll);
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(resizeTimeout);
+    };
+  }, [isEnabled, updateSectionPositions]);
 
   // Change soundscape when section changes (only if not using fallback)
   useEffect(() => {

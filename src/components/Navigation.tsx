@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Lock, Menu, Compass } from "lucide-react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
@@ -27,6 +27,13 @@ const pageLinks = [
   { href: "/partners/join", label: "Partner With Us", icon: Compass },
 ];
 
+// Cache section positions to avoid forced reflows on scroll
+interface SectionPosition {
+  id: string;
+  top: number;
+  bottom: number;
+}
+
 const Navigation = () => {
   const { t } = useTranslation();
   const location = useLocation();
@@ -34,32 +41,87 @@ const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const { scrollY } = useScroll();
+  
+  // Cache section positions to avoid reading layout on every scroll
+  const sectionPositionsRef = useRef<SectionPosition[]>([]);
+  const rafIdRef = useRef<number | null>(null);
+  const lastScrollRef = useRef(0);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 50);
   });
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = navLinks.map(link => link.href.replace('#', ''));
-      const scrollPosition = window.scrollY + 200;
+  // Calculate and cache section positions (only on mount and resize)
+  const updateSectionPositions = useCallback(() => {
+    const sections = navLinks.map(link => link.href.replace('#', ''));
+    const positions: SectionPosition[] = [];
+    
+    sections.forEach(sectionId => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        positions.push({
+          id: sectionId,
+          top: rect.top + scrollTop,
+          bottom: rect.top + scrollTop + rect.height
+        });
+      }
+    });
+    
+    sectionPositionsRef.current = positions;
+  }, []);
 
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const offsetTop = element.offsetTop;
-          const offsetHeight = element.offsetHeight;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section);
-            break;
-          }
+  // Throttled scroll handler that uses cached positions
+  const handleScroll = useCallback(() => {
+    if (rafIdRef.current !== null) return;
+    
+    rafIdRef.current = requestAnimationFrame(() => {
+      const scrollPosition = window.scrollY + 200;
+      
+      // Only update if scroll changed significantly (debounce)
+      if (Math.abs(scrollPosition - lastScrollRef.current) < 10) {
+        rafIdRef.current = null;
+        return;
+      }
+      lastScrollRef.current = scrollPosition;
+      
+      // Use cached positions instead of reading from DOM
+      for (const section of sectionPositionsRef.current) {
+        if (scrollPosition >= section.top && scrollPosition < section.bottom) {
+          setActiveSection(prev => prev !== section.id ? section.id : prev);
+          break;
         }
       }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+      
+      rafIdRef.current = null;
+    });
   }, []);
+
+  useEffect(() => {
+    // Initial calculation after a short delay to ensure DOM is ready
+    const initTimeout = setTimeout(updateSectionPositions, 100);
+    
+    // Recalculate on resize (with debounce)
+    let resizeTimeout: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(updateSectionPositions, 150);
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize, { passive: true });
+    
+    return () => {
+      clearTimeout(initTimeout);
+      clearTimeout(resizeTimeout);
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+    };
+  }, [handleScroll, updateSectionPositions]);
 
   return (
     <motion.nav

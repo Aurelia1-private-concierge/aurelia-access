@@ -1,11 +1,13 @@
 import { lazy, Suspense } from "react";
 import { useLocation } from "react-router-dom";
-import PWAInstallPrompt from "./PWAInstallPrompt";
-import FloatingWhatsApp from "./FloatingWhatsApp";
-import OrlaFAB from "./OrlaFAB";
-import SystemHealthIndicator from "./SystemHealthIndicator";
-import OfflineBanner from "./OfflineBanner";
-import NotificationPermissionPrompt from "./NotificationPermissionPrompt";
+
+// Lazy load all floating UI components to reduce initial bundle and FID
+const PWAInstallPrompt = lazy(() => import("./PWAInstallPrompt"));
+const FloatingWhatsApp = lazy(() => import("./FloatingWhatsApp"));
+const OrlaFAB = lazy(() => import("./OrlaFAB"));
+const SystemHealthIndicator = lazy(() => import("./SystemHealthIndicator"));
+const OfflineBanner = lazy(() => import("./OfflineBanner"));
+const NotificationPermissionPrompt = lazy(() => import("./NotificationPermissionPrompt"));
 
 // Lazy load heavy components
 const AmbientParticles = lazy(() => import("./AmbientParticles"));
@@ -45,16 +47,24 @@ const GlobalElements = ({
   return (
     <>
       {/* Offline Banner - shown on dashboard/app pages only */}
-      {!shouldHideOfflineBanner && <OfflineBanner />}
+      <Suspense fallback={null}>
+        {!shouldHideOfflineBanner && <OfflineBanner />}
+      </Suspense>
       
       {/* PWA Install Prompt - shown on all pages */}
-      <PWAInstallPrompt />
+      <Suspense fallback={null}>
+        <PWAInstallPrompt />
+      </Suspense>
       
       {/* Push Notification Permission Prompt */}
-      {showNotificationPrompt && <NotificationPermissionPrompt />}
+      <Suspense fallback={null}>
+        {showNotificationPrompt && <NotificationPermissionPrompt />}
+      </Suspense>
       
       {/* System Health Indicator - AI Self-Healing */}
-      {showHealthIndicator && <SystemHealthIndicator />}
+      <Suspense fallback={null}>
+        {showHealthIndicator && <SystemHealthIndicator />}
+      </Suspense>
       
       {/* Ambient Effects */}
       {showParticles && (
@@ -70,8 +80,10 @@ const GlobalElements = ({
       )}
       
       {/* Floating Controls */}
-      {showWhatsApp && <FloatingWhatsApp />}
-      {showOrla && <OrlaFAB />}
+      <Suspense fallback={null}>
+        {showWhatsApp && <FloatingWhatsApp />}
+        {showOrla && <OrlaFAB />}
+      </Suspense>
     </>
   );
 };

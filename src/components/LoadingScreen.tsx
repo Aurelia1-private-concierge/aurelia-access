@@ -1,8 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, lazy, Suspense } from "react";
 import { AnimatedLogo } from "@/components/brand";
-import ParticleField from "@/components/loading/ParticleField";
-import LoadingOrb from "@/components/loading/LoadingOrb";
+
+// Lazy load heavy visual components to reduce main thread blocking
+const ParticleField = lazy(() => import("@/components/loading/ParticleField"));
+const LoadingOrb = lazy(() => import("@/components/loading/LoadingOrb"));
 
 const loadingPhrases = [
   "Initializing secure connection",
@@ -24,43 +26,61 @@ const LoadingScreen = () => {
   }, [isLoading]);
 
   useEffect(() => {
-    // Animate progress with smoother acceleration
-    const progressInterval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          return 100;
-        }
-        // Ease out effect - faster at start, slower at end
-        const remaining = 100 - prev;
-        const increment = Math.max(remaining * 0.08, 1);
-        return Math.min(prev + increment, 100);
-      });
-    }, 80);
+    // Schedule updates during idle time to reduce main thread blocking
+    const scheduleIdleUpdate = (callback: () => void) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const win = window as any;
+      if (typeof win.requestIdleCallback === 'function') {
+        win.requestIdleCallback(callback, { timeout: 100 });
+      } else {
+        setTimeout(callback, 16);
+      }
+    };
 
-    // Rotate through phrases
+    // Animate progress with smoother acceleration - use rAF for better scheduling
+    let progressRafId: number;
+    let lastProgressUpdate = 0;
+    const updateProgress = (timestamp: number) => {
+      if (timestamp - lastProgressUpdate >= 80) {
+        lastProgressUpdate = timestamp;
+        setProgress(prev => {
+          if (prev >= 100) return 100;
+          const remaining = 100 - prev;
+          const increment = Math.max(remaining * 0.08, 1);
+          return Math.min(prev + increment, 100);
+        });
+      }
+      if (progress < 100) {
+        progressRafId = requestAnimationFrame(updateProgress);
+      }
+    };
+    progressRafId = requestAnimationFrame(updateProgress);
+
+    // Rotate through phrases - use idle callback to avoid blocking
     const phraseInterval = setInterval(() => {
-      setPhraseIndex(prev => (prev + 1) % loadingPhrases.length);
+      scheduleIdleUpdate(() => {
+        setPhraseIndex(prev => (prev + 1) % loadingPhrases.length);
+      });
     }, 800);
 
-    // Set loading to false after animation completes
+    // Set loading to false - reduced from 2500ms to 1800ms for faster FID
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2500);
+    }, 1800);
 
-    // Fallback: force unmount after 3.5 seconds if animation doesn't complete
+    // Fallback: force unmount after 2.5 seconds if animation doesn't complete
     const fallbackTimer = setTimeout(() => {
       setIsLoading(false);
       setShouldRender(false);
-    }, 3500);
+    }, 2500);
 
     return () => {
       clearTimeout(timer);
       clearTimeout(fallbackTimer);
-      clearInterval(progressInterval);
       clearInterval(phraseInterval);
+      cancelAnimationFrame(progressRafId);
     };
-  }, []);
+  }, [progress]);
 
   if (!shouldRender) {
     return null;
@@ -78,11 +98,15 @@ const LoadingScreen = () => {
           transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
           className="fixed inset-0 z-[100] bg-background flex items-center justify-center overflow-hidden"
         >
-          {/* Premium particle effects */}
-          <ParticleField />
+          {/* Premium particle effects - lazy loaded */}
+          <Suspense fallback={null}>
+            <ParticleField />
+          </Suspense>
           
-          {/* Central orb effect */}
-          <LoadingOrb />
+          {/* Central orb effect - lazy loaded */}
+          <Suspense fallback={null}>
+            <LoadingOrb />
+          </Suspense>
 
           {/* Noise texture overlay */}
           <div 

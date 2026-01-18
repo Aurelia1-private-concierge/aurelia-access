@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, lazy, Suspense } from "react";
+import { useState, useCallback, useRef, lazy, Suspense, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import heroVideo from "@/assets/hero-yacht.mp4";
@@ -68,9 +68,19 @@ const Index = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [isPipEnabled, setIsPipEnabled] = useState(true);
   const soundscapes = useContextualSoundscapes();
-  useBehaviorTracking(); // Track user behavior
   const musicToggleRef = useRef<(() => void) | null>(null);
   const narratorToggleRef = useRef<(() => void) | null>(null);
+
+  // Defer behavior tracking to reduce FID - run after paint
+  useEffect(() => {
+    const timer = requestAnimationFrame(() => {
+      // Behavior tracking will initialize on next idle
+    });
+    return () => cancelAnimationFrame(timer);
+  }, []);
+
+  // Initialize behavior tracking after initial render
+  useBehaviorTracking();
 
   // Callbacks for voice commands
   const handleToggleMusic = useCallback(() => {

@@ -254,13 +254,21 @@ export const EVENTS_PARTNERS = `
 export const SECURITY_PARTNERS = `
 ## Security & Protection Partners
 
-### Executive Protection
+### Executive Protection & Chauffeur Services
 **Tier 1 Partners**
 - Leading international EP firms (names confidential)
 - Commission: 5% on contracted services
 - Vetting: Former government/military backgrounds
 - Response time: 24-48 hours for non-emergency
 - Emergency: 4-6 hour deployment in major cities
+
+**Velocities**
+- Services: Premium chauffeur and executive protection
+- Specialty: Seamless luxury ground transport with integrated security
+- Regions: Global coverage with emphasis on major metropolitan areas
+- Commission: 10% on all bookings
+- Booking: Dedicated concierge line, 2-hour minimum notice
+- Fleet: Armored and luxury vehicles available
 
 ### Residential Security
 - Security assessment partners in all major markets
@@ -357,6 +365,37 @@ export const BOOKING_BEST_PRACTICES = `
 6. Document for partner review
 `;
 
+export const AI_TECHNOLOGY_PARTNERS = `
+## AI & Technology Partners
+
+### Courier & Logistics (AI-Powered)
+**OnTarget Couriers**
+- Specialty: AI-optimized premium courier and logistics services
+- Technology: Real-time tracking, predictive delivery windows
+- Services: Same-day luxury goods delivery, secure document transport
+- Regions: Global network with guaranteed discretion
+- Commission: 12% on all bookings
+- Booking: API integration or concierge hotline
+- Lead time: 1-4 hours for metropolitan areas
+
+### Digital Services
+**OnTarget WebDesigns**
+- Specialty: AI-enhanced bespoke web design and digital presence
+- Services: Luxury brand websites, member portals, digital experiences
+- Technology: AI-driven design optimization, personalization engines
+- Commission: 15% on project value
+- Lead time: 2-4 weeks for full projects
+- Support: 24/7 maintenance available
+
+### Booking Procedure for AI Partners
+1. Define scope and requirements
+2. Confirm timeline and budget parameters
+3. Request proposal with AI capability brief
+4. Present options with technology benefits explained
+5. Coordinate integration with existing member services
+6. Provide ongoing support coordination
+`;
+
 // Export full partner knowledge for agent configuration
 export const FULL_PARTNER_KNOWLEDGE = `
 ${PARTNER_CATEGORIES}
@@ -372,6 +411,8 @@ ${DINING_PARTNERS}
 ${EVENTS_PARTNERS}
 
 ${SECURITY_PARTNERS}
+
+${AI_TECHNOLOGY_PARTNERS}
 
 ${COMMISSION_SUMMARY}
 

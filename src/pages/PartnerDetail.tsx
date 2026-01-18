@@ -1,12 +1,13 @@
 import { useParams, Link } from "react-router-dom";
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { ArrowLeft, MapPin, Clock, Star, CheckCircle, ArrowRight, Sparkles, Shield, Globe2, Play, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { getPartnerById, getPartnersByCategory } from "@/lib/partners-data";
-import { useRef, useState } from "react";
+import { getPartnerSEO, generatePartnerSchema, generateBreadcrumbSchema, generatePartnerFAQSchema } from "@/lib/partner-seo";
+import { useRef, useState, useEffect } from "react";
 
 const PartnerDetail = () => {
   const { partnerId } = useParams<{ partnerId: string }>();
@@ -25,6 +26,100 @@ const PartnerDetail = () => {
   const heroScale = useTransform(smoothProgress, [0, 0.5], [1, 1.15]);
   const textY = useTransform(smoothProgress, [0, 0.5], [0, 80]);
   const overlayOpacity = useTransform(smoothProgress, [0, 0.4], [0.4, 0.9]);
+
+  // SEO: Update meta tags and structured data
+  useEffect(() => {
+    if (!partner || !partnerId) return;
+
+    const seo = getPartnerSEO(partnerId, {
+      name: partner.name,
+      category: partner.category,
+      tagline: partner.tagline,
+      description: partner.description
+    });
+
+    // Update document title
+    document.title = seo.title;
+
+    // Update meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', seo.metaDescription);
+    }
+
+    // Update meta keywords
+    let metaKeywords = document.querySelector('meta[name="keywords"]');
+    if (metaKeywords) {
+      metaKeywords.setAttribute('content', seo.keywords.join(', '));
+    } else {
+      metaKeywords = document.createElement('meta');
+      metaKeywords.setAttribute('name', 'keywords');
+      metaKeywords.setAttribute('content', seo.keywords.join(', '));
+      document.head.appendChild(metaKeywords);
+    }
+
+    // Update Open Graph tags
+    const updateOG = (property: string, content: string) => {
+      let tag = document.querySelector(`meta[property="${property}"]`);
+      if (tag) {
+        tag.setAttribute('content', content);
+      }
+    };
+    updateOG('og:title', seo.title);
+    updateOG('og:description', seo.metaDescription);
+    updateOG('og:url', `https://aurelia-privateconcierge.com${seo.canonicalPath}`);
+    updateOG('og:image', partner.heroImage);
+
+    // Update canonical URL
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) {
+      canonical.setAttribute('href', `https://aurelia-privateconcierge.com${seo.canonicalPath}`);
+    }
+
+    // Inject structured data
+    const existingSchemas = document.querySelectorAll('script[data-partner-schema]');
+    existingSchemas.forEach(el => el.remove());
+
+    // Partner schema
+    const partnerSchema = generatePartnerSchema(partnerId, {
+      name: partner.name,
+      description: partner.description,
+      specialty: partner.specialty,
+      services: partner.services,
+      regions: partner.regions,
+      stats: partner.stats,
+      heroImage: partner.heroImage
+    });
+    if (partnerSchema) {
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.setAttribute('data-partner-schema', 'main');
+      script.textContent = JSON.stringify(partnerSchema);
+      document.head.appendChild(script);
+    }
+
+    // Breadcrumb schema
+    const breadcrumbSchema = generateBreadcrumbSchema(partnerId, partner.name);
+    const breadcrumbScript = document.createElement('script');
+    breadcrumbScript.type = 'application/ld+json';
+    breadcrumbScript.setAttribute('data-partner-schema', 'breadcrumb');
+    breadcrumbScript.textContent = JSON.stringify(breadcrumbSchema);
+    document.head.appendChild(breadcrumbScript);
+
+    // FAQ schema
+    const faqSchema = generatePartnerFAQSchema(partnerId, partner.name, partner.category);
+    const faqScript = document.createElement('script');
+    faqScript.type = 'application/ld+json';
+    faqScript.setAttribute('data-partner-schema', 'faq');
+    faqScript.textContent = JSON.stringify(faqSchema);
+    document.head.appendChild(faqScript);
+
+    // Cleanup on unmount
+    return () => {
+      const schemas = document.querySelectorAll('script[data-partner-schema]');
+      schemas.forEach(el => el.remove());
+    };
+  }, [partner, partnerId]);
 
   if (!partner) {
     return (

@@ -12,6 +12,20 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Split heavy vendor libraries into separate chunks
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-motion': ['framer-motion'],
+          'vendor-query': ['@tanstack/react-query'],
+          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-popover', '@radix-ui/react-tooltip', '@radix-ui/react-tabs'],
+          'vendor-charts': ['recharts'],
+          'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-i18n': ['i18next', 'react-i18next', 'i18next-browser-languagedetector'],
+        },
+      },
+    },
   },
   plugins: [
     react(),

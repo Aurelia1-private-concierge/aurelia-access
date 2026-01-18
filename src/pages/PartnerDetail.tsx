@@ -47,18 +47,31 @@ const PartnerDetail = () => {
       
       {/* Immersive Hero Section */}
       <div ref={heroRef} className="relative h-[100vh] overflow-hidden">
-        {/* Background Image with Parallax */}
+        {/* Background Video/Image with Parallax */}
         <motion.div 
           style={{ scale: heroScale }}
           className="absolute inset-0"
         >
-          <img 
-            src={partner.heroImage}
-            alt={partner.name}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
+          {partner.heroVideo ? (
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+              poster={partner.heroImage}
+            >
+              <source src={partner.heroVideo} type="video/mp4" />
+            </video>
+          ) : (
+            <img 
+              src={partner.heroImage}
+              alt={partner.name}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          )}
           {/* Sophisticated Gradient Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/20 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/20 to-background" />
           <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-transparent to-transparent" />
         </motion.div>
         

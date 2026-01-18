@@ -41,7 +41,7 @@ const ExperiencesSection = () => {
               </motion.li>
             ))}
           </ul>
-          <Link to="/services" className="group inline-flex items-center gap-2 text-foreground text-sm tracking-widest uppercase border-2 border-primary/50 px-6 py-3 mt-6 hover:bg-primary hover:text-primary-foreground hover:scale-105 hover:shadow-[0_8px_30px_-6px_hsl(var(--primary)/0.4)] active:scale-95 transition-all duration-300 rounded-sm">
+          <Link to="/services" className="group inline-flex items-center gap-3 text-sm font-semibold tracking-widest uppercase bg-primary text-primary-foreground px-8 py-4 mt-6 hover:bg-primary/90 hover:scale-105 hover:-translate-y-1 shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.6)] hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.7)] active:scale-95 active:translate-y-0 transition-all duration-300 rounded-md cursor-pointer">
             {t("experiences.viewAcquisitions")}
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>

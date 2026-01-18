@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Gamepad2, Server, Globe, Shield, Zap, Users } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -173,9 +174,12 @@ const GamingServicesSection = () => {
           <Button 
             size="lg" 
             className="bg-primary hover:bg-primary/90 text-primary-foreground px-8"
+            asChild
           >
-            <Globe className="w-5 h-5 mr-2" />
-            Request Private Server
+            <Link to="/auth">
+              <Globe className="w-5 h-5 mr-2" />
+              Request Private Server
+            </Link>
           </Button>
           <p className="text-muted-foreground text-sm mt-4">
             Available exclusively to Prestige and Black Card members

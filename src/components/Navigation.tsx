@@ -23,8 +23,8 @@ const navLinks = [
 const pageLinks = [
   { href: "/services", label: "Services", icon: Compass },
   { href: "/blog", label: "Journal", icon: Compass },
-  { href: "/discover", label: "Discover", icon: Compass },
-  { href: "/partners/join", label: "Become a Partner", icon: Compass },
+  { href: "/orla", label: "Meet Orla", icon: Compass },
+  { href: "/partners/join", label: "Partner With Us", icon: Compass },
 ];
 
 const Navigation = () => {

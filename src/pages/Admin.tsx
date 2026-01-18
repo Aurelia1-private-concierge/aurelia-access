@@ -71,6 +71,7 @@ import PartnerDiscoveryPanel from "@/components/admin/PartnerDiscoveryPanel";
 import EncryptionManagementPanel from "@/components/admin/EncryptionManagementPanel";
 import ColdOutreachPanel from "@/components/admin/ColdOutreachPanel";
 import { WebCrawlerPanel } from "@/components/admin/WebCrawlerPanel";
+import PreLaunchToggle from "@/components/admin/PreLaunchToggle";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -333,7 +334,16 @@ const Admin = () => {
             <TabsTrigger value="crawler">Crawler</TabsTrigger>
             <TabsTrigger value="auditlogs">Audit Logs</TabsTrigger>
             <TabsTrigger value="encryption">Encryption</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="settings" className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-serif text-3xl text-foreground mb-2">Site Settings</h1>
+              <p className="text-muted-foreground">Control site-wide settings and launch mode</p>
+            </motion.div>
+            <PreLaunchToggle />
+          </TabsContent>
 
           <TabsContent value="discovery" className="space-y-6">
             <PartnerDiscoveryPanel />

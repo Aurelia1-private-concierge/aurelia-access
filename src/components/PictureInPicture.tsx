@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Maximize2, Minimize2, Volume2, VolumeX, Play, Pause } from 'lucide-react';
 import heroVideo from '@/assets/hero-luxury-holiday.mp4';
@@ -8,7 +8,7 @@ interface PictureInPictureProps {
   onClose?: () => void;
 }
 
-const PictureInPicture: React.FC<PictureInPictureProps> = ({ isEnabled = true, onClose }) => {
+const PictureInPicture = forwardRef<HTMLDivElement, PictureInPictureProps>(({ isEnabled = true, onClose }, _ref) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -218,6 +218,8 @@ const PictureInPicture: React.FC<PictureInPictureProps> = ({ isEnabled = true, o
       )}
     </AnimatePresence>
   );
-};
+});
+
+PictureInPicture.displayName = "PictureInPicture";
 
 export default PictureInPicture;

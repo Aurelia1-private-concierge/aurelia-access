@@ -1,6 +1,6 @@
 // Partner display data for public-facing pages
 import { Car, Truck, Laptop } from "lucide-react";
-import heroJetVideo from "@/assets/hero-jet.mp4";
+import luxuryCarVideo from "@/assets/luxury-car.mp4";
 import heroVideoExtended from "@/assets/hero-video-extended.mp4";
 import demoVisionVideo from "@/assets/demo-vision.mp4";
 
@@ -35,12 +35,12 @@ export const partnersData: Partner[] = [
     highlights: ["2-hour minimum notice", "Armored and luxury fleet", "Former government/military personnel"],
     contactMethod: "Dedicated concierge line",
     icon: Car,
-    heroImage: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=3840&q=100&auto=format&fit=crop",
-    heroVideo: heroJetVideo,
+    heroImage: "https://images.unsplash.com/photo-1563720360172-67b8f3dce741?w=3840&q=100&auto=format&fit=crop",
+    heroVideo: luxuryCarVideo,
     galleryImages: [
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1920&q=100&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1920&q=100&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=1920&q=100&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=1920&q=100&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1920&q=100&auto=format&fit=crop",
     ],
     tagline: "Arrive in Absolute Security",
     stats: [

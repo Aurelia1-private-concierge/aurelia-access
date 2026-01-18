@@ -1,12 +1,12 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import React, { useRef, forwardRef } from "react";
 
 interface SectionDividerProps {
   variant?: "default" | "wide" | "minimal" | "ornate";
   className?: string;
 }
 
-const SectionDivider = ({ variant = "default", className = "" }: SectionDividerProps) => {
+const SectionDivider = forwardRef<HTMLDivElement, SectionDividerProps>(({ variant = "default", className = "" }, _ref) => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -240,6 +240,8 @@ const SectionDivider = ({ variant = "default", className = "" }: SectionDividerP
       </motion.div>
     </div>
   );
-};
+});
+
+SectionDivider.displayName = "SectionDivider";
 
 export default SectionDivider;

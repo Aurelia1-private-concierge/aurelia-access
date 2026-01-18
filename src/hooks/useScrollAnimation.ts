@@ -71,28 +71,41 @@ export const useScrollOpacity = (
 export const useSectionProgress = () => {
   const ref = useRef<HTMLElement>(null);
   const progress = useMotionValue(0);
+  const rafIdRef = useRef<number | null>(null);
 
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
 
     const handleScroll = () => {
-      const rect = element.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
+      // Throttle with requestAnimationFrame to prevent forced reflows
+      if (rafIdRef.current !== null) return;
       
-      // Calculate progress from when element enters view to when it leaves
-      const start = windowHeight;
-      const end = -rect.height;
-      const current = rect.top;
-      
-      const progressValue = Math.max(0, Math.min(1, (start - current) / (start - end)));
-      progress.set(progressValue);
+      rafIdRef.current = requestAnimationFrame(() => {
+        const rect = element.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        
+        // Calculate progress from when element enters view to when it leaves
+        const start = windowHeight;
+        const end = -rect.height;
+        const current = rect.top;
+        
+        const progressValue = Math.max(0, Math.min(1, (start - current) / (start - end)));
+        progress.set(progressValue);
+        
+        rafIdRef.current = null;
+      });
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll(); // Initial calculation
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+    };
   }, [progress]);
 
   return { ref, progress };

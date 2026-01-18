@@ -102,30 +102,44 @@ export const useBehaviorTracking = () => {
     };
   }, [location.pathname, trackEvent, flushEvents]);
 
-  // Track scroll depth
+  // Track scroll depth with throttling to prevent performance issues
   useEffect(() => {
+    let rafId: number | null = null;
+    
     const handleScroll = () => {
-      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollPercent = scrollHeight > 0 
-        ? Math.round((window.scrollY / scrollHeight) * 100) 
-        : 0;
+      // Throttle with requestAnimationFrame
+      if (rafId !== null) return;
       
-      if (scrollPercent > maxScrollDepth.current) {
-        maxScrollDepth.current = scrollPercent;
+      rafId = requestAnimationFrame(() => {
+        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = scrollHeight > 0 
+          ? Math.round((window.scrollY / scrollHeight) * 100) 
+          : 0;
         
-        // Track milestone scroll depths
-        const milestones = [25, 50, 75, 100];
-        if (milestones.includes(scrollPercent)) {
-          trackEvent({
-            event_type: "scroll_milestone",
-            scroll_depth: scrollPercent,
-          });
+        if (scrollPercent > maxScrollDepth.current) {
+          maxScrollDepth.current = scrollPercent;
+          
+          // Track milestone scroll depths
+          const milestones = [25, 50, 75, 100];
+          if (milestones.includes(scrollPercent)) {
+            trackEvent({
+              event_type: "scroll_milestone",
+              scroll_depth: scrollPercent,
+            });
+          }
         }
-      }
+        
+        rafId = null;
+      });
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
+    };
   }, [trackEvent]);
 
   // Track clicks on important elements

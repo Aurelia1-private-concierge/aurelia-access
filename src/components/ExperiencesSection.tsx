@@ -2,6 +2,7 @@ import { Check } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import OptimizedImage from "./OptimizedImage";
 
 const images = [
@@ -40,7 +41,7 @@ const ExperiencesSection = () => {
               </motion.li>
             ))}
           </ul>
-          <a href="/services#collectibles" className="inline-block text-foreground text-sm tracking-widest uppercase border-b border-primary pb-1 hover:text-primary transition-colors pt-6">{t("experiences.viewAcquisitions")}</a>
+          <Link to="/services" className="inline-block text-foreground text-sm tracking-widest uppercase border-b border-primary pb-1 hover:text-primary transition-colors pt-6">{t("experiences.viewAcquisitions")}</Link>
         </motion.div>
         <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} style={{ y: imagesY }} className="relative order-1 lg:order-2">
           <div className="grid grid-cols-2 gap-4">

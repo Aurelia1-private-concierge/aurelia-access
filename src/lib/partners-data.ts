@@ -43,7 +43,7 @@ export const partnersData: Partner[] = [
       "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1920&q=100&auto=format&fit=crop",
       bodyguardsTeam,
       chauffeurDriver,
-      "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1920&q=100&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=1920&q=100&auto=format&fit=crop",
     ],
     tagline: "Arrive in Absolute Security",
     stats: [

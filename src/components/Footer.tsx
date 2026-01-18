@@ -188,6 +188,7 @@ const Footer = () => {
               <Link to="/terms" className="hover:text-foreground transition-colors">{t("footer.terms")}</Link>
               <a href="mailto:concierge@aurelia-privateconcierge.com" className="hover:text-foreground transition-colors">{t("footer.legal")}</a>
               <Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link>
+              <Link to="/admin" className="hover:text-primary transition-colors opacity-50 hover:opacity-100">Admin</Link>
             </div>
             <motion.button
               onClick={scrollToTop}

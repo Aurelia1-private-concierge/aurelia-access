@@ -10,7 +10,7 @@ interface VideoModalProps {
 }
 
 const VideoModal = ({ isOpen, onClose, videoSrc, title = "Experience Aurelia" }: VideoModalProps) => {
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 

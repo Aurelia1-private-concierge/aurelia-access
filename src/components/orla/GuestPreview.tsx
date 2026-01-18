@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, User, Lock, Sparkles, Volume2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import orlaAvatar from "@/assets/orla-avatar.png";
+import orlaAvatar from "@/assets/orla-avatar-optimized.webp";
 import orlaDemoVideo from "@/assets/orla-demo.mp4";
 
 interface GuestPreviewProps {

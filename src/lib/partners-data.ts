@@ -3,6 +3,8 @@ import { Car, Truck, Laptop } from "lucide-react";
 import chauffeurLuxuryVideo from "@/assets/chauffeur-luxury.mp4";
 import heroVideoExtended from "@/assets/hero-video-extended.mp4";
 import demoVisionVideo from "@/assets/demo-vision.mp4";
+import bodyguardsTeam from "@/assets/partners/bodyguards-team.jpg";
+import chauffeurDriver from "@/assets/partners/chauffeur-driver.jpg";
 
 export interface Partner {
   id: string;
@@ -39,8 +41,8 @@ export const partnersData: Partner[] = [
     heroVideo: chauffeurLuxuryVideo,
     galleryImages: [
       "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1920&q=100&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1920&q=100&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1582139329536-e7284fece509?w=1920&q=100&auto=format&fit=crop",
+      bodyguardsTeam,
+      chauffeurDriver,
       "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1920&q=100&auto=format&fit=crop",
     ],
     tagline: "Arrive in Absolute Security",

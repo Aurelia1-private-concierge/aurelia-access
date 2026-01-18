@@ -35,10 +35,13 @@ const PreLaunchGate = ({ children }: PreLaunchGateProps) => {
       }
 
       try {
-        const { data, error } = await supabase.rpc("has_role", {
-          _user_id: user.id,
-          _role: "admin",
-        });
+        // Query user_roles directly to avoid function overload ambiguity
+        const { data, error } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", user.id)
+          .eq("role", "admin")
+          .maybeSingle();
 
         if (error) {
           console.error("Error checking admin role:", error);

@@ -1,9 +1,73 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+// Rate limiting configuration
+const RATE_LIMIT_MAX = 20; // Max requests per window
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour window
+
+// Input validation schema
+const requestSchema = z.object({
+  type: z.enum(['travel', 'wellness', 'lifestyle', 'investment', 'general']).default('general'),
+  context: z.string().max(2000, "Context too long").optional(),
+  preferences: z.record(z.any()).optional(),
+});
+
+// Generate fingerprint for rate limiting
+function generateFingerprint(req: Request, userId: string | null): string {
+  if (userId) return `insights_${userId}`;
+  
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || 
+             req.headers.get("x-real-ip") || "unknown";
+  const userAgent = req.headers.get("user-agent") || "unknown";
+  
+  let hash = 0;
+  const combined = `${ip}:${userAgent.slice(0, 50)}`;
+  for (let i = 0; i < combined.length; i++) {
+    const char = combined.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return `insights_anon_${Math.abs(hash).toString(36)}`;
+}
+
+// Check rate limit
+async function checkRateLimit(
+  supabase: any,
+  identifier: string
+): Promise<{ allowed: boolean; remaining: number }> {
+  const windowStart = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString();
+  
+  const { data, error } = await supabase
+    .from("rate_limits")
+    .select("id")
+    .eq("identifier", identifier)
+    .eq("action_type", "ai_insights")
+    .gte("created_at", windowStart);
+
+  if (error) {
+    console.error("Rate limit check error:", error);
+    return { allowed: true, remaining: RATE_LIMIT_MAX };
+  }
+
+  const currentCount = data?.length || 0;
+  const allowed = currentCount < RATE_LIMIT_MAX;
+  const remaining = Math.max(0, RATE_LIMIT_MAX - currentCount - 1);
+
+  if (allowed) {
+    await supabase.from("rate_limits").insert({
+      identifier,
+      action_type: "ai_insights",
+    });
+  }
+
+  return { allowed, remaining };
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -11,40 +75,109 @@ serve(async (req) => {
   }
 
   try {
-    const { type, context, preferences } = await req.json();
+    // Parse and validate request
+    const body = await req.json();
+    const validation = requestSchema.safeParse(body);
+    
+    if (!validation.success) {
+      console.error("Validation error:", validation.error.errors);
+      return new Response(
+        JSON.stringify({ error: "Invalid request format" }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    const { type, context, preferences } = validation.data;
     
     console.log(`Generating AI insights for type: ${type}`);
     
-    // Use Lovable AI (built-in, no API key needed)
-    const LOVABLE_API_URL = Deno.env.get('LOVABLE_API_URL') || 'https://api.lovable.ai';
+    const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    
+    // Extract user ID if authenticated
+    let userId: string | null = null;
+    const authHeader = req.headers.get("authorization");
+    
+    if (authHeader && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+      const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+      const token = authHeader.replace("Bearer ", "");
+      
+      if (token !== Deno.env.get("SUPABASE_ANON_KEY")) {
+        const { data: { user } } = await supabase.auth.getUser(token);
+        userId = user?.id || null;
+      }
+    }
+    
+    // Apply rate limiting
+    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+      const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+      const fingerprint = generateFingerprint(req, userId);
+      const { allowed, remaining } = await checkRateLimit(supabase, fingerprint);
+      
+      console.log(`[AI Insights] Request: fingerprint=${fingerprint}, allowed=${allowed}, remaining=${remaining}`);
+      
+      if (!allowed) {
+        return new Response(
+          JSON.stringify({ 
+            error: "Rate limit exceeded. Please try again later.",
+            code: "RATE_LIMITED"
+          }),
+          { 
+            status: 429, 
+            headers: { 
+              ...corsHeaders, 
+              'Content-Type': 'application/json',
+              'X-RateLimit-Limit': String(RATE_LIMIT_MAX),
+              'X-RateLimit-Remaining': '0',
+              'Retry-After': '3600'
+            } 
+          }
+        );
+      }
+    }
+    
+    const LOVABLE_API_URL = 'https://ai.gateway.lovable.dev';
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    
+    if (!LOVABLE_API_KEY) {
+      console.log('LOVABLE_API_KEY not configured, using curated insights');
+      const curatedInsights = getCuratedInsights(type, preferences);
+      return new Response(JSON.stringify(curatedInsights), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     
     let systemPrompt = '';
     let userPrompt = '';
     
+    // Sanitize context for prompt injection prevention
+    const sanitizedContext = context?.replace(/[<>]/g, '').slice(0, 1000) || '';
+    const sanitizedPrefs = JSON.stringify(preferences || {}).slice(0, 500);
+    
     switch (type) {
       case 'travel':
         systemPrompt = `You are an elite luxury travel concierge AI for Aurelia, a premium lifestyle platform. Provide sophisticated, personalized travel recommendations based on the client's preferences. Be concise but insightful. Focus on exclusive experiences, hidden gems, and luxury accommodations. Always suggest 3-5 specific recommendations.`;
-        userPrompt = `Based on these travel preferences: ${JSON.stringify(preferences || {})}\n\nContext: ${context || 'Looking for travel inspiration'}\n\nProvide personalized luxury travel recommendations.`;
+        userPrompt = `Based on these travel preferences: ${sanitizedPrefs}\n\nContext: ${sanitizedContext || 'Looking for travel inspiration'}\n\nProvide personalized luxury travel recommendations.`;
         break;
         
       case 'wellness':
         systemPrompt = `You are a wellness advisor for Aurelia's ultra-high-net-worth clients. Provide holistic wellness insights combining physical health, mental wellbeing, and lifestyle optimization. Be sophisticated and evidence-based. Consider sleep, nutrition, exercise, stress management, and biohacking.`;
-        userPrompt = `Wellness data context: ${JSON.stringify(context || {})}\n\nPreferences: ${JSON.stringify(preferences || {})}\n\nProvide personalized wellness insights and recommendations.`;
+        userPrompt = `Wellness data context: ${sanitizedContext}\n\nPreferences: ${sanitizedPrefs}\n\nProvide personalized wellness insights and recommendations.`;
         break;
         
       case 'lifestyle':
         systemPrompt = `You are a lifestyle curator for Aurelia, serving discerning clients who expect the exceptional. Provide recommendations for dining, events, experiences, and cultural activities. Be knowledgeable about exclusive venues, private events, and bespoke experiences.`;
-        userPrompt = `Client context: ${JSON.stringify(context || {})}\n\nPreferences: ${JSON.stringify(preferences || {})}\n\nSuggest personalized lifestyle experiences.`;
+        userPrompt = `Client context: ${sanitizedContext}\n\nPreferences: ${sanitizedPrefs}\n\nSuggest personalized lifestyle experiences.`;
         break;
         
       case 'investment':
         systemPrompt = `You are a luxury asset advisor for Aurelia's sophisticated clientele. Provide insights on collectibles, art, wine, watches, and alternative investments. Be knowledgeable about market trends, provenance, and appreciation potential. This is for informational purposes only.`;
-        userPrompt = `Interest areas: ${JSON.stringify(context || {})}\n\nProvide insights on luxury asset opportunities and trends.`;
+        userPrompt = `Interest areas: ${sanitizedContext}\n\nProvide insights on luxury asset opportunities and trends.`;
         break;
         
       default:
         systemPrompt = `You are Orla, the AI concierge for Aurelia luxury lifestyle platform. Be sophisticated, helpful, and personalized in your responses.`;
-        userPrompt = context || 'How can you assist me today?';
+        userPrompt = sanitizedContext || 'How can you assist me today?';
     }
     
     // Call Lovable AI
@@ -52,10 +185,10 @@ serve(async (req) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Deno.env.get('LOVABLE_API_KEY') || ''}`,
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'openai/gpt-5-mini',
+        model: 'google/gemini-2.5-flash',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },
@@ -66,7 +199,6 @@ serve(async (req) => {
     });
     
     if (!response.ok) {
-      // Fallback to curated insights if AI unavailable
       console.log('AI service unavailable, using curated insights');
       const curatedInsights = getCuratedInsights(type, preferences);
       return new Response(JSON.stringify(curatedInsights), {
@@ -83,7 +215,7 @@ serve(async (req) => {
       type,
       insight,
       generated_at: new Date().toISOString(),
-      model: 'gpt-5-mini',
+      model: 'gemini-2.5-flash',
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -91,7 +223,14 @@ serve(async (req) => {
     console.error('AI insights error:', error);
     
     // Return curated fallback
-    const { type, preferences } = await req.json().catch(() => ({ type: 'general', preferences: {} }));
+    let type = 'general';
+    let preferences = {};
+    try {
+      const body = await req.json();
+      type = body.type || 'general';
+      preferences = body.preferences || {};
+    } catch { /* ignore */ }
+    
     const curatedInsights = getCuratedInsights(type, preferences);
     
     return new Response(JSON.stringify(curatedInsights), {

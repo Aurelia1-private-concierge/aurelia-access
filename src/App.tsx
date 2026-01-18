@@ -18,6 +18,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import SessionTimeoutProvider from "./components/auth/SessionTimeoutProvider";
 import SkipLink from "./components/a11y/SkipLink";
 import { ReducedMotionProvider } from "./components/a11y/ReducedMotionProvider";
+import VisitorTracker from "./components/VisitorTracker";
 import "@/i18n";
 
 // Eagerly load the landing page for best LCP
@@ -509,6 +510,7 @@ const App = () => (
               <BrowserRouter>
                 <AuthProvider>
                   <SessionTimeoutProvider timeoutMinutes={30} warningMinutes={5}>
+                    <VisitorTracker />
                     <SkipLink />
                     <main id="main-content">
                       <AnimatedRoutes />

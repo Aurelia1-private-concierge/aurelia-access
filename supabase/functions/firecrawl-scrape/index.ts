@@ -68,11 +68,40 @@ Deno.serve(async (req) => {
     console.log('Options:', JSON.stringify(options));
 
     // Build request body with advanced options
+    // Filter out non-string formats (like JSON extraction objects) and handle them separately
+    let formats = options?.formats || ['markdown'];
+    let jsonSchema = null;
+    let jsonPrompt = null;
+    
+    // Check if formats contains JSON extraction config
+    if (Array.isArray(formats)) {
+      const validFormats: string[] = [];
+      for (const format of formats) {
+        if (typeof format === 'string') {
+          validFormats.push(format);
+        } else if (format && typeof format === 'object' && format.type === 'json') {
+          // Handle JSON extraction - add 'json' to formats and extract schema/prompt
+          validFormats.push('json');
+          if (format.schema) jsonSchema = format.schema;
+          if (format.prompt) jsonPrompt = format.prompt;
+        }
+      }
+      formats = validFormats;
+    }
+
     const requestBody: Record<string, unknown> = {
       url: formattedUrl,
-      formats: options?.formats || ['markdown'],
+      formats,
       onlyMainContent: options?.onlyMainContent ?? true,
     };
+
+    // Add JSON extraction parameters if present
+    if (jsonSchema) {
+      requestBody.jsonOptions = { schema: jsonSchema };
+    }
+    if (jsonPrompt) {
+      requestBody.jsonOptions = { ...(requestBody.jsonOptions as object || {}), prompt: jsonPrompt };
+    }
 
     // Add optional parameters
     if (options?.waitFor) {

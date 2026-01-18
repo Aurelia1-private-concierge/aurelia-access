@@ -17,7 +17,13 @@ Deno.serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const url = new URL(req.url);
-    const action = url.searchParams.get('action');
+    let action = url.searchParams.get('action');
+
+    // Auto-detect action from method if not specified
+    // POST with body = track, GET = count
+    if (!action) {
+      action = req.method === 'POST' ? 'track' : 'count';
+    }
 
     // POST /track - Record a new visitor hit
     if (req.method === 'POST' && action === 'track') {

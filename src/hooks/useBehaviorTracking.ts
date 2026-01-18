@@ -25,15 +25,34 @@ const getSessionId = (): string => {
 
 export const useBehaviorTracking = () => {
   const location = useLocation();
-  const sessionId = useRef(getSessionId());
-  const pageStartTime = useRef(Date.now());
+  const sessionId = useRef<string | null>(null);
+  const pageStartTime = useRef(0);
   const maxScrollDepth = useRef(0);
   const eventQueue = useRef<BehaviorEvent[]>([]);
   const flushTimeout = useRef<NodeJS.Timeout | null>(null);
+  const isInitialized = useRef(false);
+
+  // Defer session ID initialization to reduce initial script execution
+  useEffect(() => {
+    if (!isInitialized.current) {
+      // Use requestIdleCallback to defer initialization
+      const initTracking = () => {
+        sessionId.current = getSessionId();
+        pageStartTime.current = Date.now();
+        isInitialized.current = true;
+      };
+      
+      if ('requestIdleCallback' in window) {
+        (window as any).requestIdleCallback(initTracking, { timeout: 3000 });
+      } else {
+        setTimeout(initTracking, 1000);
+      }
+    }
+  }, []);
 
   // Flush events to database (batched for performance)
   const flushEvents = useCallback(async () => {
-    if (eventQueue.current.length === 0) return;
+    if (eventQueue.current.length === 0 || !sessionId.current) return;
 
     const events = [...eventQueue.current];
     eventQueue.current = [];
@@ -64,6 +83,9 @@ export const useBehaviorTracking = () => {
   // Queue an event (batches for performance)
   const trackEvent = useCallback(
     (event: Omit<BehaviorEvent, "page_path">) => {
+      // Skip if not yet initialized
+      if (!isInitialized.current) return;
+      
       eventQueue.current.push({
         ...event,
         page_path: location.pathname,
@@ -76,21 +98,33 @@ export const useBehaviorTracking = () => {
     [location.pathname, flushEvents]
   );
 
-  // Track page views
+  // Track page views - deferred to reduce initial script execution
   useEffect(() => {
+    if (!isInitialized.current) return;
+    
     pageStartTime.current = Date.now();
     maxScrollDepth.current = 0;
 
-    trackEvent({
-      event_type: "page_view",
-      metadata: {
-        title: document.title,
-        timestamp: new Date().toISOString(),
-      },
-    });
+    // Defer page view tracking to idle time
+    const trackPageView = () => {
+      trackEvent({
+        event_type: "page_view",
+        metadata: {
+          title: document.title,
+          timestamp: new Date().toISOString(),
+        },
+      });
+    };
+
+    if ('requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(trackPageView, { timeout: 5000 });
+    } else {
+      setTimeout(trackPageView, 500);
+    }
 
     // Track time on page when leaving
     return () => {
+      if (!sessionId.current) return;
       const timeOnPage = Math.round((Date.now() - pageStartTime.current) / 1000);
       eventQueue.current.push({
         event_type: "page_exit",

@@ -148,7 +148,7 @@ const SmartIntegrationsHub: React.FC = () => {
                   <Button onClick={handleWeatherSearch} disabled={isLoading}>
                     {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Search'}
                   </Button>
-                  <Button variant="outline" onClick={handleLocationWeather} disabled={isLoading}>
+                  <Button variant="outline" onClick={handleLocationWeather} disabled={isLoading} aria-label="Use my current location">
                     <MapPin className="w-4 h-4" />
                   </Button>
                 </div>

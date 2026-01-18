@@ -1,6 +1,6 @@
 // Partner display data for public-facing pages
 import { Car, Truck, Laptop } from "lucide-react";
-import luxuryCarVideo from "@/assets/luxury-car.mp4";
+import chauffeurLuxuryVideo from "@/assets/chauffeur-luxury.mp4";
 import heroVideoExtended from "@/assets/hero-video-extended.mp4";
 import demoVisionVideo from "@/assets/demo-vision.mp4";
 
@@ -36,7 +36,7 @@ export const partnersData: Partner[] = [
     contactMethod: "Dedicated concierge line",
     icon: Car,
     heroImage: "https://images.unsplash.com/photo-1563720360172-67b8f3dce741?w=3840&q=100&auto=format&fit=crop",
-    heroVideo: luxuryCarVideo,
+    heroVideo: chauffeurLuxuryVideo,
     galleryImages: [
       "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1920&q=100&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1920&q=100&auto=format&fit=crop",

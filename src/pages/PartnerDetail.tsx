@@ -52,13 +52,14 @@ const PartnerDetail = () => {
           style={{ scale: heroScale }}
           className="absolute inset-0"
         >
-          <div 
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${partner.heroImage})` }}
+          <img 
+            src={partner.heroImage}
+            alt={partner.name}
+            className="absolute inset-0 w-full h-full object-cover"
           />
           {/* Sophisticated Gradient Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/30 to-background" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/20 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-transparent to-transparent" />
         </motion.div>
         
         {/* Floating Particles Effect */}

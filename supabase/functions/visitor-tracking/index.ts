@@ -36,14 +36,15 @@ Deno.serve(async (req) => {
         );
       }
 
+      // Insert into funnel_events (the table that actually has data)
       const { error } = await supabase
-        .from('visitor_logs')
+        .from('funnel_events')
         .insert({
-          path,
-          user_agent: userAgent,
-          ip_address: ip,
+          stage: 'page_view',
           session_id: sessionId,
+          landing_page: path,
           referrer,
+          source: 'direct',
         });
 
       if (error) {
@@ -54,26 +55,26 @@ Deno.serve(async (req) => {
         );
       }
 
-      console.log(`Tracked visit: ${path} from ${ip}`);
+      console.log(`Tracked visit: ${path} from session ${sessionId}`);
       return new Response(
         JSON.stringify({ success: true }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // GET /count - Query visitor counts
+    // GET /count - Query visitor counts from funnel_events
     if (req.method === 'GET' && action === 'count') {
       const type = url.searchParams.get('type') || 'today';
       let count = 0;
 
       if (type === 'realtime') {
-        // Real-time = last 5 minutes active (distinct IPs)
+        // Real-time = last 5 minutes active (distinct sessions)
         const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
         
         const { data, error } = await supabase
-          .from('visitor_logs')
-          .select('ip_address')
-          .gte('timestamp', fiveMinutesAgo);
+          .from('funnel_events')
+          .select('session_id')
+          .gte('created_at', fiveMinutesAgo);
 
         if (error) {
           console.error('Error fetching realtime count:', error);
@@ -83,17 +84,17 @@ Deno.serve(async (req) => {
           );
         }
 
-        // Count distinct IPs
-        const uniqueIps = new Set(data?.map(row => row.ip_address) || []);
-        count = uniqueIps.size;
+        // Count distinct sessions
+        const uniqueSessions = new Set(data?.map(row => row.session_id) || []);
+        count = uniqueSessions.size;
       } else {
-        // Today's visitors (distinct IPs)
+        // Today's visitors (distinct sessions)
         const today = new Date().toISOString().split('T')[0];
         
         const { data, error } = await supabase
-          .from('visitor_logs')
-          .select('ip_address')
-          .eq('visit_date', today);
+          .from('funnel_events')
+          .select('session_id')
+          .gte('created_at', today);
 
         if (error) {
           console.error('Error fetching today count:', error);
@@ -103,9 +104,9 @@ Deno.serve(async (req) => {
           );
         }
 
-        // Count distinct IPs
-        const uniqueIps = new Set(data?.map(row => row.ip_address) || []);
-        count = uniqueIps.size;
+        // Count distinct sessions
+        const uniqueSessions = new Set(data?.map(row => row.session_id) || []);
+        count = uniqueSessions.size;
       }
 
       return new Response(

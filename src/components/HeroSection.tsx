@@ -1,7 +1,7 @@
 import { ArrowRight, ChevronDown, Play, Loader2 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useCampaignPersonalization } from "@/hooks/useCampaignPersonalization";
 
@@ -17,11 +17,16 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
   const ref = useRef<HTMLElement>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [videoError, setVideoError] = useState(false);
-  const { scrollYProgress } = useScroll({
+  
+  // Memoize scroll options to prevent recalculation
+  const scrollOptions = useMemo(() => ({
     target: ref,
-    offset: ["start start", "end start"],
-  });
+    offset: ["start start", "end start"] as ["start start", "end start"],
+  }), []);
+  
+  const { scrollYProgress } = useScroll(scrollOptions);
 
+  // Use CSS-friendly transform values to avoid forced reflows
   const mediaY = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
   const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
@@ -40,9 +45,9 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
 
   return (
     <header ref={ref} className="relative w-full min-h-[100dvh] overflow-hidden flex items-center justify-center">
-      {/* Background Video/Image with parallax */}
+      {/* Background Video/Image with parallax - use will-change to hint GPU acceleration */}
       <motion.div 
-        style={{ y: mediaY, scale: mediaScale }}
+        style={{ y: mediaY, scale: mediaScale, willChange: 'transform' }}
         className="absolute inset-0 w-full h-[130%] z-0"
       >
         {/* Video loading indicator - only show if no video loaded yet */}
@@ -107,9 +112,9 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
         }}
       />
 
-      {/* Content with parallax */}
+      {/* Content with parallax - use will-change for GPU acceleration */}
       <motion.div 
-        style={{ y: contentY, opacity }}
+        style={{ y: contentY, opacity, willChange: 'transform, opacity' }}
         className="relative z-20 text-center px-4 sm:px-6 max-w-5xl mx-auto w-full"
       >
         {/* Elegant top line */}

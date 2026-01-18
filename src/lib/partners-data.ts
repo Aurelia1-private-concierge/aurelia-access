@@ -159,9 +159,9 @@ export const partnersData: Partner[] = [
     heroImage: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=3840&q=100&auto=format&fit=crop",
     heroVideo: demoVisionVideo,
     galleryImages: [
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&q=100&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1920&q=100&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=1920&q=100&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1551434678-e076c223a692?w=1920&q=100&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1559028012-481c04fa702d?w=1920&q=100&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1547658719-da2b51169166?w=1920&q=100&auto=format&fit=crop",
     ],
     tagline: "Digital Excellence Elevated",
     stats: [

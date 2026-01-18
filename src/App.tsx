@@ -62,6 +62,7 @@ const Status = lazy(() => import("./pages/Status"));
 const VideoRoom = lazy(() => import("./pages/VideoRoom"));
 const Boardroom = lazy(() => import("./pages/Boardroom"));
 const BoardroomSession = lazy(() => import("./pages/BoardroomSession"));
+const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 
 // Minimal loading fallback
 const PageLoader = () => (
@@ -101,6 +102,14 @@ const AnimatedRoutes = () => {
             element={
               <PageTransition>
                 <Auth />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/auth/callback"
+            element={
+              <PageTransition>
+                <AuthCallback />
               </PageTransition>
             }
           />

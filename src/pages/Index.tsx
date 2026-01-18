@@ -57,9 +57,12 @@ const useContextualSoundscapes = () => {
   };
 };
 
-// Minimal section loader for lazy components
+// Minimal section loader for lazy components - optimized to reduce layout shift
 const SectionLoader = () => (
-  <div className="min-h-[200px] flex items-center justify-center">
+  <div 
+    className="min-h-[200px] flex items-center justify-center"
+    style={{ contentVisibility: 'auto', containIntrinsicSize: '0 200px' }}
+  >
     <div className="w-8 h-8 border border-primary/30 rounded-full border-t-primary animate-spin" />
   </div>
 );
@@ -92,7 +95,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-[100dvh] bg-background overflow-x-hidden relative">
+    <div className="min-h-[100dvh] bg-background overflow-x-hidden relative" style={{ contain: 'layout style' }}>
       {/* GA4 Analytics */}
       <GA4Script />
       
@@ -117,10 +120,10 @@ const Index = () => {
 
       <SectionDivider variant="ornate" />
 
-      {/* Below-the-fold content - Lazy loaded */}
+      {/* Below-the-fold content - Lazy loaded with content visibility optimization */}
       <Suspense fallback={<SectionLoader />}>
         {/* Luxury Clock Section */}
-        <section className="py-16 flex justify-center items-center">
+        <section className="py-16 flex justify-center items-center content-auto">
           <RolexClock />
         </section>
 

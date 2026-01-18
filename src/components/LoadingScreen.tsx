@@ -63,16 +63,16 @@ const LoadingScreen = () => {
       });
     }, 800);
 
-    // Set loading to false - reduced from 2500ms to 1800ms for faster FID
+    // Set loading to false - reduced to 1000ms for faster FID and LCP
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1800);
+    }, 1000);
 
-    // Fallback: force unmount after 2.5 seconds if animation doesn't complete
+    // Fallback: force unmount after 1.5 seconds if animation doesn't complete
     const fallbackTimer = setTimeout(() => {
       setIsLoading(false);
       setShouldRender(false);
-    }, 2500);
+    }, 1500);
 
     return () => {
       clearTimeout(timer);
@@ -95,8 +95,9 @@ const LoadingScreen = () => {
             opacity: 0,
             scale: 1.05,
           }}
-          transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
-          className="fixed inset-0 z-[100] bg-background flex items-center justify-center overflow-hidden"
+          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+          className="fixed inset-0 z-[100] bg-background flex items-center justify-center overflow-hidden fixed-optimize"
+          style={{ contain: 'layout paint' }}
         >
           {/* Premium particle effects - lazy loaded */}
           <Suspense fallback={null}>

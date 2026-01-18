@@ -4,6 +4,7 @@ import { Construction, Mail, Bell, ArrowRight, Sparkles, Clock } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import heroVideo from "@/assets/hero-luxury-holiday.mp4";
 
 const UnderConstruction = () => {
@@ -42,11 +43,40 @@ const UnderConstruction = () => {
     if (!email) return;
     
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    toast.success("You'll be the first to know when we launch!");
-    setEmail("");
-    setIsSubmitting(false);
+    try {
+      // Save to launch_signups table
+      const { error } = await supabase
+        .from('launch_signups')
+        .insert({ 
+          email, 
+          source: 'coming_soon_page',
+          notification_preference: 'email'
+        });
+
+      if (error) {
+        if (error.code === '23505') {
+          toast.info("You're already on the list!");
+        } else {
+          throw error;
+        }
+      } else {
+        // Notify admin
+        await supabase.functions.invoke('notify-admin', {
+          body: { 
+            type: 'launch_signup',
+            email,
+            source: 'coming_soon_page'
+          }
+        });
+        toast.success("You'll be the first to know when we launch!");
+      }
+      setEmail("");
+    } catch (err) {
+      console.error('Signup error:', err);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Countdown (example: 30 days from now)

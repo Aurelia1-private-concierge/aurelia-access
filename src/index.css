@@ -185,6 +185,11 @@
       opacity: 1;
     }
   }
+
+  /* Brighten all videos by 5% */
+  video {
+    filter: brightness(1.05);
+  }
 }
 
 @layer utilities {

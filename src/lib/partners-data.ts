@@ -66,7 +66,6 @@ export const partnersData: Partner[] = [
     contactMethod: "Concierge booking",
     icon: Truck,
     heroImage: "https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?w=3840&q=100&auto=format&fit=crop",
-    heroVideo: heroVideoExtended,
     galleryImages: [
       "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=1920&q=100&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=1920&q=100&auto=format&fit=crop",

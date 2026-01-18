@@ -65,6 +65,31 @@ Deno.serve(async (req) => {
     }
 
     console.log('Scraping URL:', formattedUrl, 'for user:', userId);
+    console.log('Options:', JSON.stringify(options));
+
+    // Build request body with advanced options
+    const requestBody: Record<string, unknown> = {
+      url: formattedUrl,
+      formats: options?.formats || ['markdown'],
+      onlyMainContent: options?.onlyMainContent ?? true,
+    };
+
+    // Add optional parameters
+    if (options?.waitFor) {
+      requestBody.waitFor = options.waitFor;
+    }
+    if (options?.location) {
+      requestBody.location = options.location;
+    }
+    if (options?.actions) {
+      requestBody.actions = options.actions;
+    }
+    if (options?.removeTags) {
+      requestBody.removeTags = options.removeTags;
+    }
+    if (options?.headers) {
+      requestBody.headers = options.headers;
+    }
 
     const response = await fetch('https://api.firecrawl.dev/v1/scrape', {
       method: 'POST',
@@ -72,13 +97,7 @@ Deno.serve(async (req) => {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        url: formattedUrl,
-        formats: options?.formats || ['markdown'],
-        onlyMainContent: options?.onlyMainContent ?? true,
-        waitFor: options?.waitFor,
-        location: options?.location,
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     const data = await response.json();
@@ -92,8 +111,14 @@ Deno.serve(async (req) => {
     }
 
     console.log('Scrape successful for user:', userId);
+    
+    // Return with consistent structure
     return new Response(
-      JSON.stringify(data),
+      JSON.stringify({
+        success: true,
+        data: data.data || data,
+        metadata: data.data?.metadata || data.metadata,
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {

@@ -41,11 +41,11 @@ Deno.serve(async (req) => {
     const userId = claimsData.claims.sub;
     console.log('Authenticated user:', userId);
 
-    const { url, options } = await req.json();
+    const { jobId } = await req.json();
 
-    if (!url) {
+    if (!jobId) {
       return new Response(
-        JSON.stringify({ success: false, error: 'URL is required' }),
+        JSON.stringify({ success: false, error: 'Job ID is required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -59,52 +59,14 @@ Deno.serve(async (req) => {
       );
     }
 
-    let formattedUrl = url.trim();
-    if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
-      formattedUrl = `https://${formattedUrl}`;
-    }
+    console.log('Checking crawl status for job:', jobId);
 
-    console.log('Crawling URL:', formattedUrl, 'for user:', userId);
-    console.log('Crawl options:', JSON.stringify(options));
-
-    // Build crawl request with advanced options
-    const crawlRequest: Record<string, unknown> = {
-      url: formattedUrl,
-      limit: options?.limit || 100,
-    };
-
-    // Add optional parameters
-    if (options?.maxDepth) {
-      crawlRequest.maxDepth = options.maxDepth;
-    }
-    if (options?.includePaths?.length) {
-      crawlRequest.includePaths = options.includePaths;
-    }
-    if (options?.excludePaths?.length) {
-      crawlRequest.excludePaths = options.excludePaths;
-    }
-
-    // Handle scrape options for each page
-    if (options?.scrapeOptions) {
-      crawlRequest.scrapeOptions = {
-        formats: options.scrapeOptions.formats || ['markdown', 'html'],
-        onlyMainContent: options.scrapeOptions.onlyMainContent ?? true,
-        waitFor: options.scrapeOptions.waitFor || 0,
-      };
-    } else {
-      crawlRequest.scrapeOptions = {
-        formats: ['markdown', 'html'],
-        onlyMainContent: true,
-      };
-    }
-
-    const response = await fetch('https://api.firecrawl.dev/v1/crawl', {
-      method: 'POST',
+    const response = await fetch(`https://api.firecrawl.dev/v1/crawl/${jobId}`, {
+      method: 'GET',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(crawlRequest),
     });
 
     const data = await response.json();
@@ -117,19 +79,22 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log('Crawl started successfully for user:', userId, 'Job ID:', data.id);
+    console.log('Crawl status retrieved:', data.status);
     return new Response(
       JSON.stringify({
         success: true,
-        id: data.id,
-        status: data.status || 'scraping',
-        url: formattedUrl,
+        status: data.status,
+        completed: data.completed,
+        total: data.total,
+        creditsUsed: data.creditsUsed,
+        expiresAt: data.expiresAt,
+        data: data.data,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error crawling:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Failed to crawl';
+    console.error('Error checking crawl status:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to check status';
     return new Response(
       JSON.stringify({ success: false, error: errorMessage }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

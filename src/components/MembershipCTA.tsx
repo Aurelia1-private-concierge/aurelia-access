@@ -30,13 +30,13 @@ const MembershipCTA = () => {
         <p className="text-muted-foreground font-light mb-12 leading-relaxed text-lg max-w-xl mx-auto">{t("membership.subtitle")}</p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link to="/auth" className="group w-full sm:w-auto px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-widest uppercase hover:bg-primary/90 hover:scale-105 hover:shadow-[0_8px_30px_-6px_hsl(var(--primary)/0.5)] active:scale-95 transition-all duration-300 gold-glow-hover flex items-center justify-center gap-3 rounded-sm">
+          <Link to="/auth" className="group w-full sm:w-auto px-10 py-5 bg-primary text-primary-foreground text-sm font-semibold tracking-widest uppercase hover:bg-primary/90 hover:scale-105 hover:-translate-y-1 shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.6),inset_0_1px_0_hsl(var(--primary-foreground)/0.2)] hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.7)] active:scale-95 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 rounded-md cursor-pointer">
             {t("membership.beginApplication")}
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
           </Link>
           <a 
             href="mailto:concierge@Aurelia-privateconcierge.com" 
-            className="w-full sm:w-auto px-10 py-4 border-2 border-foreground/30 text-foreground text-sm font-medium tracking-widest uppercase hover:bg-primary/10 hover:border-primary hover:scale-105 hover:shadow-[0_8px_30px_-6px_hsl(var(--primary)/0.3)] active:scale-95 transition-all duration-300 rounded-sm"
+            className="w-full sm:w-auto px-10 py-5 bg-foreground/10 backdrop-blur-sm border-2 border-foreground/40 text-foreground text-sm font-semibold tracking-widest uppercase hover:bg-primary hover:text-primary-foreground hover:border-primary hover:scale-105 hover:-translate-y-1 shadow-[0_4px_20px_-4px_hsl(var(--foreground)/0.2)] hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.5)] active:scale-95 active:translate-y-0 transition-all duration-300 rounded-md cursor-pointer"
           >
             {t("membership.contactLiaison")}
           </a>

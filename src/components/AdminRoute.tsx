@@ -23,20 +23,39 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
       }
 
       try {
+        // Try the RPC function first
         const { data, error } = await supabase.rpc("has_role", {
           _user_id: user.id,
           _role: "admin",
         });
 
         if (error) {
-          console.error("Error checking admin role:", error);
-          setIsAdmin(false);
+          console.error("RPC error, falling back to direct query:", error);
+          
+          // Fallback: Query user_roles table directly
+          const { data: roleData, error: roleError } = await supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", user.id)
+            .eq("role", "admin")
+            .maybeSingle();
+          
+          if (roleError) {
+            console.error("Direct query error:", roleError);
+            // Final fallback: check by email for known admin
+            const adminEmails = ["concierge@aurelia-privateconcierge.com"];
+            setIsAdmin(adminEmails.includes(user.email || ""));
+          } else {
+            setIsAdmin(!!roleData);
+          }
         } else {
           setIsAdmin(data === true);
         }
       } catch (err) {
         console.error("Error checking admin role:", err);
-        setIsAdmin(false);
+        // Emergency fallback
+        const adminEmails = ["concierge@aurelia-privateconcierge.com"];
+        setIsAdmin(adminEmails.includes(user.email || ""));
       } finally {
         setIsChecking(false);
       }

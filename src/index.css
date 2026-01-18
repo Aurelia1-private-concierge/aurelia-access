@@ -778,4 +778,26 @@
     opacity: 1;
     transform: translateY(0);
   }
+
+  /* Performance: Content visibility optimization for below-the-fold sections */
+  .content-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 500px;
+  }
+
+  /* Performance: Reduce layout thrashing with containment */
+  .contain-layout {
+    contain: layout style;
+  }
+
+  /* Performance: Will-change hints for animated elements */
+  .will-animate {
+    will-change: transform, opacity;
+  }
+
+  /* Performance: Reduce paint area for fixed elements */
+  .fixed-optimize {
+    contain: layout paint;
+    will-change: transform;
+  }
 }

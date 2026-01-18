@@ -41,94 +41,18 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,svg,woff2}"],
-        // Exclude large files from precaching
-        globIgnores: ["**/*.mp4", "**/*.jpg", "**/*.jpeg", "**/*.webp", "**/*.png", "**/*.gif"],
-        maximumFileSizeToCacheInBytes: 500 * 1024, // 500KB max
+        // Disable all precaching to clear corrupted caches
+        globPatterns: [],
+        globIgnores: ["**/*"],
+        maximumFileSizeToCacheInBytes: 0,
         skipWaiting: true,
         clientsClaim: true,
         cleanupOutdatedCaches: true,
+        // No runtime caching - use network only to clear corrupted IndexedDB
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "google-fonts-cache",
-              expiration: {
-                maxEntries: 5,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
-                purgeOnQuotaError: true,
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-          {
-            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "gstatic-fonts-cache",
-              expiration: {
-                maxEntries: 5,
-                maxAgeSeconds: 60 * 60 * 24 * 30,
-                purgeOnQuotaError: true,
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-          {
-            urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "api-cache",
-              expiration: {
-                maxEntries: 20,
-                maxAgeSeconds: 60 * 60, // 1 hour
-                purgeOnQuotaError: true,
-              },
-              networkTimeoutSeconds: 10,
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-          {
-            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
-            handler: "NetworkFirst", // Changed from StaleWhileRevalidate
-            options: {
-              cacheName: "image-cache",
-              expiration: {
-                maxEntries: 20,
-                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
-                purgeOnQuotaError: true,
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-          {
-            urlPattern: /\.(?:mp4|webm|mp3|wav)$/i,
+            urlPattern: /.*/i,
             handler: "NetworkOnly",
-          },
-          {
-            urlPattern: ({ request }) => request.mode === 'navigate',
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "page-cache",
-              expiration: {
-                maxEntries: 5,
-                maxAgeSeconds: 60 * 60 * 24,
-                purgeOnQuotaError: true,
-              },
-              networkTimeoutSeconds: 5,
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
           },
         ],
       },

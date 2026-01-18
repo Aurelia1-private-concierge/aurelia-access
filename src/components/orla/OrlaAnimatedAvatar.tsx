@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useState, useRef, useCallback } from "react";
-import orlaAvatar from "@/assets/orla-avatar.png";
+import orlaAvatar from "@/assets/orla-avatar-optimized.webp";
 
 interface OrlaAnimatedAvatarProps {
   isSpeaking: boolean;

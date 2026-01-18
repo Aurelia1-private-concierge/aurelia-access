@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useVoiceSession } from "@/hooks/useVoiceSession";
 import { useConversationHistory } from "@/hooks/useConversationHistory";
-import orlaAvatar from "@/assets/orla-avatar.png";
+import orlaAvatar from "@/assets/orla-avatar-optimized.webp";
 import { format } from "date-fns";
 import { OrlaVideoPreview } from "@/components/video";
 interface TranscriptEntry {

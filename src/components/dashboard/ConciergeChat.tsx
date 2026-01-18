@@ -17,6 +17,7 @@ import { useConciergeChat } from "@/hooks/useConciergeChat";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import orlaAvatarOptimized from "@/assets/orla-avatar-optimized.webp";
 
 export const ConciergeChat = () => {
   const { user } = useAuth();
@@ -117,7 +118,7 @@ export const ConciergeChat = () => {
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <Avatar className="w-10 h-10 border-2 border-primary/20">
-                    <AvatarImage src="/lovable-uploads/orla-avatar.png" />
+                    <AvatarImage src={orlaAvatarOptimized} />
                     <AvatarFallback className="bg-primary/10 text-primary">
                       <Sparkles className="w-5 h-5" />
                     </AvatarFallback>

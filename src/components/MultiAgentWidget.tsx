@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMultiAgent, AgentMessage, AgentMode } from "@/hooks/useMultiAgent";
 import OrlaMiniAvatar from "@/components/orla/OrlaMiniAvatar";
-import orlaAvatar from "@/assets/orla-avatar.png";
+import orlaAvatar from "@/assets/orla-avatar-optimized.webp";
 
 const INITIAL_MESSAGE: AgentMessage = {
   id: "initial",

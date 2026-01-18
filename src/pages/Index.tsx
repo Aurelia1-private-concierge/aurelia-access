@@ -36,6 +36,7 @@ import MusicControlFAB from "@/components/MusicControlFAB";
 import useContextualSoundscapes from "@/hooks/useContextualSoundscapes";
 import GA4Script from "@/components/GA4Script";
 import useBehaviorTracking from "@/hooks/useBehaviorTracking";
+import PartnersSection from "@/components/PartnersSection";
 
 const Index = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -140,6 +141,11 @@ const Index = () => {
       
       {/* Experiences Showcase */}
       <ExperiencesSection />
+
+      <SectionDivider variant="default" />
+
+      {/* Partners Network */}
+      <PartnersSection />
       
       <SectionDivider variant="default" />
       

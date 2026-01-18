@@ -39,7 +39,7 @@ export const partnersData: Partner[] = [
     heroVideo: chauffeurLuxuryVideo,
     galleryImages: [
       "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1920&q=100&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=100&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1920&q=100&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=100&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1920&q=100&auto=format&fit=crop",
     ],

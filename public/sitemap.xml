@@ -79,9 +79,46 @@
   <!-- Referral Program -->
   <url>
     <loc>https://aurelia-privateconcierge.com/referral</loc>
-    <lastmod>2026-01-16</lastmod>
+    <lastmod>2026-01-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
+  </url>
+  
+  <!-- Partner Detail Pages - High SEO Value -->
+  <url>
+    <loc>https://aurelia-privateconcierge.com/partners/velocities</loc>
+    <lastmod>2026-01-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1563720360172-67b8f3dce741?w=1200</image:loc>
+      <image:title>Velocities Luxury Chauffeur &amp; Executive Protection</image:title>
+      <image:caption>Premium executive chauffeur and close protection services with armored vehicles across 150+ cities worldwide</image:caption>
+    </image:image>
+  </url>
+  
+  <url>
+    <loc>https://aurelia-privateconcierge.com/partners/ontarget-couriers</loc>
+    <lastmod>2026-01-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?w=1200</image:loc>
+      <image:title>OnTarget Couriers Premium UK Delivery &amp; House Removals</image:title>
+      <image:caption>Premium same-day courier and luxury house removal services with Mercedes and Luton van fleet across 100% of UK</image:caption>
+    </image:image>
+  </url>
+  
+  <url>
+    <loc>https://aurelia-privateconcierge.com/partners/ontarget-webdesigns</loc>
+    <lastmod>2026-01-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1551434678-e076c223a692?w=1200</image:loc>
+      <image:title>OnTarget WebDesigns AI-Enhanced Luxury Web Design</image:title>
+      <image:caption>AI-enhanced bespoke web design for luxury brands with 2-4 week delivery and 99.99% uptime guarantee</image:caption>
+    </image:image>
   </url>
   
   <!-- Partner Recruitment -->

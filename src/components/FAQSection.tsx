@@ -1,6 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const FAQSection = () => {
@@ -42,7 +43,7 @@ const FAQSection = () => {
         </motion.div>
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 }} className="text-center mt-12">
           <p className="text-sm text-muted-foreground font-light">
-            {t("faq.moreQuestions")} <a href="#" className="text-primary hover:underline transition-all">{t("faq.contactLiaison")}</a>
+            {t("faq.moreQuestions")} <Link to="/contact" className="text-primary hover:underline transition-all">{t("faq.contactLiaison")}</Link>
           </p>
         </motion.div>
       </div>

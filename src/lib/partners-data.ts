@@ -1,10 +1,14 @@
 // Partner display data for public-facing pages
 import { Car, Truck, Laptop } from "lucide-react";
 import chauffeurLuxuryVideo from "@/assets/chauffeur-luxury.mp4";
-import heroVideoExtended from "@/assets/hero-video-extended.mp4";
 import demoVisionVideo from "@/assets/demo-vision.mp4";
 import bodyguardsTeam from "@/assets/partners/bodyguards-team.jpg";
 import chauffeurDriver from "@/assets/partners/chauffeur-driver.jpg";
+import ontargetDeliveryVideo from "@/assets/ontarget-delivery.mp4";
+import homeRelocation from "@/assets/partners/home-relocation.jpg";
+import parcelDelivery from "@/assets/partners/parcel-delivery.jpg";
+import vanInterior from "@/assets/partners/van-interior.jpg";
+import deliveryFleet from "@/assets/partners/delivery-fleet.jpg";
 
 export interface Partner {
   id: string;
@@ -66,11 +70,12 @@ export const partnersData: Partner[] = [
     contactMethod: "Concierge booking",
     icon: Truck,
     heroImage: "https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?w=3840&q=100&auto=format&fit=crop",
+    heroVideo: ontargetDeliveryVideo,
     galleryImages: [
-      "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=1920&q=100&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=1920&q=100&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=100&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1603796846097-bee99e4a601f?w=1920&q=100&auto=format&fit=crop",
+      homeRelocation,
+      parcelDelivery,
+      vanInterior,
+      deliveryFleet,
     ],
     tagline: "Your Move. Our Mission.",
     stats: [

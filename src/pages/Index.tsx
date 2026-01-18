@@ -31,6 +31,7 @@ import SmartIntegrationsHub from "@/components/SmartIntegrationsHub";
 import PictureInPicture from "@/components/PictureInPicture";
 import VoiceCommands from "@/components/VoiceCommands";
 import ContextualSoundscapeIndicator from "@/components/ContextualSoundscapeIndicator";
+import MusicControlFAB from "@/components/MusicControlFAB";
 import useContextualSoundscapes from "@/hooks/useContextualSoundscapes";
 import GA4Script from "@/components/GA4Script";
 import useBehaviorTracking from "@/hooks/useBehaviorTracking";
@@ -179,6 +180,17 @@ const Index = () => {
       <VoiceCommands 
         onToggleMusic={handleToggleMusic}
         onToggleNarrator={handleToggleNarrator}
+      />
+      
+      {/* Music Control FAB */}
+      <MusicControlFAB
+        isPlaying={soundscapes.isPlaying}
+        isLoading={soundscapes.isLoading}
+        volume={soundscapes.volume}
+        onToggle={soundscapes.toggleSoundscapes}
+        onVolumeChange={soundscapes.setVolume}
+        currentSection={soundscapes.currentSection}
+        description={soundscapes.getCurrentSoundscape().description}
       />
       
       {/* Contextual Soundscape Indicator */}

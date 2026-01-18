@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface SoundscapeConfig {
   section: string;
@@ -18,12 +18,16 @@ const SECTION_SOUNDSCAPES: SoundscapeConfig[] = [
   { section: 'global', style: 'worldly', description: 'Cultural fusion' },
 ];
 
+// Static fallback audio path
+const FALLBACK_AUDIO = '/audio/ambient-luxury.mp3';
+
 export const useContextualSoundscapes = () => {
   const [isEnabled, setIsEnabled] = useState(false);
   const [currentSection, setCurrentSection] = useState<string>('hero');
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [volume, setVolume] = useState(0.3);
+  const [useFallback, setUseFallback] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioCache = useRef<Map<string, string>>(new Map());
   const lastSectionRef = useRef<string>('');
@@ -72,15 +76,15 @@ export const useContextualSoundscapes = () => {
     return () => window.removeEventListener('scroll', throttledScroll);
   }, [isEnabled]);
 
-  // Change soundscape when section changes
+  // Change soundscape when section changes (only if not using fallback)
   useEffect(() => {
-    if (!isEnabled || !isPlaying) return;
+    if (!isEnabled || !isPlaying || useFallback) return;
     
     const sectionConfig = SECTION_SOUNDSCAPES.find(s => s.section === currentSection);
     if (sectionConfig && audioCache.current.has(currentSection)) {
       transitionToSoundscape(currentSection);
     }
-  }, [currentSection, isEnabled, isPlaying]);
+  }, [currentSection, isEnabled, isPlaying, useFallback]);
 
   const transitionToSoundscape = useCallback((section: string) => {
     const cachedAudio = audioCache.current.get(section);
@@ -104,42 +108,95 @@ export const useContextualSoundscapes = () => {
                 clearInterval(fadeIn);
               }
             }, 50);
-          });
+          }).catch(console.error);
         }
       }
     }, 50);
   }, [volume]);
 
-  const preloadSoundscapes = useCallback(async () => {
+  const generateMusic = async (genre: string): Promise<string | null> => {
+    try {
+      console.log(`Generating ${genre} music...`);
+      
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-ambient-music`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ genre, duration: 45 }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Music generation failed:', response.status, errorData);
+        return null;
+      }
+
+      const data = await response.json();
+      
+      if (data.audioContent) {
+        // Return data URI for base64 audio
+        return `data:audio/mpeg;base64,${data.audioContent}`;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Error generating music:', error);
+      return null;
+    }
+  };
+
+  const initializeAudio = useCallback(async () => {
     setIsLoading(true);
     
     try {
-      // Preload hero section first
-      const { data, error } = await supabase.functions.invoke('generate-ambient-music', {
-        body: { genre: 'luxury' },
-      });
-
-      if (error) throw error;
-      if (data?.audioUrl) {
-        audioCache.current.set('hero', data.audioUrl);
-        
-        // Initialize audio element
-        audioRef.current = new Audio(data.audioUrl);
+      // Try to generate AI music first
+      const sectionConfig = SECTION_SOUNDSCAPES.find(s => s.section === currentSection);
+      const genre = sectionConfig?.style || 'luxury';
+      
+      const audioUrl = await generateMusic(genre);
+      
+      if (audioUrl) {
+        audioCache.current.set(currentSection, audioUrl);
+        audioRef.current = new Audio(audioUrl);
         audioRef.current.loop = true;
         audioRef.current.volume = volume;
+        setUseFallback(false);
+        console.log('Using AI-generated music');
+      } else {
+        // Fallback to static audio
+        console.log('Falling back to static audio');
+        audioRef.current = new Audio(FALLBACK_AUDIO);
+        audioRef.current.loop = true;
+        audioRef.current.volume = volume;
+        setUseFallback(true);
+        toast.info('Using ambient music', {
+          description: 'AI music generation unavailable, using fallback track',
+          duration: 3000,
+        });
       }
     } catch (error) {
-      console.error('Error preloading soundscapes:', error);
+      console.error('Error initializing audio:', error);
+      // Fallback to static audio
+      audioRef.current = new Audio(FALLBACK_AUDIO);
+      audioRef.current.loop = true;
+      audioRef.current.volume = volume;
+      setUseFallback(true);
     } finally {
       setIsLoading(false);
     }
-  }, [volume]);
+  }, [currentSection, volume]);
 
   const toggleSoundscapes = useCallback(async () => {
     if (!isEnabled) {
       setIsEnabled(true);
       if (!audioRef.current) {
-        await preloadSoundscapes();
+        await initializeAudio();
       }
     }
 
@@ -148,11 +205,18 @@ export const useContextualSoundscapes = () => {
         audioRef.current.pause();
         setIsPlaying(false);
       } else {
-        await audioRef.current.play();
-        setIsPlaying(true);
+        try {
+          await audioRef.current.play();
+          setIsPlaying(true);
+        } catch (error) {
+          console.error('Error playing audio:', error);
+          toast.error('Unable to play audio', {
+            description: 'Please try again or check your browser settings',
+          });
+        }
       }
     }
-  }, [isEnabled, isPlaying, preloadSoundscapes]);
+  }, [isEnabled, isPlaying, initializeAudio]);
 
   const setAudioVolume = useCallback((newVolume: number) => {
     setVolume(newVolume);
@@ -186,6 +250,7 @@ export const useContextualSoundscapes = () => {
     toggleSoundscapes,
     getCurrentSoundscape,
     soundscapes: SECTION_SOUNDSCAPES,
+    useFallback,
   };
 };
 

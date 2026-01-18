@@ -171,7 +171,7 @@ const Footer = () => {
         {/* Legal Text Strip */}
         <div className="border-t border-border/10">
           <div className="max-w-7xl mx-auto px-6 py-4">
-            <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
+            <p className="text-[10px] text-muted-foreground/80 text-center leading-relaxed">
               {BRAND.legal.trademark} {BRAND.legal.jurisdiction}
             </p>
           </div>
@@ -180,10 +180,10 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-border/10">
           <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-xs text-muted-foreground font-light">
+            <p className="text-xs text-muted-foreground/80 font-light">
               © 2026 Aurelia Concierge Services.. All rights reserved. Unauthorized reproduction prohibited.
             </p>
-            <div className="flex items-center gap-6 text-xs text-muted-foreground font-light">
+            <div className="flex items-center gap-6 text-xs text-muted-foreground/80 font-light">
               <Link to="/privacy" className="hover:text-foreground transition-colors">{t("footer.privacy")}</Link>
               <Link to="/terms" className="hover:text-foreground transition-colors">{t("footer.terms")}</Link>
               <a href="mailto:concierge@aurelia-privateconcierge.com" className="hover:text-foreground transition-colors">{t("footer.legal")}</a>

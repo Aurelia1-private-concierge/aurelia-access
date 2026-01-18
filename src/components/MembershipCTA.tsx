@@ -30,13 +30,13 @@ const MembershipCTA = () => {
         <p className="text-muted-foreground font-light mb-12 leading-relaxed text-lg max-w-xl mx-auto">{t("membership.subtitle")}</p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link to="/auth" className="group w-full sm:w-auto px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-widest uppercase hover:bg-primary/90 transition-all duration-300 gold-glow-hover flex items-center justify-center gap-3">
+          <Link to="/auth" className="group w-full sm:w-auto px-10 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-widest uppercase hover:bg-primary/90 hover:scale-105 hover:shadow-[0_8px_30px_-6px_hsl(var(--primary)/0.5)] active:scale-95 transition-all duration-300 gold-glow-hover flex items-center justify-center gap-3 rounded-sm">
             {t("membership.beginApplication")}
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
           </Link>
           <a 
             href="mailto:concierge@Aurelia-privateconcierge.com" 
-            className="w-full sm:w-auto px-10 py-4 border border-border/30 text-foreground text-sm font-medium tracking-widest uppercase hover:bg-secondary/50 hover:border-primary/30 transition-all duration-300"
+            className="w-full sm:w-auto px-10 py-4 border-2 border-foreground/30 text-foreground text-sm font-medium tracking-widest uppercase hover:bg-primary/10 hover:border-primary hover:scale-105 hover:shadow-[0_8px_30px_-6px_hsl(var(--primary)/0.3)] active:scale-95 transition-all duration-300 rounded-sm"
           >
             {t("membership.contactLiaison")}
           </a>

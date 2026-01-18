@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Plane, Ship, Shield, Truck, Globe, Utensils, ArrowRight, Sparkles } from "lucide-react";
 import { partnersData, getCategories } from "@/lib/partners-data";
 import { useRef } from "react";
+import { Button } from "@/components/ui/button";
 
 const categoryIcons: Record<string, typeof Plane> = {
   "Private Aviation": Plane,
@@ -181,27 +182,35 @@ const PartnersSection = () => {
                         viewport={{ once: true }}
                         transition={{ delay: 0.3 + partnerIndex * 0.1 }}
                       >
-                        <Link 
-                          to={`/partners/${partner.id}`}
-                          className="text-sm text-muted-foreground font-light flex items-center gap-3 hover:text-primary transition-all duration-300 group/link py-1"
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          asChild
+                          className="w-full justify-start text-muted-foreground font-light hover:text-primary hover:bg-primary/5 transition-all duration-300 group/link px-2"
                         >
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover/link:bg-primary group-hover/link:scale-150 transition-all duration-300" />
-                          <span className="flex-1">{partner.name}</span>
-                          <ArrowRight className="w-4 h-4 opacity-0 -translate-x-3 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all duration-300 text-primary" />
-                        </Link>
+                          <Link to={`/partners/${partner.id}`}>
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover/link:bg-primary group-hover/link:scale-150 transition-all duration-300 mr-3" />
+                            <span className="flex-1 text-left">{partner.name}</span>
+                            <ArrowRight className="w-4 h-4 opacity-0 -translate-x-3 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all duration-300 text-primary ml-2" />
+                          </Link>
+                        </Button>
                       </motion.li>
                     ))}
                   </ul>
                   
-                  {/* View all link */}
+                  {/* View all button */}
                   <div className="pt-4 border-t border-border/30">
-                    <Link 
-                      to={`/partners/${categoryPartners[0]?.id || ''}`}
-                      className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-primary/70 hover:text-primary transition-colors group/explore"
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      asChild
+                      className="w-full border-primary/30 hover:bg-primary/10 hover:border-primary/50 text-xs uppercase tracking-widest group/explore"
                     >
-                      <span>Explore {category}</span>
-                      <ArrowRight className="w-3 h-3 group-hover/explore:translate-x-1 transition-transform" />
-                    </Link>
+                      <Link to={`/partners/${categoryPartners[0]?.id || ''}`}>
+                        <span>Explore {category}</span>
+                        <ArrowRight className="w-3 h-3 ml-2 group-hover/explore:translate-x-1 transition-transform" />
+                      </Link>
+                    </Button>
                   </div>
 
                   {/* Decorative corner accents */}

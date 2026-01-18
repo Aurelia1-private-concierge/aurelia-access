@@ -1,5 +1,8 @@
 // Partner display data for public-facing pages
 import { Car, Truck, Laptop } from "lucide-react";
+import heroJetVideo from "@/assets/hero-jet.mp4";
+import heroVideoExtended from "@/assets/hero-video-extended.mp4";
+import demoVisionVideo from "@/assets/demo-vision.mp4";
 
 export interface Partner {
   id: string;
@@ -33,7 +36,7 @@ export const partnersData: Partner[] = [
     contactMethod: "Dedicated concierge line",
     icon: Car,
     heroImage: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=3840&q=100&auto=format&fit=crop",
-    heroVideo: "https://videos.pexels.com/video-files/3045163/3045163-uhd_2560_1440_24fps.mp4",
+    heroVideo: heroJetVideo,
     galleryImages: [
       "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1920&q=100&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=1920&q=100&auto=format&fit=crop",
@@ -60,7 +63,7 @@ export const partnersData: Partner[] = [
     contactMethod: "API integration or concierge",
     icon: Truck,
     heroImage: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=3840&q=100&auto=format&fit=crop",
-    heroVideo: "https://videos.pexels.com/video-files/6010489/6010489-uhd_2560_1440_25fps.mp4",
+    heroVideo: heroVideoExtended,
     galleryImages: [
       "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=100&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=1920&q=100&auto=format&fit=crop",
@@ -86,7 +89,7 @@ export const partnersData: Partner[] = [
     contactMethod: "Project consultation",
     icon: Laptop,
     heroImage: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=3840&q=100&auto=format&fit=crop",
-    heroVideo: "https://videos.pexels.com/video-files/5473108/5473108-uhd_2560_1440_30fps.mp4",
+    heroVideo: demoVisionVideo,
     galleryImages: [
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&q=100&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1920&q=100&auto=format&fit=crop",

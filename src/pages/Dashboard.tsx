@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import DashboardSidebar, { type ActiveView } from "@/components/dashboard/DashboardSidebar";
 import PortfolioOverview from "@/components/dashboard/PortfolioOverview";
 import SecureMessaging from "@/components/dashboard/SecureMessaging";
@@ -17,6 +17,32 @@ import GlobalImpactPlatform from "@/components/dashboard/GlobalImpactPlatform";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { TierThemeProvider, useTierTheme } from "@/contexts/TierThemeContext";
 import { cn } from "@/lib/utils";
+
+const pageVariants = {
+  initial: { 
+    opacity: 0, 
+    y: 20,
+    scale: 0.98,
+  },
+  animate: { 
+    opacity: 1, 
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.4,
+      ease: "easeOut" as const,
+    }
+  },
+  exit: { 
+    opacity: 0, 
+    y: -10,
+    scale: 0.98,
+    transition: {
+      duration: 0.3,
+      ease: "easeIn" as const,
+    }
+  }
+};
 
 const DashboardContent = () => {
   const [searchParams] = useSearchParams();
@@ -62,28 +88,60 @@ const DashboardContent = () => {
   };
 
   return (
-    <div className={cn("min-h-screen bg-background flex relative", colors.accentGlow)}>
-      {/* Subtle tier gradient overlay */}
-      <div className={cn(
-        "absolute inset-0 bg-gradient-to-br pointer-events-none opacity-30",
-        colors.gradientFrom,
-        colors.gradientTo
-      )} />
+    <div className={cn("min-h-screen bg-background flex relative overflow-hidden", colors.accentGlow)}>
+      {/* Premium animated gradient background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <motion.div
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.03, 0.06, 0.03],
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+          className={cn(
+            "absolute -top-1/4 -left-1/4 w-[800px] h-[800px] rounded-full blur-3xl",
+            colors.gradientFrom
+          )}
+        />
+        <motion.div
+          animate={{ 
+            scale: [1.2, 1, 1.2],
+            opacity: [0.04, 0.02, 0.04],
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+          className={cn(
+            "absolute -bottom-1/4 -right-1/4 w-[700px] h-[700px] rounded-full blur-3xl",
+            colors.gradientTo
+          )}
+        />
+      </div>
+      
+      {/* Subtle grid pattern */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-[0.015]"
+        style={{
+          backgroundImage: `linear-gradient(hsl(var(--primary) / 0.3) 1px, transparent 1px),
+                           linear-gradient(90deg, hsl(var(--primary) / 0.3) 1px, transparent 1px)`,
+          backgroundSize: '60px 60px',
+        }}
+      />
       
       <DashboardSidebar activeView={activeView} setActiveView={setActiveView} />
       
       <div className="flex-1 flex flex-col min-h-screen relative z-10">
         <DashboardHeader activeView={activeView} />
         
-        <motion.main 
-          key={activeView}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="flex-1 p-6 lg:p-8 overflow-auto"
-        >
-          {renderView()}
-        </motion.main>
+        <AnimatePresence mode="wait">
+          <motion.main 
+            key={activeView}
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="flex-1 p-6 lg:p-8 overflow-auto"
+          >
+            {renderView()}
+          </motion.main>
+        </AnimatePresence>
       </div>
     </div>
   );

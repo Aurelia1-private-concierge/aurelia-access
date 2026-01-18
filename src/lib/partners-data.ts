@@ -66,11 +66,12 @@ export const partnersData: Partner[] = [
     contactMethod: "Concierge booking",
     icon: Truck,
     heroImage: "https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?w=3840&q=100&auto=format&fit=crop",
+    heroVideo: heroVideoExtended,
     galleryImages: [
-      "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=1920&q=100&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=1920&q=100&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=1920&q=100&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=100&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=100&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1603796846097-bee99e4a601f?w=1920&q=100&auto=format&fit=crop",
     ],
     tagline: "Your Move. Our Mission.",
     stats: [

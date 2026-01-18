@@ -134,16 +134,13 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
           <span className="w-8 h-px bg-primary/40" />
         </motion.div>
 
-        {/* Main headline with refined typography */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.5, ease: [0.4, 0, 0.2, 1] }}
+        {/* Main headline - LCP element, render immediately for performance */}
+        <h1
           className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl text-foreground font-normal tracking-[-0.03em] leading-[0.95] mb-6 sm:mb-8 px-2"
           style={{ fontFamily: "'Cormorant Garamond', serif" }}
         >
           {campaign.title || t("hero.title")}
-        </motion.h1>
+        </h1>
 
         {/* Subtitle with refined spacing */}
         <motion.p

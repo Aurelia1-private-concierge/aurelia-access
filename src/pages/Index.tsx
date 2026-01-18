@@ -28,6 +28,7 @@ import GlowingOrb from "@/components/GlowingOrb";
 import MetaverseEntryPoint from "@/components/MetaverseEntryPoint";
 import WearablesHub from "@/components/wearables/WearablesHub";
 import SmartIntegrationsHub from "@/components/SmartIntegrationsHub";
+import GamingServicesSection from "@/components/GamingServicesSection";
 import PictureInPicture from "@/components/PictureInPicture";
 import VoiceCommands from "@/components/VoiceCommands";
 import ContextualSoundscapeIndicator from "@/components/ContextualSoundscapeIndicator";
@@ -124,6 +125,11 @@ const Index = () => {
 
       {/* Smart Integrations Hub */}
       <SmartIntegrationsHub />
+
+      <SectionDivider variant="default" />
+
+      {/* Private Gaming Servers */}
+      <GamingServicesSection />
 
       <SectionDivider variant="ornate" />
 

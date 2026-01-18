@@ -228,7 +228,7 @@ const FeaturesSection = () => {
           </p>
           <Link
             to="/services"
-            className="inline-flex items-center gap-3 px-8 py-4 bg-primary/10 border border-primary/30 text-primary text-xs tracking-[0.2em] uppercase hover:bg-primary/20 transition-all duration-300"
+            className="inline-flex items-center gap-3 px-10 py-5 bg-primary text-primary-foreground text-sm font-semibold tracking-[0.15em] uppercase hover:bg-primary/90 hover:scale-105 hover:-translate-y-1 shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.6)] hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.7)] active:scale-95 transition-all duration-300 rounded-md cursor-pointer"
           >
             <Gem className="w-4 h-4" />
             Explore All Services

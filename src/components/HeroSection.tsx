@@ -50,17 +50,22 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
         style={{ y: mediaY, scale: mediaScale, willChange: 'transform' }}
         className="absolute inset-0 w-full h-[130%] z-0"
       >
-        {/* Video loading indicator - subtle, doesn't block content */}
+        {/* Video loading indicator - only show if no video loaded yet */}
         {videoSrc && !videoLoaded && !videoError && (
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center justify-center z-10 pointer-events-none">
+          <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none bg-background">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1 }}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/40 backdrop-blur-sm"
+              transition={{ delay: 0.3 }}
+              className="flex flex-col items-center gap-3"
             >
-              <Loader2 className="w-3 h-3 text-primary/60 animate-spin" />
-              <span className="text-[9px] uppercase tracking-[0.15em] text-foreground/40">Loading</span>
+              <div className="relative">
+                <div className="w-12 h-12 rounded-full border border-primary/30 flex items-center justify-center bg-background/20 backdrop-blur-sm">
+                  <Loader2 className="w-5 h-5 text-primary animate-spin" />
+                </div>
+                <div className="absolute inset-0 w-12 h-12 rounded-full border-t border-primary/50 animate-spin" style={{ animationDuration: '2s' }} />
+              </div>
+              <span className="text-[10px] uppercase tracking-[0.2em] text-foreground/40">Loading video</span>
             </motion.div>
           </div>
         )}

@@ -11,15 +11,7 @@ import "./i18n";
 
 import App from "./App.tsx";
 
-const rootElement = document.getElementById("root")!;
-
-// Clear the loading fallback content before React mounts
-const fallback = document.getElementById("loading-fallback");
-if (fallback) {
-  fallback.remove();
-}
-
-createRoot(rootElement).render(
+createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>

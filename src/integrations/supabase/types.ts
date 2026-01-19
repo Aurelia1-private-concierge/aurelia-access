@@ -2748,13 +2748,20 @@ export type Database = {
       }
     }
     Views: {
-      funnel_summary_admin: {
+      funnel_summary: {
         Row: {
           campaign: string | null
-          count: number | null
+          converted_count: number | null
+          first_event_date: string | null
+          landing_count: number | null
+          last_event_date: string | null
           medium: string | null
+          onboarding_completed_count: number | null
+          onboarding_started_count: number | null
+          signup_completed_count: number | null
+          signup_started_count: number | null
           source: string | null
-          stage: string | null
+          trial_started_count: number | null
         }
         Relationships: []
       }
@@ -2782,29 +2789,44 @@ export type Database = {
         }
         Relationships: []
       }
+      wearable_connections_public: {
+        Row: {
+          created_at: string | null
+          device_name: string | null
+          expires_at: string | null
+          id: string | null
+          last_sync_at: string | null
+          provider: string | null
+          sync_enabled: boolean | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          device_name?: string | null
+          expires_at?: string | null
+          id?: string | null
+          last_sync_at?: string | null
+          provider?: string | null
+          sync_enabled?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          device_name?: string | null
+          expires_at?: string | null
+          id?: string | null
+          last_sync_at?: string | null
+          provider?: string | null
+          sync_enabled?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      admin_get_all_profiles: {
-        Args: never
-        Returns: {
-          avatar_url: string | null
-          company: string | null
-          created_at: string
-          display_name: string | null
-          id: string
-          notification_preferences: Json | null
-          phone: string | null
-          timezone: string | null
-          updated_at: string
-          user_id: string
-        }[]
-        SetofOptions: {
-          from: "*"
-          to: "profiles"
-          isOneToOne: false
-          isSetofReturn: true
-        }
-      }
       check_ip_rate_limit: {
         Args: {
           p_ip_address: string
@@ -2858,16 +2880,6 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
-      }
-      get_funnel_summary: {
-        Args: never
-        Returns: {
-          campaign: string
-          count: number
-          medium: string
-          source: string
-          stage: string
-        }[]
       }
       get_keys_due_for_rotation: {
         Args: never

@@ -198,7 +198,7 @@ const PartnersSection = () => {
                   <div className="pt-4 border-t border-border/30">
                     <Link 
                       to={`/partners/${categoryPartners[0]?.id || ''}`}
-                      className="flex items-center justify-center w-full py-2 px-4 rounded-md border border-primary/30 hover:bg-primary/10 hover:border-primary/50 text-xs uppercase tracking-widest group/explore transition-all duration-300"
+                      className="flex items-center justify-center w-full py-2.5 px-4 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 text-xs uppercase tracking-widest font-medium group/explore transition-all duration-300 shadow-sm hover:shadow-md"
                     >
                       <span>Explore {category}</span>
                       <ArrowRight className="w-3 h-3 ml-2 group-hover/explore:translate-x-1 transition-transform" />

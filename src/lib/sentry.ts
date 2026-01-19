@@ -1,5 +1,14 @@
 import * as Sentry from "@sentry/react";
-import { toast } from "@/hooks/use-toast";
+
+// Lazy toast import to avoid circular dependency during initialization
+let toastFn: typeof import("@/hooks/use-toast").toast | null = null;
+const getToast = async () => {
+  if (!toastFn) {
+    const { toast } = await import("@/hooks/use-toast");
+    toastFn = toast;
+  }
+  return toastFn;
+};
 
 // Initialize Sentry for error monitoring
 export const initSentry = () => {
@@ -105,20 +114,25 @@ export const captureFeedback = (
 };
 
 // Capture error and show user-facing notification with event ID
-export const captureErrorWithNotification = (
+export const captureErrorWithNotification = async (
   error: Error,
   context?: Record<string, unknown>
-): string | undefined => {
+): Promise<string | undefined> => {
   const eventId = Sentry.captureException(error, {
     extra: context,
   });
 
   if (eventId) {
-    toast({
-      title: "An error occurred",
-      description: `Reference ID: ${eventId}`,
-      variant: "destructive",
-    });
+    try {
+      const toast = await getToast();
+      toast({
+        title: "An error occurred",
+        description: `Reference ID: ${eventId}`,
+        variant: "destructive",
+      });
+    } catch {
+      // Toast not available, silently continue
+    }
   }
 
   return eventId;

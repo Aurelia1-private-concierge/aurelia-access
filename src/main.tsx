@@ -11,10 +11,11 @@ import "./i18n";
 
 import App from "./App.tsx";
 
-// Remove the loading fallback once React mounts
-const loadingFallback = document.getElementById("loading-fallback");
-if (loadingFallback) {
-  loadingFallback.remove();
+// Clear the loading fallback content before React mounts
+const root = document.getElementById("root");
+if (root) {
+  // Clear all fallback content - React will populate it
+  root.innerHTML = '';
 }
 
 createRoot(document.getElementById("root")!).render(

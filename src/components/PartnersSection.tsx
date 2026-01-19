@@ -1,6 +1,6 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Plane, Ship, Shield, Truck, Globe, Utensils, ArrowRight, Sparkles } from "lucide-react";
+import { Plane, Ship, Shield, Truck, Globe, Utensils, ArrowRight, Sparkles, Bot } from "lucide-react";
 import { partnersData, getCategories } from "@/lib/partners-data";
 import { useRef } from "react";
 
@@ -9,7 +9,7 @@ const categoryIcons: Record<string, typeof Plane> = {
   "Private Aviation": Plane,
   "Yacht Charter": Ship,
   "Security & Chauffeur": Shield,
-  "AI Technology": Truck,
+  "AI Technology": Bot,
   "Logistics & Removals": Truck,
   "Hospitality": Globe,
   "Fine Dining": Utensils,

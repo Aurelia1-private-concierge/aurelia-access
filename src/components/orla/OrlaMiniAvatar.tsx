@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import orlaAvatarTiny from "@/assets/orla-avatar-tiny.webp";
 
@@ -14,6 +14,79 @@ interface OrlaMiniAvatarProps {
   mouthOpenness?: number;
   audioLevel?: number;
 }
+
+// ForwardRef wrapper for AnimatePresence children
+const SpeakingRing = forwardRef<HTMLDivElement, { audioLevel: number }>(({ audioLevel }, ref) => (
+  <motion.div
+    ref={ref}
+    initial={{ scale: 0.9, opacity: 0 }}
+    animate={{
+      scale: [1, 1.1 + audioLevel * 0.15, 1],
+      opacity: [0.7, 0.4, 0.7],
+    }}
+    exit={{ scale: 0.9, opacity: 0 }}
+    transition={{
+      duration: 0.5,
+      repeat: Infinity,
+      ease: "easeInOut",
+    }}
+    className="absolute inset-0 rounded-full border-2 border-primary"
+  />
+));
+SpeakingRing.displayName = "SpeakingRing";
+
+const ListeningRing = forwardRef<HTMLDivElement>((_, ref) => (
+  <motion.div
+    ref={ref}
+    initial={{ scale: 0.9, opacity: 0 }}
+    animate={{
+      scale: [1, 1.05, 1],
+      opacity: [0.5, 0.8, 0.5],
+    }}
+    exit={{ scale: 0.9, opacity: 0 }}
+    transition={{
+      duration: 1,
+      repeat: Infinity,
+      ease: "easeInOut",
+    }}
+    className="absolute inset-0 rounded-full border-2 border-emerald-400"
+  />
+));
+ListeningRing.displayName = "ListeningRing";
+
+const SpeakingDot = forwardRef<HTMLDivElement>((_, ref) => (
+  <motion.div
+    ref={ref}
+    initial={{ scale: 0, opacity: 0 }}
+    animate={{ scale: 1, opacity: 1 }}
+    exit={{ scale: 0, opacity: 0 }}
+    className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-background flex items-center justify-center"
+  >
+    <motion.div
+      animate={{ scale: [1, 1.3, 1] }}
+      transition={{ duration: 0.5, repeat: Infinity }}
+      className="w-1.5 h-1.5 bg-white rounded-full"
+    />
+  </motion.div>
+));
+SpeakingDot.displayName = "SpeakingDot";
+
+const ListeningDot = forwardRef<HTMLDivElement>((_, ref) => (
+  <motion.div
+    ref={ref}
+    initial={{ scale: 0, opacity: 0 }}
+    animate={{ scale: 1, opacity: 1 }}
+    exit={{ scale: 0, opacity: 0 }}
+    className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 rounded-full border-2 border-background flex items-center justify-center"
+  >
+    <motion.div
+      animate={{ height: ["30%", "80%", "30%"] }}
+      transition={{ duration: 0.4, repeat: Infinity }}
+      className="w-1 bg-white rounded-full"
+    />
+  </motion.div>
+));
+ListeningDot.displayName = "ListeningDot";
 
 const OrlaMiniAvatar = memo(({
   size = 56,
@@ -45,42 +118,12 @@ const OrlaMiniAvatar = memo(({
 
       {/* Speaking indicator ring */}
       <AnimatePresence>
-        {isSpeaking && (
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{
-              scale: [1, 1.1 + audioLevel * 0.15, 1],
-              opacity: [0.7, 0.4, 0.7],
-            }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            transition={{
-              duration: 0.5,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="absolute inset-0 rounded-full border-2 border-primary"
-          />
-        )}
+        {isSpeaking && <SpeakingRing audioLevel={audioLevel} />}
       </AnimatePresence>
 
       {/* Listening indicator ring */}
       <AnimatePresence>
-        {isListening && !isSpeaking && (
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{
-              scale: [1, 1.05, 1],
-              opacity: [0.5, 0.8, 0.5],
-            }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            transition={{
-              duration: 1,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="absolute inset-0 rounded-full border-2 border-emerald-400"
-          />
-        )}
+        {isListening && !isSpeaking && <ListeningRing />}
       </AnimatePresence>
 
       {/* Static avatar image - using optimized smaller version */}
@@ -100,38 +143,12 @@ const OrlaMiniAvatar = memo(({
 
       {/* Speaking status dot */}
       <AnimatePresence>
-        {isSpeaking && (
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-background flex items-center justify-center"
-          >
-            <motion.div
-              animate={{ scale: [1, 1.3, 1] }}
-              transition={{ duration: 0.5, repeat: Infinity }}
-              className="w-1.5 h-1.5 bg-white rounded-full"
-            />
-          </motion.div>
-        )}
+        {isSpeaking && <SpeakingDot />}
       </AnimatePresence>
 
       {/* Listening status dot */}
       <AnimatePresence>
-        {isListening && !isSpeaking && (
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 rounded-full border-2 border-background flex items-center justify-center"
-          >
-            <motion.div
-              animate={{ height: ["30%", "80%", "30%"] }}
-              transition={{ duration: 0.4, repeat: Infinity }}
-              className="w-1 bg-white rounded-full"
-            />
-          </motion.div>
-        )}
+        {isListening && !isSpeaking && <ListeningDot />}
       </AnimatePresence>
     </div>
   );

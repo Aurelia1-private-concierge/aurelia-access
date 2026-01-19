@@ -17,11 +17,25 @@ const VideoModal = ({ isOpen, onClose, videoSrc, title = "Experience Aurelia" }:
 
   useEffect(() => {
     if (isOpen && videoRef.current) {
-      // Start muted to comply with autoplay policy, then unmute after user interaction
-      videoRef.current.muted = true;
-      videoRef.current.play().then(() => {
-        setIsPlaying(true);
-      }).catch(console.error);
+      // Reset state when modal opens
+      setIsPlaying(false);
+      setIsMuted(true);
+      setHasUserInteracted(false);
+      
+      // Small delay to ensure video element is ready
+      const timer = setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.muted = true;
+          videoRef.current.currentTime = 0;
+          videoRef.current.play().then(() => {
+            setIsPlaying(true);
+          }).catch((err) => {
+            console.error('Video play failed:', err);
+          });
+        }
+      }, 100);
+      
+      return () => clearTimeout(timer);
     }
   }, [isOpen]);
 

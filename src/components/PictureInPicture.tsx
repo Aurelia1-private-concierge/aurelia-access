@@ -141,43 +141,41 @@ const PictureInPicture = forwardRef<HTMLDivElement, PictureInPictureProps>(({ is
           <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent pointer-events-none" />
 
           {/* Controls */}
-          <AnimatePresence>
-            {!isMinimized && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="absolute bottom-0 left-0 right-0 p-3 flex items-center justify-between"
-              >
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={togglePlay}
-                    className="p-1.5 rounded-full bg-background/50 hover:bg-background/70 transition-colors"
-                  >
-                    {isPlaying ? (
-                      <Pause className="w-3 h-3 text-foreground" />
-                    ) : (
-                      <Play className="w-3 h-3 text-foreground" />
-                    )}
-                  </button>
-                  <button
-                    onClick={toggleMute}
-                    className="p-1.5 rounded-full bg-background/50 hover:bg-background/70 transition-colors"
-                  >
-                    {isMuted ? (
-                      <VolumeX className="w-3 h-3 text-foreground" />
-                    ) : (
-                      <Volume2 className="w-3 h-3 text-foreground" />
-                    )}
-                  </button>
-                </div>
-                
-                <span className="text-[10px] text-foreground/80 uppercase tracking-wider">
-                  Aurelia Experience
-                </span>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {!isMinimized && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute bottom-0 left-0 right-0 p-3 flex items-center justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={togglePlay}
+                  className="p-1.5 rounded-full bg-background/50 hover:bg-background/70 transition-colors"
+                >
+                  {isPlaying ? (
+                    <Pause className="w-3 h-3 text-foreground" />
+                  ) : (
+                    <Play className="w-3 h-3 text-foreground" />
+                  )}
+                </button>
+                <button
+                  onClick={toggleMute}
+                  className="p-1.5 rounded-full bg-background/50 hover:bg-background/70 transition-colors"
+                >
+                  {isMuted ? (
+                    <VolumeX className="w-3 h-3 text-foreground" />
+                  ) : (
+                    <Volume2 className="w-3 h-3 text-foreground" />
+                  )}
+                </button>
+              </div>
+              
+              <span className="text-[10px] text-foreground/80 uppercase tracking-wider">
+                Aurelia Experience
+              </span>
+            </motion.div>
+          )}
 
           {/* Top controls */}
           <div className="absolute top-2 right-2 flex items-center gap-1">

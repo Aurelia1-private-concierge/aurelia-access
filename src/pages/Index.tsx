@@ -21,7 +21,7 @@ const MembershipCTA = lazy(() => import("@/components/MembershipCTA"));
 const Footer = lazy(() => import("@/components/Footer"));
 const RolexClock = lazy(() => import("@/components/RolexClock"));
 const CustomCursor = lazy(() => import("@/components/CustomCursor"));
-const VideoModal = lazy(() => import("@/components/VideoModal"));
+import VideoModal from "@/components/VideoModal";
 const AwardsStrip = lazy(() => import("@/components/AwardsStrip"));
 const GlobalPresenceSection = lazy(() => import("@/components/GlobalPresenceSection"));
 const NewsletterSection = lazy(() => import("@/components/NewsletterSection"));
@@ -289,13 +289,15 @@ const Index = () => {
           isPlaying={soundscapes.isPlaying}
         />
 
-        <VideoModal
-          isOpen={isVideoModalOpen}
-          onClose={() => setIsVideoModalOpen(false)}
-          videoSrc={heroVideo}
-          title="Experience Aurelia"
-        />
       </Suspense>
+      
+      {/* Video Modal - Always mounted for immediate response */}
+      <VideoModal
+        isOpen={isVideoModalOpen}
+        onClose={() => setIsVideoModalOpen(false)}
+        videoSrc={heroVideo}
+        title="Experience Aurelia"
+      />
     </div>
   );
 };

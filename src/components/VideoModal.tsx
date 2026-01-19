@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Play, Volume2, VolumeX } from "lucide-react";
+import { X, Play, Volume2, VolumeX, Loader2 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 interface VideoModalProps {
@@ -12,38 +12,44 @@ interface VideoModalProps {
 const VideoModal = ({ isOpen, onClose, videoSrc, title = "Experience Aurelia" }: VideoModalProps) => {
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [hasUserInteracted, setHasUserInteracted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Reset state when modal opens/closes
   useEffect(() => {
-    if (isOpen && videoRef.current) {
-      // Reset state when modal opens
+    if (isOpen) {
+      setIsLoading(true);
+      setHasError(false);
       setIsPlaying(false);
       setIsMuted(true);
-      setHasUserInteracted(false);
-      
-      // Small delay to ensure video element is ready
-      const timer = setTimeout(() => {
-        if (videoRef.current) {
-          videoRef.current.muted = true;
-          videoRef.current.currentTime = 0;
-          videoRef.current.play().then(() => {
-            setIsPlaying(true);
-          }).catch((err) => {
-            console.error('Video play failed:', err);
-          });
-        }
-      }, 100);
-      
-      return () => clearTimeout(timer);
     }
   }, [isOpen]);
+
+  const handleVideoLoaded = () => {
+    setIsLoading(false);
+    setHasError(false);
+    // Auto-play muted when loaded
+    if (videoRef.current) {
+      videoRef.current.muted = true;
+      videoRef.current.play().then(() => {
+        setIsPlaying(true);
+      }).catch((err) => {
+        console.error('Video autoplay failed:', err);
+      });
+    }
+  };
+
+  const handleVideoError = () => {
+    setIsLoading(false);
+    setHasError(true);
+    console.error('Video failed to load');
+  };
 
   const handleUnmute = () => {
     if (videoRef.current) {
       videoRef.current.muted = false;
       setIsMuted(false);
-      setHasUserInteracted(true);
     }
   };
 
@@ -51,18 +57,22 @@ const VideoModal = ({ isOpen, onClose, videoSrc, title = "Experience Aurelia" }:
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
-    window.addEventListener('keydown', handleEscape);
+    if (isOpen) {
+      window.addEventListener('keydown', handleEscape);
+    }
     return () => window.removeEventListener('keydown', handleEscape);
-  }, [onClose]);
+  }, [onClose, isOpen]);
 
   const togglePlay = () => {
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
+        setIsPlaying(false);
       } else {
-        videoRef.current.play();
+        videoRef.current.play().then(() => {
+          setIsPlaying(true);
+        }).catch(console.error);
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -71,7 +81,6 @@ const VideoModal = ({ isOpen, onClose, videoSrc, title = "Experience Aurelia" }:
       const newMuted = !isMuted;
       videoRef.current.muted = newMuted;
       setIsMuted(newMuted);
-      if (!newMuted) setHasUserInteracted(true);
     }
   };
 
@@ -118,7 +127,7 @@ const VideoModal = ({ isOpen, onClose, videoSrc, title = "Experience Aurelia" }:
             </div>
 
             {/* Video Container */}
-            <div className="relative aspect-video bg-card border border-border/20 overflow-hidden">
+            <div className="relative aspect-video bg-card border border-border/20 overflow-hidden rounded-lg">
               {/* Corner accents */}
               <div className="absolute top-3 left-3 w-6 h-6 z-20 pointer-events-none">
                 <div className="absolute top-0 left-0 w-full h-px bg-primary/40" />
@@ -137,18 +146,56 @@ const VideoModal = ({ isOpen, onClose, videoSrc, title = "Experience Aurelia" }:
                 <div className="absolute bottom-0 right-0 w-px h-full bg-primary/40" />
               </div>
 
+              {/* Loading State */}
+              {isLoading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-card z-10">
+                  <div className="flex flex-col items-center gap-3">
+                    <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                    <span className="text-sm text-muted-foreground">Loading video...</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Error State */}
+              {hasError && (
+                <div className="absolute inset-0 flex items-center justify-center bg-card z-10">
+                  <div className="flex flex-col items-center gap-3 text-center px-4">
+                    <X className="w-8 h-8 text-destructive" />
+                    <span className="text-sm text-muted-foreground">Failed to load video</span>
+                    <button 
+                      onClick={() => {
+                        setHasError(false);
+                        setIsLoading(true);
+                        if (videoRef.current) {
+                          videoRef.current.load();
+                        }
+                      }}
+                      className="text-xs text-primary hover:underline"
+                    >
+                      Try again
+                    </button>
+                  </div>
+                </div>
+              )}
+
               <video
                 ref={videoRef}
-                src={videoSrc}
                 muted={isMuted}
                 loop
                 playsInline
-                className="w-full h-full object-cover"
+                preload="auto"
+                onLoadedData={handleVideoLoaded}
+                onCanPlay={handleVideoLoaded}
+                onError={handleVideoError}
+                className={`w-full h-full object-cover transition-opacity duration-300 ${isLoading || hasError ? 'opacity-0' : 'opacity-100'}`}
                 onClick={togglePlay}
-              />
+              >
+                <source src={videoSrc} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
 
-              {/* Play overlay */}
-              {!isPlaying && (
+              {/* Play overlay - only show when not loading and not playing */}
+              {!isLoading && !hasError && !isPlaying && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -166,7 +213,7 @@ const VideoModal = ({ isOpen, onClose, videoSrc, title = "Experience Aurelia" }:
               )}
 
               {/* Unmute banner - shows when muted and playing */}
-              {isMuted && isPlaying && (
+              {!isLoading && !hasError && isMuted && isPlaying && (
                 <motion.button
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -180,14 +227,16 @@ const VideoModal = ({ isOpen, onClose, videoSrc, title = "Experience Aurelia" }:
               )}
 
               {/* Controls */}
-              <div className="absolute bottom-4 right-4 flex items-center gap-2 z-20">
-                <button
-                  onClick={toggleMute}
-                  className="w-10 h-10 rounded-full bg-background/60 backdrop-blur-sm border border-border/30 flex items-center justify-center text-foreground/70 hover:text-foreground hover:border-primary/50 transition-all duration-300"
-                >
-                  {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                </button>
-              </div>
+              {!isLoading && !hasError && (
+                <div className="absolute bottom-4 right-4 flex items-center gap-2 z-20">
+                  <button
+                    onClick={toggleMute}
+                    className="w-10 h-10 rounded-full bg-background/60 backdrop-blur-sm border border-border/30 flex items-center justify-center text-foreground/70 hover:text-foreground hover:border-primary/50 transition-all duration-300"
+                  >
+                    {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Footer text */}

@@ -19,13 +19,13 @@ const ALLOWED_ROUTES = [
 
 const PreLaunchGate = ({ children }: PreLaunchGateProps) => {
   const { isPreLaunch, loading } = usePreLaunchMode();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-  const [checkingAdmin, setCheckingAdmin] = useState(true);
+  const [checkingAdmin, setCheckingAdmin] = useState(false);
 
-  // Check if user is admin
+  // Check if user is admin - only when we have a user
   useEffect(() => {
     const checkAdmin = async () => {
       if (!user) {
@@ -34,6 +34,7 @@ const PreLaunchGate = ({ children }: PreLaunchGateProps) => {
         return;
       }
 
+      setCheckingAdmin(true);
       try {
         // Query user_roles directly to avoid function overload ambiguity
         const { data, error } = await supabase
@@ -57,12 +58,19 @@ const PreLaunchGate = ({ children }: PreLaunchGateProps) => {
       }
     };
 
-    checkAdmin();
-  }, [user]);
+    // Only check admin status once auth is done loading
+    if (!authLoading) {
+      checkAdmin();
+    }
+  }, [user, authLoading]);
 
-  // Redirect logic
+  // Redirect logic - only run after all loading is complete
   useEffect(() => {
-    if (loading || checkingAdmin) return;
+    // Wait for all checks to complete
+    if (loading || authLoading || checkingAdmin) return;
+    
+    // If isPreLaunch is still null, wait
+    if (isPreLaunch === null) return;
 
     const currentPath = location.pathname;
     const isAllowedRoute = ALLOWED_ROUTES.some(
@@ -73,14 +81,9 @@ const PreLaunchGate = ({ children }: PreLaunchGateProps) => {
     if (isPreLaunch && !isAdmin && !isAllowedRoute) {
       navigate("/coming-soon", { replace: true });
     }
-  }, [isPreLaunch, isAdmin, loading, checkingAdmin, location.pathname, navigate]);
+  }, [isPreLaunch, isAdmin, loading, authLoading, checkingAdmin, location.pathname, navigate]);
 
-  // Show children while checking to prevent black screen
-  // The redirect will happen after checks complete if needed
-  if (loading || checkingAdmin) {
-    return <>{children}</>;
-  }
-
+  // Always render children - redirects happen via navigate()
   return <>{children}</>;
 };
 

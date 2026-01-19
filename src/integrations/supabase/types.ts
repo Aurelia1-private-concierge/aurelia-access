@@ -2784,6 +2784,27 @@ export type Database = {
       }
     }
     Functions: {
+      admin_get_all_profiles: {
+        Args: never
+        Returns: {
+          avatar_url: string | null
+          company: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          notification_preferences: Json | null
+          phone: string | null
+          timezone: string | null
+          updated_at: string
+          user_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       check_ip_rate_limit: {
         Args: {
           p_ip_address: string

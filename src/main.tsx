@@ -11,6 +11,12 @@ import "./i18n";
 
 import App from "./App.tsx";
 
+// Remove the loading fallback once React mounts
+const loadingFallback = document.getElementById("loading-fallback");
+if (loadingFallback) {
+  loadingFallback.remove();
+}
+
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />

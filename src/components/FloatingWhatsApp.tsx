@@ -1,11 +1,37 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X } from "lucide-react";
-import { useState, useEffect, startTransition } from "react";
+import { useState, useEffect, startTransition, forwardRef } from "react";
+
+// ForwardRef wrapper for AnimatePresence tooltip
+const TooltipContent = forwardRef<HTMLDivElement, { 
+  onDismiss: () => void 
+}>(({ onDismiss }, ref) => (
+  <motion.div
+    ref={ref}
+    initial={{ opacity: 0, y: 10, scale: 0.9 }}
+    animate={{ opacity: 1, y: 0, scale: 1 }}
+    exit={{ opacity: 0, y: 10, scale: 0.9 }}
+    className="relative bg-card border border-border/30 px-4 py-3 shadow-lg max-w-[200px]"
+  >
+    <button
+      onClick={onDismiss}
+      className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-background border border-border/30 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+      aria-label="Dismiss tooltip"
+    >
+      <X className="w-3 h-3" />
+    </button>
+    <p className="text-xs text-foreground mb-1">Need assistance?</p>
+    <p className="text-[10px] text-muted-foreground">Chat with our concierge team</p>
+    {/* Arrow */}
+    <div className="absolute -bottom-2 right-6 w-4 h-4 bg-card border-r border-b border-border/30 rotate-45" />
+  </motion.div>
+));
+TooltipContent.displayName = "TooltipContent";
 
 const FloatingWhatsApp = () => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [, setIsMobile] = useState(false);
   const [isReady, setIsReady] = useState(false);
 
   // Defer initialization to reduce TBT
@@ -57,6 +83,11 @@ const FloatingWhatsApp = () => {
     return () => clearTimeout(timer);
   }, [isDismissed, isReady]);
 
+  const handleDismiss = () => {
+    setIsTooltipVisible(false);
+    setIsDismissed(true);
+  };
+
   // Don't render until ready to avoid blocking main thread
   if (!isReady) return null;
 
@@ -68,27 +99,7 @@ const FloatingWhatsApp = () => {
       {/* Tooltip */}
       <AnimatePresence>
         {isTooltipVisible && !isDismissed && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.9 }}
-            className="relative bg-card border border-border/30 px-4 py-3 shadow-lg max-w-[200px]"
-          >
-            <button
-              onClick={() => {
-                setIsTooltipVisible(false);
-                setIsDismissed(true);
-              }}
-              className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-background border border-border/30 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="Dismiss tooltip"
-            >
-              <X className="w-3 h-3" />
-            </button>
-            <p className="text-xs text-foreground mb-1">Need assistance?</p>
-            <p className="text-[10px] text-muted-foreground">Chat with our concierge team</p>
-            {/* Arrow */}
-            <div className="absolute -bottom-2 right-6 w-4 h-4 bg-card border-r border-b border-border/30 rotate-45" />
-          </motion.div>
+          <TooltipContent onDismiss={handleDismiss} />
         )}
       </AnimatePresence>
 

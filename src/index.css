@@ -130,6 +130,134 @@
     --font-sans: "Open Sans", ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
     --font-mono: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
   }
+
+  /* Marble & Gold Light Theme */
+  .light {
+    /* Marble-inspired light palette */
+    --background: 0 0% 96%;
+    --foreground: 220 40% 15%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 220 40% 15%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 40% 15%;
+    
+    /* Gold as primary - rich champagne gold */
+    --primary: 43 75% 42%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 0 0% 92%;
+    --secondary-foreground: 220 40% 15%;
+    
+    --muted: 0 0% 92%;
+    --muted-foreground: 220 20% 45%;
+    
+    --accent: 43 40% 90%;
+    --accent-foreground: 43 75% 35%;
+    
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 220 10% 85%;
+    --input: 220 10% 85%;
+    --ring: 43 75% 42%;
+    
+    --radius: 0.75rem;
+    
+    /* Premium Aurelia tokens - light variants */
+    --gold: 43 75% 42%;
+    --gold-light: 43 55% 78%;
+    --gold-muted: 43 35% 65%;
+    --navy-deep: 220 40% 15%;
+    --navy-light: 220 30% 25%;
+    --ivory: 45 30% 96%;
+    --champagne: 40 25% 85%;
+    
+    /* Marble textures */
+    --marble-light: 0 0% 96%;
+    --marble-dark: 0 0% 92%;
+    
+    /* Premium shadows - softer for light mode */
+    --shadow-gold: 0 0 60px hsl(43 75% 42% / 0.12);
+    --shadow-elegant: 0 25px 50px -12px hsl(220 40% 15% / 0.15);
+    --shadow-card: 0 2px 32px 0 hsl(220 40% 15% / 0.09);
+    --shadow-btn: 0 2px 8px hsl(43 75% 42% / 0.16);
+    
+    --chart-1: 43 75% 42%;
+    --chart-2: 43 55% 55%;
+    --chart-3: 43 65% 48%;
+    --chart-4: 40 70% 45%;
+    --chart-5: 220 20% 45%;
+    
+    --sidebar: 0 0% 98%;
+    --sidebar-foreground: 220 40% 15%;
+    --sidebar-primary: 43 75% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 43 40% 92%;
+    --sidebar-accent-foreground: 43 75% 35%;
+    --sidebar-border: 220 10% 88%;
+    --sidebar-ring: 43 75% 42%;
+    
+    --shadow-2xs: 0 1px 2px 0 hsl(220 40% 15% / 0.03);
+    --shadow-xs: 0 1px 3px 0 hsl(220 40% 15% / 0.05);
+    --shadow-sm: 0 1px 2px 0 hsl(220 40% 15% / 0.06);
+    --shadow: 0 2px 4px 0 hsl(220 40% 15% / 0.06);
+    --shadow-md: 0 4px 8px 0 hsl(220 40% 15% / 0.08);
+    --shadow-lg: 0 8px 16px 0 hsl(220 40% 15% / 0.08);
+    --shadow-xl: 0 12px 24px 0 hsl(220 40% 15% / 0.1);
+    --shadow-2xl: 0 24px 48px 0 hsl(220 40% 15% / 0.12);
+  }
+
+  /* Light theme specific utility overrides */
+  .light .marble-bg {
+    background: 
+      radial-gradient(ellipse 80% 50% at 20% 30%, hsl(var(--gold) / 0.06), transparent 50%),
+      radial-gradient(ellipse 60% 60% at 80% 70%, hsl(var(--gold) / 0.04), transparent 50%),
+      linear-gradient(135deg, hsl(var(--marble-light)), hsl(var(--marble-dark)));
+  }
+
+  .light .marble-premium {
+    background: 
+      radial-gradient(ellipse 120% 80% at 10% 20%, hsl(var(--gold) / 0.08), transparent 60%),
+      radial-gradient(ellipse 80% 100% at 90% 80%, hsl(var(--gold) / 0.05), transparent 50%),
+      linear-gradient(135deg, hsl(0 0% 96%), hsl(0 0% 92%));
+  }
+
+  .light .glass {
+    background: hsl(0 0% 100% / 0.85);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid hsl(var(--border) / 0.6);
+  }
+
+  .light .gold-glow {
+    box-shadow: 
+      0 0 60px hsl(var(--gold) / 0.12),
+      0 0 30px hsl(var(--gold) / 0.08),
+      inset 0 1px 0 hsl(var(--gold) / 0.15);
+  }
+
+  .light .card-hover:hover {
+    box-shadow: 
+      0 30px 60px hsl(220 40% 15% / 0.12),
+      0 0 1px hsl(var(--gold) / 0.4);
+  }
+
+  .light ::-webkit-scrollbar {
+    width: 7px;
+    background: hsl(var(--marble-light));
+  }
+
+  .light ::-webkit-scrollbar-thumb {
+    background: hsl(var(--gold));
+    border-radius: 12px;
+  }
+
+  .light ::selection {
+    background: hsl(var(--gold) / 0.25);
+    color: hsl(var(--foreground));
+  }
 }
 
 @layer base {

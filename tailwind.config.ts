@@ -64,6 +64,10 @@ export default {
   				deep: 'hsl(var(--navy-deep))',
   				light: 'hsl(var(--navy-light))'
   			},
+  			marble: {
+  				light: 'hsl(var(--marble-light, 0 0% 96%))',
+  				dark: 'hsl(var(--marble-dark, 0 0% 92%))'
+  			},
   			ivory: 'hsl(var(--ivory))',
   			champagne: 'hsl(var(--champagne))',
   			primary: {

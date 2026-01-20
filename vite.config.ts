@@ -37,12 +37,9 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('node_modules/@radix-ui')) {
             return 'vendor-radix';
           }
-          // Charts - keep recharts and d3 together to avoid circular dep issues
-          if (id.includes('node_modules/recharts')) {
-            return 'vendor-recharts';
-          }
-          if (id.includes('node_modules/d3')) {
-            return 'vendor-d3';
+          // Charts - recharts and d3 MUST be in the same chunk to avoid circular dependency ReferenceError
+          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3')) {
+            return 'vendor-charts';
           }
           // Supabase - backend operations
           if (id.includes('node_modules/@supabase')) {

@@ -180,6 +180,7 @@ const VideoModal = ({ isOpen, onClose, videoSrc, title = "Experience Aurelia" }:
 
               <video
                 ref={videoRef}
+                src={videoSrc}
                 muted={isMuted}
                 loop
                 playsInline
@@ -189,10 +190,7 @@ const VideoModal = ({ isOpen, onClose, videoSrc, title = "Experience Aurelia" }:
                 onError={handleVideoError}
                 className={`w-full h-full object-cover transition-opacity duration-300 ${isLoading || hasError ? 'opacity-0' : 'opacity-100'}`}
                 onClick={togglePlay}
-              >
-                <source src={videoSrc} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+              />
 
               {/* Play overlay - only show when not loading and not playing */}
               {!isLoading && !hasError && !isPlaying && (

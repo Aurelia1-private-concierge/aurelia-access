@@ -19,31 +19,40 @@ const VideoModal = ({ isOpen, onClose, videoSrc, title = "Experience Aurelia" }:
   // Reset state when modal opens/closes
   useEffect(() => {
     if (isOpen) {
+      console.log('[VideoModal] Modal opened, videoSrc:', videoSrc);
       setIsLoading(true);
       setHasError(false);
       setIsPlaying(false);
       setIsMuted(true);
+      
+      // Force video load when modal opens
+      if (videoRef.current) {
+        videoRef.current.load();
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, videoSrc]);
 
   const handleVideoLoaded = () => {
+    console.log('[VideoModal] Video loaded successfully');
     setIsLoading(false);
     setHasError(false);
     // Auto-play muted when loaded
     if (videoRef.current) {
       videoRef.current.muted = true;
       videoRef.current.play().then(() => {
+        console.log('[VideoModal] Video playing');
         setIsPlaying(true);
       }).catch((err) => {
-        console.error('Video autoplay failed:', err);
+        console.error('[VideoModal] Video autoplay failed:', err);
       });
     }
   };
 
-  const handleVideoError = () => {
+  const handleVideoError = (e: React.SyntheticEvent<HTMLVideoElement>) => {
+    const video = e.currentTarget;
+    console.error('[VideoModal] Video error:', video.error?.message, video.error?.code);
     setIsLoading(false);
     setHasError(true);
-    console.error('Video failed to load');
   };
 
   const handleUnmute = () => {
@@ -180,17 +189,19 @@ const VideoModal = ({ isOpen, onClose, videoSrc, title = "Experience Aurelia" }:
 
               <video
                 ref={videoRef}
-                src={videoSrc}
                 muted={isMuted}
                 loop
                 playsInline
                 preload="auto"
                 onLoadedData={handleVideoLoaded}
-                onCanPlay={handleVideoLoaded}
+                onCanPlayThrough={handleVideoLoaded}
                 onError={handleVideoError}
                 className={`w-full h-full object-cover transition-opacity duration-300 ${isLoading || hasError ? 'opacity-0' : 'opacity-100'}`}
                 onClick={togglePlay}
-              />
+              >
+                <source src={videoSrc} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
 
               {/* Play overlay - only show when not loading and not playing */}
               {!isLoading && !hasError && !isPlaying && (

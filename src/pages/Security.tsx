@@ -5,6 +5,7 @@ import {
   CheckCircle2, ShieldCheck, Database, Globe
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { BRAND } from "@/components/brand";
@@ -273,13 +274,13 @@ const Security = () => {
           <p className="text-sm text-muted-foreground mb-6">
             Questions about our security practices?
           </p>
-          <a 
-            href="mailto:security@aurelia-privateconcierge.com"
+          <Link 
+            to="/contact"
             className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground text-xs font-medium tracking-[0.2em] uppercase hover:bg-primary/90 transition-colors"
           >
             <AlertTriangle className="w-4 h-4" />
             Contact Security Team
-          </a>
+          </Link>
         </div>
       </section>
 

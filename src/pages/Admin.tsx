@@ -71,6 +71,8 @@ import PartnerDiscoveryPanel from "@/components/admin/PartnerDiscoveryPanel";
 import EncryptionManagementPanel from "@/components/admin/EncryptionManagementPanel";
 import ColdOutreachPanel from "@/components/admin/ColdOutreachPanel";
 import { WebCrawlerPanel } from "@/components/admin/WebCrawlerPanel";
+import AutoDiscoveryPanel from "@/components/admin/AutoDiscoveryPanel";
+import VisitorCountPanel from "@/components/admin/VisitorCountPanel";
 
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -314,17 +316,22 @@ const Admin = () => {
           <TabsList className="bg-card border border-border/50 flex-wrap h-auto gap-1 p-1">
             <TabsTrigger value="analytics">Overview</TabsTrigger>
             <TabsTrigger value="visitors">Visitors</TabsTrigger>
+            <TabsTrigger value="behavior">Behavior</TabsTrigger>
             <TabsTrigger value="funnel">Funnel</TabsTrigger>
+            <TabsTrigger value="funneldashboard">Funnel Dashboard</TabsTrigger>
             <TabsTrigger value="attribution">Attribution</TabsTrigger>
             <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
             <TabsTrigger value="urlbuilder">URL Builder</TabsTrigger>
             <TabsTrigger value="abtesting">A/B Tests</TabsTrigger>
+            <TabsTrigger value="seo">SEO</TabsTrigger>
+            <TabsTrigger value="marketing">Marketing</TabsTrigger>
             <TabsTrigger value="trials">Trials</TabsTrigger>
             <TabsTrigger value="concierge">Concierge</TabsTrigger>
             <TabsTrigger value="crm">CRM</TabsTrigger>
             <TabsTrigger value="commissions">Commissions</TabsTrigger>
             <TabsTrigger value="partners">Partners</TabsTrigger>
             <TabsTrigger value="discovery">Discovery</TabsTrigger>
+            <TabsTrigger value="autodiscovery">Auto Discovery</TabsTrigger>
             <TabsTrigger value="outreach">Cold Outreach</TabsTrigger>
             <TabsTrigger value="signups">Signups</TabsTrigger>
             <TabsTrigger value="contacts">Contacts</TabsTrigger>
@@ -334,6 +341,7 @@ const Admin = () => {
             <TabsTrigger value="crawler">Crawler</TabsTrigger>
             <TabsTrigger value="auditlogs">Audit Logs</TabsTrigger>
             <TabsTrigger value="encryption">Encryption</TabsTrigger>
+            <TabsTrigger value="security">Security Guide</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
@@ -390,14 +398,32 @@ const Admin = () => {
 
           <TabsContent value="visitors" className="space-y-6">
             <VisitorAnalytics />
+            <VisitorCountPanel />
+          </TabsContent>
+
+          <TabsContent value="behavior" className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-serif text-3xl text-foreground mb-2">Behavior Analytics</h1>
+              <p className="text-muted-foreground">Track user behavior patterns and interactions</p>
+            </motion.div>
+            <BehaviorAnalytics />
           </TabsContent>
 
           <TabsContent value="funnel" className="space-y-6">
             <ConversionFunnelAnalytics />
           </TabsContent>
 
+          <TabsContent value="funneldashboard" className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-serif text-3xl text-foreground mb-2">Funnel Dashboard</h1>
+              <p className="text-muted-foreground">Visual conversion funnel and traffic attribution</p>
+            </motion.div>
+            <ConversionFunnelDashboard />
+          </TabsContent>
+
           <TabsContent value="attribution" className="space-y-6">
             <TrafficAttributionAnalytics />
+            <AttributionAnalytics />
           </TabsContent>
 
           <TabsContent value="campaigns" className="space-y-6">
@@ -414,6 +440,38 @@ const Admin = () => {
 
           <TabsContent value="abtesting" className="space-y-6">
             <ABTestingPanel />
+          </TabsContent>
+
+          <TabsContent value="seo" className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-serif text-3xl text-foreground mb-2">SEO Dashboard</h1>
+              <p className="text-muted-foreground">Monitor SEO performance and keyword rankings</p>
+            </motion.div>
+            <SEODashboard />
+          </TabsContent>
+
+          <TabsContent value="marketing" className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-serif text-3xl text-foreground mb-2">Marketing Packages</h1>
+              <p className="text-muted-foreground">Manage marketing packages and UHNW networks</p>
+            </motion.div>
+            <MarketingPackagesPanel />
+          </TabsContent>
+
+          <TabsContent value="autodiscovery" className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-serif text-3xl text-foreground mb-2">Auto Discovery</h1>
+              <p className="text-muted-foreground">Automatically discover and qualify potential partners</p>
+            </motion.div>
+            <AutoDiscoveryPanel />
+          </TabsContent>
+
+          <TabsContent value="security" className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-serif text-3xl text-foreground mb-2">Security Best Practices</h1>
+              <p className="text-muted-foreground">Security guidelines and implementation checklist</p>
+            </motion.div>
+            <SecurityGuidePanel />
           </TabsContent>
 
           <TabsContent value="crm" className="space-y-6">

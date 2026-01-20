@@ -37,7 +37,7 @@ const GlobalElements = ({
   const isHiddenPage = hideOnPages.some(path => location.pathname.startsWith(path));
   
   // Hide offline banner on public-facing pages (landing, waitlist)
-  const hideOfflineBannerOn = ["/", "/coming-soon"];
+  const hideOfflineBannerOn = ["/"];
   const shouldHideOfflineBanner = hideOfflineBannerOn.includes(location.pathname);
 
   if (isHiddenPage) {

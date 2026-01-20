@@ -19,7 +19,6 @@ import SessionTimeoutProvider from "./components/auth/SessionTimeoutProvider";
 import SkipLink from "./components/a11y/SkipLink";
 import { ReducedMotionProvider } from "./components/a11y/ReducedMotionProvider";
 import VisitorTracker from "./components/VisitorTracker";
-import PreLaunchGate from "./components/PreLaunchGate";
 import "@/i18n";
 
 // Eagerly load the landing page for best LCP
@@ -70,7 +69,6 @@ const BoardroomSession = lazy(() => import("./pages/BoardroomSession"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const PartnerDetail = lazy(() => import("./pages/PartnerDetail"));
 const SurpriseMe = lazy(() => import("./pages/SurpriseMe"));
-const UnderConstruction = lazy(() => import("./pages/UnderConstruction"));
 
 // Premium loading fallback with better UX
 const PageLoader = () => (
@@ -476,14 +474,6 @@ const AnimatedRoutes = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/coming-soon"
-            element={
-              <PageTransition>
-                <UnderConstruction />
-              </PageTransition>
-            }
-          />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route
             path="*"
@@ -511,16 +501,14 @@ const App = () => (
               <BrowserRouter>
                 <AuthProvider>
                   <SessionTimeoutProvider timeoutMinutes={30} warningMinutes={5}>
-                    <PreLaunchGate>
-                      <VisitorTracker />
-                      <SkipLink />
-                      <main id="main-content">
-                        <AnimatedRoutes />
-                      </main>
-                      <GlobalElements />
-                      <BackToTop />
-                      <CookieConsent />
-                    </PreLaunchGate>
+                    <VisitorTracker />
+                    <SkipLink />
+                    <main id="main-content">
+                      <AnimatedRoutes />
+                    </main>
+                    <GlobalElements />
+                    <BackToTop />
+                    <CookieConsent />
                   </SessionTimeoutProvider>
                 </AuthProvider>
               </BrowserRouter>

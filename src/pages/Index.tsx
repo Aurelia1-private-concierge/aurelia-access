@@ -30,8 +30,7 @@ class SectionErrorBoundary extends Component<{ children: ReactNode; fallback?: R
   }
 }
 
-// Critical path - load immediately
-const LoadingScreen = lazy(() => import("@/components/LoadingScreen"));
+// LoadingScreen removed - was causing production hang issues
 
 // Lazy load below-the-fold components
 const GA4Script = lazy(() => import("@/components/GA4Script"));
@@ -138,13 +137,7 @@ const Index = () => {
         </SectionErrorBoundary>
       )}
       
-      {/* Loading Screen - Deferred */}
-      <SectionErrorBoundary>
-        <Suspense fallback={null}>
-          <LoadingScreen />
-        </Suspense>
-      </SectionErrorBoundary>
-      
+      {/* Loading Screen removed - was causing production issues */}
       <ScrollProgress />
       <Navigation />
       

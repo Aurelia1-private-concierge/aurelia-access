@@ -1,14 +1,12 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { usePreLaunchMode } from "@/hooks/usePreLaunchMode";
-import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 interface PreLaunchGateProps {
   children: React.ReactNode;
 }
 
-// Routes that should always be accessible (even in pre-launch mode)
+// Routes that should always be accessible
 const ALLOWED_ROUTES = [
   "/coming-soon",
   "/auth",
@@ -17,95 +15,85 @@ const ALLOWED_ROUTES = [
   "/admin",
 ];
 
-// Maximum time to wait for all checks before rendering anyway
-const MAX_WAIT_TIME = 4000;
-
 const PreLaunchGate = ({ children }: PreLaunchGateProps) => {
-  const { isPreLaunch, loading } = usePreLaunchMode();
-  const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-  const [checkingAdmin, setCheckingAdmin] = useState(false);
-  const [forceReady, setForceReady] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [hasChecked, setHasChecked] = useState(false);
 
-  // Failsafe: Force ready after MAX_WAIT_TIME
+  // Single async check that doesn't block rendering
   useEffect(() => {
-    timeoutRef.current = setTimeout(() => {
-      if (!forceReady) {
-        console.warn("PreLaunchGate timeout - forcing render");
-        setForceReady(true);
-      }
-    }, MAX_WAIT_TIME);
+    if (hasChecked) return;
 
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, [forceReady]);
-
-  // Check if user is admin - only when we have a user
-  useEffect(() => {
-    const checkAdmin = async () => {
-      if (!user) {
-        setIsAdmin(false);
-        setCheckingAdmin(false);
-        return;
-      }
-
-      setCheckingAdmin(true);
+    const checkPreLaunch = async () => {
       try {
-        // Query user_roles directly to avoid function overload ambiguity
-        const { data, error } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", user.id)
-          .eq("role", "admin")
+        // Set a timeout to prevent hanging
+        const timeoutPromise = new Promise<null>((resolve) => 
+          setTimeout(() => resolve(null), 2000)
+        );
+
+        const fetchPromise = supabase
+          .from("app_settings")
+          .select("value")
+          .eq("key", "pre_launch_mode")
           .maybeSingle();
 
-        if (error) {
-          console.error("Error checking admin role:", error);
-          setIsAdmin(false);
-        } else {
-          setIsAdmin(!!data);
+        const result = await Promise.race([fetchPromise, timeoutPromise]);
+        
+        // Timeout or error - allow access
+        if (!result || result === null) {
+          setHasChecked(true);
+          return;
         }
+
+        const setting = (result as { data: { value: string } | null }).data;
+
+        // If pre-launch mode is not enabled, do nothing
+        if (setting?.value !== "true") {
+          setHasChecked(true);
+          return;
+        }
+
+        // Check if on allowed route
+        const currentPath = location.pathname;
+        const isAllowedRoute = ALLOWED_ROUTES.some(
+          (route) => currentPath === route || currentPath.startsWith(route + "/")
+        );
+
+        if (isAllowedRoute) {
+          setHasChecked(true);
+          return;
+        }
+
+        // Check if user is admin
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: roleData } = await supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", user.id)
+            .eq("role", "admin")
+            .maybeSingle();
+
+          if (roleData) {
+            setHasChecked(true);
+            return; // Admin - allow access
+          }
+        }
+
+        // Pre-launch active, not admin, not allowed route - redirect
+        navigate("/coming-soon", { replace: true });
       } catch (err) {
-        console.error("Error:", err);
-        setIsAdmin(false);
+        // On any error, allow access (fail open)
+        console.warn("PreLaunch check failed:", err);
       } finally {
-        setCheckingAdmin(false);
+        setHasChecked(true);
       }
     };
 
-    // Only check admin status once auth is done loading
-    if (!authLoading) {
-      checkAdmin();
-    }
-  }, [user, authLoading]);
+    checkPreLaunch();
+  }, [hasChecked, location.pathname, navigate]);
 
-  // Redirect logic - only run after all loading is complete OR force ready
-  useEffect(() => {
-    // If forced ready, skip all checks
-    if (forceReady) return;
-    
-    // Wait for all checks to complete
-    if (loading || authLoading || checkingAdmin) return;
-    
-    // If isPreLaunch is still null, wait
-    if (isPreLaunch === null) return;
-
-    const currentPath = location.pathname;
-    const isAllowedRoute = ALLOWED_ROUTES.some(
-      (route) => currentPath === route || currentPath.startsWith(route + "/")
-    );
-
-    // If pre-launch mode is enabled and user is not admin and not on allowed route
-    if (isPreLaunch && !isAdmin && !isAllowedRoute) {
-      navigate("/coming-soon", { replace: true });
-    }
-  }, [isPreLaunch, isAdmin, loading, authLoading, checkingAdmin, location.pathname, navigate, forceReady]);
-
-  // Always render children - redirects happen via navigate()
+  // Always render children immediately - never block
   return <>{children}</>;
 };
 

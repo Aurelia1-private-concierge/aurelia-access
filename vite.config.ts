@@ -37,9 +37,12 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('node_modules/@radix-ui')) {
             return 'vendor-radix';
           }
-          // Charts - only needed on specific pages
-          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3')) {
-            return 'vendor-charts';
+          // Charts - keep recharts and d3 together to avoid circular dep issues
+          if (id.includes('node_modules/recharts')) {
+            return 'vendor-recharts';
+          }
+          if (id.includes('node_modules/d3')) {
+            return 'vendor-d3';
           }
           // Supabase - backend operations
           if (id.includes('node_modules/@supabase')) {
@@ -101,17 +104,20 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       workbox: {
-        // Disable all precaching to clear corrupted caches
+        // Disable precaching entirely to avoid stale cache issues
         globPatterns: [],
         globIgnores: ["**/*"],
         maximumFileSizeToCacheInBytes: 0,
         skipWaiting: true,
         clientsClaim: true,
         cleanupOutdatedCaches: true,
-        // No runtime caching - use network only to clear corrupted IndexedDB
+        // Disable navigation preload and fallback to avoid precache errors
+        navigateFallback: null,
+        navigateFallbackDenylist: [/.*/],
+        // Network-only for everything
         runtimeCaching: [
           {
-            urlPattern: /.*/i,
+            urlPattern: /^https:\/\/.*/i,
             handler: "NetworkOnly",
           },
         ],

@@ -5,6 +5,19 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-elevenlabs-signature',
 };
 
+// Valid ElevenLabs event types for basic validation
+const VALID_EVENT_TYPES = [
+  'conversation.started',
+  'conversation.ended',
+  'transcript.final',
+  'transcript.partial',
+  'agent.response',
+  'agent.response.started',
+  'agent.response.ended',
+  'error',
+  'ping',
+];
+
 interface VoiceEvent {
   event_type: string;
   conversation_id?: string;
@@ -16,6 +29,29 @@ interface VoiceEvent {
     user_id?: string;
     metadata?: Record<string, unknown>;
   };
+}
+
+// Basic validation - checks event structure matches expected ElevenLabs format
+function isValidEvent(event: unknown): event is VoiceEvent {
+  if (!event || typeof event !== 'object') return false;
+  const e = event as Record<string, unknown>;
+  
+  // Must have event_type string
+  if (typeof e.event_type !== 'string') return false;
+  
+  // event_type should be a known type (or at least look reasonable)
+  const eventType = e.event_type;
+  if (!VALID_EVENT_TYPES.includes(eventType) && !eventType.match(/^[a-z_]+(\.[a-z_]+)*$/)) {
+    return false;
+  }
+  
+  // conversation_id if present must be string
+  if (e.conversation_id !== undefined && typeof e.conversation_id !== 'string') return false;
+  
+  // agent_id if present must be string
+  if (e.agent_id !== undefined && typeof e.agent_id !== 'string') return false;
+  
+  return true;
 }
 
 Deno.serve(async (req) => {
@@ -32,12 +68,32 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const body = await req.text();
+    let event: unknown;
+    
+    try {
+      event = JSON.parse(body);
+    } catch {
+      console.error('Invalid JSON in request body');
+      return new Response(
+        JSON.stringify({ error: 'Invalid JSON' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // Validate event structure
+    if (!isValidEvent(event)) {
+      console.error('Invalid event structure:', JSON.stringify(event).slice(0, 200));
+      return new Response(
+        JSON.stringify({ error: 'Invalid event structure' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
-
-    const event: VoiceEvent = await req.json();
     
     console.log('Received voice event:', JSON.stringify(event, null, 2));
 

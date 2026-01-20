@@ -19,9 +19,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+    
+    // Failsafe: ensure loading state clears within 3 seconds max
+    const loadingTimeout = setTimeout(() => {
+      if (isMounted && isLoading) {
+        console.warn("Auth loading timeout - forcing ready state");
+        setIsLoading(false);
+      }
+    }, 3000);
+
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        if (!isMounted) return;
         setSession(session);
         setUser(session?.user ?? null);
         setIsLoading(false);
@@ -29,14 +40,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setIsLoading(false);
-    });
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        if (!isMounted) return;
+        setSession(session);
+        setUser(session?.user ?? null);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error("Auth session error:", err);
+        if (isMounted) setIsLoading(false);
+      });
 
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => {
+      isMounted = false;
+      clearTimeout(loadingTimeout);
+      subscription.unsubscribe();
+    };
+  }, [isLoading]);
 
   const signUp = async (email: string, password: string) => {
     const redirectUrl = `${window.location.origin}/auth/callback`;

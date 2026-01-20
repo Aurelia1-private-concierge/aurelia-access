@@ -1,11 +1,11 @@
 import { motion, useMotionValue, useSpring } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 
 const CustomCursor = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(true); // Default to true to prevent flash
 
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
@@ -13,58 +13,62 @@ const CustomCursor = () => {
   const springConfig = { damping: 25, stiffness: 400 };
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
+  
+  // Use refs to avoid re-renders
+  const isHoveringRef = useRef(false);
 
-  // Trail particles
-  const [trails, setTrails] = useState<{ id: number; x: number; y: number }[]>([]);
+  // Memoized handlers to prevent recreation
+  const moveCursor = useCallback((e: MouseEvent) => {
+    cursorX.set(e.clientX);
+    cursorY.set(e.clientY);
+    setIsVisible(true);
+  }, [cursorX, cursorY]);
+
+  const handleMouseEnter = useCallback(() => setIsVisible(true), []);
+  const handleMouseLeave = useCallback(() => setIsVisible(false), []);
+  const handleMouseDown = useCallback(() => setIsClicking(true), []);
+  const handleMouseUp = useCallback(() => setIsClicking(false), []);
+
+  const handleHoverStart = useCallback((e: MouseEvent) => {
+    const target = e.target as HTMLElement;
+    const shouldHover = !!(
+      target.tagName === 'A' ||
+      target.tagName === 'BUTTON' ||
+      target.closest('a') ||
+      target.closest('button') ||
+      target.classList.contains('cursor-pointer')
+    );
+    
+    if (shouldHover !== isHoveringRef.current) {
+      isHoveringRef.current = shouldHover;
+      setIsHovering(shouldHover);
+    }
+  }, []);
+
+  const handleHoverEnd = useCallback(() => {
+    if (isHoveringRef.current) {
+      isHoveringRef.current = false;
+      setIsHovering(false);
+    }
+  }, []);
 
   useEffect(() => {
-    // Check for touch device
-    const checkTouchDevice = () => {
-      setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
-    };
-    checkTouchDevice();
+    // Check for touch device only once
+    const isTouchCapable = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    setIsTouchDevice(isTouchCapable);
 
-    if (isTouchDevice) return;
+    if (isTouchCapable) return;
 
-    const moveCursor = (e: MouseEvent) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
-      setIsVisible(true);
-
-      // Add trail particle
-      setTrails(prev => {
-        const newTrail = { id: Date.now(), x: e.clientX, y: e.clientY };
-        return [...prev.slice(-8), newTrail];
-      });
-    };
-
-    const handleMouseEnter = () => setIsVisible(true);
-    const handleMouseLeave = () => setIsVisible(false);
-    const handleMouseDown = () => setIsClicking(true);
-    const handleMouseUp = () => setIsClicking(false);
-
-    const handleHoverStart = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (
-        target.tagName === 'A' ||
-        target.tagName === 'BUTTON' ||
-        target.closest('a') ||
-        target.closest('button') ||
-        target.classList.contains('cursor-pointer')
-      ) {
-        setIsHovering(true);
-      }
-    };
-
-    const handleHoverEnd = () => setIsHovering(false);
-
-    window.addEventListener('mousemove', moveCursor);
-    window.addEventListener('mouseenter', handleMouseEnter);
-    window.addEventListener('mouseleave', handleMouseLeave);
-    window.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mouseup', handleMouseUp);
-    window.addEventListener('mouseover', handleHoverStart);
-    window.addEventListener('mouseout', handleHoverEnd);
+    // Use passive listeners for better performance
+    const options = { passive: true };
+    
+    window.addEventListener('mousemove', moveCursor, options);
+    window.addEventListener('mouseenter', handleMouseEnter, options);
+    window.addEventListener('mouseleave', handleMouseLeave, options);
+    window.addEventListener('mousedown', handleMouseDown, options);
+    window.addEventListener('mouseup', handleMouseUp, options);
+    window.addEventListener('mouseover', handleHoverStart, options);
+    window.addEventListener('mouseout', handleHoverEnd, options);
 
     // Add global cursor style
     document.body.style.cursor = 'none';
@@ -79,51 +83,20 @@ const CustomCursor = () => {
       window.removeEventListener('mouseout', handleHoverEnd);
       document.body.style.cursor = 'auto';
     };
-  }, [cursorX, cursorY, isTouchDevice]);
-
-  // Clean up old trail particles
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTrails(prev => prev.slice(-6));
-    }, 100);
-    return () => clearInterval(interval);
-  }, []);
+  }, [moveCursor, handleMouseEnter, handleMouseLeave, handleMouseDown, handleMouseUp, handleHoverStart, handleHoverEnd]);
 
   if (isTouchDevice || !isVisible) return null;
 
   return (
     <>
-      {/* Trail particles */}
-      {trails.map((trail, index) => (
-        <motion.div
-          key={trail.id}
-          initial={{ opacity: 0.6, scale: 1 }}
-          animate={{ opacity: 0, scale: 0.3 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="fixed pointer-events-none z-[9998] mix-blend-screen"
-          style={{
-            left: trail.x,
-            top: trail.y,
-            transform: 'translate(-50%, -50%)',
-          }}
-        >
-          <div
-            className="rounded-full bg-primary/30"
-            style={{
-              width: 4 + index * 0.5,
-              height: 4 + index * 0.5,
-            }}
-          />
-        </motion.div>
-      ))}
-
-      {/* Main cursor ring */}
+      {/* Main cursor ring - simplified for performance */}
       <motion.div
         className="fixed pointer-events-none z-[9999] mix-blend-difference"
         style={{
           left: cursorXSpring,
           top: cursorYSpring,
-          transform: 'translate(-50%, -50%)',
+          x: '-50%',
+          y: '-50%',
         }}
       >
         <motion.div
@@ -161,7 +134,8 @@ const CustomCursor = () => {
           style={{
             left: cursorXSpring,
             top: cursorYSpring,
-            transform: 'translate(-50%, -50%)',
+            x: '-50%',
+            y: '-50%',
           }}
         >
           <div className="w-20 h-20 rounded-full bg-primary/10 blur-xl" />

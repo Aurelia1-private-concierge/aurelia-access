@@ -503,7 +503,7 @@ const App = () => {
               <TooltipProvider>
                 <Toaster />
                 <Sonner position="top-right" richColors closeButton />
-              <BrowserRouter>
+              <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
                 <AuthProvider>
                   <SessionTimeoutProvider timeoutMinutes={30} warningMinutes={5}>
                     <VisitorTracker />

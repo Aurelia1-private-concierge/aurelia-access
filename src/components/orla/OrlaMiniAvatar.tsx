@@ -117,13 +117,13 @@ const OrlaMiniAvatar = memo(({
       )}
 
       {/* Speaking indicator ring */}
-      <AnimatePresence>
-        {isSpeaking && <SpeakingRing audioLevel={audioLevel} />}
+      <AnimatePresence mode="wait">
+        {isSpeaking && <SpeakingRing key="speaking-ring" audioLevel={audioLevel} />}
       </AnimatePresence>
 
       {/* Listening indicator ring */}
-      <AnimatePresence>
-        {isListening && !isSpeaking && <ListeningRing />}
+      <AnimatePresence mode="wait">
+        {isListening && !isSpeaking && <ListeningRing key="listening-ring" />}
       </AnimatePresence>
 
       {/* Static avatar image - using optimized smaller version */}
@@ -142,13 +142,13 @@ const OrlaMiniAvatar = memo(({
       />
 
       {/* Speaking status dot */}
-      <AnimatePresence>
-        {isSpeaking && <SpeakingDot />}
+      <AnimatePresence mode="wait">
+        {isSpeaking && <SpeakingDot key="speaking-dot" />}
       </AnimatePresence>
 
       {/* Listening status dot */}
-      <AnimatePresence>
-        {isListening && !isSpeaking && <ListeningDot />}
+      <AnimatePresence mode="wait">
+        {isListening && !isSpeaking && <ListeningDot key="listening-dot" />}
       </AnimatePresence>
     </div>
   );

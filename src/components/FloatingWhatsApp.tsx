@@ -97,9 +97,9 @@ const FloatingWhatsApp = () => {
   return (
     <div className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-40 flex flex-col items-end gap-3">
       {/* Tooltip */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {isTooltipVisible && !isDismissed && (
-          <TooltipContent onDismiss={handleDismiss} />
+          <TooltipContent key="tooltip" onDismiss={handleDismiss} />
         )}
       </AnimatePresence>
 

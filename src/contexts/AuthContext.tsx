@@ -21,13 +21,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     let isMounted = true;
     
-    // Failsafe: ensure loading state clears within 3 seconds max
+    // Failsafe: ensure loading state clears within 2 seconds max
     const loadingTimeout = setTimeout(() => {
-      if (isMounted && isLoading) {
+      if (isMounted) {
         console.warn("Auth loading timeout - forcing ready state");
         setIsLoading(false);
       }
-    }, 3000);
+    }, 2000);
 
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       clearTimeout(loadingTimeout);
       subscription.unsubscribe();
     };
-  }, [isLoading]);
+  }, []); // Empty dependency array - run once on mount only
 
   const signUp = async (email: string, password: string) => {
     const redirectUrl = `${window.location.origin}/auth/callback`;

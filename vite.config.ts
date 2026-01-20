@@ -41,6 +41,10 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('node_modules/recharts') || id.includes('node_modules/d3')) {
             return 'vendor-charts';
           }
+          // Three.js - 3D graphics, keep together to avoid circular dependency
+          if (id.includes('node_modules/three') || id.includes('node_modules/@react-three')) {
+            return 'vendor-three';
+          }
           // Supabase - backend operations
           if (id.includes('node_modules/@supabase')) {
             return 'vendor-supabase';
@@ -61,7 +65,7 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('node_modules/@sentry')) {
             return 'vendor-sentry';
           }
-          // All other vendor modules
+          // All other vendor modules - don't split to avoid circular deps
           if (id.includes('node_modules/')) {
             return 'vendor-misc';
           }
@@ -101,23 +105,17 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       workbox: {
-        // Disable precaching entirely to avoid stale cache issues
+        // Completely disable precaching and navigation handling
         globPatterns: [],
         globIgnores: ["**/*"],
         maximumFileSizeToCacheInBytes: 0,
         skipWaiting: true,
         clientsClaim: true,
         cleanupOutdatedCaches: true,
-        // Disable navigation preload and fallback to avoid precache errors
-        navigateFallback: null,
-        navigateFallbackDenylist: [/.*/],
-        // Network-only for everything
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/.*/i,
-            handler: "NetworkOnly",
-          },
-        ],
+        // Explicitly disable navigation fallback to prevent createHandlerBoundToURL errors
+        navigateFallback: undefined,
+        // No runtime caching - everything goes to network
+        runtimeCaching: [],
       },
     }),
   ].filter(Boolean),

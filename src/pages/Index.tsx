@@ -1,15 +1,40 @@
-import { useState, useCallback, useRef, lazy, Suspense, useEffect, startTransition } from "react";
+import { useState, useCallback, useRef, lazy, Suspense, useEffect, startTransition, Component, ReactNode } from "react";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import heroVideo from "@/assets/hero-yacht.mp4";
 import ScrollProgress from "@/components/ScrollProgress";
 import SectionDivider from "@/components/SectionDivider";
+import Footer from "@/components/Footer";
+import VideoModal from "@/components/VideoModal";
 
-// Defer loading screen to reduce TBT - it's not critical for LCP
+// Simple error boundary for lazy-loaded sections
+class SectionErrorBoundary extends Component<{ children: ReactNode; fallback?: ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode; fallback?: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error) {
+    console.warn("Section failed to load:", error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback ?? null;
+    }
+    return this.props.children;
+  }
+}
+
+// Critical path - load immediately
 const LoadingScreen = lazy(() => import("@/components/LoadingScreen"));
-const GA4Script = lazy(() => import("@/components/GA4Script"));
 
-// Lazy load below-the-fold components to reduce initial bundle size
+// Lazy load below-the-fold components
+const GA4Script = lazy(() => import("@/components/GA4Script"));
 const MetricsStrip = lazy(() => import("@/components/MetricsStrip"));
 const TrustStrip = lazy(() => import("@/components/TrustStrip"));
 const FeaturesSection = lazy(() => import("@/components/FeaturesSection"));
@@ -18,10 +43,8 @@ const ExperiencesSection = lazy(() => import("@/components/ExperiencesSection"))
 const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
 const FAQSection = lazy(() => import("@/components/FAQSection"));
 const MembershipCTA = lazy(() => import("@/components/MembershipCTA"));
-const Footer = lazy(() => import("@/components/Footer"));
 const RolexClock = lazy(() => import("@/components/RolexClock"));
 const CustomCursor = lazy(() => import("@/components/CustomCursor"));
-import VideoModal from "@/components/VideoModal";
 const AwardsStrip = lazy(() => import("@/components/AwardsStrip"));
 const GlobalPresenceSection = lazy(() => import("@/components/GlobalPresenceSection"));
 const NewsletterSection = lazy(() => import("@/components/NewsletterSection"));
@@ -39,9 +62,6 @@ const VoiceCommands = lazy(() => import("@/components/VoiceCommands"));
 const ContextualSoundscapeIndicator = lazy(() => import("@/components/ContextualSoundscapeIndicator"));
 const MusicControlFAB = lazy(() => import("@/components/MusicControlFAB"));
 const PartnersSection = lazy(() => import("@/components/PartnersSection"));
-
-// Defer behavior tracking hook loading
-const useBehaviorTrackingModule = () => import("@/hooks/useBehaviorTracking");
 
 // Lazy load soundscapes hook
 const useContextualSoundscapes = () => {
@@ -61,12 +81,9 @@ const useContextualSoundscapes = () => {
   };
 };
 
-// Minimal section loader for lazy components - optimized to reduce layout shift
+// Minimal section loader for lazy components
 const SectionLoader = () => (
-  <div 
-    className="min-h-[200px] flex items-center justify-center"
-    style={{ contentVisibility: 'auto', containIntrinsicSize: '0 200px' }}
-  >
+  <div className="min-h-[200px] flex items-center justify-center">
     <div className="w-8 h-8 border border-primary/30 rounded-full border-t-primary animate-spin" />
   </div>
 );
@@ -79,39 +96,15 @@ const Index = () => {
   const musicToggleRef = useRef<(() => void) | null>(null);
   const narratorToggleRef = useRef<(() => void) | null>(null);
 
-  // Defer ambient effects and behavior tracking to reduce TBT
+  // Defer ambient effects to reduce TBT
   useEffect(() => {
-    // Use requestIdleCallback to defer non-critical initialization
-    const scheduleIdle = (callback: () => void) => {
-      if ('requestIdleCallback' in window) {
-        return (window as typeof window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback(callback, { timeout: 2000 });
-      }
-      return setTimeout(callback, 100) as unknown as number;
-    };
-
-    // Defer showing ambient effects
-    const ambientId = scheduleIdle(() => {
+    const timer = setTimeout(() => {
       startTransition(() => {
         setShowAmbient(true);
       });
-    });
+    }, 100);
 
-    // Defer behavior tracking initialization
-    const trackingId = scheduleIdle(() => {
-      useBehaviorTrackingModule().then(module => {
-        // Module loaded but tracking will self-initialize
-      });
-    });
-
-    return () => {
-      if ('cancelIdleCallback' in window) {
-        (window as typeof window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(ambientId);
-        (window as typeof window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(trackingId);
-      } else {
-        clearTimeout(ambientId);
-        clearTimeout(trackingId);
-      }
-    };
+    return () => clearTimeout(timer);
   }, []);
 
   // Callbacks for voice commands
@@ -126,25 +119,31 @@ const Index = () => {
   return (
     <div className="min-h-[100dvh] bg-background overflow-x-hidden relative" style={{ contain: 'layout style' }}>
       {/* GA4 Analytics - Deferred */}
-      <Suspense fallback={null}>
-        <GA4Script />
-      </Suspense>
+      <SectionErrorBoundary>
+        <Suspense fallback={null}>
+          <GA4Script />
+        </Suspense>
+      </SectionErrorBoundary>
       
       {/* Ambient Effects - Deferred to reduce TBT */}
       {showAmbient && (
-        <Suspense fallback={null}>
-          <AmbientParticles />
-          <GlowingOrb className="top-1/4 -left-48" size="xl" color="gold" intensity="soft" />
-          <GlowingOrb className="top-1/2 -right-32" size="lg" color="gold" intensity="soft" />
-          <GlowingOrb className="bottom-1/4 left-1/3" size="md" color="gold" intensity="soft" />
-          <CustomCursor />
-        </Suspense>
+        <SectionErrorBoundary>
+          <Suspense fallback={null}>
+            <AmbientParticles />
+            <GlowingOrb className="top-1/4 -left-48" size="xl" color="gold" intensity="soft" />
+            <GlowingOrb className="top-1/2 -right-32" size="lg" color="gold" intensity="soft" />
+            <GlowingOrb className="bottom-1/4 left-1/3" size="md" color="gold" intensity="soft" />
+            <CustomCursor />
+          </Suspense>
+        </SectionErrorBoundary>
       )}
       
       {/* Loading Screen - Deferred */}
-      <Suspense fallback={null}>
-        <LoadingScreen />
-      </Suspense>
+      <SectionErrorBoundary>
+        <Suspense fallback={null}>
+          <LoadingScreen />
+        </Suspense>
+      </SectionErrorBoundary>
       
       <ScrollProgress />
       <Navigation />
@@ -157,139 +156,142 @@ const Index = () => {
 
       <SectionDivider variant="ornate" />
 
-      {/* Below-the-fold content - Lazy loaded with content visibility optimization */}
-      <Suspense fallback={<SectionLoader />}>
-        {/* Luxury Clock Section */}
-        <section className="py-16 flex justify-center items-center content-auto">
-          <RolexClock />
-        </section>
+      {/* Below-the-fold content - Lazy loaded with error boundary */}
+      <SectionErrorBoundary fallback={<SectionLoader />}>
+        <Suspense fallback={<SectionLoader />}>
+          {/* Luxury Clock Section */}
+          <section className="py-16 flex justify-center items-center content-auto">
+            <RolexClock />
+          </section>
 
-        <SectionDivider variant="default" />
+          <SectionDivider variant="default" />
 
-        {/* Key Metrics */}
-        <MetricsStrip />
-        
-        <SectionDivider variant="minimal" />
-        
-        {/* Trust Indicators - Publications */}
-        <TrustStrip />
+          {/* Key Metrics */}
+          <MetricsStrip />
+          
+          <SectionDivider variant="minimal" />
+          
+          {/* Trust Indicators - Publications */}
+          <TrustStrip />
 
-        {/* Awards & Certifications */}
-        <AwardsStrip />
-        
-        <SectionDivider variant="wide" />
-        
-        {/* Service Categories Quick Links */}
-        <ServiceCategoriesSection />
+          {/* Awards & Certifications */}
+          <AwardsStrip />
+          
+          <SectionDivider variant="wide" />
+          
+          {/* Service Categories Quick Links */}
+          <ServiceCategoriesSection />
 
-        <SectionDivider variant="ornate" />
-        
-        {/* Detailed Features */}
-        <FeaturesSection />
-        
-        <SectionDivider variant="default" />
-        
-        {/* Security & Privacy */}
-        <SecuritySection />
-        
-        <SectionDivider variant="wide" />
+          <SectionDivider variant="ornate" />
+          
+          {/* Detailed Features */}
+          <FeaturesSection />
+          
+          <SectionDivider variant="default" />
+          
+          {/* Security & Privacy */}
+          <SecuritySection />
+          
+          <SectionDivider variant="wide" />
 
-        {/* Metaverse & EQ Intelligence Section */}
-        <MetaverseEntryPoint />
+          {/* Metaverse & EQ Intelligence Section */}
+          <MetaverseEntryPoint />
 
-        <SectionDivider variant="default" />
+          <SectionDivider variant="default" />
 
-        {/* Wearables Hub */}
-        <WearablesHub />
+          {/* Wearables Hub */}
+          <WearablesHub />
 
-        <SectionDivider variant="default" />
+          <SectionDivider variant="default" />
 
-        {/* Smart Integrations Hub */}
-        <SmartIntegrationsHub />
+          {/* Smart Integrations Hub */}
+          <SmartIntegrationsHub />
 
-        <SectionDivider variant="default" />
+          <SectionDivider variant="default" />
 
-        {/* Private Gaming Servers */}
-        <GamingServicesSection />
+          {/* Private Gaming Servers */}
+          <GamingServicesSection />
 
-        <SectionDivider variant="ornate" />
+          <SectionDivider variant="ornate" />
 
-        {/* Global Presence */}
-        <GlobalPresenceSection />
-        
-        <SectionDivider variant="default" />
-        
-        {/* Experiences Showcase */}
-        <ExperiencesSection />
+          {/* Global Presence */}
+          <GlobalPresenceSection />
+          
+          <SectionDivider variant="default" />
+          
+          {/* Experiences Showcase */}
+          <ExperiencesSection />
 
-        <SectionDivider variant="default" />
+          <SectionDivider variant="default" />
 
-        {/* Partners Network */}
-        <PartnersSection />
-        
-        <SectionDivider variant="default" />
-        
-        {/* Client Testimonials */}
-        <TestimonialsSection />
+          {/* Partners Network */}
+          <PartnersSection />
+          
+          <SectionDivider variant="default" />
+          
+          {/* Client Testimonials */}
+          <TestimonialsSection />
 
-        <SectionDivider variant="wide" />
+          <SectionDivider variant="wide" />
 
-        {/* Membership Tiers */}
-        <MembershipTiersPreview />
-        
-        <SectionDivider variant="ornate" />
-        
-        {/* FAQ Section */}
-        <FAQSection />
-        
-        <SectionDivider variant="minimal" />
+          {/* Membership Tiers */}
+          <MembershipTiersPreview />
+          
+          <SectionDivider variant="ornate" />
+          
+          {/* FAQ Section */}
+          <FAQSection />
+          
+          <SectionDivider variant="minimal" />
 
-        {/* Newsletter / Exclusive Access */}
-        <NewsletterSection />
+          {/* Newsletter / Exclusive Access */}
+          <NewsletterSection />
 
-        <SectionDivider variant="default" />
+          <SectionDivider variant="default" />
 
-        {/* Contact Section */}
-        <ContactSection />
-        
-        <SectionDivider variant="ornate" />
-        
-        {/* Final CTA */}
-        <MembershipCTA />
+          {/* Contact Section */}
+          <ContactSection />
+          
+          <SectionDivider variant="ornate" />
+          
+          {/* Final CTA */}
+          <MembershipCTA />
 
-        {/* Footer */}
-        <Footer />
-      </Suspense>
+          {/* Footer */}
+          <Footer />
+        </Suspense>
+      </SectionErrorBoundary>
 
       {/* Floating UI Elements - Lazy loaded */}
-      <Suspense fallback={null}>
-        <PictureInPicture 
-          isEnabled={isPipEnabled} 
-          onClose={() => setIsPipEnabled(false)} 
-        />
-        
-        <VoiceCommands 
-          onToggleMusic={handleToggleMusic}
-          onToggleNarrator={handleToggleNarrator}
-        />
-        
-        <MusicControlFAB
-          isPlaying={soundscapes.isPlaying}
-          isLoading={soundscapes.isLoading}
-          volume={soundscapes.volume}
-          onToggle={soundscapes.toggleSoundscapes}
-          onVolumeChange={soundscapes.setVolume}
-          currentSection={soundscapes.currentSection}
-          description={soundscapes.getCurrentSoundscape().description}
-        />
-        
-        <ContextualSoundscapeIndicator
-          currentSection={soundscapes.currentSection}
-          description={soundscapes.getCurrentSoundscape().description}
-          isPlaying={soundscapes.isPlaying}
-        />
-
-      </Suspense>
+      <SectionErrorBoundary>
+        <Suspense fallback={null}>
+          <PictureInPicture 
+            isEnabled={isPipEnabled} 
+            onClose={() => setIsPipEnabled(false)} 
+          />
+          
+          <VoiceCommands 
+            onToggleMusic={handleToggleMusic}
+            onToggleNarrator={handleToggleNarrator}
+          />
+          
+          <MusicControlFAB
+            isPlaying={soundscapes.isPlaying}
+            isLoading={soundscapes.isLoading}
+            volume={soundscapes.volume}
+            onToggle={soundscapes.toggleSoundscapes}
+            onVolumeChange={soundscapes.setVolume}
+            currentSection={soundscapes.currentSection}
+            description={soundscapes.getCurrentSoundscape().description}
+          />
+          
+          <ContextualSoundscapeIndicator
+            currentSection={soundscapes.currentSection}
+            description={soundscapes.getCurrentSoundscape().description}
+            isPlaying={soundscapes.isPlaying}
+          />
+        </Suspense>
+      </SectionErrorBoundary>
       
       {/* Video Modal - Always mounted for immediate response */}
       <VideoModal

@@ -8,18 +8,30 @@ export const usePreLaunchMode = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchPreLaunchMode = useCallback(async () => {
+    // Create a timeout promise to prevent hanging
+    const timeoutPromise = new Promise<null>((resolve) => {
+      setTimeout(() => resolve(null), 3000);
+    });
+
     try {
-      const { data, error } = await supabase
+      const fetchPromise = supabase
         .from("app_settings")
         .select("value")
         .eq("key", SETTING_KEY)
         .maybeSingle();
 
-      if (error) {
-        console.error("Error fetching pre-launch mode:", error);
+      // Race between fetch and timeout
+      const result = await Promise.race([fetchPromise, timeoutPromise]);
+
+      if (result === null) {
+        // Timeout hit - default to showing the site
+        console.warn("Pre-launch mode check timed out - defaulting to live");
+        setIsPreLaunch(false);
+      } else if (result.error) {
+        console.error("Error fetching pre-launch mode:", result.error);
         setIsPreLaunch(false);
       } else {
-        setIsPreLaunch(data?.value === "true");
+        setIsPreLaunch(result.data?.value === "true");
       }
     } catch (err) {
       console.error("Error:", err);

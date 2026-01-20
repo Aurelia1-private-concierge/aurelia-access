@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { usePreLaunchMode } from "@/hooks/usePreLaunchMode";
 import { useAuth } from "@/contexts/AuthContext";
@@ -17,6 +17,9 @@ const ALLOWED_ROUTES = [
   "/admin",
 ];
 
+// Maximum time to wait for all checks before rendering anyway
+const MAX_WAIT_TIME = 4000;
+
 const PreLaunchGate = ({ children }: PreLaunchGateProps) => {
   const { isPreLaunch, loading } = usePreLaunchMode();
   const { user, isLoading: authLoading } = useAuth();
@@ -24,6 +27,22 @@ const PreLaunchGate = ({ children }: PreLaunchGateProps) => {
   const location = useLocation();
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [checkingAdmin, setCheckingAdmin] = useState(false);
+  const [forceReady, setForceReady] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Failsafe: Force ready after MAX_WAIT_TIME
+  useEffect(() => {
+    timeoutRef.current = setTimeout(() => {
+      if (!forceReady) {
+        console.warn("PreLaunchGate timeout - forcing render");
+        setForceReady(true);
+      }
+    }, MAX_WAIT_TIME);
+
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [forceReady]);
 
   // Check if user is admin - only when we have a user
   useEffect(() => {
@@ -64,8 +83,11 @@ const PreLaunchGate = ({ children }: PreLaunchGateProps) => {
     }
   }, [user, authLoading]);
 
-  // Redirect logic - only run after all loading is complete
+  // Redirect logic - only run after all loading is complete OR force ready
   useEffect(() => {
+    // If forced ready, skip all checks
+    if (forceReady) return;
+    
     // Wait for all checks to complete
     if (loading || authLoading || checkingAdmin) return;
     
@@ -81,7 +103,7 @@ const PreLaunchGate = ({ children }: PreLaunchGateProps) => {
     if (isPreLaunch && !isAdmin && !isAllowedRoute) {
       navigate("/coming-soon", { replace: true });
     }
-  }, [isPreLaunch, isAdmin, loading, authLoading, checkingAdmin, location.pathname, navigate]);
+  }, [isPreLaunch, isAdmin, loading, authLoading, checkingAdmin, location.pathname, navigate, forceReady]);
 
   // Always render children - redirects happen via navigate()
   return <>{children}</>;

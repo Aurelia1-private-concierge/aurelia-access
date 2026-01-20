@@ -212,17 +212,21 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
             transition={{ duration: 0.8, delay: 1.1 }}
             className="mt-10"
           >
-            <motion.button
-              onClick={onPlayVideo}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="group inline-flex items-center gap-3 text-foreground/60 hover:text-foreground transition-colors duration-300"
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('[HeroSection] Watch Video clicked');
+                onPlayVideo();
+              }}
+              className="group inline-flex items-center gap-3 text-foreground/60 hover:text-foreground transition-colors duration-300 cursor-pointer"
             >
               <div className="w-12 h-12 rounded-full border border-foreground/20 group-hover:border-primary/50 group-hover:bg-primary/10 flex items-center justify-center transition-all duration-300">
                 <Play className="w-4 h-4 ml-0.5 text-foreground/60 group-hover:text-primary transition-colors" fill="currentColor" />
               </div>
               <span className="text-[11px] uppercase tracking-[0.2em] font-light">Watch Video</span>
-            </motion.button>
+            </button>
           </motion.div>
         )}
 

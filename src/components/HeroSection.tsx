@@ -1,22 +1,46 @@
 import { ArrowRight, ChevronDown, Play, Loader2 } from "lucide-react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useCampaignPersonalization } from "@/hooks/useCampaignPersonalization";
 
-
 interface HeroSectionProps {
   videoSrc?: string;
+  videoSources?: string[]; // Array of video sources for rotation
+  rotationInterval?: number; // Interval in ms between video changes
   onPlayVideo?: () => void;
 }
 
-const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
+const HeroSection = ({ 
+  videoSrc, 
+  videoSources = [], 
+  rotationInterval = 12000, // 12 seconds default
+  onPlayVideo 
+}: HeroSectionProps) => {
   const { t } = useTranslation();
   const campaign = useCampaignPersonalization();
   const ref = useRef<HTMLElement>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [videoError, setVideoError] = useState(false);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  
+  // Use videoSources array if provided, otherwise fall back to single videoSrc
+  const videos = videoSources.length > 0 ? videoSources : (videoSrc ? [videoSrc] : []);
+  const currentVideo = videos[currentVideoIndex];
+  const hasMultipleVideos = videos.length > 1;
+  
+  // Rotate videos at interval
+  useEffect(() => {
+    if (!hasMultipleVideos) return;
+    
+    const interval = setInterval(() => {
+      setVideoLoaded(false);
+      setCurrentVideoIndex((prev) => (prev + 1) % videos.length);
+    }, rotationInterval);
+    
+    return () => clearInterval(interval);
+  }, [hasMultipleVideos, videos.length, rotationInterval]);
   
   // Memoize scroll options to prevent recalculation
   const scrollOptions = useMemo(() => ({
@@ -70,25 +94,55 @@ const HeroSection = ({ videoSrc, onPlayVideo }: HeroSectionProps) => {
           </div>
         )}
         
-        {/* Video background */}
-        {videoSrc && !videoError && (
-          <video
-            key={videoSrc}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            onLoadedData={handleVideoLoad}
-            onCanPlay={handleVideoLoad}
-            onError={handleVideoError}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-              videoLoaded ? "opacity-60" : "opacity-0"
-            }`}
+        {/* Video background with smooth transitions */}
+        <AnimatePresence mode="wait">
+          {currentVideo && !videoError && (
+            <motion.video
+              key={currentVideo}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: videoLoaded ? 0.6 : 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.5, ease: "easeInOut" }}
+              autoPlay
+              muted
+              loop={!hasMultipleVideos}
+              playsInline
+              preload="auto"
+              onLoadedData={handleVideoLoad}
+              onCanPlay={handleVideoLoad}
+              onError={handleVideoError}
+              className="absolute inset-0 w-full h-full object-cover"
+            >
+              <source src={currentVideo} type="video/mp4" />
+              Your browser does not support the video tag.
+            </motion.video>
+          )}
+        </AnimatePresence>
+        
+        {/* Video indicator dots for multiple videos */}
+        {hasMultipleVideos && videoLoaded && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20"
           >
-            <source src={videoSrc} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+            {videos.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setVideoLoaded(false);
+                  setCurrentVideoIndex(index);
+                }}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  index === currentVideoIndex 
+                    ? 'bg-primary w-6' 
+                    : 'bg-foreground/30 hover:bg-foreground/50'
+                }`}
+                aria-label={`View video ${index + 1}`}
+              />
+            ))}
+          </motion.div>
         )}
       </motion.div>
 

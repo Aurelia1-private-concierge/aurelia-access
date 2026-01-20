@@ -70,23 +70,26 @@ const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const PartnerDetail = lazy(() => import("./pages/PartnerDetail"));
 const SurpriseMe = lazy(() => import("./pages/SurpriseMe"));
 
-// Premium loading fallback with better UX
-const PageLoader = () => (
-  <motion.div 
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
-    className="min-h-screen bg-background flex flex-col items-center justify-center gap-4"
-  >
-    <div className="relative">
-      <div className="w-12 h-12 border border-primary/30 rounded-full" />
-      <div className="absolute inset-0 w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+// Production debugging
+const log = (msg: string) => console.log(`[App ${Date.now()}] ${msg}`);
+log("App.tsx module loading");
+
+// Simple CSS-only loading fallback (no framer-motion to prevent any potential blocking)
+const PageLoader = () => {
+  log("PageLoader rendering");
+  return (
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
+      <div className="relative">
+        <div className="w-12 h-12 border border-primary/30 rounded-full" />
+        <div className="absolute inset-0 w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+      <p className="text-xs text-muted-foreground/50 uppercase tracking-widest">Loading</p>
     </div>
-    <p className="text-xs text-muted-foreground/50 uppercase tracking-widest">Loading</p>
-  </motion.div>
-);
+  );
+};
 
 const queryClient = new QueryClient();
+log("QueryClient created");
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -489,15 +492,17 @@ const AnimatedRoutes = () => {
   );
 };
 
-const App = () => (
-  <ErrorBoundary>
-    <HelmetProvider>
-      <QueryClientProvider client={queryClient}>
-        <GlobalProvider>
-          <ReducedMotionProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner position="top-right" richColors closeButton />
+const App = () => {
+  log("App component rendering");
+  return (
+    <ErrorBoundary>
+      <HelmetProvider>
+        <QueryClientProvider client={queryClient}>
+          <GlobalProvider>
+            <ReducedMotionProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner position="top-right" richColors closeButton />
               <BrowserRouter>
                 <AuthProvider>
                   <SessionTimeoutProvider timeoutMinutes={30} warningMinutes={5}>
@@ -518,6 +523,7 @@ const App = () => (
       </QueryClientProvider>
     </HelmetProvider>
   </ErrorBoundary>
-);
+  );
+};
 
 export default App;

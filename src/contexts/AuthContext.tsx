@@ -2,6 +2,9 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
+// Production debugging
+const log = (msg: string) => console.log(`[Auth ${Date.now()}] ${msg}`);
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
@@ -18,20 +21,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  log("AuthProvider rendering, isLoading: " + isLoading);
+
   useEffect(() => {
     let isMounted = true;
+    log("AuthProvider useEffect starting");
     
-    // Failsafe: ensure loading state clears within 2 seconds max
+    // Failsafe: ensure loading state clears within 1.5 seconds max
     const loadingTimeout = setTimeout(() => {
       if (isMounted) {
-        console.warn("Auth loading timeout - forcing ready state");
+        log("Auth loading timeout triggered - forcing ready state");
         setIsLoading(false);
       }
-    }, 2000);
+    }, 1500);
 
     // Set up auth state listener FIRST
+    log("Setting up onAuthStateChange listener");
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        log(`onAuthStateChange: event=${event}, hasSession=${!!session}`);
         if (!isMounted) return;
         setSession(session);
         setUser(session?.user ?? null);
@@ -40,19 +48,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     );
 
     // THEN check for existing session
+    log("Calling getSession...");
     supabase.auth.getSession()
       .then(({ data: { session } }) => {
+        log(`getSession completed: hasSession=${!!session}`);
         if (!isMounted) return;
         setSession(session);
         setUser(session?.user ?? null);
         setIsLoading(false);
       })
       .catch((err) => {
-        console.error("Auth session error:", err);
+        log(`getSession error: ${err?.message}`);
         if (isMounted) setIsLoading(false);
       });
 
     return () => {
+      log("AuthProvider cleanup");
       isMounted = false;
       clearTimeout(loadingTimeout);
       subscription.unsubscribe();
@@ -85,6 +96,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signOut = async () => {
     await supabase.auth.signOut();
   };
+
+  log("AuthProvider render complete, providing context");
 
   return (
     <AuthContext.Provider

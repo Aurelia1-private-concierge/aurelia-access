@@ -1,14 +1,27 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 
+// Production debugging
+const DEBUG = true;
+const log = (msg: string) => DEBUG && console.log(`[Aurelia ${Date.now()}] ${msg}`);
+
+log("main.tsx: Script starting");
+
 // Import styles first
 import "./index.css";
+log("main.tsx: CSS loaded");
 
-// Initialize i18n
-import "./i18n";
+// Initialize i18n with error handling
+try {
+  log("main.tsx: Loading i18n...");
+  import("./i18n").then(() => log("main.tsx: i18n loaded")).catch(e => console.error("i18n failed:", e));
+} catch (e) {
+  console.error("i18n import error:", e);
+}
 
 // Import app
 import App from "./App.tsx";
+log("main.tsx: App component imported");
 
 // Initialize Sentry lazily (non-blocking)
 import("./lib/sentry").then(({ initSentry }) => initSentry()).catch(() => {});
@@ -18,22 +31,30 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.getRegistrations().then((regs) => {
     regs.forEach((r) => r.unregister());
   });
+  // Also clear caches
+  if ("caches" in window) {
+    caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
+  }
 }
 
 // Mount React with error handling
 const rootElement = document.getElementById("root");
+log("main.tsx: Root element found: " + !!rootElement);
 
 if (rootElement) {
   // Clear any existing content first
   rootElement.innerHTML = "";
   
   try {
+    log("main.tsx: Creating React root...");
     const root = createRoot(rootElement);
+    log("main.tsx: Rendering App...");
     root.render(
       <React.StrictMode>
         <App />
       </React.StrictMode>
     );
+    log("main.tsx: React render called");
   } catch (error) {
     console.error("Failed to mount React app:", error);
     // Show fallback error UI

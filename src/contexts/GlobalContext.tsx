@@ -1,5 +1,8 @@
-import React, { createContext, useContext, ReactNode } from "react";
+import React, { createContext, useContext, ReactNode, useState, useEffect } from "react";
 import { useGlobalFeatures } from "@/hooks/useGlobalFeatures";
+
+// Production debugging
+const log = (msg: string) => console.log(`[Global ${Date.now()}] ${msg}`);
 
 interface GlobalContextType {
   currency: string;
@@ -14,10 +17,43 @@ interface GlobalContextType {
   phonePrefix: string;
 }
 
-const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
+// Default values for failsafe initialization
+const defaultGlobalFeatures: GlobalContextType = {
+  currency: "USD",
+  currencySymbol: "$",
+  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+  locale: navigator.language || "en-US",
+  isRTL: false,
+  formatCurrency: (amount: number) => `$${amount.toFixed(2)}`,
+  formatDate: (date: Date | string) => new Date(date).toLocaleDateString(),
+  formatTime: (date: Date | string) => new Date(date).toLocaleTimeString(),
+  countryCode: "US",
+  phonePrefix: "+1",
+};
+
+const GlobalContext = createContext<GlobalContextType>(defaultGlobalFeatures);
 
 export const GlobalProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const globalFeatures = useGlobalFeatures();
+  log("GlobalProvider rendering");
+  const [isReady, setIsReady] = useState(false);
+  
+  // Use hook but with error handling
+  let globalFeatures: GlobalContextType;
+  try {
+    globalFeatures = useGlobalFeatures();
+  } catch (e) {
+    log(`useGlobalFeatures error: ${e}`);
+    globalFeatures = defaultGlobalFeatures;
+  }
+  
+  // Ensure we don't block render
+  useEffect(() => {
+    log("GlobalProvider mounted, setting ready");
+    const timeout = setTimeout(() => setIsReady(true), 100);
+    return () => clearTimeout(timeout);
+  }, []);
+  
+  log("GlobalProvider render complete");
   
   return (
     <GlobalContext.Provider value={globalFeatures}>
@@ -28,8 +64,6 @@ export const GlobalProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
 export const useGlobal = () => {
   const context = useContext(GlobalContext);
-  if (!context) {
-    throw new Error("useGlobal must be used within a GlobalProvider");
-  }
-  return context;
+  // No longer throw - return default if no context
+  return context || defaultGlobalFeatures;
 };

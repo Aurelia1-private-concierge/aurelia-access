@@ -2,6 +2,11 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
+// Production debugging
+const log = (msg: string) => console.log(`[i18n ${Date.now()}] ${msg}`);
+
+log("i18n module loading");
+
 import en from "./translations/en.json";
 import fr from "./translations/fr.json";
 import de from "./translations/de.json";
@@ -10,6 +15,8 @@ import zh from "./translations/zh.json";
 import ru from "./translations/ru.json";
 import es from "./translations/es.json";
 import it from "./translations/it.json";
+
+log("i18n translations imported");
 
 export const languages = [
   { code: "en", name: "English", flag: "🇬🇧", dir: "ltr" },
@@ -35,28 +42,41 @@ const resources = {
   it: { translation: it },
 };
 
-i18n
-  .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({
-    resources,
-    fallbackLng: "en",
-    interpolation: {
-      escapeValue: false,
-    },
-    detection: {
-      order: ["localStorage", "navigator"],
-      caches: ["localStorage"],
-    },
-  });
+// Wrap initialization in try-catch to prevent blocking
+try {
+  log("i18n initializing...");
+  i18n
+    .use(LanguageDetector)
+    .use(initReactI18next)
+    .init({
+      resources,
+      fallbackLng: "en",
+      interpolation: {
+        escapeValue: false,
+      },
+      detection: {
+        order: ["localStorage", "navigator"],
+        caches: ["localStorage"],
+      },
+    });
+  log("i18n initialized successfully");
+} catch (error) {
+  console.error("i18n initialization failed:", error);
+}
 
 // Update document direction for RTL languages
-i18n.on("languageChanged", (lng) => {
-  const language = languages.find((l) => l.code === lng);
-  if (language) {
-    document.documentElement.dir = language.dir;
-    document.documentElement.lang = lng;
-  }
-});
+try {
+  i18n.on("languageChanged", (lng) => {
+    const language = languages.find((l) => l.code === lng);
+    if (language) {
+      document.documentElement.dir = language.dir;
+      document.documentElement.lang = lng;
+    }
+  });
+} catch (error) {
+  console.error("i18n language change listener failed:", error);
+}
+
+log("i18n module complete");
 
 export default i18n;

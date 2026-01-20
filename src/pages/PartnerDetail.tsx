@@ -159,7 +159,6 @@ const PartnerDetail = () => {
                 loop
                 playsInline
                 className="absolute inset-0 w-full h-full object-cover"
-                poster={partner.heroImage}
               >
                 <source src={partner.heroVideo} type="video/mp4" />
               </video>

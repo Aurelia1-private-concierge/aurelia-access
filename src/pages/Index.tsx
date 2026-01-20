@@ -1,11 +1,18 @@
 import { useState, useCallback, useRef, lazy, Suspense, useEffect, startTransition, Component, ReactNode } from "react";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
-import heroVideo from "@/assets/hero-yacht.mp4";
+// Real luxury video assets for rotating showcase
+import heroYacht from "@/assets/hero-yacht.mp4";
+import heroJet from "@/assets/hero-jet.mp4";
+import heroHoliday from "@/assets/hero-luxury-holiday.mp4";
+import heroPenthouse from "@/assets/hero-penthouse.mp4";
 import ScrollProgress from "@/components/ScrollProgress";
 import SectionDivider from "@/components/SectionDivider";
 import Footer from "@/components/Footer";
 import VideoModal from "@/components/VideoModal";
+
+// Array of luxury videos for rotating hero showcase
+const heroVideos = [heroYacht, heroJet, heroHoliday, heroPenthouse];
 
 // Simple error boundary for lazy-loaded sections
 class SectionErrorBoundary extends Component<{ children: ReactNode; fallback?: ReactNode }, { hasError: boolean }> {
@@ -141,9 +148,10 @@ const Index = () => {
       <ScrollProgress />
       <Navigation />
       
-      {/* Hero Section - Critical, not lazy */}
+      {/* Hero Section - Critical, not lazy - Rotating luxury video showcase */}
       <HeroSection 
-        videoSrc={heroVideo} 
+        videoSources={heroVideos}
+        rotationInterval={15000}
         onPlayVideo={() => setIsVideoModalOpen(true)} 
       />
 
@@ -290,7 +298,7 @@ const Index = () => {
       <VideoModal
         isOpen={isVideoModalOpen}
         onClose={() => setIsVideoModalOpen(false)}
-        videoSrc={heroVideo}
+        videoSrc={heroYacht}
         title="Experience Aurelia"
       />
     </div>

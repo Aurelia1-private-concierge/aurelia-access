@@ -95,6 +95,7 @@ const SectionLoader = () => (
   </div>
 );
 
+// Force publish: 2026-01-21T09:14
 const Index = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [isPipEnabled, setIsPipEnabled] = useState(true);

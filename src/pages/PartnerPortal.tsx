@@ -18,7 +18,8 @@ import {
   DollarSign,
   Wallet,
   Hotel,
-  Briefcase
+  Briefcase,
+  Gavel
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -30,6 +31,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import SiteMinderIntegration from "@/components/partner/SiteMinderIntegration";
 import PartnerOpportunitiesPanel from "@/components/partner/PartnerOpportunitiesPanel";
+import PartnerConsignmentForm from "@/components/partner/PartnerConsignmentForm";
 
 type Partner = {
   id: string;
@@ -416,7 +418,7 @@ const PartnerPortal = () => {
           {/* Main Content */}
           {!isPending && (
             <Tabs defaultValue="opportunities" className="space-y-6">
-              <TabsList className="bg-secondary/50">
+              <TabsList className="bg-secondary/50 flex-wrap">
                 <TabsTrigger value="opportunities">
                   <Briefcase className="w-4 h-4 mr-2" />
                   Opportunities
@@ -424,6 +426,10 @@ const PartnerPortal = () => {
                 <TabsTrigger value="requests">
                   <MessageSquare className="w-4 h-4 mr-2" />
                   My Requests
+                </TabsTrigger>
+                <TabsTrigger value="consignments">
+                  <Gavel className="w-4 h-4 mr-2" />
+                  Consignments
                 </TabsTrigger>
                 <TabsTrigger value="earnings">
                   <DollarSign className="w-4 h-4 mr-2" />
@@ -445,6 +451,15 @@ const PartnerPortal = () => {
 
               <TabsContent value="opportunities" className="space-y-4">
                 <PartnerOpportunitiesPanel />
+              </TabsContent>
+
+              <TabsContent value="consignments" className="space-y-4">
+                {partner && (
+                  <PartnerConsignmentForm 
+                    partnerId={partner.id} 
+                    onSuccess={() => toast.success("Consignment submitted!")}
+                  />
+                )}
               </TabsContent>
 
               <TabsContent value="requests" className="space-y-4">

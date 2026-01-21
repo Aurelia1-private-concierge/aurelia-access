@@ -28,11 +28,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Search, RefreshCw, Eye, MessageSquare, Calendar, DollarSign, Tag, User, Gavel, Loader2 } from "lucide-react";
+import { Search, RefreshCw, Eye, MessageSquare, Calendar, DollarSign, Tag, User, Gavel, Loader2, Sparkles } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ServiceRequest {
   id: string;
@@ -85,6 +86,7 @@ const ServiceRequestsPanel = () => {
   const [internalNotes, setInternalNotes] = useState("");
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [togglingBidding, setTogglingBidding] = useState(false);
+  const [triggeringAI, setTriggeringAI] = useState(false);
 
   const fetchRequests = async () => {
     setLoading(true);
@@ -465,6 +467,53 @@ const ServiceRequestsPanel = () => {
                   <p className="text-xs text-muted-foreground">
                     Deadline: {format(new Date(selectedRequest.bidding_deadline), "PPP 'at' p")}
                   </p>
+                )}
+                
+                {/* AI Partner Matching Button */}
+                {selectedRequest.bidding_enabled && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-full mt-2 border-primary/30 hover:bg-primary/10"
+                        disabled={triggeringAI}
+                        onClick={async () => {
+                          setTriggeringAI(true);
+                          try {
+                            const { data, error } = await supabase.functions.invoke("ai-partner-matching", {
+                              body: { service_request_id: selectedRequest.id },
+                            });
+                            if (error) throw error;
+                            toast({
+                              title: "Partners Recommended",
+                              description: `${data.recommendations_created} partners have been notified about this opportunity.`,
+                            });
+                            fetchRequests();
+                          } catch (err) {
+                            console.error("AI matching error:", err);
+                            toast({
+                              title: "Error",
+                              description: "Failed to find matching partners.",
+                              variant: "destructive",
+                            });
+                          } finally {
+                            setTriggeringAI(false);
+                          }
+                        }}
+                      >
+                        {triggeringAI ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : (
+                          <Sparkles className="h-4 w-4 mr-2" />
+                        )}
+                        Find Matching Partners (AI)
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Use AI to find and notify the best-fit partners for this request</p>
+                    </TooltipContent>
+                  </Tooltip>
                 )}
               </div>
 

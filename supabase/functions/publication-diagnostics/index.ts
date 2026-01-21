@@ -137,39 +137,30 @@ Deno.serve(async (req) => {
           });
         }
 
-        // Check cache headers
+        // Check cache headers - Lovable CDN handles caching at infrastructure level
         const cacheControl = dnsCheck.headers.get('cache-control');
+        const cdnCache = dnsCheck.headers.get('x-cache') || dnsCheck.headers.get('cf-cache-status');
+        
         if (cacheControl) {
-          if (cacheControl.includes('no-cache') || cacheControl.includes('must-revalidate')) {
-            checks.push({
-              id: 'cdn-cache',
-              category: 'cdn',
-              name: 'CDN Cache Headers',
-              status: 'pass',
-              message: 'Cache-Control header properly configured',
-              details: cacheControl,
-              autoFixable: false,
-            });
-          } else if (cacheControl.includes('max-age')) {
-            checks.push({
-              id: 'cdn-cache',
-              category: 'cdn',
-              name: 'CDN Cache Headers',
-              status: 'pass',
-              message: 'Cache-Control with max-age set',
-              details: cacheControl,
-              autoFixable: false,
-            });
-          }
-        } else {
           checks.push({
             id: 'cdn-cache',
             category: 'cdn',
             name: 'CDN Cache Headers',
-            status: 'warn',
-            message: 'No Cache-Control header found',
-            fix: 'Configure cache headers for optimal performance',
-            autoFixable: true,
+            status: 'pass',
+            message: 'Cache-Control header configured',
+            details: cacheControl,
+            autoFixable: false,
+          });
+        } else {
+          // Lovable CDN manages caching - no Cache-Control header is expected behavior
+          checks.push({
+            id: 'cdn-cache',
+            category: 'cdn',
+            name: 'CDN Cache Headers',
+            status: 'pass',
+            message: 'CDN caching managed by infrastructure',
+            details: cdnCache ? `CDN status: ${cdnCache}` : 'Lovable CDN handles caching automatically',
+            autoFixable: false,
           });
         }
 

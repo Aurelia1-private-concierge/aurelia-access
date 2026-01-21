@@ -68,6 +68,7 @@ import VisitorCountPanel from "@/components/admin/VisitorCountPanel";
 import ContactAutomationPanel from "@/components/admin/ContactAutomationPanel";
 import PublicationFixWizard from "@/components/admin/PublicationFixWizard";
 import UnifiedStatusDashboard from "@/components/admin/UnifiedStatusDashboard";
+import AuctionManagementPanel from "@/components/admin/AuctionManagementPanel";
 
 // Lazy load recharts-heavy components to prevent circular initialization errors
 const AnalyticsDashboard = lazy(() => import("@/components/admin/AnalyticsDashboard"));
@@ -375,6 +376,7 @@ const Admin = () => {
             <TabsTrigger value="security">Security Guide</TabsTrigger>
             <TabsTrigger value="systemhealth">System Health</TabsTrigger>
             <TabsTrigger value="publication">Publication</TabsTrigger>
+            <TabsTrigger value="auctions">Auctions</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
@@ -419,6 +421,10 @@ const Admin = () => {
 
           <TabsContent value="publication" className="space-y-6">
             <PublicationFixWizard />
+          </TabsContent>
+
+          <TabsContent value="auctions" className="space-y-6">
+            <AuctionManagementPanel />
           </TabsContent>
 
           <TabsContent value="scheduler" className="space-y-6">

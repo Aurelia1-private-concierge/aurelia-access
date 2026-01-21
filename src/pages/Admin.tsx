@@ -1,5 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
+import { useSearchParams } from "react-router-dom";
 import { Shield, Users, Mail, Phone, Send, Search, Download, Trash2, Check, X, RefreshCw, Settings, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -104,6 +105,8 @@ interface LaunchSignup {
 
 const Admin = () => {
   const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "analytics");
   const [signups, setSignups] = useState<LaunchSignup[]>([]);
   const [filteredSignups, setFilteredSignups] = useState<LaunchSignup[]>([]);
   const [loading, setLoading] = useState(true);
@@ -117,6 +120,20 @@ const Admin = () => {
   const [notificationMessage, setNotificationMessage] = useState(
     "Aurelia Private Concierge is now live. Your journey into extraordinary begins: www.aurelia-privateconcierge.com"
   );
+
+  // Sync tab state with URL
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setSearchParams({ tab: value });
+  };
+
+  // Update active tab if URL changes
+  useEffect(() => {
+    const tabFromUrl = searchParams.get("tab");
+    if (tabFromUrl && tabFromUrl !== activeTab) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [searchParams]);
 
   // Fetch signups
   const fetchSignups = async () => {
@@ -325,7 +342,7 @@ const Admin = () => {
       </header>
 
       <main className="container mx-auto px-6 py-8">
-        <Tabs defaultValue="analytics" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
           <TabsList className="bg-card border border-border/50 flex-wrap h-auto gap-1 p-1">
             <TabsTrigger value="analytics">Overview</TabsTrigger>
             <TabsTrigger value="visitors">Visitors</TabsTrigger>
@@ -358,7 +375,6 @@ const Admin = () => {
             <TabsTrigger value="security">Security Guide</TabsTrigger>
             <TabsTrigger value="systemhealth">System Health</TabsTrigger>
             <TabsTrigger value="publication">Publication</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 

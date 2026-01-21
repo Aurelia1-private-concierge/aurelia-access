@@ -1760,6 +1760,62 @@ export type Database = {
           },
         ]
       }
+      partner_pms_integrations: {
+        Row: {
+          api_endpoint: string | null
+          created_at: string
+          credentials_encrypted: string | null
+          id: string
+          is_active: boolean | null
+          last_sync_at: string | null
+          metadata: Json | null
+          partner_id: string
+          property_code: string
+          provider: string
+          sync_error: string | null
+          sync_status: string | null
+          updated_at: string
+        }
+        Insert: {
+          api_endpoint?: string | null
+          created_at?: string
+          credentials_encrypted?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_sync_at?: string | null
+          metadata?: Json | null
+          partner_id: string
+          property_code: string
+          provider?: string
+          sync_error?: string | null
+          sync_status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          api_endpoint?: string | null
+          created_at?: string
+          credentials_encrypted?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_sync_at?: string | null
+          metadata?: Json | null
+          partner_id?: string
+          property_code?: string
+          provider?: string
+          sync_error?: string | null
+          sync_status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_pms_integrations_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       partner_prospects: {
         Row: {
           assigned_to: string | null
@@ -1953,6 +2009,53 @@ export type Database = {
           website?: string | null
         }
         Relationships: []
+      }
+      pms_sync_logs: {
+        Row: {
+          created_at: string
+          duration_ms: number | null
+          error_message: string | null
+          id: string
+          integration_id: string
+          request_payload: Json | null
+          response_payload: Json | null
+          rooms_synced: number | null
+          status: string
+          sync_type: string
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          integration_id: string
+          request_payload?: Json | null
+          response_payload?: Json | null
+          rooms_synced?: number | null
+          status: string
+          sync_type: string
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          integration_id?: string
+          request_payload?: Json | null
+          response_payload?: Json | null
+          rooms_synced?: number | null
+          status?: string
+          sync_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pms_sync_logs_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "partner_pms_integrations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       potential_partners: {
         Row: {

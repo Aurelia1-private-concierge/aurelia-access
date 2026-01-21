@@ -161,3 +161,6 @@ verify_jwt = false
 
 [functions.publication-health-check]
 verify_jwt = false
+
+[functions.siteminder-availability]
+verify_jwt = false

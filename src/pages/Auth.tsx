@@ -545,6 +545,8 @@ const Auth = () => {
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <input
                       type="email"
+                      name="email"
+                      id="email"
                       value={email}
                       onChange={(e) => {
                         setEmail(e.target.value);
@@ -585,6 +587,8 @@ const Auth = () => {
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <input
                       type={showPassword ? "text" : "password"}
+                      name="password"
+                      id="password"
                       value={password}
                       onChange={(e) => {
                         const newPassword = e.target.value;

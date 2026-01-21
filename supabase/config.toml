@@ -155,3 +155,6 @@ verify_jwt = false
 
 [functions.service-availability]
 verify_jwt = false
+
+[functions.publication-diagnostics]
+verify_jwt = false

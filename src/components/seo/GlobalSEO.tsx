@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { Helmet } from "react-helmet-async";
+import { SITE_CONFIG } from "@/lib/site-config";
 
 interface GlobalSEOProps {
   title?: string;
@@ -15,12 +16,10 @@ interface GlobalSEOProps {
 }
 
 const defaultMeta = {
-  title: "Aurelia Private Concierge | Ultra-Premium Lifestyle Management",
-  description:
-    "Experience unparalleled luxury with Aurelia's private concierge services. Bespoke travel, exclusive access, and 24/7 lifestyle management for discerning individuals.",
-  keywords:
-    "private concierge, luxury lifestyle, bespoke travel, VIP access, premium services, wealth management, exclusive experiences",
-  ogImage: "/og-image-new.png",
+  title: `${SITE_CONFIG.brand.name} | ${SITE_CONFIG.brand.tagline}`,
+  description: SITE_CONFIG.seo.defaultDescription,
+  keywords: SITE_CONFIG.seo.defaultKeywords,
+  ogImage: SITE_CONFIG.seo.defaultImage,
 };
 
 export const GlobalSEO = ({
@@ -36,16 +35,14 @@ export const GlobalSEO = ({
   structuredData,
 }: GlobalSEOProps) => {
   const fullTitle = title
-    ? `${title} | Aurelia Private Concierge`
+    ? `${title} | ${SITE_CONFIG.brand.name}`
     : defaultMeta.title;
 
-  const baseUrl = "https://aurelia-access.lovable.app";
+  const baseUrl = SITE_CONFIG.getBaseUrl();
   const fullCanonical = canonicalUrl
-    ? `${baseUrl}${canonicalUrl}`
+    ? SITE_CONFIG.getCanonicalUrl(canonicalUrl)
     : undefined;
-  const fullOgImage = ogImage.startsWith("http")
-    ? ogImage
-    : `${baseUrl}${ogImage}`;
+  const fullOgImage = SITE_CONFIG.getAssetUrl(ogImage);
 
   return (
     <Helmet>
@@ -67,7 +64,7 @@ export const GlobalSEO = ({
       <meta property="og:description" content={description} />
       <meta property="og:image" content={fullOgImage} />
       {fullCanonical && <meta property="og:url" content={fullCanonical} />}
-      <meta property="og:site_name" content="Aurelia Private Concierge" />
+      <meta property="og:site_name" content={SITE_CONFIG.brand.name} />
       <meta property="og:locale" content="en_GB" />
 
       {/* Twitter */}
@@ -77,7 +74,7 @@ export const GlobalSEO = ({
       <meta name="twitter:image" content={fullOgImage} />
 
       {/* Additional SEO */}
-      <meta name="author" content="Aurelia Holdings Ltd." />
+      <meta name="author" content={SITE_CONFIG.brand.company} />
       <meta name="geo.region" content="GB-LND" />
       <meta name="geo.placename" content="London" />
 
@@ -97,27 +94,27 @@ export const GlobalSEO = ({
 export const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "Aurelia Private Concierge",
-  alternateName: "Aurelia",
-  url: "https://aurelia-access.lovable.app",
-  logo: "https://aurelia-access.lovable.app/logos/aurelia-logo-light.svg",
+  name: SITE_CONFIG.brand.name,
+  alternateName: SITE_CONFIG.brand.shortName,
+  url: SITE_CONFIG.productionDomain,
+  logo: `${SITE_CONFIG.productionDomain}/logos/aurelia-logo-light.svg`,
   sameAs: [
-    "https://www.linkedin.com/company/aurelia-concierge",
-    "https://www.instagram.com/aurelia.concierge",
-    "https://twitter.com/AureliaConcierge",
+    SITE_CONFIG.social.linkedin,
+    SITE_CONFIG.social.instagram,
+    SITE_CONFIG.social.twitter,
   ],
   contactPoint: {
     "@type": "ContactPoint",
-    telephone: "+44-7309-935106",
+    telephone: SITE_CONFIG.contact.phone,
     contactType: "customer service",
-    email: "concierge@aurelia-privateconcierge.com",
-    areaServed: ["GB", "EU", "US", "AE", "SG"],
-    availableLanguage: ["English", "French", "German", "Arabic", "Mandarin"],
+    email: SITE_CONFIG.contact.email,
+    areaServed: SITE_CONFIG.serviceAreas,
+    availableLanguage: SITE_CONFIG.supportedLanguages.slice(0, 5),
   },
   address: {
     "@type": "PostalAddress",
-    addressLocality: "London",
-    addressCountry: "GB",
+    addressLocality: SITE_CONFIG.location.city,
+    addressCountry: SITE_CONFIG.location.countryCode,
   },
 };
 
@@ -125,22 +122,21 @@ export const organizationSchema = {
 export const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  name: "Aurelia Private Concierge",
-  description:
-    "Ultra-premium private concierge and lifestyle management services",
-  url: "https://aurelia-access.lovable.app",
-  telephone: "+44-7309-935106",
-  email: "concierge@aurelia-privateconcierge.com",
+  name: SITE_CONFIG.brand.name,
+  description: `Ultra-premium private concierge and lifestyle management services`,
+  url: SITE_CONFIG.productionDomain,
+  telephone: SITE_CONFIG.contact.phone,
+  email: SITE_CONFIG.contact.email,
   priceRange: "$$$$",
   address: {
     "@type": "PostalAddress",
-    addressLocality: "London",
-    addressCountry: "United Kingdom",
+    addressLocality: SITE_CONFIG.location.city,
+    addressCountry: SITE_CONFIG.location.country,
   },
   geo: {
     "@type": "GeoCoordinates",
-    latitude: 51.5074,
-    longitude: -0.1278,
+    latitude: SITE_CONFIG.location.coordinates.latitude,
+    longitude: SITE_CONFIG.location.coordinates.longitude,
   },
   openingHoursSpecification: {
     "@type": "OpeningHoursSpecification",

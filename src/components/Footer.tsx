@@ -160,6 +160,17 @@ const Footer = () => {
                     Contact Us →
                   </Link>
                 </li>
+                <li className="pt-3">
+                  <a 
+                    href="https://www.linkedin.com/comm/mynetwork/discovery-see-all?usecase=PEOPLE_FOLLOWS&followMember=tyrone-mitchell-730a253a4" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-2 rounded-full text-sm font-medium text-white bg-[#0A66C2] hover:bg-[#004182] transition-all duration-300"
+                  >
+                    <Linkedin className="w-4 h-4" />
+                    Follow on LinkedIn
+                  </a>
+                </li>
                 <li className="pt-4">
                   <LanguageSwitcher variant="footer" />
                 </li>

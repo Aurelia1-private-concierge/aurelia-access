@@ -24,16 +24,36 @@ const HeroSection = ({
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [videoError, setVideoError] = useState(false);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [contentReady, setContentReady] = useState(false);
   
   const videos = videoSources.length > 0 ? videoSources : (videoSrc ? [videoSrc] : []);
   const currentVideo = videos[currentVideoIndex];
   const hasMultipleVideos = videos.length > 1;
+  
+  // Force content visibility after brief delay - never block on video loading
+  useEffect(() => {
+    const timeout = setTimeout(() => setContentReady(true), 100);
+    return () => clearTimeout(timeout);
+  }, []);
+  
+  // Failsafe: if video doesn't load in 3 seconds, show content anyway
+  useEffect(() => {
+    if (videoLoaded) return;
+    const timeout = setTimeout(() => {
+      if (!videoLoaded) {
+        console.log("[HeroSection] Video load timeout - forcing content display");
+        setVideoError(true);
+      }
+    }, 3000);
+    return () => clearTimeout(timeout);
+  }, [currentVideoIndex, videoLoaded]);
   
   useEffect(() => {
     if (!hasMultipleVideos) return;
     
     const interval = setInterval(() => {
       setVideoLoaded(false);
+      setVideoError(false);
       setCurrentVideoIndex((prev) => (prev + 1) % videos.length);
     }, rotationInterval);
     
@@ -72,19 +92,19 @@ const HeroSection = ({
         {/* Permanent background layer to prevent gaps during video transitions */}
         <div className="absolute inset-0 bg-background" />
         
-        {/* Loading state */}
-        {currentVideo && !videoLoaded && !videoError && (
+        {/* Loading state - only show spinner briefly, never block content */}
+        {currentVideo && !videoLoaded && !videoError && !contentReady && (
           <div className="absolute inset-0 flex items-center justify-center z-10 bg-background">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="flex flex-col items-center gap-4"
-            >
+            <div className="flex flex-col items-center gap-4">
               <div className="w-8 h-8 border border-primary/30 rounded-full border-t-primary animate-spin" />
               <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Loading</span>
-            </motion.div>
+            </div>
           </div>
+        )}
+        
+        {/* Static gradient background while video loads - ensures content is visible */}
+        {(!videoLoaded || videoError) && (
+          <div className="absolute inset-0 bg-gradient-to-br from-background via-obsidian to-navy-deep" />
         )}
         
         {/* Video background - using sync mode for smooth crossfade without gaps */}
@@ -116,10 +136,6 @@ const HeroSection = ({
           )}
         </AnimatePresence>
         
-        {/* Fallback background gradient if no video */}
-        {(!currentVideo || videoError) && (
-          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />
-        )}
         
         {/* Video indicators */}
         {hasMultipleVideos && videoLoaded && (

@@ -68,20 +68,19 @@ export function useMonitoring() {
 
   const fetchUptimeChecks = useCallback(async () => {
     const { data } = await supabase
-      .from('uptime_checks')
+      .from('uptime_checks' as any)
       .select('*')
       .order('checked_at', { ascending: false })
       .limit(100);
     
     if (data) {
-      setUptimeChecks(data as UptimeCheck[]);
+      const typedData = data as unknown as UptimeCheck[];
+      setUptimeChecks(typedData);
       
-      // Calculate uptime percentage
-      const healthyCount = data.filter(c => c.status === 'healthy').length;
-      const uptimePercentage = data.length > 0 ? (healthyCount / data.length) * 100 : 100;
+      const healthyCount = typedData.filter(c => c.status === 'healthy').length;
+      const uptimePercentage = typedData.length > 0 ? (healthyCount / typedData.length) * 100 : 100;
       
-      // Calculate avg response time
-      const responseTimes = data.filter(c => c.response_time_ms).map(c => c.response_time_ms!);
+      const responseTimes = typedData.filter(c => c.response_time_ms).map(c => c.response_time_ms!);
       const avgResponseTime = responseTimes.length > 0 
         ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length 
         : 0;
@@ -96,40 +95,41 @@ export function useMonitoring() {
 
   const fetchIncidents = useCallback(async () => {
     const { data } = await supabase
-      .from('incidents')
+      .from('incidents' as any)
       .select('*')
       .order('started_at', { ascending: false })
       .limit(50);
     
     if (data) {
-      setIncidents(data as Incident[]);
-      const activeCount = data.filter(i => i.status !== 'resolved').length;
+      const typedData = data as unknown as Incident[];
+      setIncidents(typedData);
+      const activeCount = typedData.filter(i => i.status !== 'resolved').length;
       setStats(prev => ({ ...prev, active_incidents: activeCount }));
     }
   }, []);
 
   const fetchPerformanceMetrics = useCallback(async () => {
     const { data } = await supabase
-      .from('performance_metrics')
+      .from('performance_metrics' as any)
       .select('*')
       .order('created_at', { ascending: false })
       .limit(200);
     
-    if (data) setPerformanceMetrics(data as PerformanceMetric[]);
+    if (data) setPerformanceMetrics(data as unknown as PerformanceMetric[]);
   }, []);
 
   const fetchErrorLogs = useCallback(async () => {
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     
     const { data, count } = await supabase
-      .from('error_logs')
+      .from('error_logs' as any)
       .select('*', { count: 'exact' })
       .gte('created_at', twentyFourHoursAgo)
       .order('created_at', { ascending: false })
       .limit(100);
     
     if (data) {
-      setErrorLogs(data as ErrorLog[]);
+      setErrorLogs(data as unknown as ErrorLog[]);
       setStats(prev => ({ ...prev, total_errors_24h: count || 0 }));
     }
   }, []);
@@ -140,7 +140,7 @@ export function useMonitoring() {
     valueMs: number,
     metadata?: Record<string, unknown>
   ) => {
-    await supabase.from('performance_metrics').insert({
+    await (supabase.from('performance_metrics' as any) as any).insert({
       metric_type: metricType,
       metric_name: metricName,
       value_ms: valueMs,
@@ -160,7 +160,7 @@ export function useMonitoring() {
       metadata?: Record<string, unknown>;
     }
   ) => {
-    await supabase.from('error_logs').insert({
+    await (supabase.from('error_logs' as any) as any).insert({
       error_type: errorType,
       error_message: errorMessage,
       error_stack: options?.errorStack,
@@ -180,7 +180,7 @@ export function useMonitoring() {
       affectedServices?: string[];
     }
   ) => {
-    const { data, error } = await supabase.from('incidents').insert({
+    const { data, error } = await (supabase.from('incidents' as any) as any).insert({
       title,
       severity,
       description: options?.description,
@@ -195,8 +195,7 @@ export function useMonitoring() {
   }, [user?.id]);
 
   const resolveIncident = useCallback(async (incidentId: string) => {
-    const { error } = await supabase
-      .from('incidents')
+    const { error } = await (supabase.from('incidents' as any) as any)
       .update({ status: 'resolved', resolved_at: new Date().toISOString() })
       .eq('id', incidentId);
     
@@ -211,8 +210,7 @@ export function useMonitoring() {
   }, []);
 
   const resolveError = useCallback(async (errorId: string) => {
-    const { error } = await supabase
-      .from('error_logs')
+    const { error } = await (supabase.from('error_logs' as any) as any)
       .update({ resolved: true, resolved_at: new Date().toISOString(), resolved_by: user?.id })
       .eq('id', errorId);
     
@@ -238,7 +236,6 @@ export function useMonitoring() {
     
     loadData();
 
-    // Set up realtime subscriptions
     const channel = supabase
       .channel('monitoring-updates')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'uptime_checks' }, 

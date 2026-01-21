@@ -25,12 +25,12 @@ export function useAIMemory() {
     if (!user?.id) return;
     
     const { data } = await supabase
-      .from('ai_conversation_memory')
+      .from('ai_conversation_memory' as any)
       .select('*')
       .eq('user_id', user.id)
       .order('updated_at', { ascending: false });
     
-    if (data) setMemories(data as AIMemory[]);
+    if (data) setMemories(data as unknown as AIMemory[]);
   }, [user?.id]);
 
   useEffect(() => {
@@ -55,8 +55,7 @@ export function useAIMemory() {
   ) => {
     if (!user?.id) return { error: 'Not authenticated' };
 
-    const { data, error } = await supabase
-      .from('ai_conversation_memory')
+    const { data, error } = await (supabase.from('ai_conversation_memory' as any) as any)
       .upsert({
         user_id: user.id,
         key,
@@ -99,8 +98,7 @@ export function useAIMemory() {
   const deleteMemory = useCallback(async (key: string) => {
     if (!user?.id) return { error: 'Not authenticated' };
 
-    const { error } = await supabase
-      .from('ai_conversation_memory')
+    const { error } = await (supabase.from('ai_conversation_memory' as any) as any)
       .delete()
       .eq('user_id', user.id)
       .eq('key', key);
@@ -115,17 +113,14 @@ export function useAIMemory() {
   const getContextForConversation = useCallback(async (conversationId?: string) => {
     if (!user?.id) return [];
 
-    // Get all relevant memories for context
     const preferences = getMemoriesByType('preference');
     const facts = getMemoriesByType('fact');
     
-    // Get conversation-specific context if provided
     let conversationContext: AIMemory[] = [];
     if (conversationId) {
       conversationContext = memories.filter(m => m.conversation_id === conversationId);
     }
 
-    // Build context object
     return {
       preferences: preferences.reduce((acc, m) => ({ ...acc, [m.key]: m.value }), {}),
       facts: facts.reduce((acc, m) => ({ ...acc, [m.key]: m.value }), {}),
@@ -134,14 +129,12 @@ export function useAIMemory() {
     };
   }, [user?.id, memories, getMemoriesByType]);
 
-  // Auto-extract and store preferences from conversation
   const extractAndStorePreferences = useCallback(async (
     message: string,
     conversationId: string
   ) => {
     if (!user?.id) return;
 
-    // Simple preference extraction patterns
     const preferencePatterns = [
       { pattern: /i (?:prefer|like|love|enjoy) (.+)/i, type: 'preference' as const },
       { pattern: /my favorite (.+) is (.+)/i, type: 'preference' as const },

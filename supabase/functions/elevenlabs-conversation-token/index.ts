@@ -83,6 +83,20 @@ serve(async (req) => {
     if (!signedUrlResponse.ok) {
       const errorText = await signedUrlResponse.text();
       console.error("Failed to get signed URL:", signedUrlResponse.status, errorText);
+
+      // Provide actionable feedback for the most common configuration mistake.
+      // ElevenLabs returns 404 document_not_found when the agent id is invalid or deleted.
+      if (signedUrlResponse.status === 404) {
+        return new Response(
+          JSON.stringify({
+            error: "Voice agent not found",
+            details:
+              "The configured ELEVENLABS_AGENT_ID does not exist in ElevenLabs. Please update the ELEVENLABS_AGENT_ID secret to a valid agent id.",
+          }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
       return new Response(
         JSON.stringify({ error: "Failed to initialize voice session" }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }

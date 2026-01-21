@@ -70,7 +70,7 @@ interface OutreachCampaign {
   id: string;
   name: string;
   category: string;
-  status: "draft" | "active" | "paused" | "completed";
+  status: string;
   target_count: number;
   sent_count: number;
   opened_count: number;
@@ -79,6 +79,9 @@ interface OutreachCampaign {
   sequence_steps: number;
   created_at: string;
   start_date: string | null;
+  target_keywords?: string | null;
+  daily_limit?: number | null;
+  auto_follow_up?: boolean | null;
 }
 
 interface OutreachSequence {
@@ -185,7 +188,8 @@ The Aurelia Team`,
 const ColdOutreachPanel = () => {
   const [campaigns, setCampaigns] = useState<OutreachCampaign[]>([]);
   const [sources, setSources] = useState<ProspectSource[]>(leadSources);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("campaigns");
   
   // Campaign creation state
@@ -209,67 +213,27 @@ const ColdOutreachPanel = () => {
   
   const { logAdminAction } = useAdminAuditLog();
 
-  // Mock data for demonstration
+  // Fetch campaigns from database
+  const fetchCampaigns = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("outreach_campaigns")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setCampaigns(data || []);
+    } catch (error) {
+      console.error("Error fetching campaigns:", error);
+      toast({ title: "Error", description: "Failed to load campaigns", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const mockCampaigns: OutreachCampaign[] = [
-      {
-        id: "1",
-        name: "Private Aviation Partners Q1",
-        category: "private_aviation",
-        status: "active",
-        target_count: 150,
-        sent_count: 87,
-        opened_count: 42,
-        replied_count: 12,
-        converted_count: 3,
-        sequence_steps: 3,
-        created_at: "2025-01-01",
-        start_date: "2025-01-05",
-      },
-      {
-        id: "2",
-        name: "Yacht Charter Network",
-        category: "yacht_charter",
-        status: "active",
-        target_count: 75,
-        sent_count: 45,
-        opened_count: 28,
-        replied_count: 8,
-        converted_count: 2,
-        sequence_steps: 3,
-        created_at: "2025-01-08",
-        start_date: "2025-01-10",
-      },
-      {
-        id: "3",
-        name: "Luxury Real Estate Brokers",
-        category: "real_estate",
-        status: "paused",
-        target_count: 200,
-        sent_count: 120,
-        opened_count: 65,
-        replied_count: 15,
-        converted_count: 4,
-        sequence_steps: 3,
-        created_at: "2024-12-15",
-        start_date: "2024-12-20",
-      },
-      {
-        id: "4",
-        name: "Security Services Outreach",
-        category: "security",
-        status: "draft",
-        target_count: 50,
-        sent_count: 0,
-        opened_count: 0,
-        replied_count: 0,
-        converted_count: 0,
-        sequence_steps: 3,
-        created_at: "2025-01-12",
-        start_date: null,
-      },
-    ];
-    setCampaigns(mockCampaigns);
+    fetchCampaigns();
   }, []);
 
   const stats = {
@@ -286,47 +250,77 @@ const ColdOutreachPanel = () => {
       : 0,
   };
 
-  const handleToggleCampaign = (id: string) => {
-    setCampaigns((prev) =>
-      prev.map((c) => {
-        if (c.id === id) {
-          const newStatus = c.status === "active" ? "paused" : "active";
-          logAdminAction("admin.campaign_status_changed", "campaign", id, { new_status: newStatus });
-          toast({ title: `Campaign ${newStatus === "active" ? "Activated" : "Paused"}` });
-          return { ...c, status: newStatus };
-        }
-        return c;
-      })
-    );
+  const handleToggleCampaign = async (id: string) => {
+    const campaign = campaigns.find(c => c.id === id);
+    if (!campaign) return;
+
+    const newStatus = campaign.status === "active" ? "paused" : "active";
+    
+    try {
+      const { error } = await supabase
+        .from("outreach_campaigns")
+        .update({ 
+          status: newStatus,
+          start_date: newStatus === "active" && !campaign.start_date ? new Date().toISOString() : campaign.start_date
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setCampaigns((prev) =>
+        prev.map((c) => c.id === id ? { ...c, status: newStatus } : c)
+      );
+      
+      logAdminAction("admin.campaign_status_changed", "campaign", id, { new_status: newStatus });
+      toast({ title: `Campaign ${newStatus === "active" ? "Activated" : "Paused"}` });
+    } catch (error) {
+      console.error("Error updating campaign:", error);
+      toast({ title: "Error", description: "Failed to update campaign", variant: "destructive" });
+    }
   };
 
-  const handleCreateCampaign = () => {
+  const handleCreateCampaign = async () => {
     if (!newCampaign.name || !newCampaign.category) {
       toast({ title: "Error", description: "Name and category required", variant: "destructive" });
       return;
     }
 
-    const campaign: OutreachCampaign = {
-      id: Date.now().toString(),
-      name: newCampaign.name,
-      category: newCampaign.category,
-      status: "draft",
-      target_count: 0,
-      sent_count: 0,
-      opened_count: 0,
-      replied_count: 0,
-      converted_count: 0,
-      sequence_steps: sequence.length,
-      created_at: new Date().toISOString(),
-      start_date: null,
-    };
-
-    setCampaigns((prev) => [campaign, ...prev]);
-    setCreateDialogOpen(false);
-    setNewCampaign({ name: "", category: "", target_keywords: "", daily_limit: 25, auto_follow_up: true });
+    setSaving(true);
     
-    logAdminAction("admin.campaign_created", "campaign", campaign.id, { name: campaign.name });
-    toast({ title: "Campaign Created", description: "Your campaign is ready as a draft" });
+    try {
+      const { data, error } = await supabase
+        .from("outreach_campaigns")
+        .insert({
+          name: newCampaign.name,
+          category: newCampaign.category,
+          status: "draft",
+          target_count: 0,
+          sent_count: 0,
+          opened_count: 0,
+          replied_count: 0,
+          converted_count: 0,
+          sequence_steps: sequence.length,
+          target_keywords: newCampaign.target_keywords || null,
+          daily_limit: newCampaign.daily_limit,
+          auto_follow_up: newCampaign.auto_follow_up,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setCampaigns((prev) => [data, ...prev]);
+      setCreateDialogOpen(false);
+      setNewCampaign({ name: "", category: "", target_keywords: "", daily_limit: 25, auto_follow_up: true });
+      
+      logAdminAction("admin.campaign_created", "campaign", data.id, { name: data.name });
+      toast({ title: "Campaign Created", description: "Your campaign is ready as a draft" });
+    } catch (error) {
+      console.error("Error creating campaign:", error);
+      toast({ title: "Error", description: "Failed to create campaign", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleAutoFind = async () => {
@@ -390,6 +384,15 @@ const ColdOutreachPanel = () => {
     return categoryOptions.find((c) => c.value === value)?.label || value;
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <RefreshCw className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-3 text-muted-foreground">Loading campaigns...</span>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -405,6 +408,9 @@ const ColdOutreachPanel = () => {
             </p>
           </div>
           <div className="flex gap-2">
+            <Button variant="outline" size="icon" onClick={fetchCampaigns}>
+              <RefreshCw className="h-4 w-4" />
+            </Button>
             <Button variant="outline" onClick={() => setFinderDialogOpen(true)}>
               <Sparkles className="h-4 w-4 mr-2" />
               Auto-Find Partners

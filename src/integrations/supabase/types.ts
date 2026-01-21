@@ -1291,6 +1291,66 @@ export type Database = {
         }
         Relationships: []
       }
+      outreach_campaigns: {
+        Row: {
+          auto_follow_up: boolean | null
+          category: string
+          converted_count: number
+          created_at: string
+          created_by: string | null
+          daily_limit: number | null
+          id: string
+          name: string
+          opened_count: number
+          replied_count: number
+          sent_count: number
+          sequence_steps: number
+          start_date: string | null
+          status: string
+          target_count: number
+          target_keywords: string | null
+          updated_at: string
+        }
+        Insert: {
+          auto_follow_up?: boolean | null
+          category: string
+          converted_count?: number
+          created_at?: string
+          created_by?: string | null
+          daily_limit?: number | null
+          id?: string
+          name: string
+          opened_count?: number
+          replied_count?: number
+          sent_count?: number
+          sequence_steps?: number
+          start_date?: string | null
+          status?: string
+          target_count?: number
+          target_keywords?: string | null
+          updated_at?: string
+        }
+        Update: {
+          auto_follow_up?: boolean | null
+          category?: string
+          converted_count?: number
+          created_at?: string
+          created_by?: string | null
+          daily_limit?: number | null
+          id?: string
+          name?: string
+          opened_count?: number
+          replied_count?: number
+          sent_count?: number
+          sequence_steps?: number
+          start_date?: string | null
+          status?: string
+          target_count?: number
+          target_keywords?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       outreach_templates: {
         Row: {
           body: string
@@ -2292,6 +2352,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      social_posts: {
+        Row: {
+          campaign: string | null
+          content: string
+          created_at: string
+          created_by: string | null
+          id: string
+          image_url: string | null
+          platforms: string[]
+          scheduled_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          campaign?: string | null
+          content: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          image_url?: string | null
+          platforms?: string[]
+          scheduled_at: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          campaign?: string | null
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          image_url?: string | null
+          platforms?: string[]
+          scheduled_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       surprise_me_requests: {
         Row: {

@@ -12,8 +12,8 @@ import {
   Edit,
   Check,
   Send,
-  Image,
-  FileText,
+  RefreshCw,
+  Loader2,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -37,16 +36,18 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
-import { format, addDays, addHours } from "date-fns";
+import { format, addHours } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ScheduledPost {
   id: string;
   content: string;
   platforms: string[];
-  scheduledAt: Date;
-  status: "scheduled" | "published" | "failed";
-  campaign?: string;
-  imageUrl?: string;
+  scheduled_at: string;
+  status: string;
+  campaign?: string | null;
+  image_url?: string | null;
 }
 
 const PLATFORMS = [
@@ -63,10 +64,11 @@ const SUGGESTED_TIMES = [
   { label: "Evening (7 PM)", hours: 19 },
 ];
 
-const STORAGE_KEY = "aurelia_scheduled_posts";
-
 const SocialScheduler = () => {
+  const { user } = useAuth();
   const [posts, setPosts] = useState<ScheduledPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<ScheduledPost | null>(null);
   
@@ -77,44 +79,30 @@ const SocialScheduler = () => {
   const [scheduledTime, setScheduledTime] = useState("09:00");
   const [campaign, setCampaign] = useState("");
 
-  // Load posts from localStorage
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      setPosts(parsed.map((p: any) => ({ ...p, scheduledAt: new Date(p.scheduledAt) })));
-    } else {
-      // Initialize with sample posts
-      const samplePosts: ScheduledPost[] = [
-        {
-          id: "1",
-          content: "What does it feel like to have the impossible become routine?\n\nAurelia is the world's first AI-powered private concierge—reserved for those who value time above all.\n\n#Aurelia #PrivateConcierge #LuxuryLifestyle",
-          platforms: ["instagram", "linkedin"],
-          scheduledAt: addDays(new Date(), 1),
-          status: "scheduled",
-          campaign: "launch",
-        },
-        {
-          id: "2",
-          content: "Private aviation. Superyachts. Off-market estates.\n\nThe waitlist is now open.\n\naurelia-privateconcierge.com",
-          platforms: ["twitter", "facebook"],
-          scheduledAt: addDays(new Date(), 2),
-          status: "scheduled",
-          campaign: "waitlist",
-        },
-      ];
-      setPosts(samplePosts);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(samplePosts));
-    }
-  }, []);
+  // Fetch posts from database
+  const fetchPosts = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("social_posts")
+        .select("*")
+        .order("scheduled_at", { ascending: true });
 
-  // Save posts to localStorage
-  const savePosts = (newPosts: ScheduledPost[]) => {
-    setPosts(newPosts);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newPosts));
+      if (error) throw error;
+      setPosts(data || []);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      toast({ title: "Error", description: "Failed to load scheduled posts", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSubmit = () => {
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const handleSubmit = async () => {
     if (!content || selectedPlatforms.length === 0 || !scheduledDate) {
       toast({
         title: "Missing Information",
@@ -124,31 +112,48 @@ const SocialScheduler = () => {
       return;
     }
 
-    const scheduledAt = new Date(`${scheduledDate}T${scheduledTime}`);
+    setSaving(true);
+    const scheduledAt = new Date(`${scheduledDate}T${scheduledTime}`).toISOString();
     
-    if (editingPost) {
-      const updated = posts.map((p) =>
-        p.id === editingPost.id
-          ? { ...p, content, platforms: selectedPlatforms, scheduledAt, campaign }
-          : p
-      );
-      savePosts(updated);
-      toast({ title: "Post Updated", description: "Your scheduled post has been updated" });
-    } else {
-      const newPost: ScheduledPost = {
-        id: Date.now().toString(),
-        content,
-        platforms: selectedPlatforms,
-        scheduledAt,
-        status: "scheduled",
-        campaign: campaign || undefined,
-      };
-      savePosts([...posts, newPost]);
-      toast({ title: "Post Scheduled", description: `Scheduled for ${format(scheduledAt, "PPP 'at' p")}` });
-    }
+    try {
+      if (editingPost) {
+        const { error } = await supabase
+          .from("social_posts")
+          .update({
+            content,
+            platforms: selectedPlatforms,
+            scheduled_at: scheduledAt,
+            campaign: campaign || null,
+          })
+          .eq("id", editingPost.id);
 
-    resetForm();
-    setIsDialogOpen(false);
+        if (error) throw error;
+        toast({ title: "Post Updated", description: "Your scheduled post has been updated" });
+      } else {
+        const { error } = await supabase
+          .from("social_posts")
+          .insert({
+            content,
+            platforms: selectedPlatforms,
+            scheduled_at: scheduledAt,
+            status: "scheduled",
+            campaign: campaign || null,
+            created_by: user?.id,
+          });
+
+        if (error) throw error;
+        toast({ title: "Post Scheduled", description: `Scheduled for ${format(new Date(scheduledAt), "PPP 'at' p")}` });
+      }
+
+      await fetchPosts();
+      resetForm();
+      setIsDialogOpen(false);
+    } catch (error) {
+      console.error("Error saving post:", error);
+      toast({ title: "Error", description: "Failed to save post", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const resetForm = () => {
@@ -164,15 +169,26 @@ const SocialScheduler = () => {
     setEditingPost(post);
     setContent(post.content);
     setSelectedPlatforms(post.platforms);
-    setScheduledDate(format(post.scheduledAt, "yyyy-MM-dd"));
-    setScheduledTime(format(post.scheduledAt, "HH:mm"));
+    setScheduledDate(format(new Date(post.scheduled_at), "yyyy-MM-dd"));
+    setScheduledTime(format(new Date(post.scheduled_at), "HH:mm"));
     setCampaign(post.campaign || "");
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (id: string) => {
-    savePosts(posts.filter((p) => p.id !== id));
-    toast({ title: "Post Deleted", description: "Scheduled post has been removed" });
+  const handleDelete = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from("social_posts")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+      setPosts(posts.filter((p) => p.id !== id));
+      toast({ title: "Post Deleted", description: "Scheduled post has been removed" });
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      toast({ title: "Error", description: "Failed to delete post", variant: "destructive" });
+    }
   };
 
   const handleQuickSchedule = (hours: number) => {
@@ -189,8 +205,18 @@ const SocialScheduler = () => {
     );
   };
 
-  const scheduledPosts = posts.filter((p) => p.status === "scheduled").sort((a, b) => a.scheduledAt.getTime() - b.scheduledAt.getTime());
+  const scheduledPosts = posts.filter((p) => p.status === "scheduled").sort((a, b) => 
+    new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime()
+  );
   const publishedPosts = posts.filter((p) => p.status === "published");
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -205,122 +231,131 @@ const SocialScheduler = () => {
             Schedule and manage posts across all platforms
           </p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="gap-2" onClick={resetForm}>
-              <Plus className="h-4 w-4" />
-              New Post
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>{editingPost ? "Edit Post" : "Schedule New Post"}</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              {/* Content */}
-              <div className="space-y-2">
-                <Label>Post Content</Label>
-                <Textarea
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="Write your post content..."
-                  rows={5}
-                  className="resize-none"
-                />
-                <p className="text-xs text-muted-foreground text-right">
-                  {content.length} characters
-                </p>
-              </div>
-
-              {/* Platforms */}
-              <div className="space-y-2">
-                <Label>Platforms</Label>
-                <div className="flex flex-wrap gap-2">
-                  {PLATFORMS.map((platform) => {
-                    const Icon = platform.icon;
-                    const isSelected = selectedPlatforms.includes(platform.id);
-                    return (
-                      <button
-                        key={platform.id}
-                        onClick={() => togglePlatform(platform.id)}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-all ${
-                          isSelected
-                            ? "border-primary bg-primary/10"
-                            : "border-border hover:border-primary/50"
-                        }`}
-                      >
-                        <Icon className="h-4 w-4" />
-                        <span className="text-sm">{platform.name}</span>
-                        {isSelected && <Check className="h-3 w-3 text-primary" />}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Quick Schedule */}
-              <div className="space-y-2">
-                <Label>Quick Schedule</Label>
-                <div className="flex flex-wrap gap-2">
-                  {SUGGESTED_TIMES.map((time) => (
-                    <Button
-                      key={time.label}
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleQuickSchedule(time.hours)}
-                    >
-                      {time.label}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Date & Time */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Date</Label>
-                  <Input
-                    type="date"
-                    value={scheduledDate}
-                    onChange={(e) => setScheduledDate(e.target.value)}
-                    min={format(new Date(), "yyyy-MM-dd")}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Time</Label>
-                  <Input
-                    type="time"
-                    value={scheduledTime}
-                    onChange={(e) => setScheduledTime(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              {/* Campaign */}
-              <div className="space-y-2">
-                <Label>Campaign (Optional)</Label>
-                <Select value={campaign} onValueChange={setCampaign}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select campaign" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="launch">Launch Campaign</SelectItem>
-                    <SelectItem value="waitlist">Waitlist Promo</SelectItem>
-                    <SelectItem value="luxury-travel">Luxury Travel</SelectItem>
-                    <SelectItem value="vip-events">VIP Events</SelectItem>
-                    <SelectItem value="organic">Organic Content</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Submit */}
-              <Button onClick={handleSubmit} className="w-full gap-2">
-                <Send className="h-4 w-4" />
-                {editingPost ? "Update Post" : "Schedule Post"}
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="icon" onClick={fetchPosts}>
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="gap-2" onClick={resetForm}>
+                <Plus className="h-4 w-4" />
+                New Post
               </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+            </DialogTrigger>
+            <DialogContent className="max-w-lg">
+              <DialogHeader>
+                <DialogTitle>{editingPost ? "Edit Post" : "Schedule New Post"}</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                {/* Content */}
+                <div className="space-y-2">
+                  <Label>Post Content</Label>
+                  <Textarea
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    placeholder="Write your post content..."
+                    rows={5}
+                    className="resize-none"
+                  />
+                  <p className="text-xs text-muted-foreground text-right">
+                    {content.length} characters
+                  </p>
+                </div>
+
+                {/* Platforms */}
+                <div className="space-y-2">
+                  <Label>Platforms</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {PLATFORMS.map((platform) => {
+                      const Icon = platform.icon;
+                      const isSelected = selectedPlatforms.includes(platform.id);
+                      return (
+                        <button
+                          key={platform.id}
+                          onClick={() => togglePlatform(platform.id)}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-all ${
+                            isSelected
+                              ? "border-primary bg-primary/10"
+                              : "border-border hover:border-primary/50"
+                          }`}
+                        >
+                          <Icon className="h-4 w-4" />
+                          <span className="text-sm">{platform.name}</span>
+                          {isSelected && <Check className="h-3 w-3 text-primary" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Quick Schedule */}
+                <div className="space-y-2">
+                  <Label>Quick Schedule</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {SUGGESTED_TIMES.map((time) => (
+                      <Button
+                        key={time.label}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleQuickSchedule(time.hours)}
+                      >
+                        {time.label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Date & Time */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Date</Label>
+                    <Input
+                      type="date"
+                      value={scheduledDate}
+                      onChange={(e) => setScheduledDate(e.target.value)}
+                      min={format(new Date(), "yyyy-MM-dd")}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Time</Label>
+                    <Input
+                      type="time"
+                      value={scheduledTime}
+                      onChange={(e) => setScheduledTime(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Campaign */}
+                <div className="space-y-2">
+                  <Label>Campaign (Optional)</Label>
+                  <Select value={campaign} onValueChange={setCampaign}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select campaign" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="launch">Launch Campaign</SelectItem>
+                      <SelectItem value="waitlist">Waitlist Promo</SelectItem>
+                      <SelectItem value="luxury-travel">Luxury Travel</SelectItem>
+                      <SelectItem value="vip-events">VIP Events</SelectItem>
+                      <SelectItem value="organic">Organic Content</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Submit */}
+                <Button onClick={handleSubmit} className="w-full gap-2" disabled={saving}>
+                  {saving ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
+                  {editingPost ? "Update Post" : "Schedule Post"}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {/* Stats */}
@@ -349,7 +384,7 @@ const SocialScheduler = () => {
           <CardContent className="pt-4">
             <p className="text-2xl font-semibold text-foreground">
               {scheduledPosts.length > 0 
-                ? format(scheduledPosts[0].scheduledAt, "MMM d")
+                ? format(new Date(scheduledPosts[0].scheduled_at), "MMM d")
                 : "-"
               }
             </p>
@@ -407,7 +442,7 @@ const SocialScheduler = () => {
                       </p>
                       <p className="text-xs text-muted-foreground flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
-                        {format(post.scheduledAt, "PPP 'at' p")}
+                        {format(new Date(post.scheduled_at), "PPP 'at' p")}
                       </p>
                     </div>
                     <div className="flex items-center gap-1">

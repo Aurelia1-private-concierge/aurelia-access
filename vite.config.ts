@@ -57,8 +57,8 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('node_modules/date-fns')) {
             return 'vendor-date';
           }
-          // Form handling
-          if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/zod')) {
+          // Form handling - MUST include @hookform/resolvers to avoid TDZ circular dependency
+          if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/zod') || id.includes('node_modules/@hookform')) {
             return 'vendor-forms';
           }
           // Sentry - error tracking

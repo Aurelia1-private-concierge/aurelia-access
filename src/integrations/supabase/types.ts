@@ -901,6 +901,39 @@ export type Database = {
         }
         Relationships: []
       }
+      health_events: {
+        Row: {
+          component: string
+          created_at: string
+          details: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          component: string
+          created_at?: string
+          details?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status: string
+          user_id?: string | null
+        }
+        Update: {
+          component?: string
+          created_at?: string
+          details?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       hotel_availability: {
         Row: {
           amenities: string[] | null
@@ -2071,6 +2104,36 @@ export type Database = {
           timezone?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      publication_health_logs: {
+        Row: {
+          checks: Json
+          created_at: string
+          domain: string
+          id: string
+          overall_status: string
+          recommendations: Json | null
+          triggered_by: string | null
+        }
+        Insert: {
+          checks?: Json
+          created_at?: string
+          domain: string
+          id?: string
+          overall_status: string
+          recommendations?: Json | null
+          triggered_by?: string | null
+        }
+        Update: {
+          checks?: Json
+          created_at?: string
+          domain?: string
+          id?: string
+          overall_status?: string
+          recommendations?: Json | null
+          triggered_by?: string | null
         }
         Relationships: []
       }

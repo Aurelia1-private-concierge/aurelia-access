@@ -2759,6 +2759,7 @@ export type Database = {
           headers: Json | null
           id: string
           is_active: boolean | null
+          last_triggered_at: string | null
           name: string
           updated_at: string
           url: string
@@ -2770,6 +2771,7 @@ export type Database = {
           headers?: Json | null
           id?: string
           is_active?: boolean | null
+          last_triggered_at?: string | null
           name: string
           updated_at?: string
           url: string
@@ -2781,6 +2783,7 @@ export type Database = {
           headers?: Json | null
           id?: string
           is_active?: boolean | null
+          last_triggered_at?: string | null
           name?: string
           updated_at?: string
           url?: string

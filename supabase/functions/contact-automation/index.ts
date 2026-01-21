@@ -235,13 +235,13 @@ async function sendAdminNotification(submission: ContactSubmission, leadScore: n
   }
 }
 
-// Send to all configured webhooks (n8n, Slack, CRM, etc.)
+// Send to all configured webhooks (n8n, Slack, CRM, etc.) with retry
 async function sendToWebhooks(
   supabase: any,
   submission: ContactSubmission,
   leadScore: number
-): Promise<{ sent: number; failed: number; details: Array<{ name: string; success: boolean; error?: string }> }> {
-  const results: Array<{ name: string; success: boolean; error?: string }> = [];
+): Promise<{ sent: number; failed: number; details: Array<{ name: string; success: boolean; error?: string; responseStatus?: number }> }> {
+  const results: Array<{ name: string; success: boolean; error?: string; responseStatus?: number }> = [];
   
   try {
     // Fetch active webhook endpoints for contact_form events
@@ -256,6 +256,8 @@ async function sendToWebhooks(
       console.log("No active webhooks configured");
       return { sent: 0, failed: 0, details: [] };
     }
+
+    console.log(`Found ${webhooks.length} active webhook(s)`);
     
     const payload = {
       event: 'contact_form_submission',
@@ -272,33 +274,64 @@ async function sendToWebhooks(
       }
     };
     
-    // Send to each webhook in parallel
-    const promises = webhooks.map(async (webhook: any) => {
-      try {
-        const headers: Record<string, string> = {
-          'Content-Type': 'application/json',
-          ...(webhook.headers || {})
-        };
-        
-        const response = await fetch(webhook.url, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify(payload),
-        });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    // Send to each webhook with retry
+    const sendWithRetry = async (webhook: any, retries = 2): Promise<{ name: string; success: boolean; error?: string; responseStatus?: number }> => {
+      for (let attempt = 0; attempt <= retries; attempt++) {
+        try {
+          const headers: Record<string, string> = {
+            'Content-Type': 'application/json',
+            'User-Agent': 'Aurelia-Webhook/1.0',
+            ...(webhook.headers || {})
+          };
+          
+          // Add n8n-specific headers if it's an n8n endpoint
+          if (webhook.endpoint_type === 'n8n') {
+            headers['X-Webhook-Source'] = 'aurelia-concierge';
+          }
+
+          console.log(`Sending to ${webhook.name} (attempt ${attempt + 1})`);
+          
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+          
+          const response = await fetch(webhook.url, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(payload),
+            signal: controller.signal,
+          });
+          
+          clearTimeout(timeoutId);
+          
+          if (!response.ok) {
+            const errorText = await response.text().catch(() => 'No response body');
+            throw new Error(`HTTP ${response.status}: ${errorText.slice(0, 200)}`);
+          }
+          
+          console.log(`✓ Webhook sent to ${webhook.name}`);
+          
+          // Update last_triggered timestamp
+          await supabase
+            .from('webhook_endpoints')
+            .update({ last_triggered_at: new Date().toISOString() })
+            .eq('id', webhook.id);
+          
+          return { name: webhook.name, success: true, responseStatus: response.status };
+        } catch (error: any) {
+          if (attempt === retries) {
+            console.error(`✗ Webhook failed for ${webhook.name} after ${retries + 1} attempts:`, error.message);
+            return { name: webhook.name, success: false, error: error.message, responseStatus: 0 };
+          }
+          console.log(`Retry ${attempt + 1} for ${webhook.name}...`);
+          await new Promise(r => setTimeout(r, 1000 * (attempt + 1))); // Exponential backoff
         }
-        
-        console.log(`Webhook sent to ${webhook.name}`);
-        results.push({ name: webhook.name, success: true });
-      } catch (error: any) {
-        console.error(`Webhook failed for ${webhook.name}:`, error);
-        results.push({ name: webhook.name, success: false, error: error.message });
       }
-    });
+      return { name: webhook.name, success: false, error: 'Max retries exceeded' };
+    };
     
-    await Promise.all(promises);
+    // Send to all webhooks in parallel
+    const webhookResults = await Promise.all(webhooks.map((wh: any) => sendWithRetry(wh)));
+    results.push(...webhookResults);
     
   } catch (error: any) {
     console.error("Webhook fetch error:", error);

@@ -164,3 +164,6 @@ verify_jwt = false
 
 [functions.siteminder-availability]
 verify_jwt = false
+
+[functions.aurelia-mcp]
+verify_jwt = false

@@ -32,7 +32,10 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [showMFAVerify, setShowMFAVerify] = useState(false);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(() => {
+    const saved = localStorage.getItem("aurelia_remembered_email");
+    return saved || "";
+  });
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -41,6 +44,9 @@ const Auth = () => {
   const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string }>({});
   const [lastResetRequest, setLastResetRequest] = useState<number>(0);
   const [cooldownRemaining, setCooldownRemaining] = useState(0);
+  const [rememberMe, setRememberMe] = useState(() => {
+    return localStorage.getItem("aurelia_remembered_email") !== null;
+  });
   
   // Client-side rate limiting (backup)
   const { 
@@ -274,6 +280,13 @@ const Auth = () => {
             });
           }
         } else {
+          // Save or clear remembered email
+          if (rememberMe) {
+            localStorage.setItem("aurelia_remembered_email", email);
+          } else {
+            localStorage.removeItem("aurelia_remembered_email");
+          }
+          
           // Record successful login for both client-side and server-side tracking
           recordClientSuccessfulLogin();
           await recordIPSuccessfulLogin(email);
@@ -648,6 +661,22 @@ const Auth = () => {
                       <p className="text-xs text-destructive mt-1">{errors.confirmPassword}</p>
                     )}
                   </motion.div>
+                )}
+
+                {/* Remember me checkbox (login only) */}
+                {isLogin && (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="remember-me"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="w-4 h-4 rounded border-border/50 bg-muted/30 text-primary focus:ring-primary/50 focus:ring-offset-0"
+                    />
+                    <label htmlFor="remember-me" className="text-sm text-muted-foreground cursor-pointer select-none">
+                      Remember my email
+                    </label>
+                  </div>
                 )}
 
               {/* Rate limit warning */}

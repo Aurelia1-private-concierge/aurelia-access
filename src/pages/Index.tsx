@@ -6,6 +6,7 @@ import heroYacht from "@/assets/hero-yacht.mp4";
 import heroJet from "@/assets/hero-jet.mp4";
 import heroHoliday from "@/assets/hero-luxury-holiday.mp4";
 import heroPenthouse from "@/assets/hero-penthouse.mp4";
+import aureliaDemo from "@/assets/aurelia-demo.mp4";
 import ScrollProgress from "@/components/ScrollProgress";
 import SectionDivider from "@/components/SectionDivider";
 import Footer from "@/components/Footer";
@@ -298,7 +299,7 @@ const Index = () => {
       <VideoModal
         isOpen={isVideoModalOpen}
         onClose={() => setIsVideoModalOpen(false)}
-        videoSrc={heroYacht}
+        videoSrc={aureliaDemo}
         title="Experience Aurelia"
       />
     </div>

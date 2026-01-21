@@ -28,9 +28,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Search, RefreshCw, Eye, MessageSquare, Calendar, DollarSign, Tag, User } from "lucide-react";
+import { Search, RefreshCw, Eye, MessageSquare, Calendar, DollarSign, Tag, User, Gavel, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface ServiceRequest {
   id: string;
@@ -46,6 +48,9 @@ interface ServiceRequest {
   client_id: string;
   created_at: string;
   updated_at: string;
+  bidding_enabled: boolean;
+  bidding_deadline: string | null;
+  bid_count?: number;
 }
 
 const statusColors: Record<string, string> = {
@@ -79,6 +84,7 @@ const ServiceRequestsPanel = () => {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [internalNotes, setInternalNotes] = useState("");
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [togglingBidding, setTogglingBidding] = useState(false);
 
   const fetchRequests = async () => {
     setLoading(true);
@@ -89,7 +95,23 @@ const ServiceRequestsPanel = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setRequests(data || []);
+      
+      // Get bid counts
+      const requestIds = data?.map(r => r.id) || [];
+      const { data: bidCounts } = await supabase
+        .from("service_request_bids")
+        .select("service_request_id")
+        .in("service_request_id", requestIds);
+
+      const bidCountMap: Record<string, number> = {};
+      bidCounts?.forEach(b => {
+        bidCountMap[b.service_request_id] = (bidCountMap[b.service_request_id] || 0) + 1;
+      });
+
+      setRequests((data || []).map(r => ({
+        ...r,
+        bid_count: bidCountMap[r.id] || 0,
+      })));
     } catch (err) {
       console.error("Error fetching service requests:", err);
       toast({
@@ -99,6 +121,45 @@ const ServiceRequestsPanel = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const toggleBidding = async (requestId: string, enabled: boolean) => {
+    setTogglingBidding(true);
+    try {
+      const updates: any = { bidding_enabled: enabled };
+      if (enabled && !selectedRequest?.bidding_deadline) {
+        // Set default deadline to 3 days from now
+        const deadline = new Date();
+        deadline.setDate(deadline.getDate() + 3);
+        updates.bidding_deadline = deadline.toISOString();
+      }
+
+      const { error } = await supabase
+        .from("service_requests")
+        .update(updates)
+        .eq("id", requestId);
+
+      if (error) throw error;
+
+      toast({
+        title: enabled ? "Partner Bidding Enabled" : "Bidding Disabled",
+        description: enabled ? "Partners can now submit bids for this request." : "Bidding has been disabled.",
+      });
+
+      fetchRequests();
+      if (selectedRequest) {
+        setSelectedRequest({ ...selectedRequest, bidding_enabled: enabled });
+      }
+    } catch (err) {
+      console.error("Error toggling bidding:", err);
+      toast({
+        title: "Error",
+        description: "Failed to update bidding status.",
+        variant: "destructive",
+      });
+    } finally {
+      setTogglingBidding(false);
     }
   };
 
@@ -232,6 +293,7 @@ const ServiceRequestsPanel = () => {
               <TableHead>Title</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Bidding</TableHead>
               <TableHead>Budget</TableHead>
               <TableHead>Date</TableHead>
               <TableHead className="text-right">Actions</TableHead>
@@ -240,13 +302,13 @@ const ServiceRequestsPanel = () => {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                   Loading requests...
                 </TableCell>
               </TableRow>
             ) : filteredRequests.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                   No service requests found
                 </TableCell>
               </TableRow>
@@ -270,6 +332,16 @@ const ServiceRequestsPanel = () => {
                     <Badge className={statusColors[request.status] || ""}>
                       {request.status.replace("_", " ")}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {request.bidding_enabled ? (
+                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+                        <Gavel className="w-3 h-3 mr-1" />
+                        {request.bid_count || 0} bids
+                      </Badge>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    )}
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {request.budget_min || request.budget_max
@@ -366,6 +438,35 @@ const ServiceRequestsPanel = () => {
                   </p>
                 </div>
               )}
+
+              {/* Partner Bidding Section */}
+              <div className="space-y-3 p-4 bg-muted/30 rounded-lg border border-border/50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Gavel className="h-4 w-4 text-primary" />
+                    <Label htmlFor="bidding-toggle" className="font-medium">Partner Bidding</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {togglingBidding && <Loader2 className="h-4 w-4 animate-spin" />}
+                    <Switch
+                      id="bidding-toggle"
+                      checked={selectedRequest.bidding_enabled || false}
+                      onCheckedChange={(checked) => toggleBidding(selectedRequest.id, checked)}
+                      disabled={togglingBidding || selectedRequest.status === "completed"}
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {selectedRequest.bidding_enabled 
+                    ? `Bidding is open. ${selectedRequest.bid_count || 0} bid(s) received.`
+                    : "Enable bidding to allow partners to submit competitive quotes."}
+                </p>
+                {selectedRequest.bidding_enabled && selectedRequest.bidding_deadline && (
+                  <p className="text-xs text-muted-foreground">
+                    Deadline: {format(new Date(selectedRequest.bidding_deadline), "PPP 'at' p")}
+                  </p>
+                )}
+              </div>
 
               <div className="space-y-2">
                 <p className="text-xs text-muted-foreground">Internal Notes (Admin Only)</p>

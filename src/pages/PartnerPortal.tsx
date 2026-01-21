@@ -17,7 +17,8 @@ import {
   Loader2,
   DollarSign,
   Wallet,
-  Hotel
+  Hotel,
+  Briefcase
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,6 +29,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import SiteMinderIntegration from "@/components/partner/SiteMinderIntegration";
+import PartnerOpportunitiesPanel from "@/components/partner/PartnerOpportunitiesPanel";
 
 type Partner = {
   id: string;
@@ -413,11 +415,15 @@ const PartnerPortal = () => {
 
           {/* Main Content */}
           {!isPending && (
-            <Tabs defaultValue="requests" className="space-y-6">
+            <Tabs defaultValue="opportunities" className="space-y-6">
               <TabsList className="bg-secondary/50">
+                <TabsTrigger value="opportunities">
+                  <Briefcase className="w-4 h-4 mr-2" />
+                  Opportunities
+                </TabsTrigger>
                 <TabsTrigger value="requests">
                   <MessageSquare className="w-4 h-4 mr-2" />
-                  Requests
+                  My Requests
                 </TabsTrigger>
                 <TabsTrigger value="earnings">
                   <DollarSign className="w-4 h-4 mr-2" />
@@ -436,6 +442,10 @@ const PartnerPortal = () => {
                   Settings
                 </TabsTrigger>
               </TabsList>
+
+              <TabsContent value="opportunities" className="space-y-4">
+                <PartnerOpportunitiesPanel />
+              </TabsContent>
 
               <TabsContent value="requests" className="space-y-4">
                 {requests.length === 0 ? (

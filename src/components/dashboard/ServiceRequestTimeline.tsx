@@ -14,6 +14,7 @@ import { formatDistanceToNow, format } from "date-fns";
 import { useServiceWorkflow } from "@/hooks/useServiceWorkflow";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import ServiceRequestBids from "./ServiceRequestBids";
 
 interface ServiceRequestTimelineProps {
   requestId: string;
@@ -121,6 +122,18 @@ export const ServiceRequestTimeline = ({
           </p>
         )}
       </div>
+
+      {/* Bids Section - show if bidding is enabled */}
+      {(currentRequest as any).bidding_enabled && (
+        <ServiceRequestBids
+          requestId={requestId}
+          requestStatus={currentRequest.status}
+          biddingEnabled={(currentRequest as any).bidding_enabled}
+          biddingDeadline={(currentRequest as any).bidding_deadline}
+          blindBidding={(currentRequest as any).blind_bidding}
+          onBidAccepted={() => fetchUpdates(requestId)}
+        />
+      )}
 
       {/* Timeline */}
       <div className="relative">

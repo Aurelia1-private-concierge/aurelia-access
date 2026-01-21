@@ -198,6 +198,16 @@ const AnimatedRoutes = forwardRef<HTMLDivElement>((props, ref) => {
             }
           />
           <Route
+            path="/partner-portal"
+            element={
+              <ProtectedRoute>
+                <PageTransition>
+                  <PartnerPortal />
+                </PageTransition>
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/partner/services/new"
             element={
               <ProtectedRoute>

@@ -65,14 +65,34 @@ const Orla = () => {
     },
     onMessage: (message) => {
       console.log("Message received:", message);
-      const entry: TranscriptEntry = {
-        id: `${Date.now()}-${Math.random()}`,
-        role: message.role,
-        text: message.message,
-        timestamp: new Date(),
-      };
-      setTranscript((prev) => [...prev, entry]);
-      addMessage(entry);
+      
+      const msg = message as unknown as Record<string, unknown>;
+      
+      // Handle user transcript
+      if (msg.user_transcript) {
+        const text = String(msg.user_transcript);
+        const entry: TranscriptEntry = {
+          id: `${Date.now()}-${Math.random()}`,
+          role: "user",
+          text,
+          timestamp: new Date(),
+        };
+        setTranscript((prev) => [...prev, entry]);
+        addMessage(entry);
+      }
+      
+      // Handle agent response
+      if (msg.agent_response) {
+        const text = String(msg.agent_response);
+        const entry: TranscriptEntry = {
+          id: `${Date.now()}-${Math.random()}`,
+          role: "agent",
+          text,
+          timestamp: new Date(),
+        };
+        setTranscript((prev) => [...prev, entry]);
+        addMessage(entry);
+      }
     },
     onError: (message) => {
       console.error("Conversation error:", message);

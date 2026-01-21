@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
-import { Shield, Users, Mail, Phone, Send, Search, Download, Trash2, Check, X, RefreshCw, Settings } from "lucide-react";
+import { Shield, Users, Mail, Phone, Send, Search, Download, Trash2, Check, X, RefreshCw, Settings, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -48,12 +48,6 @@ import ContactSubmissionsPanel from "@/components/admin/ContactSubmissionsPanel"
 import ServiceRequestsPanel from "@/components/admin/ServiceRequestsPanel";
 import ConciergeRequestsPanel from "@/components/admin/ConciergeRequestsPanel";
 import PartnerApplicationsPanel from "@/components/admin/PartnerApplicationsPanel";
-import AnalyticsDashboard from "@/components/admin/AnalyticsDashboard";
-import VisitorAnalytics from "@/components/admin/VisitorAnalytics";
-import ConversionFunnelAnalytics from "@/components/admin/ConversionFunnelAnalytics";
-import TrafficAttributionAnalytics from "@/components/admin/TrafficAttributionAnalytics";
-import CampaignAnalytics from "@/components/admin/CampaignAnalytics";
-import ABTestingPanel from "@/components/admin/ABTestingPanel";
 import MarketingPackagesPanel from "@/components/admin/MarketingPackagesPanel";
 import SEODashboard from "@/components/admin/SEODashboard";
 import AutomatedPosting from "@/components/admin/AutomatedPosting";
@@ -61,11 +55,8 @@ import CRMPanel from "@/components/admin/CRMPanel";
 import CommissionTracker from "@/components/admin/CommissionTracker";
 import TrialApplicationsPanel from "@/components/admin/TrialApplicationsPanel";
 import SocialScheduler from "@/components/admin/SocialScheduler";
-import BehaviorAnalytics from "@/components/admin/BehaviorAnalytics";
 import SecurityGuidePanel from "@/components/admin/SecurityGuidePanel";
-import ConversionFunnelDashboard from "@/components/admin/ConversionFunnelDashboard";
 import CampaignURLBuilder from "@/components/admin/CampaignURLBuilder";
-import AttributionAnalytics from "@/components/admin/AttributionAnalytics";
 import AuditLogsPanel from "@/components/admin/AuditLogsPanel";
 import PartnerDiscoveryPanel from "@/components/admin/PartnerDiscoveryPanel";
 import EncryptionManagementPanel from "@/components/admin/EncryptionManagementPanel";
@@ -75,8 +66,27 @@ import AutoDiscoveryPanel from "@/components/admin/AutoDiscoveryPanel";
 import VisitorCountPanel from "@/components/admin/VisitorCountPanel";
 import ContactAutomationPanel from "@/components/admin/ContactAutomationPanel";
 
+// Lazy load recharts-heavy components to prevent circular initialization errors
+const AnalyticsDashboard = lazy(() => import("@/components/admin/AnalyticsDashboard"));
+const VisitorAnalytics = lazy(() => import("@/components/admin/VisitorAnalytics"));
+const ConversionFunnelAnalytics = lazy(() => import("@/components/admin/ConversionFunnelAnalytics"));
+const TrafficAttributionAnalytics = lazy(() => import("@/components/admin/TrafficAttributionAnalytics"));
+const CampaignAnalytics = lazy(() => import("@/components/admin/CampaignAnalytics"));
+const ABTestingPanel = lazy(() => import("@/components/admin/ABTestingPanel"));
+const BehaviorAnalytics = lazy(() => import("@/components/admin/BehaviorAnalytics"));
+const ConversionFunnelDashboard = lazy(() => import("@/components/admin/ConversionFunnelDashboard"));
+const AttributionAnalytics = lazy(() => import("@/components/admin/AttributionAnalytics"));
+
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+// Loading fallback for lazy components
+const ChartLoading = () => (
+  <div className="flex items-center justify-center py-12">
+    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+    <span className="ml-3 text-muted-foreground">Loading analytics...</span>
+  </div>
+);
 
 interface LaunchSignup {
   id: string;
@@ -395,11 +405,15 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6">
-            <AnalyticsDashboard />
+            <Suspense fallback={<ChartLoading />}>
+              <AnalyticsDashboard />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="visitors" className="space-y-6">
-            <VisitorAnalytics />
+            <Suspense fallback={<ChartLoading />}>
+              <VisitorAnalytics />
+            </Suspense>
             <VisitorCountPanel />
           </TabsContent>
 
@@ -408,11 +422,15 @@ const Admin = () => {
               <h1 className="font-serif text-3xl text-foreground mb-2">Behavior Analytics</h1>
               <p className="text-muted-foreground">Track user behavior patterns and interactions</p>
             </motion.div>
-            <BehaviorAnalytics />
+            <Suspense fallback={<ChartLoading />}>
+              <BehaviorAnalytics />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="funnel" className="space-y-6">
-            <ConversionFunnelAnalytics />
+            <Suspense fallback={<ChartLoading />}>
+              <ConversionFunnelAnalytics />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="funneldashboard" className="space-y-6">
@@ -420,16 +438,22 @@ const Admin = () => {
               <h1 className="font-serif text-3xl text-foreground mb-2">Funnel Dashboard</h1>
               <p className="text-muted-foreground">Visual conversion funnel and traffic attribution</p>
             </motion.div>
-            <ConversionFunnelDashboard />
+            <Suspense fallback={<ChartLoading />}>
+              <ConversionFunnelDashboard />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="attribution" className="space-y-6">
-            <TrafficAttributionAnalytics />
-            <AttributionAnalytics />
+            <Suspense fallback={<ChartLoading />}>
+              <TrafficAttributionAnalytics />
+              <AttributionAnalytics />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="campaigns" className="space-y-6">
-            <CampaignAnalytics />
+            <Suspense fallback={<ChartLoading />}>
+              <CampaignAnalytics />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="urlbuilder" className="space-y-6">
@@ -441,7 +465,9 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="abtesting" className="space-y-6">
-            <ABTestingPanel />
+            <Suspense fallback={<ChartLoading />}>
+              <ABTestingPanel />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="seo" className="space-y-6">

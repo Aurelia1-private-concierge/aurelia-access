@@ -1,6 +1,6 @@
 /* 
- * Aurelia Design System - Dark Ultra-Premium Platinum Aesthetic
- * Pure black backgrounds, platinum/silver accents, understated elegance
+ * Aurelia Design System - Ultra-Premium Luxury Aesthetic
+ * Rich dark backgrounds, champagne gold accents, luxury patterns
  */
 
 @tailwind base;
@@ -9,76 +9,80 @@
 
 @layer base {
   :root {
-    /* Dark Ultra-Premium - Pure black with platinum accents */
-    --background: 0 0% 0%;
-    --foreground: 0 0% 96%;
+    /* Ultra-Premium Dark with warm undertones */
+    --background: 30 8% 3%;
+    --foreground: 45 20% 95%;
 
-    --card: 0 0% 4%;
-    --card-foreground: 0 0% 96%;
+    --card: 30 6% 6%;
+    --card-foreground: 45 20% 95%;
 
-    --popover: 0 0% 4%;
-    --popover-foreground: 0 0% 96%;
+    --popover: 30 6% 6%;
+    --popover-foreground: 45 20% 95%;
 
-    /* Platinum as primary - sophisticated silver */
-    --primary: 0 0% 85%;
-    --primary-foreground: 0 0% 0%;
+    /* Champagne Gold as primary - warm luxury */
+    --primary: 43 65% 65%;
+    --primary-foreground: 30 8% 5%;
 
-    --secondary: 0 0% 8%;
-    --secondary-foreground: 0 0% 96%;
+    --secondary: 30 5% 10%;
+    --secondary-foreground: 45 20% 95%;
 
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 55%;
+    --muted: 30 5% 15%;
+    --muted-foreground: 40 10% 60%;
 
-    --accent: 0 0% 10%;
-    --accent-foreground: 0 0% 85%;
+    --accent: 43 40% 20%;
+    --accent-foreground: 43 65% 75%;
 
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 12%;
-    --input: 0 0% 12%;
-    --ring: 0 0% 85%;
+    --border: 43 20% 18%;
+    --input: 30 5% 12%;
+    --ring: 43 65% 65%;
 
-    --radius: 0.125rem;
+    --radius: 0.25rem;
 
-    /* Platinum color tokens */
-    --platinum: 0 0% 85%;
-    --platinum-light: 0 0% 92%;
-    --platinum-muted: 0 0% 70%;
-    --silver: 0 0% 75%;
-    --silver-light: 0 0% 82%;
-    --obsidian: 0 0% 4%;
-    --obsidian-light: 0 0% 8%;
+    /* Luxury color tokens */
+    --platinum: 45 10% 88%;
+    --platinum-light: 45 15% 94%;
+    --platinum-muted: 45 8% 75%;
+    --silver: 45 5% 78%;
+    --silver-light: 45 8% 85%;
+    --obsidian: 30 8% 5%;
+    --obsidian-light: 30 6% 8%;
     
-    /* Legacy gold tokens - now mapped to platinum for compatibility */
-    --gold: 0 0% 85%;
-    --gold-light: 0 0% 92%;
-    --gold-muted: 0 0% 70%;
-    --navy-deep: 0 0% 0%;
-    --navy-light: 0 0% 6%;
-    --ivory: 0 0% 96%;
-    --champagne: 0 0% 90%;
-
-    /* Premium shadows */
-    --shadow-platinum: 0 0 60px hsl(0 0% 85% / 0.1);
-    --shadow-elegant: 0 25px 50px -12px hsl(0 0% 0% / 0.9);
+    /* Gold & Champagne tokens */
+    --gold: 43 65% 55%;
+    --gold-light: 43 70% 70%;
+    --gold-muted: 43 40% 45%;
+    --champagne: 43 35% 80%;
+    --champagne-light: 43 40% 88%;
+    --bronze: 30 50% 40%;
     
-    /* Chart colors - monochrome */
-    --chart-1: 0 0% 85%;
-    --chart-2: 0 0% 70%;
-    --chart-3: 0 0% 55%;
-    --chart-4: 0 0% 40%;
-    --chart-5: 0 0% 25%;
+    /* Rich darks */
+    --navy-deep: 220 20% 8%;
+    --navy-light: 220 15% 12%;
+    --ivory: 45 30% 96%;
+
+    /* Premium shadows with warm glow */
+    --shadow-gold: 0 0 60px hsl(43 65% 55% / 0.15);
+    --shadow-elegant: 0 25px 50px -12px hsl(30 8% 0% / 0.8);
+    
+    /* Chart colors - warm metallics */
+    --chart-1: 43 65% 65%;
+    --chart-2: 43 50% 55%;
+    --chart-3: 30 40% 45%;
+    --chart-4: 30 30% 35%;
+    --chart-5: 30 20% 25%;
     
     /* Sidebar */
-    --sidebar: 0 0% 2%;
-    --sidebar-foreground: 0 0% 96%;
-    --sidebar-primary: 0 0% 85%;
-    --sidebar-primary-foreground: 0 0% 0%;
-    --sidebar-accent: 0 0% 10%;
-    --sidebar-accent-foreground: 0 0% 85%;
-    --sidebar-border: 0 0% 12%;
-    --sidebar-ring: 0 0% 85%;
+    --sidebar: 30 8% 4%;
+    --sidebar-foreground: 45 20% 95%;
+    --sidebar-primary: 43 65% 65%;
+    --sidebar-primary-foreground: 30 8% 5%;
+    --sidebar-accent: 43 30% 15%;
+    --sidebar-accent-foreground: 43 65% 75%;
+    --sidebar-border: 43 15% 15%;
+    --sidebar-ring: 43 65% 65%;
     
     /* Typography */
     --font-sans: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
@@ -86,36 +90,36 @@
     --font-mono: "JetBrains Mono", "SF Mono", monospace;
     
     /* Shadows */
-    --shadow-2xs: 0 1px 2px 0 hsl(0 0% 0% / 0.1);
-    --shadow-xs: 0 1px 3px 0 hsl(0 0% 0% / 0.15);
-    --shadow-sm: 0 2px 4px 0 hsl(0 0% 0% / 0.2);
-    --shadow: 0 4px 8px 0 hsl(0 0% 0% / 0.25);
-    --shadow-md: 0 6px 12px 0 hsl(0 0% 0% / 0.3);
-    --shadow-lg: 0 8px 20px 0 hsl(0 0% 0% / 0.35);
-    --shadow-xl: 0 16px 40px 0 hsl(0 0% 0% / 0.4);
-    --shadow-2xl: 0 24px 60px 0 hsl(0 0% 0% / 0.5);
+    --shadow-2xs: 0 1px 2px 0 hsl(30 8% 0% / 0.15);
+    --shadow-xs: 0 1px 3px 0 hsl(30 8% 0% / 0.2);
+    --shadow-sm: 0 2px 4px 0 hsl(30 8% 0% / 0.25);
+    --shadow: 0 4px 8px 0 hsl(30 8% 0% / 0.3);
+    --shadow-md: 0 6px 12px 0 hsl(30 8% 0% / 0.35);
+    --shadow-lg: 0 8px 20px 0 hsl(30 8% 0% / 0.4);
+    --shadow-xl: 0 16px 40px 0 hsl(30 8% 0% / 0.5);
+    --shadow-2xl: 0 24px 60px 0 hsl(30 8% 0% / 0.6);
   }
 
   .dark {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 96%;
-    --card: 0 0% 4%;
-    --card-foreground: 0 0% 96%;
-    --popover: 0 0% 4%;
-    --popover-foreground: 0 0% 96%;
-    --primary: 0 0% 85%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 0 0% 8%;
-    --secondary-foreground: 0 0% 96%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 55%;
-    --accent: 0 0% 10%;
-    --accent-foreground: 0 0% 85%;
+    --background: 30 8% 3%;
+    --foreground: 45 20% 95%;
+    --card: 30 6% 6%;
+    --card-foreground: 45 20% 95%;
+    --popover: 30 6% 6%;
+    --popover-foreground: 45 20% 95%;
+    --primary: 43 65% 65%;
+    --primary-foreground: 30 8% 5%;
+    --secondary: 30 5% 10%;
+    --secondary-foreground: 45 20% 95%;
+    --muted: 30 5% 15%;
+    --muted-foreground: 40 10% 60%;
+    --accent: 43 40% 20%;
+    --accent-foreground: 43 65% 75%;
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 12%;
-    --input: 0 0% 12%;
-    --ring: 0 0% 85%;
+    --border: 43 20% 18%;
+    --input: 30 5% 12%;
+    --ring: 43 65% 65%;
   }
 
   /* Light theme - Marble & Platinum */
@@ -205,7 +209,7 @@
 }
 
 @layer utilities {
-  /* Dark ultra-premium backgrounds */
+  /* Ultra-premium backgrounds with warm undertones */
   .bg-obsidian {
     background: hsl(var(--background));
   }
@@ -213,37 +217,98 @@
   .bg-obsidian-subtle {
     background: linear-gradient(
       180deg,
-      hsl(0 0% 0%) 0%,
-      hsl(0 0% 2%) 100%
+      hsl(30 8% 3%) 0%,
+      hsl(30 6% 5%) 100%
     );
   }
 
-  /* Hero overlay - pure black gradient */
+  /* Luxury pattern overlay - Art Deco geometric */
+  .luxury-pattern {
+    position: relative;
+  }
+  .luxury-pattern::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    pointer-events: none;
+    background-image: 
+      linear-gradient(30deg, hsl(43 65% 55%) 12%, transparent 12.5%, transparent 87%, hsl(43 65% 55%) 87.5%, hsl(43 65% 55%)),
+      linear-gradient(150deg, hsl(43 65% 55%) 12%, transparent 12.5%, transparent 87%, hsl(43 65% 55%) 87.5%, hsl(43 65% 55%)),
+      linear-gradient(30deg, hsl(43 65% 55%) 12%, transparent 12.5%, transparent 87%, hsl(43 65% 55%) 87.5%, hsl(43 65% 55%)),
+      linear-gradient(150deg, hsl(43 65% 55%) 12%, transparent 12.5%, transparent 87%, hsl(43 65% 55%) 87.5%, hsl(43 65% 55%)),
+      linear-gradient(60deg, hsl(43 40% 45% / 0.5) 25%, transparent 25.5%, transparent 75%, hsl(43 40% 45% / 0.5) 75%, hsl(43 40% 45% / 0.5)),
+      linear-gradient(60deg, hsl(43 40% 45% / 0.5) 25%, transparent 25.5%, transparent 75%, hsl(43 40% 45% / 0.5) 75%, hsl(43 40% 45% / 0.5));
+    background-size: 80px 140px;
+    background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+  }
+
+  /* Diamond pattern overlay */
+  .diamond-pattern {
+    position: relative;
+  }
+  .diamond-pattern::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.02;
+    pointer-events: none;
+    background: 
+      linear-gradient(135deg, hsl(43 65% 55%) 25%, transparent 25%) -50px 0,
+      linear-gradient(225deg, hsl(43 65% 55%) 25%, transparent 25%) -50px 0,
+      linear-gradient(315deg, hsl(43 65% 55%) 25%, transparent 25%),
+      linear-gradient(45deg, hsl(43 65% 55%) 25%, transparent 25%);
+    background-size: 100px 100px;
+  }
+
+  /* Hero overlay - rich gradient with gold tint */
   .hero-overlay {
     background: linear-gradient(
       to top, 
-      hsl(0 0% 0%) 0%, 
-      hsl(0 0% 0% / 0.95) 20%,
-      hsl(0 0% 0% / 0.7) 50%, 
-      hsl(0 0% 0% / 0.5) 100%
+      hsl(30 8% 3%) 0%, 
+      hsl(30 8% 3% / 0.95) 15%,
+      hsl(30 10% 5% / 0.8) 40%, 
+      hsl(30 12% 8% / 0.6) 70%,
+      hsl(43 20% 10% / 0.4) 100%
     );
   }
 
-  /* Glass effect - dark version */
+  /* Glass effect - warm luxury version */
   .glass {
-    background: hsl(0 0% 0% / 0.6);
+    background: hsl(30 8% 5% / 0.7);
     backdrop-filter: blur(20px) saturate(150%);
     -webkit-backdrop-filter: blur(20px) saturate(150%);
-    border: 1px solid hsl(var(--border) / 0.5);
+    border: 1px solid hsl(43 30% 30% / 0.2);
   }
 
   .glass-subtle {
-    background: hsl(0 0% 4% / 0.8);
+    background: hsl(30 6% 6% / 0.85);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
 
-  /* Platinum glow effects */
+  .glass-gold {
+    background: linear-gradient(135deg, hsl(30 8% 6% / 0.9), hsl(43 20% 8% / 0.8));
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid hsl(43 50% 50% / 0.15);
+  }
+
+  /* Gold glow effects */
+  .gold-glow {
+    box-shadow: 
+      0 0 40px hsl(43 65% 55% / 0.1),
+      0 0 20px hsl(43 65% 55% / 0.05);
+  }
+
+  .gold-glow-hover:hover {
+    box-shadow: 
+      0 0 60px hsl(43 65% 55% / 0.15),
+      0 0 30px hsl(43 65% 55% / 0.1),
+      inset 0 1px 0 hsl(43 70% 70% / 0.1);
+  }
+
+  /* Platinum glow effects (kept for compatibility) */
   .platinum-glow {
     box-shadow: 
       0 0 40px hsl(var(--platinum) / 0.08),
@@ -264,7 +329,16 @@
     border-color: hsl(var(--platinum) / 0.4);
   }
 
-  /* Subtle grain texture */
+  /* Gold border effects */
+  .gold-border {
+    border-color: hsl(43 65% 55% / 0.25);
+  }
+
+  .gold-border-hover:hover {
+    border-color: hsl(43 65% 55% / 0.5);
+  }
+
+  /* Luxury grain texture with warmth */
   .grain {
     position: relative;
   }
@@ -272,18 +346,34 @@
     content: '';
     position: absolute;
     inset: 0;
-    opacity: 0.015;
+    opacity: 0.02;
     pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   }
 
-  /* Card styles */
+  /* Card styles - luxury edition */
   .card-dark {
-    @apply bg-card border border-border/20 transition-all duration-300;
+    @apply bg-card border border-border/30 transition-all duration-300;
+    background: linear-gradient(135deg, hsl(30 6% 6%), hsl(30 8% 5%));
   }
 
   .card-dark:hover {
-    @apply border-border/40 bg-card/80;
+    @apply border-border/50;
+    background: linear-gradient(135deg, hsl(30 6% 7%), hsl(30 8% 6%));
+    box-shadow: 0 10px 40px -10px hsl(43 65% 55% / 0.08);
+  }
+
+  .card-luxury {
+    @apply bg-card border transition-all duration-500;
+    border-color: hsl(43 30% 25% / 0.3);
+    background: linear-gradient(145deg, hsl(30 6% 7%), hsl(30 8% 5%));
+  }
+
+  .card-luxury:hover {
+    border-color: hsl(43 50% 50% / 0.4);
+    box-shadow: 
+      0 20px 40px -15px hsl(30 8% 0% / 0.6),
+      0 0 30px hsl(43 65% 55% / 0.08);
   }
 
   .card-platinum {
@@ -292,7 +382,7 @@
 
   .card-platinum:hover {
     @apply border-platinum/25;
-    box-shadow: 0 20px 40px -15px hsl(0 0% 0% / 0.5);
+    box-shadow: 0 20px 40px -15px hsl(30 8% 0% / 0.5);
   }
 
   /* Text utilities */
@@ -304,7 +394,32 @@
     color: hsl(var(--platinum-muted));
   }
 
+  .text-gold {
+    color: hsl(43 65% 65%);
+  }
+
+  .text-gold-light {
+    color: hsl(43 70% 75%);
+  }
+
+  .text-champagne {
+    color: hsl(43 35% 80%);
+  }
+
+  /* Gradient text */
+  .text-gradient-gold {
+    background: linear-gradient(135deg, hsl(43 70% 70%), hsl(43 65% 55%), hsl(30 50% 45%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
   /* Divider lines */
+  .divider-gold {
+    @apply h-px;
+    background: linear-gradient(90deg, transparent, hsl(43 65% 55% / 0.3), transparent);
+  }
+
   .divider-platinum {
     @apply h-px bg-gradient-to-r from-transparent via-platinum/20 to-transparent;
   }
@@ -313,14 +428,37 @@
     @apply h-px bg-border/30;
   }
 
-  /* Button base styles */
+  /* Button base styles - gold edition */
+  .btn-gold {
+    @apply px-8 py-4 text-xs font-medium tracking-[0.2em] uppercase transition-all duration-300;
+    background: linear-gradient(135deg, hsl(43 65% 55%), hsl(43 55% 48%));
+    color: hsl(30 8% 5%);
+  }
+
+  .btn-gold:hover {
+    background: linear-gradient(135deg, hsl(43 70% 60%), hsl(43 60% 52%));
+    box-shadow: 0 10px 30px -10px hsl(43 65% 55% / 0.4);
+  }
+
   .btn-platinum {
     @apply px-8 py-4 bg-primary text-primary-foreground text-xs font-medium tracking-[0.2em] uppercase transition-all duration-300;
   }
 
   .btn-platinum:hover {
     @apply bg-primary/90;
-    box-shadow: 0 10px 30px -10px hsl(var(--primary) / 0.3);
+    box-shadow: 0 10px 30px -10px hsl(var(--primary) / 0.4);
+  }
+
+  .btn-outline-gold {
+    @apply px-8 py-4 bg-transparent text-xs font-medium tracking-[0.2em] uppercase transition-all duration-300;
+    border: 1px solid hsl(43 65% 55% / 0.4);
+    color: hsl(43 65% 70%);
+  }
+
+  .btn-outline-gold:hover {
+    border-color: hsl(43 65% 55% / 0.7);
+    background: hsl(43 65% 55% / 0.1);
+    color: hsl(43 70% 80%);
   }
 
   .btn-outline-platinum {

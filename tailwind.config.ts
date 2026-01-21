@@ -59,22 +59,28 @@ export default {
   				DEFAULT: 'hsl(var(--obsidian))',
   				light: 'hsl(var(--obsidian-light))'
   			},
-  			// Legacy gold tokens for compatibility
+  			// Gold & Champagne luxury tokens
   			gold: {
   				DEFAULT: 'hsl(var(--gold))',
   				light: 'hsl(var(--gold-light))',
   				muted: 'hsl(var(--gold-muted))'
+  			},
+  			champagne: {
+  				DEFAULT: 'hsl(var(--champagne))',
+  				light: 'hsl(var(--champagne-light, 43 40% 88%))'
+  			},
+  			bronze: {
+  				DEFAULT: 'hsl(var(--bronze))'
   			},
   			navy: {
   				deep: 'hsl(var(--navy-deep))',
   				light: 'hsl(var(--navy-light))'
   			},
   			marble: {
-  				light: 'hsl(var(--marble-light, 0 0% 96%))',
-  				dark: 'hsl(var(--marble-dark, 0 0% 92%))'
+  				light: 'hsl(var(--marble-light, 45 30% 96%))',
+  				dark: 'hsl(var(--marble-dark, 45 20% 92%))'
   			},
   			ivory: 'hsl(var(--ivory))',
-  			champagne: 'hsl(var(--champagne))',
   			primary: {
   				DEFAULT: 'hsl(var(--primary))',
   				foreground: 'hsl(var(--primary-foreground))'
@@ -152,12 +158,16 @@ export default {
 				'50%': { opacity: '0.8' }
 			},
 			'glow-pulse': {
-				'0%, 100%': { boxShadow: '0 0 20px hsl(var(--platinum) / 0.1)' },
-				'50%': { boxShadow: '0 0 40px hsl(var(--platinum) / 0.2)' }
+				'0%, 100%': { boxShadow: '0 0 20px hsl(43 65% 55% / 0.1)' },
+				'50%': { boxShadow: '0 0 40px hsl(43 65% 55% / 0.2)' }
+			},
+			'gold-shimmer': {
+				'0%': { backgroundPosition: '-200% center' },
+				'100%': { backgroundPosition: '200% center' }
 			},
 			'border-glow': {
-				'0%, 100%': { borderColor: 'hsl(var(--platinum) / 0.2)' },
-				'50%': { borderColor: 'hsl(var(--platinum) / 0.4)' }
+				'0%, 100%': { borderColor: 'hsl(43 65% 55% / 0.2)' },
+				'50%': { borderColor: 'hsl(43 65% 55% / 0.4)' }
 			},
 			shimmer: {
 				'0%': { transform: 'translateX(-100%)' },
@@ -190,7 +200,10 @@ export default {
   			xl: 'var(--shadow-xl)',
   			'2xl': 'var(--shadow-2xl)',
   			'platinum': '0 0 60px hsl(var(--platinum) / 0.15)',
-  			'platinum-lg': '0 20px 60px -15px hsl(0 0% 0% / 0.5), 0 0 30px hsl(var(--platinum) / 0.1)'
+  			'platinum-lg': '0 20px 60px -15px hsl(30 8% 0% / 0.5), 0 0 30px hsl(var(--platinum) / 0.1)',
+  			'gold': '0 0 60px hsl(43 65% 55% / 0.15)',
+  			'gold-lg': '0 20px 60px -15px hsl(30 8% 0% / 0.6), 0 0 30px hsl(43 65% 55% / 0.12)',
+  			'luxury': '0 25px 50px -12px hsl(30 8% 0% / 0.5), 0 0 40px hsl(43 65% 55% / 0.08)'
   		}
   	}
   },

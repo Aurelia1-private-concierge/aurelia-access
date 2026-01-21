@@ -37,7 +37,24 @@ const handler = async (req: Request): Promise<Response> => {
 
     const { email, feature, source = "wearables-hub" }: WaitlistRequest = await req.json();
 
-    // IP-based rate limiting - max 5 signups per IP per hour
+    // Validate input FIRST before rate limiting
+    if (!email || !feature) {
+      return new Response(
+        JSON.stringify({ error: "Email and feature are required" }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid email format" }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // IP-based rate limiting - max 5 signups per IP per hour (after validation)
     const clientIP = getClientIP(req);
     const rateLimitIdentifier = `waitlist_${clientIP}`;
     
@@ -59,22 +76,6 @@ const handler = async (req: Request): Promise<Response> => {
       return new Response(
         JSON.stringify({ error: "Too many signup attempts. Please try again later." }),
         { status: 429, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
-    }
-
-    if (!email || !feature) {
-      return new Response(
-        JSON.stringify({ error: "Email and feature are required" }),
-        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return new Response(
-        JSON.stringify({ error: "Invalid email format" }),
-        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 

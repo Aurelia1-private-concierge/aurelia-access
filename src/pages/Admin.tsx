@@ -73,6 +73,7 @@ import ColdOutreachPanel from "@/components/admin/ColdOutreachPanel";
 import { WebCrawlerPanel } from "@/components/admin/WebCrawlerPanel";
 import AutoDiscoveryPanel from "@/components/admin/AutoDiscoveryPanel";
 import VisitorCountPanel from "@/components/admin/VisitorCountPanel";
+import ContactAutomationPanel from "@/components/admin/ContactAutomationPanel";
 
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -337,6 +338,7 @@ const Admin = () => {
             <TabsTrigger value="contacts">Contacts</TabsTrigger>
             <TabsTrigger value="requests">Requests</TabsTrigger>
             <TabsTrigger value="scheduler">Scheduler</TabsTrigger>
+            <TabsTrigger value="automation">Contact Automation</TabsTrigger>
             <TabsTrigger value="integrations">Integrations</TabsTrigger>
             <TabsTrigger value="crawler">Crawler</TabsTrigger>
             <TabsTrigger value="auditlogs">Audit Logs</TabsTrigger>
@@ -756,6 +758,14 @@ const Admin = () => {
 
           <TabsContent value="contacts">
             <ContactSubmissionsPanel />
+          </TabsContent>
+
+          <TabsContent value="automation" className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-serif text-3xl text-foreground mb-2">Contact Automation</h1>
+              <p className="text-muted-foreground">Manage webhooks, n8n integrations, and automated workflows</p>
+            </motion.div>
+            <ContactAutomationPanel />
           </TabsContent>
 
           <TabsContent value="requests" className="space-y-6">

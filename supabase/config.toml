@@ -119,3 +119,33 @@ verify_jwt = false
 
 [functions.perplexity-search]
 verify_jwt = false
+
+[functions.contact-automation]
+verify_jwt = false
+
+[functions.webhook-receiver]
+verify_jwt = false
+
+[functions.notify-admin]
+verify_jwt = false
+
+[functions.send-transactional-email]
+verify_jwt = false
+
+[functions.firecrawl-scrape]
+verify_jwt = false
+
+[functions.firecrawl-crawl]
+verify_jwt = false
+
+[functions.firecrawl-crawl-status]
+verify_jwt = false
+
+[functions.firecrawl-map]
+verify_jwt = false
+
+[functions.firecrawl-schedule]
+verify_jwt = false
+
+[functions.agent-config]
+verify_jwt = false

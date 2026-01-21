@@ -393,6 +393,56 @@ export type Database = {
         }
         Relationships: []
       }
+      bid_revisions: {
+        Row: {
+          bid_id: string
+          created_at: string
+          id: string
+          new_amount: number
+          new_message: string | null
+          new_timeline: string | null
+          previous_amount: number
+          previous_message: string | null
+          previous_timeline: string | null
+          revision_number: number
+          revision_reason: string | null
+        }
+        Insert: {
+          bid_id: string
+          created_at?: string
+          id?: string
+          new_amount: number
+          new_message?: string | null
+          new_timeline?: string | null
+          previous_amount: number
+          previous_message?: string | null
+          previous_timeline?: string | null
+          revision_number?: number
+          revision_reason?: string | null
+        }
+        Update: {
+          bid_id?: string
+          created_at?: string
+          id?: string
+          new_amount?: number
+          new_message?: string | null
+          new_timeline?: string | null
+          previous_amount?: number
+          previous_message?: string | null
+          previous_timeline?: string | null
+          revision_number?: number
+          revision_reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bid_revisions_bid_id_fkey"
+            columns: ["bid_id"]
+            isOneToOne: false
+            referencedRelation: "service_request_bids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       boardroom_participants: {
         Row: {
           created_at: string
@@ -3165,6 +3215,7 @@ export type Database = {
           partner_id: string
           proposed_timeline: string | null
           response_notes: string | null
+          revision_count: number
           service_request_id: string
           status: Database["public"]["Enums"]["bid_status"] | null
           updated_at: string
@@ -3181,6 +3232,7 @@ export type Database = {
           partner_id: string
           proposed_timeline?: string | null
           response_notes?: string | null
+          revision_count?: number
           service_request_id: string
           status?: Database["public"]["Enums"]["bid_status"] | null
           updated_at?: string
@@ -3197,6 +3249,7 @@ export type Database = {
           partner_id?: string
           proposed_timeline?: string | null
           response_notes?: string | null
+          revision_count?: number
           service_request_id?: string
           status?: Database["public"]["Enums"]["bid_status"] | null
           updated_at?: string
@@ -3273,6 +3326,7 @@ export type Database = {
       }
       service_requests: {
         Row: {
+          allow_revisions: boolean
           auto_recommend_partners: boolean | null
           bidding_deadline: string | null
           bidding_enabled: boolean | null
@@ -3286,6 +3340,7 @@ export type Database = {
           id: string
           internal_notes: string | null
           max_bids_allowed: number | null
+          max_revisions: number
           min_bids_required: number | null
           partner_id: string | null
           partner_response: string | null
@@ -3298,6 +3353,7 @@ export type Database = {
           winning_bid_id: string | null
         }
         Insert: {
+          allow_revisions?: boolean
           auto_recommend_partners?: boolean | null
           bidding_deadline?: string | null
           bidding_enabled?: boolean | null
@@ -3311,6 +3367,7 @@ export type Database = {
           id?: string
           internal_notes?: string | null
           max_bids_allowed?: number | null
+          max_revisions?: number
           min_bids_required?: number | null
           partner_id?: string | null
           partner_response?: string | null
@@ -3323,6 +3380,7 @@ export type Database = {
           winning_bid_id?: string | null
         }
         Update: {
+          allow_revisions?: boolean
           auto_recommend_partners?: boolean | null
           bidding_deadline?: string | null
           bidding_enabled?: boolean | null
@@ -3336,6 +3394,7 @@ export type Database = {
           id?: string
           internal_notes?: string | null
           max_bids_allowed?: number | null
+          max_revisions?: number
           min_bids_required?: number | null
           partner_id?: string | null
           partner_response?: string | null

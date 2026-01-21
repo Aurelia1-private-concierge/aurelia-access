@@ -468,6 +468,7 @@ const Auth = () => {
                       setErrors((prev) => ({ ...prev, email: undefined }));
                     }}
                     placeholder="your@email.com"
+                    autoComplete="email"
                     className={`w-full bg-muted/30 border ${
                       errors.email ? "border-destructive" : "border-border/50"
                     } rounded-lg py-3 pl-12 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors`}
@@ -537,6 +538,7 @@ const Auth = () => {
                         setErrors((prev) => ({ ...prev, email: undefined }));
                       }}
                       placeholder="your@email.com"
+                      autoComplete="email"
                       className={`w-full bg-muted/30 border ${
                         errors.email ? "border-destructive" : "border-border/50"
                       } rounded-lg py-3 pl-12 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors`}
@@ -585,6 +587,7 @@ const Auth = () => {
                         }
                       }}
                       placeholder="••••••••"
+                      autoComplete={isLogin ? "current-password" : "new-password"}
                       className={`w-full bg-muted/30 border ${
                         errors.password ? "border-destructive" : "border-border/50"
                       } rounded-lg py-3 pl-12 pr-12 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors`}
@@ -635,6 +638,7 @@ const Auth = () => {
                           setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
                         }}
                         placeholder="••••••••"
+                        autoComplete="new-password"
                         className={`w-full bg-muted/30 border ${
                           errors.confirmPassword ? "border-destructive" : "border-border/50"
                         } rounded-lg py-3 pl-12 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors`}

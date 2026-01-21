@@ -149,3 +149,6 @@ verify_jwt = false
 
 [functions.agent-config]
 verify_jwt = false
+
+[functions.n8n-proxy]
+verify_jwt = false

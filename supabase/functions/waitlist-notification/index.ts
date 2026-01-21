@@ -3,13 +3,26 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-forwarded-for",
 };
 
 interface WaitlistRequest {
   email: string;
   feature: string;
   source?: string;
+}
+
+// Extract client IP from request headers
+function getClientIP(req: Request): string {
+  const forwardedFor = req.headers.get("x-forwarded-for");
+  if (forwardedFor) {
+    return forwardedFor.split(",")[0].trim();
+  }
+  const realIP = req.headers.get("x-real-ip");
+  if (realIP) {
+    return realIP;
+  }
+  return "unknown";
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -23,6 +36,31 @@ const handler = async (req: Request): Promise<Response> => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const { email, feature, source = "wearables-hub" }: WaitlistRequest = await req.json();
+
+    // IP-based rate limiting - max 5 signups per IP per hour
+    const clientIP = getClientIP(req);
+    const rateLimitIdentifier = `waitlist_${clientIP}`;
+    
+    const { data: rateLimitAllowed, error: rateLimitError } = await supabase.rpc(
+      "check_rate_limit",
+      {
+        p_identifier: rateLimitIdentifier,
+        p_action_type: "waitlist_signup",
+        p_max_requests: 5,
+        p_window_minutes: 60,
+      }
+    );
+
+    if (rateLimitError) {
+      console.error("Rate limit check failed:", rateLimitError);
+      // Fail open - allow request if rate limit check fails
+    } else if (!rateLimitAllowed) {
+      console.log(`Rate limited waitlist signup from IP: ${clientIP}`);
+      return new Response(
+        JSON.stringify({ error: "Too many signup attempts. Please try again later." }),
+        { status: 429, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
 
     if (!email || !feature) {
       return new Response(

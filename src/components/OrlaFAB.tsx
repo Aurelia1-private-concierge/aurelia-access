@@ -1,12 +1,16 @@
 import { motion, useAnimation } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useState, useEffect, useRef, startTransition } from "react";
+import { useState, useEffect, useRef, startTransition, forwardRef } from "react";
 import OrlaMiniAvatar from "@/components/orla/OrlaMiniAvatar";
 import { useAvatarStyle } from "@/hooks/useAvatarStyle";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
-const OrlaFAB = () => {
+interface OrlaFABProps {
+  className?: string;
+}
+
+const OrlaFAB = forwardRef<HTMLAnchorElement, OrlaFABProps>((_, ref) => {
   const [isHovered, setIsHovered] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isReady, setIsReady] = useState(false);
@@ -105,7 +109,7 @@ const OrlaFAB = () => {
   if (!isReady) return null;
   
   return (
-    <Link to="/orla">
+    <Link to="/orla" ref={ref}>
       <motion.div
         initial={{ scale: 0 }}
         animate={controls}
@@ -214,6 +218,8 @@ const OrlaFAB = () => {
       </motion.div>
     </Link>
   );
-};
+});
+
+OrlaFAB.displayName = "OrlaFAB";
 
 export default OrlaFAB;

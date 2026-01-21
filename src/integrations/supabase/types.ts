@@ -14,6 +14,56 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_conversation_memory: {
+        Row: {
+          confidence: number | null
+          conversation_id: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          key: string
+          memory_type: string
+          source: string | null
+          updated_at: string
+          user_id: string
+          value: Json
+        }
+        Insert: {
+          confidence?: number | null
+          conversation_id?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          key: string
+          memory_type: string
+          source?: string | null
+          updated_at?: string
+          user_id: string
+          value: Json
+        }
+        Update: {
+          confidence?: number | null
+          conversation_id?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          key?: string
+          memory_type?: string
+          source?: string | null
+          updated_at?: string
+          user_id?: string
+          value?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_conversation_memory_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       analytics_events: {
         Row: {
           created_at: string
@@ -1192,6 +1242,54 @@ export type Database = {
         }
         Relationships: []
       }
+      error_logs: {
+        Row: {
+          component: string | null
+          created_at: string
+          error_message: string
+          error_stack: string | null
+          error_type: string
+          function_name: string | null
+          id: string
+          metadata: Json | null
+          resolved: boolean | null
+          resolved_at: string | null
+          resolved_by: string | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          component?: string | null
+          created_at?: string
+          error_message: string
+          error_stack?: string | null
+          error_type: string
+          function_name?: string | null
+          id?: string
+          metadata?: Json | null
+          resolved?: boolean | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          component?: string | null
+          created_at?: string
+          error_message?: string
+          error_stack?: string | null
+          error_type?: string
+          function_name?: string | null
+          id?: string
+          metadata?: Json | null
+          resolved?: boolean | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       funnel_events: {
         Row: {
           campaign: string | null
@@ -1549,6 +1647,48 @@ export type Database = {
           start_date?: string | null
           status?: string | null
           target_amount?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      incidents: {
+        Row: {
+          affected_services: string[] | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          resolved_at: string | null
+          severity: string
+          started_at: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          affected_services?: string[] | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          resolved_at?: string | null
+          severity?: string
+          started_at?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          affected_services?: string[] | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          resolved_at?: string | null
+          severity?: string
+          started_at?: string
+          status?: string
           title?: string
           updated_at?: string
         }
@@ -2093,6 +2233,50 @@ export type Database = {
           },
         ]
       }
+      partner_performance_scores: {
+        Row: {
+          breakdown: Json | null
+          created_at: string
+          id: string
+          partner_id: string
+          period_end: string
+          period_start: string
+          sample_size: number | null
+          score: number
+          score_type: string
+        }
+        Insert: {
+          breakdown?: Json | null
+          created_at?: string
+          id?: string
+          partner_id: string
+          period_end: string
+          period_start: string
+          sample_size?: number | null
+          score: number
+          score_type: string
+        }
+        Update: {
+          breakdown?: Json | null
+          created_at?: string
+          id?: string
+          partner_id?: string
+          period_end?: string
+          period_start?: string
+          sample_size?: number | null
+          score?: number
+          score_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_performance_scores_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       partner_pms_integrations: {
         Row: {
           api_endpoint: string | null
@@ -2397,6 +2581,39 @@ export type Database = {
         }
         Relationships: []
       }
+      performance_metrics: {
+        Row: {
+          created_at: string
+          id: string
+          metadata: Json | null
+          metric_name: string
+          metric_type: string
+          session_id: string | null
+          user_id: string | null
+          value_ms: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          metric_name: string
+          metric_type: string
+          session_id?: string | null
+          user_id?: string | null
+          value_ms: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          metric_name?: string
+          metric_type?: string
+          session_id?: string | null
+          user_id?: string | null
+          value_ms?: number
+        }
+        Relationships: []
+      }
       pms_sync_logs: {
         Row: {
           created_at: string
@@ -2555,6 +2772,48 @@ export type Database = {
           status?: string | null
           title?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      proactive_notification_queue: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          metadata: Json | null
+          notification_type: string
+          priority: string | null
+          sent_at: string | null
+          status: string | null
+          title: string
+          trigger_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          metadata?: Json | null
+          notification_type: string
+          priority?: string | null
+          sent_at?: string | null
+          status?: string | null
+          title: string
+          trigger_at: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          metadata?: Json | null
+          notification_type?: string
+          priority?: string | null
+          sent_at?: string | null
+          status?: string | null
+          title?: string
+          trigger_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -2742,6 +3001,48 @@ export type Database = {
           signed_up_at?: string | null
           status?: string
           subscribed_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      scheduled_mcp_tasks: {
+        Row: {
+          config: Json | null
+          created_at: string
+          cron_expression: string
+          id: string
+          is_active: boolean | null
+          last_result: Json | null
+          last_run_at: string | null
+          next_run_at: string | null
+          task_name: string
+          task_type: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json | null
+          created_at?: string
+          cron_expression: string
+          id?: string
+          is_active?: boolean | null
+          last_result?: Json | null
+          last_run_at?: string | null
+          next_run_at?: string | null
+          task_name: string
+          task_type: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json | null
+          created_at?: string
+          cron_expression?: string
+          id?: string
+          is_active?: boolean | null
+          last_result?: Json | null
+          last_run_at?: string | null
+          next_run_at?: string | null
+          task_name?: string
+          task_type?: string
           updated_at?: string
         }
         Relationships: []
@@ -3654,6 +3955,42 @@ export type Database = {
           trial_starts_at?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      uptime_checks: {
+        Row: {
+          checked_at: string
+          created_at: string
+          endpoint_name: string
+          endpoint_url: string
+          error_message: string | null
+          id: string
+          response_time_ms: number | null
+          status: string
+          status_code: number | null
+        }
+        Insert: {
+          checked_at?: string
+          created_at?: string
+          endpoint_name: string
+          endpoint_url: string
+          error_message?: string | null
+          id?: string
+          response_time_ms?: number | null
+          status?: string
+          status_code?: number | null
+        }
+        Update: {
+          checked_at?: string
+          created_at?: string
+          endpoint_name?: string
+          endpoint_url?: string
+          error_message?: string | null
+          id?: string
+          response_time_ms?: number | null
+          status?: string
+          status_code?: number | null
         }
         Relationships: []
       }

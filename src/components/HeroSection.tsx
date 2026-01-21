@@ -24,29 +24,28 @@ const HeroSection = ({
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [videoError, setVideoError] = useState(false);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  const [contentReady, setContentReady] = useState(false);
+  const [forcedShowContent, setForcedShowContent] = useState(false);
   
   const videos = videoSources.length > 0 ? videoSources : (videoSrc ? [videoSrc] : []);
   const currentVideo = videos[currentVideoIndex];
   const hasMultipleVideos = videos.length > 1;
   
-  // Force content visibility after brief delay - never block on video loading
+  // CRITICAL: Always show content after 2s, even if video hasn't loaded
+  // This prevents blank screen issues in production
   useEffect(() => {
-    const timeout = setTimeout(() => setContentReady(true), 100);
-    return () => clearTimeout(timeout);
+    const timer = setTimeout(() => {
+      console.log("[HeroSection] Force showing content after 2s timeout");
+      setForcedShowContent(true);
+    }, 2000);
+    return () => clearTimeout(timer);
   }, []);
   
-  // Failsafe: if video doesn't load in 3 seconds, show content anyway
+  // Mark content ready immediately if video loads successfully
   useEffect(() => {
-    if (videoLoaded) return;
-    const timeout = setTimeout(() => {
-      if (!videoLoaded) {
-        console.log("[HeroSection] Video load timeout - forcing content display");
-        setVideoError(true);
-      }
-    }, 3000);
-    return () => clearTimeout(timeout);
-  }, [currentVideoIndex, videoLoaded]);
+    if (videoLoaded) {
+      setForcedShowContent(true);
+    }
+  }, [videoLoaded]);
   
   useEffect(() => {
     if (!hasMultipleVideos) return;
@@ -82,29 +81,32 @@ const HeroSection = ({
     setVideoLoaded(false);
   };
 
+  // Determine if content should be visible
+  const showContent = videoLoaded || forcedShowContent;
+
   return (
-    <header ref={ref} className="relative w-full min-h-[100dvh] overflow-hidden flex items-center justify-center bg-background">
+    <header ref={ref} className="relative w-full min-h-[100dvh] overflow-hidden flex items-center justify-center">
+      {/* PERMANENT gradient background - always visible, prevents blank/black screen */}
+      <div 
+        className="absolute inset-0 z-0"
+        style={{
+          background: 'linear-gradient(135deg, hsl(var(--background)) 0%, hsl(220 15% 10%) 60%, hsl(var(--background)) 100%)',
+        }}
+      />
+      
       {/* Background Video with parallax */}
       <motion.div 
         style={{ y: mediaY, scale: mediaScale, willChange: 'transform' }}
         className="absolute inset-0 w-full h-[120%] z-0"
       >
-        {/* Permanent background layer to prevent gaps during video transitions */}
-        <div className="absolute inset-0 bg-background" />
-        
-        {/* Loading state - only show spinner briefly, never block content */}
-        {currentVideo && !videoLoaded && !videoError && !contentReady && (
-          <div className="absolute inset-0 flex items-center justify-center z-10 bg-background">
+        {/* Loading spinner - only show briefly before forced content */}
+        {!showContent && !videoError && (
+          <div className="absolute inset-0 flex items-center justify-center z-10">
             <div className="flex flex-col items-center gap-4">
               <div className="w-8 h-8 border border-primary/30 rounded-full border-t-primary animate-spin" />
               <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Loading</span>
             </div>
           </div>
-        )}
-        
-        {/* Static gradient background while video loads - ensures content is visible */}
-        {(!videoLoaded || videoError) && (
-          <div className="absolute inset-0 bg-gradient-to-br from-background via-obsidian to-navy-deep" />
         )}
         
         {/* Video background - using sync mode for smooth crossfade without gaps */}
@@ -178,9 +180,15 @@ const HeroSection = ({
       {/* Subtle grain texture */}
       <div className="grain absolute inset-0 z-10 pointer-events-none" />
 
-      {/* Content */}
+      {/* Content - always render, animate in when ready */}
       <motion.div 
-        style={{ y: contentY, opacity, willChange: 'transform, opacity' }}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ 
+          opacity: showContent ? 1 : 0, 
+          y: showContent ? 0 : 30 
+        }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        style={{ willChange: 'transform, opacity' }}
         className="relative z-20 text-center px-6 max-w-4xl mx-auto w-full"
       >
         {/* Top line */}

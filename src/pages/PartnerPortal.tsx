@@ -16,7 +16,8 @@ import {
   ExternalLink,
   Loader2,
   DollarSign,
-  Wallet
+  Wallet,
+  Hotel
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import SiteMinderIntegration from "@/components/partner/SiteMinderIntegration";
 
 type Partner = {
   id: string;
@@ -425,6 +427,10 @@ const PartnerPortal = () => {
                   <Package className="w-4 h-4 mr-2" />
                   My Services
                 </TabsTrigger>
+                <TabsTrigger value="integrations">
+                  <Hotel className="w-4 h-4 mr-2" />
+                  Integrations
+                </TabsTrigger>
                 <TabsTrigger value="settings">
                   <Settings className="w-4 h-4 mr-2" />
                   Settings
@@ -575,6 +581,10 @@ const PartnerPortal = () => {
                     </motion.div>
                   ))
                 )}
+              </TabsContent>
+
+              <TabsContent value="integrations">
+                <SiteMinderIntegration partnerId={partner.id} />
               </TabsContent>
 
               <TabsContent value="settings">

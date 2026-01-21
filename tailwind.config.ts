@@ -15,22 +15,17 @@ export default {
   	extend: {
   		fontFamily: {
   			sans: [
-  				'Open Sans',
-  				'ui-sans-serif',
+  				'Inter',
+  				'SF Pro Display',
+  				'-apple-system',
+  				'BlinkMacSystemFont',
   				'system-ui',
-  				'sans-serif',
-  				'Apple Color Emoji',
-  				'Segoe UI Emoji',
-  				'Segoe UI Symbol',
-  				'Noto Color Emoji'
+  				'sans-serif'
   			],
   			serif: [
-  				'Playfair Display',
-  				'ui-serif',
+  				'Cormorant Garamond',
   				'Georgia',
-  				'Cambria',
   				'Times New Roman',
-  				'Times',
   				'serif'
   			],
   			display: [
@@ -38,14 +33,9 @@ export default {
   				'serif'
   			],
   			mono: [
-  				'Roboto Mono',
+  				'JetBrains Mono',
+  				'SF Mono',
   				'ui-monospace',
-  				'SFMono-Regular',
-  				'Menlo',
-  				'Monaco',
-  				'Consolas',
-  				'Liberation Mono',
-  				'Courier New',
   				'monospace'
   			]
   		},
@@ -55,6 +45,21 @@ export default {
   			ring: 'hsl(var(--ring))',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
+  			// Platinum color palette
+  			platinum: {
+  				DEFAULT: 'hsl(var(--platinum))',
+  				light: 'hsl(var(--platinum-light))',
+  				muted: 'hsl(var(--platinum-muted))'
+  			},
+  			silver: {
+  				DEFAULT: 'hsl(var(--silver))',
+  				light: 'hsl(var(--silver-light))'
+  			},
+  			obsidian: {
+  				DEFAULT: 'hsl(var(--obsidian))',
+  				light: 'hsl(var(--obsidian-light))'
+  			},
+  			// Legacy gold tokens for compatibility
   			gold: {
   				DEFAULT: 'hsl(var(--gold))',
   				light: 'hsl(var(--gold-light))',
@@ -115,113 +120,66 @@ export default {
   		},
 		keyframes: {
 			'accordion-down': {
-				from: {
-					height: '0'
-				},
-				to: {
-					height: 'var(--radix-accordion-content-height)'
-				}
+				from: { height: '0' },
+				to: { height: 'var(--radix-accordion-content-height)' }
 			},
 			'accordion-up': {
-				from: {
-					height: 'var(--radix-accordion-content-height)'
-				},
-				to: {
-					height: '0'
-				}
+				from: { height: 'var(--radix-accordion-content-height)' },
+				to: { height: '0' }
+			},
+			'fade-in': {
+				'0%': { opacity: '0', transform: 'translateY(10px)' },
+				'100%': { opacity: '1', transform: 'translateY(0)' }
 			},
 			'fade-in-up': {
-				'0%': {
-					opacity: '0',
-					transform: 'translateY(30px)'
-				},
-				'100%': {
-					opacity: '1',
-					transform: 'translateY(0)'
-				}
+				'0%': { opacity: '0', transform: 'translateY(20px)' },
+				'100%': { opacity: '1', transform: 'translateY(0)' }
 			},
 			'fade-in-scale': {
-				'0%': {
-					opacity: '0',
-					transform: 'scale(0.95)'
-				},
-				'100%': {
-					opacity: '1',
-					transform: 'scale(1)'
-				}
+				'0%': { opacity: '0', transform: 'scale(0.98)' },
+				'100%': { opacity: '1', transform: 'scale(1)' }
 			},
 			'slide-in-right': {
-				'0%': {
-					opacity: '0',
-					transform: 'translateX(20px)'
-				},
-				'100%': {
-					opacity: '1',
-					transform: 'translateX(0)'
-				}
+				'0%': { opacity: '0', transform: 'translateX(20px)' },
+				'100%': { opacity: '1', transform: 'translateX(0)' }
 			},
 			'slide-in-left': {
-				'0%': {
-					opacity: '0',
-					transform: 'translateX(-20px)'
-				},
-				'100%': {
-					opacity: '1',
-					transform: 'translateX(0)'
-				}
+				'0%': { opacity: '0', transform: 'translateX(-20px)' },
+				'100%': { opacity: '1', transform: 'translateX(0)' }
 			},
 			'subtle-pulse': {
-				'0%, 100%': {
-					opacity: '0.6'
-				},
-				'50%': {
-					opacity: '1'
-				}
+				'0%, 100%': { opacity: '0.5' },
+				'50%': { opacity: '0.8' }
 			},
 			'glow-pulse': {
-				'0%, 100%': {
-					boxShadow: '0 0 40px hsl(42 65% 55% / 0.15)'
-				},
-				'50%': {
-					boxShadow: '0 0 60px hsl(42 65% 55% / 0.25)'
-				}
+				'0%, 100%': { boxShadow: '0 0 20px hsl(var(--platinum) / 0.1)' },
+				'50%': { boxShadow: '0 0 40px hsl(var(--platinum) / 0.2)' }
 			},
 			'border-glow': {
-				'0%, 100%': {
-					borderColor: 'hsl(42 65% 55% / 0.2)'
-				},
-				'50%': {
-					borderColor: 'hsl(42 65% 55% / 0.5)'
-				}
+				'0%, 100%': { borderColor: 'hsl(var(--platinum) / 0.2)' },
+				'50%': { borderColor: 'hsl(var(--platinum) / 0.4)' }
 			},
 			shimmer: {
-				'0%': {
-					transform: 'translateX(-100%)'
-				},
-				'100%': {
-					transform: 'translateX(100%)'
-				}
+				'0%': { transform: 'translateX(-100%)' },
+				'100%': { transform: 'translateX(100%)' }
 			},
-			'float-slow': {
-				'0%, 100%': {
-					transform: 'translateY(0)'
-				},
-				'50%': {
-					transform: 'translateY(-10px)'
-				}
+			'line-grow': {
+				'0%': { transform: 'scaleX(0)' },
+				'100%': { transform: 'scaleX(1)' }
 			}
 		},
 		animation: {
 			'accordion-down': 'accordion-down 0.2s ease-out',
 			'accordion-up': 'accordion-up 0.2s ease-out',
-			'fade-in-up': 'fade-in-up 1s cubic-bezier(0.4, 0, 0.2, 1) forwards',
-			'fade-in-scale': 'fade-in-scale 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards',
-			'slide-in-right': 'slide-in-right 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards',
-			'slide-in-left': 'slide-in-left 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards',
-			'subtle-pulse': 'subtle-pulse 4s ease-in-out infinite',
-			'glow-pulse': 'glow-pulse 3s ease-in-out infinite',
+			'fade-in': 'fade-in 0.5s ease-out forwards',
+			'fade-in-up': 'fade-in-up 0.6s ease-out forwards',
+			'fade-in-scale': 'fade-in-scale 0.4s ease-out forwards',
+			'slide-in-right': 'slide-in-right 0.4s ease-out forwards',
+			'slide-in-left': 'slide-in-left 0.4s ease-out forwards',
+			'subtle-pulse': 'subtle-pulse 3s ease-in-out infinite',
+			'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
 			'border-glow': 'border-glow 2s ease-in-out infinite',
-			'float-slow': 'float-slow 6s ease-in-out infinite'
+			'line-grow': 'line-grow 1s ease-out forwards'
 		},
   		boxShadow: {
   			'2xs': 'var(--shadow-2xs)',
@@ -230,7 +188,9 @@ export default {
   			md: 'var(--shadow-md)',
   			lg: 'var(--shadow-lg)',
   			xl: 'var(--shadow-xl)',
-  			'2xl': 'var(--shadow-2xl)'
+  			'2xl': 'var(--shadow-2xl)',
+  			'platinum': '0 0 60px hsl(var(--platinum) / 0.15)',
+  			'platinum-lg': '0 20px 60px -15px hsl(0 0% 0% / 0.5), 0 0 30px hsl(var(--platinum) / 0.1)'
   		}
   	}
   },

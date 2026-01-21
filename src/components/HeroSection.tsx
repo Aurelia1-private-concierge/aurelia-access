@@ -1,21 +1,21 @@
 import { ArrowRight, ChevronDown, Play, Loader2 } from "lucide-react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useRef, useState, useMemo, useEffect, useCallback } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useCampaignPersonalization } from "@/hooks/useCampaignPersonalization";
 
 interface HeroSectionProps {
   videoSrc?: string;
-  videoSources?: string[]; // Array of video sources for rotation
-  rotationInterval?: number; // Interval in ms between video changes
+  videoSources?: string[];
+  rotationInterval?: number;
   onPlayVideo?: () => void;
 }
 
 const HeroSection = ({ 
   videoSrc, 
   videoSources = [], 
-  rotationInterval = 12000, // 12 seconds default
+  rotationInterval = 15000,
   onPlayVideo 
 }: HeroSectionProps) => {
   const { t } = useTranslation();
@@ -25,12 +25,10 @@ const HeroSection = ({
   const [videoError, setVideoError] = useState(false);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   
-  // Use videoSources array if provided, otherwise fall back to single videoSrc
   const videos = videoSources.length > 0 ? videoSources : (videoSrc ? [videoSrc] : []);
   const currentVideo = videos[currentVideoIndex];
   const hasMultipleVideos = videos.length > 1;
   
-  // Rotate videos at interval
   useEffect(() => {
     if (!hasMultipleVideos) return;
     
@@ -42,7 +40,6 @@ const HeroSection = ({
     return () => clearInterval(interval);
   }, [hasMultipleVideos, videos.length, rotationInterval]);
   
-  // Memoize scroll options to prevent recalculation
   const scrollOptions = useMemo(() => ({
     target: ref,
     offset: ["start start", "end start"] as ["start start", "end start"],
@@ -50,12 +47,10 @@ const HeroSection = ({
   
   const { scrollYProgress } = useScroll(scrollOptions);
 
-  // Use CSS-friendly transform values to avoid forced reflows
-  const mediaY = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
-  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-  const mediaScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
-  const overlayOpacity = useTransform(scrollYProgress, [0, 0.5], [0.6, 0.9]);
+  const mediaY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const mediaScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
 
   const handleVideoLoad = () => {
     setVideoLoaded(true);
@@ -68,39 +63,34 @@ const HeroSection = ({
   };
 
   return (
-    <header ref={ref} className="relative w-full min-h-[100dvh] overflow-hidden flex items-center justify-center">
-      {/* Background Video/Image with parallax - use will-change to hint GPU acceleration */}
+    <header ref={ref} className="relative w-full min-h-[100dvh] overflow-hidden flex items-center justify-center bg-background">
+      {/* Background Video with parallax */}
       <motion.div 
         style={{ y: mediaY, scale: mediaScale, willChange: 'transform' }}
-        className="absolute inset-0 w-full h-[130%] z-0"
+        className="absolute inset-0 w-full h-[120%] z-0"
       >
-        {/* Video loading indicator - only show if no video loaded yet */}
-        {videoSrc && !videoLoaded && !videoError && (
-          <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none bg-background">
+        {/* Loading state */}
+        {currentVideo && !videoLoaded && !videoError && (
+          <div className="absolute inset-0 flex items-center justify-center z-10 bg-background">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="flex flex-col items-center gap-3"
+              className="flex flex-col items-center gap-4"
             >
-              <div className="relative">
-                <div className="w-12 h-12 rounded-full border border-primary/30 flex items-center justify-center bg-background/20 backdrop-blur-sm">
-                  <Loader2 className="w-5 h-5 text-primary animate-spin" />
-                </div>
-                <div className="absolute inset-0 w-12 h-12 rounded-full border-t border-primary/50 animate-spin" style={{ animationDuration: '2s' }} />
-              </div>
-              <span className="text-[10px] uppercase tracking-[0.2em] text-foreground/40">Loading video</span>
+              <div className="w-8 h-8 border border-primary/30 rounded-full border-t-primary animate-spin" />
+              <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Loading</span>
             </motion.div>
           </div>
         )}
         
-        {/* Video background with smooth transitions */}
+        {/* Video background */}
         <AnimatePresence mode="wait">
           {currentVideo && !videoError && (
             <motion.video
               key={currentVideo}
               initial={{ opacity: 0 }}
-              animate={{ opacity: videoLoaded ? 0.6 : 0 }}
+              animate={{ opacity: videoLoaded ? 0.4 : 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 1.5, ease: "easeInOut" }}
               autoPlay
@@ -114,12 +104,11 @@ const HeroSection = ({
               className="absolute inset-0 w-full h-full object-cover"
             >
               <source src={currentVideo} type="video/mp4" />
-              Your browser does not support the video tag.
             </motion.video>
           )}
         </AnimatePresence>
         
-        {/* Video indicator dots for multiple videos */}
+        {/* Video indicators */}
         {hasMultipleVideos && videoLoaded && (
           <motion.div 
             initial={{ opacity: 0 }}
@@ -134,10 +123,10 @@ const HeroSection = ({
                   setVideoLoaded(false);
                   setCurrentVideoIndex(index);
                 }}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                className={`h-0.5 transition-all duration-500 ${
                   index === currentVideoIndex 
-                    ? 'bg-primary w-6' 
-                    : 'bg-foreground/30 hover:bg-foreground/50'
+                    ? 'bg-primary w-8' 
+                    : 'bg-foreground/20 w-2 hover:bg-foreground/40'
                 }`}
                 aria-label={`View video ${index + 1}`}
               />
@@ -146,177 +135,162 @@ const HeroSection = ({
         )}
       </motion.div>
 
-      {/* Enhanced Overlay with vignette */}
-      <motion.div 
-        style={{ opacity: overlayOpacity }}
-        className="absolute inset-0 hero-overlay z-10" 
-      />
+      {/* Dark overlay */}
+      <div className="absolute inset-0 hero-overlay z-10" />
       
-      {/* Subtle noise texture */}
-      <div className="absolute inset-0 z-10 opacity-[0.03] pointer-events-none mix-blend-overlay"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`
-        }}
-      />
+      {/* Subtle grain texture */}
+      <div className="grain absolute inset-0 z-10 pointer-events-none" />
 
       {/* Radial vignette */}
-      <div className="absolute inset-0 z-10 pointer-events-none"
+      <div 
+        className="absolute inset-0 z-10 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse 70% 60% at 50% 45%, transparent 30%, hsl(225 45% 3% / 0.5) 100%)'
+          background: 'radial-gradient(ellipse 60% 50% at 50% 45%, transparent 0%, hsl(0 0% 0% / 0.6) 100%)'
         }}
       />
 
-      {/* Content with parallax - use will-change for GPU acceleration */}
+      {/* Content */}
       <motion.div 
         style={{ y: contentY, opacity, willChange: 'transform, opacity' }}
-        className="relative z-20 text-center px-4 sm:px-6 max-w-5xl mx-auto w-full"
+        className="relative z-20 text-center px-6 max-w-4xl mx-auto w-full"
       >
-        {/* Elegant top line */}
+        {/* Top line */}
         <motion.div
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
-          transition={{ duration: 1.2, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
-          className="w-16 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent mx-auto mb-12"
+          transition={{ duration: 1, delay: 0.3, ease: [0.4, 0, 0.2, 1] }}
+          className="w-12 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent mx-auto mb-16 origin-center"
         />
 
-        {/* Refined badge */}
+        {/* Badge */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="inline-flex items-center space-x-3 mb-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+          className="mb-10"
         >
-          <span className="w-8 h-px bg-primary/40" />
-          <span className="text-[11px] uppercase tracking-[0.4em] text-primary/80 font-medium">
+          <span className="text-[10px] uppercase tracking-[0.5em] text-muted-foreground font-light">
             {campaign.badge || t("hero.badge")}
           </span>
-          <span className="w-8 h-px bg-primary/40" />
         </motion.div>
 
-        {/* Main headline - LCP element, render immediately for fast LCP, animation is progressive enhancement */}
+        {/* Headline */}
         <h1
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl text-foreground font-normal tracking-[-0.03em] leading-[0.95] mb-6 sm:mb-8 px-2 animate-fade-in"
-          style={{ 
-            fontFamily: "'Cormorant Garamond', Georgia, 'Times New Roman', serif",
-            contentVisibility: 'auto',
-          }}
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-foreground font-normal tracking-[-0.03em] leading-[0.9] mb-8 animate-fade-in"
+          style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
         >
           {campaign.title || t("hero.title")}
         </h1>
 
-        {/* Subtitle with refined spacing */}
+        {/* Subtitle */}
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
-          className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground font-light tracking-wide max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-12 px-4"
+          transition={{ duration: 0.8, delay: 0.8 }}
+          className="text-sm sm:text-base md:text-lg text-muted-foreground font-light tracking-wide max-w-xl mx-auto leading-relaxed mb-12"
         >
           {campaign.subtitle || t("hero.subtitle")}
         </motion.p>
 
-        {/* Premium CTAs */}
+        {/* CTAs */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.9 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 px-4"
+          transition={{ duration: 0.8, delay: 1 }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <Link 
             to="/auth" 
-            className="group relative w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 bg-primary text-primary-foreground text-sm font-semibold tracking-[0.15em] uppercase transition-all duration-300 hover:bg-primary/90 hover:scale-105 hover:-translate-y-1 shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.6),inset_0_1px_0_hsl(var(--primary-foreground)/0.2)] hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.7)] active:scale-95 active:translate-y-0 overflow-hidden text-center rounded-md cursor-pointer"
+            className="group w-full sm:w-auto px-10 py-4 bg-primary text-primary-foreground text-xs font-medium tracking-[0.2em] uppercase transition-all duration-300 hover:bg-primary/90 flex items-center justify-center gap-3"
           >
-            <span className="relative z-10 flex items-center justify-center gap-2">
-              {campaign.ctaText || t("hero.joinButton")}
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </span>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+            {campaign.ctaText || t("hero.joinButton")}
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
 
           <a 
             href="#experiences" 
-            className="group w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 bg-foreground/10 backdrop-blur-sm border-2 border-foreground/40 text-foreground text-sm font-semibold tracking-[0.15em] uppercase hover:bg-primary hover:text-primary-foreground hover:border-primary hover:scale-105 hover:-translate-y-1 shadow-[0_4px_20px_-4px_hsl(var(--foreground)/0.2)] hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.5)] active:scale-95 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 rounded-md cursor-pointer"
+            className="group w-full sm:w-auto px-10 py-4 bg-transparent border border-primary/30 text-foreground text-xs font-medium tracking-[0.2em] uppercase hover:border-primary/60 hover:bg-primary/5 transition-all duration-300 flex items-center justify-center gap-3"
           >
-            <span>{t("hero.discoverButton")}</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
+            {t("hero.discoverButton")}
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </a>
         </motion.div>
 
-        {/* Waitlist CTA for non-ready visitors */}
+        {/* Waitlist link */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1.0 }}
-          className="mt-6"
+          transition={{ duration: 0.8, delay: 1.2 }}
+          className="mt-8"
         >
           <Link 
             to="/waitlist" 
-            className="inline-flex items-center gap-2 text-sm text-foreground bg-foreground/10 backdrop-blur-sm hover:bg-primary hover:text-primary-foreground transition-all duration-300 tracking-wide group px-5 py-2.5 rounded-full border border-foreground/30 hover:border-primary shadow-sm hover:shadow-[0_8px_25px_-6px_hsl(var(--primary)/0.4)] hover:scale-105 active:scale-95 cursor-pointer"
+            className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors duration-300 tracking-wide group"
           >
             <span>Not ready to join?</span>
-            <span className="font-semibold">Join Waitlist</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            <span className="text-primary">Join Waitlist</span>
+            <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </motion.div>
 
-        {/* Video Play Button */}
+        {/* Video button */}
         {onPlayVideo && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 1.1 }}
-            className="mt-10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 1.4 }}
+            className="mt-12"
           >
             <button
               type="button"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('[HeroSection] Watch Video clicked');
                 onPlayVideo();
               }}
-              className="group inline-flex items-center gap-3 text-foreground/60 hover:text-foreground transition-colors duration-300 cursor-pointer"
+              className="group inline-flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors duration-300"
             >
-              <div className="w-12 h-12 rounded-full border border-foreground/20 group-hover:border-primary/50 group-hover:bg-primary/10 flex items-center justify-center transition-all duration-300">
-                <Play className="w-4 h-4 ml-0.5 text-foreground/60 group-hover:text-primary transition-colors" fill="currentColor" />
+              <div className="w-10 h-10 rounded-full border border-primary/20 group-hover:border-primary/40 flex items-center justify-center transition-all duration-300">
+                <Play className="w-3.5 h-3.5 ml-0.5" fill="currentColor" />
               </div>
-              <span className="text-[11px] uppercase tracking-[0.2em] font-light">Watch Video</span>
+              <span className="text-[10px] uppercase tracking-[0.3em] font-light">Watch</span>
             </button>
           </motion.div>
         )}
 
-        {/* Bottom decorative line */}
+        {/* Bottom line */}
         <motion.div
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
-          transition={{ duration: 1.2, delay: 1.3, ease: [0.4, 0, 0.2, 1] }}
-          className="w-24 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent mx-auto mt-12"
+          transition={{ duration: 1, delay: 1.6, ease: [0.4, 0, 0.2, 1] }}
+          className="w-16 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent mx-auto mt-16 origin-center"
         />
       </motion.div>
 
-      {/* Refined Scroll Indicator */}
+      {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-3"
+        transition={{ delay: 2, duration: 1 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-3"
       >
-        <span className="text-[10px] uppercase tracking-[0.3em] text-foreground/30 font-light">Scroll</span>
+        <span className="text-[9px] uppercase tracking-[0.4em] text-muted-foreground/50 font-light">Scroll</span>
         <motion.div
-          animate={{ y: [0, 8, 0] }}
+          animate={{ y: [0, 6, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         >
-          <ChevronDown className="w-5 h-5 text-foreground/30" />
+          <ChevronDown className="w-4 h-4 text-muted-foreground/50" />
         </motion.div>
       </motion.div>
 
-      {/* Ambient corner accents */}
-      <div className="absolute top-0 left-0 w-32 h-32 z-20 pointer-events-none">
-        <div className="absolute top-8 left-8 w-px h-12 bg-gradient-to-b from-primary/30 to-transparent" />
-        <div className="absolute top-8 left-8 w-12 h-px bg-gradient-to-r from-primary/30 to-transparent" />
+      {/* Corner accents - minimal */}
+      <div className="absolute top-8 left-8 z-20 pointer-events-none">
+        <div className="w-px h-8 bg-gradient-to-b from-primary/20 to-transparent" />
+        <div className="w-8 h-px bg-gradient-to-r from-primary/20 to-transparent -mt-8 ml-0" />
       </div>
-      <div className="absolute top-0 right-0 w-32 h-32 z-20 pointer-events-none">
-        <div className="absolute top-8 right-8 w-px h-12 bg-gradient-to-b from-primary/30 to-transparent" />
-        <div className="absolute top-8 right-8 w-12 h-px bg-gradient-to-l from-primary/30 to-transparent" />
+      <div className="absolute top-8 right-8 z-20 pointer-events-none">
+        <div className="w-px h-8 bg-gradient-to-b from-primary/20 to-transparent ml-7" />
+        <div className="w-8 h-px bg-gradient-to-l from-primary/20 to-transparent -mt-8" />
       </div>
     </header>
   );

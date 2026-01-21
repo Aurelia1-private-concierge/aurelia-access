@@ -1,15 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Lock, Menu, Compass } from "lucide-react";
-import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import { Lock, Menu, X } from "lucide-react";
+import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import { Logo } from "@/components/brand";
 import LanguageSwitcher from "./LanguageSwitcher";
 
@@ -21,13 +14,12 @@ const navLinks = [
 ];
 
 const pageLinks = [
-  { href: "/services", label: "Services", icon: Compass },
-  { href: "/blog", label: "Journal", icon: Compass },
-  { href: "/orla", label: "Meet Orla", icon: Compass },
-  { href: "/partners/join", label: "Partner With Us", icon: Compass },
+  { href: "/services", label: "Services" },
+  { href: "/blog", label: "Journal" },
+  { href: "/orla", label: "Meet Orla" },
+  { href: "/partners/join", label: "Partners" },
 ];
 
-// Cache section positions to avoid forced reflows on scroll
 interface SectionPosition {
   id: string;
   top: number;
@@ -42,16 +34,13 @@ const Navigation = () => {
   const [activeSection, setActiveSection] = useState("");
   const { scrollY } = useScroll();
   
-  // Cache section positions to avoid reading layout on every scroll
   const sectionPositionsRef = useRef<SectionPosition[]>([]);
   const rafIdRef = useRef<number | null>(null);
-  const lastScrollRef = useRef(0);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 50);
   });
 
-  // Calculate and cache section positions (only on mount and resize)
   const updateSectionPositions = useCallback(() => {
     const sections = navLinks.map(link => link.href.replace('#', ''));
     const positions: SectionPosition[] = [];
@@ -72,21 +61,12 @@ const Navigation = () => {
     sectionPositionsRef.current = positions;
   }, []);
 
-  // Throttled scroll handler that uses cached positions
   const handleScroll = useCallback(() => {
     if (rafIdRef.current !== null) return;
     
     rafIdRef.current = requestAnimationFrame(() => {
       const scrollPosition = window.scrollY + 200;
       
-      // Only update if scroll changed significantly (debounce)
-      if (Math.abs(scrollPosition - lastScrollRef.current) < 10) {
-        rafIdRef.current = null;
-        return;
-      }
-      lastScrollRef.current = scrollPosition;
-      
-      // Use cached positions instead of reading from DOM
       for (const section of sectionPositionsRef.current) {
         if (scrollPosition >= section.top && scrollPosition < section.bottom) {
           setActiveSection(prev => prev !== section.id ? section.id : prev);
@@ -99,10 +79,8 @@ const Navigation = () => {
   }, []);
 
   useEffect(() => {
-    // Initial calculation after a short delay to ensure DOM is ready
     const initTimeout = setTimeout(updateSectionPositions, 100);
     
-    // Recalculate on resize (with debounce)
     let resizeTimeout: NodeJS.Timeout;
     const handleResize = () => {
       clearTimeout(resizeTimeout);
@@ -123,176 +101,190 @@ const Navigation = () => {
     };
   }, [handleScroll, updateSectionPositions]);
 
-  return (
-    <motion.nav
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 2.2 }}
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
-        isScrolled 
-          ? "border-b border-border/30 glass shadow-lg shadow-background/20" 
-          : "border-b border-transparent bg-transparent"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
-        <Link to="/">
-          <Logo variant="wordmark" size="md" />
-        </Link>
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-10 text-sm font-light tracking-wide">
-          {/* Page Links */}
-          {pageLinks.map((link) => {
-            const Icon = link.icon;
-            const isDemo = 'isDemo' in link && link.isDemo;
-            return (
+  return (
+    <>
+      <motion.nav
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 2 }}
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
+          isScrolled 
+            ? "border-b border-border/20 glass" 
+            : "bg-transparent"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-6 h-16 md:h-20 flex items-center justify-between">
+          <Link to="/" className="relative z-10">
+            <Logo variant="wordmark" size="md" />
+          </Link>
+
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center gap-10 text-xs font-light tracking-[0.1em]">
+            {pageLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
-                className={`relative py-2 transition-colors duration-300 flex items-center gap-1.5 ${
-                  isDemo 
-                    ? "text-primary hover:text-primary/80" 
-                    : location.pathname === link.href
-                      ? "text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
+                className={`relative py-2 transition-colors duration-300 ${
+                  location.pathname === link.href
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <Icon className="w-4 h-4" />
                 {link.label}
-                {isDemo && (
-                  <span className="px-1.5 py-0.5 text-[9px] bg-primary/20 border border-primary/30 rounded-full text-primary">
-                    COMING SOON
-                  </span>
-                )}
                 {location.pathname === link.href && (
                   <motion.span
                     layoutId="activeNav"
-                    className="absolute -bottom-1 left-0 right-0 h-px bg-primary"
+                    className="absolute -bottom-0.5 left-0 right-0 h-px bg-primary"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
               </Link>
-            );
-          })}
-          
-          {/* Section Links (homepage only) */}
-          {location.pathname === "/" && navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className={`relative py-2 transition-colors duration-300 ${
-                activeSection === link.href.replace('#', '')
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {t(link.labelKey)}
-              {activeSection === link.href.replace('#', '') && (
-                <motion.span
-                  layoutId="activeSection"
-                  className="absolute -bottom-1 left-0 right-0 h-px bg-primary"
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                />
-              )}
-            </a>
-          ))}
-        </div>
-
-        <div className="flex items-center space-x-4">
-          <LanguageSwitcher variant="nav" className="hidden md:flex" />
-          
-          <Link 
-            to="/auth" 
-            className="hidden md:flex items-center space-x-2 text-xs font-medium tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors group"
-          >
-            <span className="w-8 h-8 rounded-full border border-border/30 flex items-center justify-center group-hover:border-primary/50 group-hover:bg-primary/10 transition-all duration-300">
-              <Lock className="w-3.5 h-3.5 text-primary" />
-            </span>
-            <span>{t("nav.clientLogin")}</span>
-          </Link>
-
-          {/* Mobile Menu */}
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild>
-              <button className="text-foreground md:hidden p-2 hover:bg-secondary/30 rounded-full transition-colors">
-                <Menu className="w-6 h-6" />
-              </button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-80 bg-background border-border/30">
-              <SheetHeader className="text-left pb-6 border-b border-border/30">
-                <SheetTitle>
-                  <Logo variant="wordmark" size="md" animated={false} />
-                </SheetTitle>
-              </SheetHeader>
-              
-              <nav className="flex flex-col space-y-1 mt-8">
-                {/* Page Links for Mobile */}
-                {pageLinks.map((link, index) => {
-                  const Icon = link.icon;
-                  const isDemo = 'isDemo' in link && link.isDemo;
-                  return (
-                    <Link
-                      key={link.href}
-                      to={link.href}
-                      onClick={() => setIsOpen(false)}
-                      className={`py-4 px-4 text-lg font-light transition-all duration-300 border-b border-border/20 flex items-center gap-3 ${
-                        isDemo
-                          ? "text-primary"
-                          : location.pathname === link.href
-                            ? "text-foreground bg-secondary/30 border-l-2 border-l-primary"
-                            : "text-muted-foreground hover:text-foreground hover:bg-secondary/30"
-                      }`}
-                    >
-                      <Icon className="w-5 h-5" />
-                      {link.label}
-                      {isDemo && (
-                        <span className="ml-auto px-2 py-0.5 text-[10px] bg-primary/20 border border-primary/30 rounded-full text-primary">
-                          COMING SOON
-                        </span>
-                      )}
-                    </Link>
-                  );
-                })}
-                
-                {/* Section Links for Mobile */}
-                {navLinks.map((link, index) => (
-                  <motion.a
+            ))}
+            
+            {location.pathname === "/" && (
+              <>
+                <span className="w-px h-4 bg-border/30" />
+                {navLinks.map((link) => (
+                  <a
                     key={link.href}
                     href={link.href}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    onClick={() => setIsOpen(false)}
-                    className={`py-4 px-4 text-lg font-light transition-all duration-300 border-b border-border/20 ${
+                    className={`relative py-2 transition-colors duration-300 ${
                       activeSection === link.href.replace('#', '')
-                        ? "text-foreground bg-secondary/30 border-l-2 border-l-primary"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary/30"
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     {t(link.labelKey)}
-                  </motion.a>
+                    {activeSection === link.href.replace('#', '') && (
+                      <motion.span
+                        layoutId="activeSection"
+                        className="absolute -bottom-0.5 left-0 right-0 h-px bg-primary"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                  </a>
+                ))}
+              </>
+            )}
+          </div>
+
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher variant="nav" className="hidden lg:flex" />
+            
+            <Link 
+              to="/auth" 
+              className="hidden lg:flex items-center gap-2 text-[10px] font-medium tracking-[0.2em] uppercase text-muted-foreground hover:text-foreground transition-colors group"
+            >
+              <span className="w-8 h-8 rounded-full border border-border/30 flex items-center justify-center group-hover:border-primary/40 transition-all duration-300">
+                <Lock className="w-3 h-3" />
+              </span>
+              <span>{t("nav.clientLogin")}</span>
+            </Link>
+
+            {/* Mobile Menu Button */}
+            <button 
+              onClick={() => setIsOpen(!isOpen)}
+              className="lg:hidden w-10 h-10 flex items-center justify-center text-foreground"
+              aria-label="Toggle menu"
+            >
+              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+      </motion.nav>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-40 lg:hidden"
+          >
+            {/* Backdrop */}
+            <motion.div 
+              className="absolute inset-0 bg-background/95 backdrop-blur-sm"
+              onClick={() => setIsOpen(false)}
+            />
+            
+            {/* Menu Content */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+              className="absolute top-20 left-0 right-0 px-6 py-8 flex flex-col"
+            >
+              <nav className="flex flex-col gap-1">
+                {pageLinks.map((link, index) => (
+                  <motion.div
+                    key={link.href}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <Link
+                      to={link.href}
+                      onClick={() => setIsOpen(false)}
+                      className={`block py-4 text-2xl font-light tracking-wide border-b border-border/10 transition-colors ${
+                        location.pathname === link.href
+                          ? "text-foreground"
+                          : "text-muted-foreground"
+                      }`}
+                      style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                    >
+                      {link.label}
+                    </Link>
+                  </motion.div>
+                ))}
+                
+                {location.pathname === "/" && navLinks.map((link, index) => (
+                  <motion.div
+                    key={link.href}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: (pageLinks.length + index) * 0.05 }}
+                  >
+                    <a
+                      href={link.href}
+                      onClick={() => setIsOpen(false)}
+                      className={`block py-4 text-2xl font-light tracking-wide border-b border-border/10 transition-colors ${
+                        activeSection === link.href.replace('#', '')
+                          ? "text-foreground"
+                          : "text-muted-foreground"
+                      }`}
+                      style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                    >
+                      {t(link.labelKey)}
+                    </a>
+                  </motion.div>
                 ))}
               </nav>
 
-              <div className="absolute bottom-20 left-6 right-6">
-                <LanguageSwitcher variant="nav" className="justify-center" />
-              </div>
-
-              <div className="absolute bottom-8 left-6 right-6">
+              <div className="mt-8 pt-8 border-t border-border/10 flex flex-col gap-6">
+                <LanguageSwitcher variant="nav" />
+                
                 <Link 
                   to="/auth"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center space-x-3 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-widest uppercase w-full gold-glow-hover transition-all duration-300"
+                  className="w-full py-4 bg-primary text-primary-foreground text-xs font-medium tracking-[0.2em] uppercase text-center flex items-center justify-center gap-2"
                 >
-                  <Lock className="w-4 h-4" />
-                  <span>{t("nav.clientLogin")}</span>
+                  <Lock className="w-3.5 h-3.5" />
+                  {t("nav.clientLogin")}
                 </Link>
               </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-      </div>
-    </motion.nav>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronDown, Play, Loader2 } from "lucide-react";
+import { ArrowRight, ChevronDown, Play } from "lucide-react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useRef, useState, useMemo, useEffect } from "react";

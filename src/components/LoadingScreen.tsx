@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState, useCallback, lazy, Suspense } from "react";
+import { useEffect, useState, useCallback, lazy, Suspense, forwardRef } from "react";
 import { AnimatedLogo } from "@/components/brand";
 
 // Lazy load heavy visual components to reduce main thread blocking
@@ -13,7 +13,7 @@ const loadingPhrases = [
   "Almost ready",
 ];
 
-const LoadingScreen = () => {
+const LoadingScreen = forwardRef<HTMLDivElement>((props, ref) => {
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [shouldRender, setShouldRender] = useState(true);
@@ -248,6 +248,8 @@ const LoadingScreen = () => {
       )}
     </AnimatePresence>
   );
-};
+});
+
+LoadingScreen.displayName = "LoadingScreen";
 
 export default LoadingScreen;

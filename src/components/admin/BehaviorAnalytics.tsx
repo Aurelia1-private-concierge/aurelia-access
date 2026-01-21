@@ -53,11 +53,17 @@ const BehaviorAnalytics = () => {
     setIsLoading(true);
     try {
       // Fetch page view stats
-      const { data: events } = await supabase
+      const { data: events, error } = await supabase
         .from("user_behavior_events")
         .select("*")
         .gte("created_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(1000);
+
+      if (error) {
+        console.error("Error fetching behavior events:", error);
+        return;
+      }
 
       if (events) {
         // Process page stats

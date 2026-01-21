@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode, forwardRef } from "react";
 
 interface ReducedMotionContextType {
   prefersReducedMotion: boolean;
@@ -18,33 +18,37 @@ interface ReducedMotionProviderProps {
   children: ReactNode;
 }
 
-export const ReducedMotionProvider = ({ children }: ReducedMotionProviderProps) => {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-  const [disableAnimations, setDisableAnimations] = useState(false);
+export const ReducedMotionProvider = forwardRef<HTMLDivElement, ReducedMotionProviderProps>(
+  ({ children }, ref) => {
+    const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+    const [disableAnimations, setDisableAnimations] = useState(false);
 
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setPrefersReducedMotion(mediaQuery.matches);
+    useEffect(() => {
+      const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+      setPrefersReducedMotion(mediaQuery.matches);
 
-    const handleChange = (event: MediaQueryListEvent) => {
-      setPrefersReducedMotion(event.matches);
-    };
+      const handleChange = (event: MediaQueryListEvent) => {
+        setPrefersReducedMotion(event.matches);
+      };
 
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
+      mediaQuery.addEventListener("change", handleChange);
+      return () => mediaQuery.removeEventListener("change", handleChange);
+    }, []);
 
-  return (
-    <ReducedMotionContext.Provider
-      value={{
-        prefersReducedMotion,
-        disableAnimations: disableAnimations || prefersReducedMotion,
-        setDisableAnimations,
-      }}
-    >
-      {children}
-    </ReducedMotionContext.Provider>
-  );
-};
+    return (
+      <ReducedMotionContext.Provider
+        value={{
+          prefersReducedMotion,
+          disableAnimations: disableAnimations || prefersReducedMotion,
+          setDisableAnimations,
+        }}
+      >
+        {children}
+      </ReducedMotionContext.Provider>
+    );
+  }
+);
+
+ReducedMotionProvider.displayName = "ReducedMotionProvider";
 
 export default ReducedMotionProvider;

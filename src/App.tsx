@@ -1,11 +1,11 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, forwardRef } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { GlobalProvider } from "@/contexts/GlobalContext";
 import PageTransition from "@/components/PageTransition";
@@ -92,7 +92,7 @@ const PageLoader = () => {
 const queryClient = new QueryClient();
 log("QueryClient created");
 
-const AnimatedRoutes = () => {
+const AnimatedRoutes = forwardRef<HTMLDivElement>((props, ref) => {
   const location = useLocation();
 
   return (
@@ -499,7 +499,9 @@ const AnimatedRoutes = () => {
       </Suspense>
     </AnimatePresence>
   );
-};
+});
+
+AnimatedRoutes.displayName = "AnimatedRoutes";
 
 const App = () => {
   log("App component rendering");

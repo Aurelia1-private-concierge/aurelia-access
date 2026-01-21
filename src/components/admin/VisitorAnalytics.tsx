@@ -100,25 +100,37 @@ const VisitorAnalytics = () => {
     setLoading(true);
     try {
       // Fetch analytics events
-      const { data: events } = await supabase
+      const { data: events, error: eventsError } = await supabase
         .from("analytics_events")
         .select("*")
         .order("created_at", { ascending: false })
-        .limit(10000);
-
-      // Fetch behavior events
-      const { data: behaviorEvents } = await supabase
-        .from("user_behavior_events")
-        .select("*")
-        .order("timestamp", { ascending: false })
         .limit(5000);
 
+      if (eventsError) {
+        console.error("Error fetching analytics events:", eventsError);
+      }
+
+      // Fetch behavior events - use correct column name 'created_at'
+      const { data: behaviorEvents, error: behaviorError } = await supabase
+        .from("user_behavior_events")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(1000);
+
+      if (behaviorError) {
+        console.error("Error fetching behavior events:", behaviorError);
+      }
+
       // Fetch funnel events for traffic sources
-      const { data: funnelEvents } = await supabase
+      const { data: funnelEvents, error: funnelError } = await supabase
         .from("funnel_events")
         .select("*")
         .order("created_at", { ascending: false })
-        .limit(5000);
+        .limit(2000);
+
+      if (funnelError) {
+        console.error("Error fetching funnel events:", funnelError);
+      }
 
       // Process analytics data
       const uniqueSessions = new Set(events?.map(e => e.session_id) || []);

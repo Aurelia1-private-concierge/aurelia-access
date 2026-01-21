@@ -69,6 +69,9 @@ const HeroSection = ({
         style={{ y: mediaY, scale: mediaScale, willChange: 'transform' }}
         className="absolute inset-0 w-full h-[120%] z-0"
       >
+        {/* Permanent background layer to prevent gaps during video transitions */}
+        <div className="absolute inset-0 bg-background" />
+        
         {/* Loading state */}
         {currentVideo && !videoLoaded && !videoError && (
           <div className="absolute inset-0 flex items-center justify-center z-10 bg-background">
@@ -84,8 +87,8 @@ const HeroSection = ({
           </div>
         )}
         
-        {/* Video background */}
-        <AnimatePresence mode="wait">
+        {/* Video background - using sync mode for smooth crossfade without gaps */}
+        <AnimatePresence mode="sync">
           {currentVideo && !videoError && (
             <motion.video
               key={currentVideo}
@@ -102,11 +105,21 @@ const HeroSection = ({
               onCanPlay={handleVideoLoad}
               onError={handleVideoError}
               className="absolute inset-0 w-full h-full object-cover"
+              style={{ 
+                objectFit: 'cover',
+                minWidth: '100%',
+                minHeight: '100%',
+              }}
             >
               <source src={currentVideo} type="video/mp4" />
             </motion.video>
           )}
         </AnimatePresence>
+        
+        {/* Fallback background gradient if no video */}
+        {(!currentVideo || videoError) && (
+          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />
+        )}
         
         {/* Video indicators */}
         {hasMultipleVideos && videoLoaded && (

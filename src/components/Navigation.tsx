@@ -15,6 +15,7 @@ const navLinks = [
 
 const pageLinks = [
   { href: "/services", label: "Services" },
+  { href: "/services/marketplace", label: "Marketplace" },
   { href: "/blog", label: "Journal" },
   { href: "/orla", label: "Meet Orla" },
   { href: "/partners/join", label: "Partners" },

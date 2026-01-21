@@ -70,6 +70,8 @@ const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const PartnerDetail = lazy(() => import("./pages/PartnerDetail"));
 const SurpriseMe = lazy(() => import("./pages/SurpriseMe"));
 const PartnerPlatform = lazy(() => import("./pages/PartnerPlatform"));
+const Marketplace = lazy(() => import("./pages/Marketplace"));
+const PartnerInventory = lazy(() => import("./pages/PartnerInventory"));
 
 // Production debugging
 const log = (msg: string) => console.log(`[App ${Date.now()}] ${msg}`);
@@ -202,6 +204,24 @@ const AnimatedRoutes = forwardRef<HTMLDivElement>((props, ref) => {
                   <PartnerServiceForm />
                 </PageTransition>
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/partner/inventory"
+            element={
+              <ProtectedRoute>
+                <PageTransition>
+                  <PartnerInventory />
+                </PageTransition>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/services/marketplace"
+            element={
+              <PageTransition>
+                <Marketplace />
+              </PageTransition>
             }
           />
           <Route

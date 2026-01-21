@@ -30,6 +30,10 @@ export interface CategoryConfig {
   subcategories: string[];
   specifications: string[];
   color: string;
+  // Extended hospitality fields (optional)
+  amenityCategories?: string[];
+  roomTypes?: string[];
+  starRatings?: number[];
 }
 
 export const SERVICE_CATEGORIES: Record<ServiceCategory, CategoryConfig> = {
@@ -71,9 +75,13 @@ export const SERVICE_CATEGORIES: Record<ServiceCategory, CategoryConfig> = {
     defaultLeadTime: 24,
     requiresDeposit: true,
     commissionRate: 15,
-    subcategories: ['Palace Hotel', 'Boutique Hotel', 'Resort', 'Private Villa', 'Penthouse'],
-    specifications: ['Room Type', 'Size', 'View', 'Beds', 'Butler Service', 'Club Access'],
+    subcategories: ['Palace Hotel', 'Boutique Hotel', 'Resort', 'Private Villa', 'Penthouse', 'Ski Chalet', 'Beach House', 'City Apartment'],
+    specifications: ['Room Type', 'Size (sqm)', 'View', 'Beds', 'Bathrooms', 'Star Rating', 'Butler Service', 'Club Access', 'Breakfast Included', 'Airport Transfer'],
     color: 'from-amber-500 to-orange-600',
+    // Extended hospitality configuration
+    amenityCategories: ['Wellness', 'Dining', 'Business', 'Family', 'Accessibility'],
+    roomTypes: ['Standard Suite', 'Junior Suite', 'Executive Suite', 'Presidential Suite', 'Royal Suite', 'Penthouse', 'Villa', 'Bungalow', 'Overwater Villa'],
+    starRatings: [3, 4, 5],
   },
   dining: {
     id: 'dining',

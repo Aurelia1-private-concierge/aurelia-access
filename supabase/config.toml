@@ -153,8 +153,5 @@ verify_jwt = false
 [functions.n8n-proxy]
 verify_jwt = false
 
-[functions.hotel-availability]
-verify_jwt = false
-
 [functions.service-availability]
 verify_jwt = false

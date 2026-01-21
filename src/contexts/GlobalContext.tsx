@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode, useState, useEffect } from "react";
+import React, { createContext, useContext, ReactNode, useState, useEffect, forwardRef } from "react";
 import { useGlobalFeatures } from "@/hooks/useGlobalFeatures";
 
 // Production debugging
@@ -33,34 +33,42 @@ const defaultGlobalFeatures: GlobalContextType = {
 
 const GlobalContext = createContext<GlobalContextType>(defaultGlobalFeatures);
 
-export const GlobalProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  log("GlobalProvider rendering");
-  const [isReady, setIsReady] = useState(false);
-  
-  // Use hook but with error handling
-  let globalFeatures: GlobalContextType;
-  try {
-    globalFeatures = useGlobalFeatures();
-  } catch (e) {
-    log(`useGlobalFeatures error: ${e}`);
-    globalFeatures = defaultGlobalFeatures;
+interface GlobalProviderProps {
+  children: ReactNode;
+}
+
+export const GlobalProvider = forwardRef<HTMLDivElement, GlobalProviderProps>(
+  ({ children }, ref) => {
+    log("GlobalProvider rendering");
+    const [isReady, setIsReady] = useState(false);
+    
+    // Use hook but with error handling
+    let globalFeatures: GlobalContextType;
+    try {
+      globalFeatures = useGlobalFeatures();
+    } catch (e) {
+      log(`useGlobalFeatures error: ${e}`);
+      globalFeatures = defaultGlobalFeatures;
+    }
+    
+    // Ensure we don't block render
+    useEffect(() => {
+      log("GlobalProvider mounted, setting ready");
+      const timeout = setTimeout(() => setIsReady(true), 100);
+      return () => clearTimeout(timeout);
+    }, []);
+    
+    log("GlobalProvider render complete");
+    
+    return (
+      <GlobalContext.Provider value={globalFeatures}>
+        {children}
+      </GlobalContext.Provider>
+    );
   }
-  
-  // Ensure we don't block render
-  useEffect(() => {
-    log("GlobalProvider mounted, setting ready");
-    const timeout = setTimeout(() => setIsReady(true), 100);
-    return () => clearTimeout(timeout);
-  }, []);
-  
-  log("GlobalProvider render complete");
-  
-  return (
-    <GlobalContext.Provider value={globalFeatures}>
-      {children}
-    </GlobalContext.Provider>
-  );
-};
+);
+
+GlobalProvider.displayName = "GlobalProvider";
 
 export const useGlobal = () => {
   const context = useContext(GlobalContext);

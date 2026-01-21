@@ -72,6 +72,7 @@ const SurpriseMe = lazy(() => import("./pages/SurpriseMe"));
 const PartnerPlatform = lazy(() => import("./pages/PartnerPlatform"));
 const Marketplace = lazy(() => import("./pages/Marketplace"));
 const PartnerInventory = lazy(() => import("./pages/PartnerInventory"));
+const Auctions = lazy(() => import("./pages/Auctions"));
 
 // Production debugging
 const log = (msg: string) => console.log(`[App ${Date.now()}] ${msg}`);
@@ -504,6 +505,14 @@ const AnimatedRoutes = forwardRef<HTMLDivElement>((props, ref) => {
                   <BoardroomSession />
                 </PageTransition>
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/auctions"
+            element={
+              <PageTransition>
+                <Auctions />
+              </PageTransition>
             }
           />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

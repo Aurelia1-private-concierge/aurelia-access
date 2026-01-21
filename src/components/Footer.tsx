@@ -41,7 +41,7 @@ const Footer = () => {
                   { icon: Instagram, href: "/instagram", label: "Instagram", isInternal: true },
                   { icon: Facebook, href: "/facebook", label: "Facebook", isInternal: true },
                   { icon: Twitter, href: "/twitter", label: "X (Twitter)", isInternal: true },
-                  { icon: Linkedin, href: "/linkedin", label: "LinkedIn", isInternal: true },
+                  { icon: Linkedin, href: "https://www.linkedin.com/comm/mynetwork/discovery-see-all?usecase=PEOPLE_FOLLOWS&followMember=tyrone-mitchell-730a253a4", label: "LinkedIn", isInternal: false },
                 ].map(({ icon: Icon, href, label, isInternal }) => (
                   isInternal ? (
                     <Link key={label} to={href}>

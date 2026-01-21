@@ -25,58 +25,7 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('node_modules/react-router')) {
             return 'vendor-router';
           }
-          // Framer Motion - heavy animation library, defer loading
-          if (id.includes('node_modules/framer-motion')) {
-            return 'vendor-motion';
-          }
-          // React Query - data fetching
-          if (id.includes('node_modules/@tanstack/react-query')) {
-            return 'vendor-query';
-          }
-          // Radix UI components - split by usage frequency
-          if (id.includes('node_modules/@radix-ui')) {
-            return 'vendor-radix';
-          }
-          // Charts - recharts and the full d3 family MUST be in the same chunk to avoid circular dependency / TDZ ReferenceError
-          // Note: d3 is often pulled in as many packages (d3-scale, d3-shape, d3-array, etc.), not just `d3/`.
-          if (
-            id.includes('node_modules/recharts') ||
-            id.includes('node_modules/d3') ||
-            id.includes('node_modules/d3-')
-          ) {
-            return 'vendor-charts';
-          }
-          // Three.js - 3D graphics, keep together to avoid circular dependency
-          if (id.includes('node_modules/three') || id.includes('node_modules/@react-three')) {
-            return 'vendor-three';
-          }
-          // Supabase - backend operations
-          if (id.includes('node_modules/@supabase')) {
-            return 'vendor-supabase';
-          }
-          // i18n - internationalization
-          if (id.includes('node_modules/i18next') || id.includes('node_modules/react-i18next')) {
-            return 'vendor-i18n';
-          }
-          // Date utilities
-          if (id.includes('node_modules/date-fns')) {
-            return 'vendor-date';
-          }
-          // Form handling - MUST keep resolvers + schema deps together to avoid TDZ circular dependency
-          if (
-            id.includes('node_modules/react-hook-form') ||
-            id.includes('node_modules/zod') ||
-            id.includes('node_modules/@hookform') ||
-            // Zod can pull in the Standard Schema spec packages; keep them co-located with zod/resolvers.
-            id.includes('node_modules/@standard-schema')
-          ) {
-            return 'vendor-forms';
-          }
-          // Sentry - error tracking
-          if (id.includes('node_modules/@sentry')) {
-            return 'vendor-sentry';
-          }
-          // All other vendor modules - don't split to avoid circular deps
+          // All other vendor modules - keep in a single chunk to avoid cross-chunk circular deps / TDZ
           if (id.includes('node_modules/')) {
             return 'vendor-misc';
           }

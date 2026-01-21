@@ -463,45 +463,98 @@ export type Database = {
           },
         ]
       }
+      contact_automation_logs: {
+        Row: {
+          automation_type: string
+          contact_id: string | null
+          created_at: string
+          details: Json | null
+          error_message: string | null
+          id: string
+          status: string
+        }
+        Insert: {
+          automation_type: string
+          contact_id?: string | null
+          created_at?: string
+          details?: Json | null
+          error_message?: string | null
+          id?: string
+          status?: string
+        }
+        Update: {
+          automation_type?: string
+          contact_id?: string | null
+          created_at?: string
+          details?: Json | null
+          error_message?: string | null
+          id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_automation_logs_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contact_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_submissions: {
         Row: {
+          admin_notified: boolean | null
           assigned_to: string | null
+          auto_response_sent: boolean | null
           created_at: string
           email: string
           id: string
+          lead_score: number | null
           message: string
           name: string
           notes: string | null
           phone: string | null
+          processed_at: string | null
           source: string | null
           status: string
           updated_at: string
+          webhook_sent: boolean | null
         }
         Insert: {
+          admin_notified?: boolean | null
           assigned_to?: string | null
+          auto_response_sent?: boolean | null
           created_at?: string
           email: string
           id?: string
+          lead_score?: number | null
           message: string
           name: string
           notes?: string | null
           phone?: string | null
+          processed_at?: string | null
           source?: string | null
           status?: string
           updated_at?: string
+          webhook_sent?: boolean | null
         }
         Update: {
+          admin_notified?: boolean | null
           assigned_to?: string | null
+          auto_response_sent?: boolean | null
           created_at?: string
           email?: string
           id?: string
+          lead_score?: number | null
           message?: string
           name?: string
           notes?: string | null
           phone?: string | null
+          processed_at?: string | null
           source?: string | null
           status?: string
           updated_at?: string
+          webhook_sent?: boolean | null
         }
         Relationships: []
       }
@@ -2695,6 +2748,42 @@ export type Database = {
           sync_enabled?: boolean | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      webhook_endpoints: {
+        Row: {
+          created_at: string
+          endpoint_type: string
+          events: string[]
+          headers: Json | null
+          id: string
+          is_active: boolean | null
+          name: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          endpoint_type: string
+          events?: string[]
+          headers?: Json | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          endpoint_type?: string
+          events?: string[]
+          headers?: Json | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          updated_at?: string
+          url?: string
         }
         Relationships: []
       }

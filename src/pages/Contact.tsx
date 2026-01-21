@@ -45,20 +45,41 @@ const Contact = () => {
     haptics.tap();
 
     try {
-      const { error } = await supabase.from("contact_submissions").insert({
-        name: data.name,
-        email: data.email,
-        phone: data.phone || null,
-        message: `Subject: ${data.subject}\n\n${data.message}`,
-        source: "contact_page",
-      });
+      // Insert contact submission
+      const { data: submission, error } = await supabase
+        .from("contact_submissions")
+        .insert({
+          name: data.name,
+          email: data.email,
+          phone: data.phone || null,
+          message: `Subject: ${data.subject}\n\n${data.message}`,
+          source: "contact_page",
+        })
+        .select()
+        .single();
 
       if (error) throw error;
+
+      // Trigger full automation pipeline (auto-response, admin notification, webhooks)
+      supabase.functions.invoke('contact-automation', {
+        body: {
+          id: submission.id,
+          name: data.name,
+          email: data.email,
+          phone: data.phone || null,
+          message: `Subject: ${data.subject}\n\n${data.message}`,
+          source: "contact_page",
+          created_at: submission.created_at,
+        }
+      }).catch(err => {
+        // Log but don't fail the submission if automation fails
+        console.error('Automation error:', err);
+      });
 
       haptics.success();
       toast({
         title: "Message Sent",
-        description: "Thank you for contacting us. We will respond within 24 hours.",
+        description: "Thank you for contacting us. A confirmation email has been sent and we will respond within 24 hours.",
       });
       reset();
     } catch (error) {

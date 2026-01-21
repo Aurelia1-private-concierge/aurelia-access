@@ -42,7 +42,13 @@ const rootElement = document.getElementById("root");
 log("main.tsx: Root element found: " + !!rootElement);
 
 if (rootElement) {
-  // Clear any existing content first
+  // Remove the initial HTML loader
+  const initialLoader = document.getElementById('initial-loader');
+  if (initialLoader) {
+    initialLoader.remove();
+  }
+  
+  // Clear any existing content
   rootElement.innerHTML = "";
   
   try {
@@ -57,12 +63,12 @@ if (rootElement) {
     log("main.tsx: React render called");
   } catch (error) {
     console.error("Failed to mount React app:", error);
-    // Show fallback error UI
+    // Show fallback error UI with visible colors
     rootElement.innerHTML = `
-      <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#050810;color:#fff;font-family:system-ui,sans-serif;text-align:center;padding:20px;">
-        <h1 style="font-size:24px;margin-bottom:16px;color:#D4AF37;">Aurelia</h1>
-        <p style="color:#999;margin-bottom:24px;">Something went wrong. Please refresh the page.</p>
-        <button onclick="location.reload()" style="padding:12px 24px;background:#D4AF37;color:#000;border:none;border-radius:4px;cursor:pointer;font-weight:600;">
+      <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#080a0f;color:#e8e4dc;font-family:system-ui,sans-serif;text-align:center;padding:20px;">
+        <h1 style="font-size:28px;margin-bottom:16px;color:#D4AF37;font-weight:300;letter-spacing:0.1em;">AURELIA</h1>
+        <p style="color:#888;margin-bottom:24px;max-width:400px;">We encountered an issue loading the application. Please refresh the page or try again later.</p>
+        <button onclick="location.reload()" style="padding:14px 32px;background:linear-gradient(135deg,#D4AF37,#B8962E);color:#080a0f;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:14px;letter-spacing:0.05em;text-transform:uppercase;">
           Refresh Page
         </button>
       </div>
@@ -70,4 +76,15 @@ if (rootElement) {
   }
 } else {
   console.error("Root element not found");
+  // Emergency fallback - create root element
+  const body = document.body;
+  body.innerHTML = `
+    <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#080a0f;color:#e8e4dc;font-family:system-ui,sans-serif;text-align:center;padding:20px;">
+      <h1 style="font-size:28px;margin-bottom:16px;color:#D4AF37;font-weight:300;">Aurelia</h1>
+      <p style="color:#888;margin-bottom:24px;">Application failed to initialize. Please refresh.</p>
+      <button onclick="location.reload()" style="padding:14px 32px;background:#D4AF37;color:#080a0f;border:none;border-radius:4px;cursor:pointer;font-weight:600;">
+        Refresh
+      </button>
+    </div>
+  `;
 }

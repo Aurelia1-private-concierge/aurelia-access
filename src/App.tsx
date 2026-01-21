@@ -69,6 +69,7 @@ const BoardroomSession = lazy(() => import("./pages/BoardroomSession"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const PartnerDetail = lazy(() => import("./pages/PartnerDetail"));
 const SurpriseMe = lazy(() => import("./pages/SurpriseMe"));
+const PartnerPlatform = lazy(() => import("./pages/PartnerPlatform"));
 
 // Production debugging
 const log = (msg: string) => console.log(`[App ${Date.now()}] ${msg}`);
@@ -254,6 +255,14 @@ const AnimatedRoutes = () => {
             element={
               <PageTransition>
                 <PartnerRecruitment />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/partner-platform"
+            element={
+              <PageTransition>
+                <PartnerPlatform />
               </PageTransition>
             }
           />

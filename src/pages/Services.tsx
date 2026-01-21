@@ -364,15 +364,24 @@ const Services = () => {
             Ready to Experience <span className="text-primary">Aurelia</span>?
           </h2>
           <p className="text-muted-foreground font-light mb-6">
-            Membership is by invitation or application. Begin your journey to extraordinary.
+            Browse our curated marketplace or apply for membership to unlock exclusive access.
           </p>
-          <Link
-            to="/auth"
-            className="group inline-flex items-center space-x-3 px-8 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-widest uppercase transition-all duration-300 hover:bg-primary/90 gold-glow-hover"
-          >
-            <span>Apply for Membership</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              to="/services/marketplace"
+              className="group inline-flex items-center justify-center space-x-3 px-8 py-4 bg-secondary border border-border text-foreground text-sm font-medium tracking-widest uppercase transition-all duration-300 hover:border-primary/50"
+            >
+              <span>Browse Marketplace</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              to="/auth"
+              className="group inline-flex items-center justify-center space-x-3 px-8 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-widest uppercase transition-all duration-300 hover:bg-primary/90 gold-glow-hover"
+            >
+              <span>Apply for Membership</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
         </motion.div>
       </section>
 

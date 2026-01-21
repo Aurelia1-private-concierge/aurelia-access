@@ -4,20 +4,28 @@ import {
   Plane, Ship, Hotel, UtensilsCrossed, Calendar, Shield, 
   Heart, Car, Home, ShoppingBag, Palette, Cpu,
   Search, MapPin, Users, Clock, Star, Sparkles, Loader2,
-  Filter, ChevronDown
+  Filter, ChevronDown, Wifi, Waves, Dumbbell, UtensilsCrossed as Restaurant,
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { 
   useServiceAvailability, 
   ServiceInventory, 
@@ -230,11 +238,48 @@ export const ServiceMarketplace: React.FC = () => {
   const [guests, setGuests] = useState(2);
   const [showFilters, setShowFilters] = useState(false);
   const [bookingService, setBookingService] = useState<string | null>(null);
+  
+  // Hospitality-specific filters
+  const [starRating, setStarRating] = useState<string>('');
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [roomType, setRoomType] = useState<string>('');
+
+  const amenityOptions = [
+    { id: 'wifi', label: 'WiFi', icon: Wifi },
+    { id: 'pool', label: 'Pool', icon: Waves },
+    { id: 'spa', label: 'Spa', icon: Sparkles },
+    { id: 'gym', label: 'Gym', icon: Dumbbell },
+    { id: 'restaurant', label: 'Restaurant', icon: Restaurant },
+    { id: 'butler', label: 'Butler Service', icon: Users },
+  ];
+
+  const roomTypeOptions = [
+    'Standard Suite', 'Junior Suite', 'Executive Suite', 
+    'Presidential Suite', 'Royal Suite', 'Penthouse', 'Villa'
+  ];
 
   useEffect(() => {
     fetchCategories();
     fetchFeatured();
   }, [fetchCategories, fetchFeatured]);
+
+  const toggleAmenity = (amenityId: string) => {
+    setSelectedAmenities(prev => 
+      prev.includes(amenityId) 
+        ? prev.filter(a => a !== amenityId)
+        : [...prev, amenityId]
+    );
+  };
+
+  const clearFilters = () => {
+    setStarRating('');
+    setSelectedAmenities([]);
+    setRoomType('');
+    setLocation('');
+    setGuests(2);
+  };
+
+  const hasActiveFilters = starRating || selectedAmenities.length > 0 || roomType || location;
 
   const handleSearch = async () => {
     const params: SearchParams = {
@@ -356,7 +401,7 @@ export const ServiceMarketplace: React.FC = () => {
           transition={{ delay: 0.2 }}
           className="bg-card/50 backdrop-blur-sm border border-border rounded-2xl p-6 mb-8"
         >
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
             <div className="md:col-span-2">
               <label className="text-sm text-muted-foreground mb-1 block">Location</label>
               <div className="relative">
@@ -395,6 +440,105 @@ export const ServiceMarketplace: React.FC = () => {
               </div>
             </div>
 
+            {/* Hospitality Filters Button */}
+            <div className="flex flex-col justify-end">
+              <Popover open={showFilters} onOpenChange={setShowFilters}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-full relative">
+                    <Filter className="h-4 w-4 mr-2" />
+                    Filters
+                    {hasActiveFilters && (
+                      <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full" />
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80" align="end">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-medium text-sm">Hospitality Filters</h4>
+                      {hasActiveFilters && (
+                        <Button variant="ghost" size="sm" onClick={clearFilters} className="h-7 text-xs">
+                          <X className="h-3 w-3 mr-1" />
+                          Clear
+                        </Button>
+                      )}
+                    </div>
+
+                    {/* Star Rating */}
+                    <div className="space-y-2">
+                      <Label className="text-xs text-muted-foreground">Star Rating</Label>
+                      <Select value={starRating} onValueChange={setStarRating}>
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder="Any rating" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Any rating</SelectItem>
+                          <SelectItem value="3">3+ Stars</SelectItem>
+                          <SelectItem value="4">4+ Stars</SelectItem>
+                          <SelectItem value="5">5 Stars Only</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Room Type */}
+                    <div className="space-y-2">
+                      <Label className="text-xs text-muted-foreground">Room Type</Label>
+                      <Select value={roomType} onValueChange={setRoomType}>
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder="Any type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Any type</SelectItem>
+                          {roomTypeOptions.map(type => (
+                            <SelectItem key={type} value={type}>{type}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Amenities */}
+                    <div className="space-y-2">
+                      <Label className="text-xs text-muted-foreground">Amenities</Label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {amenityOptions.map(amenity => (
+                          <div
+                            key={amenity.id}
+                            className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-colors ${
+                              selectedAmenities.includes(amenity.id)
+                                ? 'bg-primary/10 border-primary/30'
+                                : 'bg-background/50 border-border hover:border-primary/20'
+                            }`}
+                            onClick={() => toggleAmenity(amenity.id)}
+                          >
+                            <Checkbox
+                              id={amenity.id}
+                              checked={selectedAmenities.includes(amenity.id)}
+                              onCheckedChange={() => toggleAmenity(amenity.id)}
+                            />
+                            <amenity.icon className="h-3 w-3 text-muted-foreground" />
+                            <Label htmlFor={amenity.id} className="text-xs cursor-pointer">
+                              {amenity.label}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <Button 
+                      className="w-full" 
+                      size="sm" 
+                      onClick={() => {
+                        setShowFilters(false);
+                        handleSearch();
+                      }}
+                    >
+                      Apply Filters
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+
             <div className="flex flex-col justify-end">
               <Button onClick={handleSearch} disabled={isLoading} className="w-full">
                 {isLoading ? (
@@ -406,6 +550,36 @@ export const ServiceMarketplace: React.FC = () => {
               </Button>
             </div>
           </div>
+
+          {/* Active Filters Display */}
+          {hasActiveFilters && (
+            <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-border/50">
+              {starRating && (
+                <Badge variant="secondary" className="gap-1">
+                  <Star className="h-3 w-3" />
+                  {starRating}+ Stars
+                  <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => setStarRating('')} />
+                </Badge>
+              )}
+              {roomType && (
+                <Badge variant="secondary" className="gap-1">
+                  <Hotel className="h-3 w-3" />
+                  {roomType}
+                  <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => setRoomType('')} />
+                </Badge>
+              )}
+              {selectedAmenities.map(amenityId => {
+                const amenity = amenityOptions.find(a => a.id === amenityId);
+                return amenity ? (
+                  <Badge key={amenityId} variant="secondary" className="gap-1">
+                    <amenity.icon className="h-3 w-3" />
+                    {amenity.label}
+                    <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => toggleAmenity(amenityId)} />
+                  </Badge>
+                ) : null;
+              })}
+            </div>
+          )}
         </motion.div>
 
         {/* Results */}

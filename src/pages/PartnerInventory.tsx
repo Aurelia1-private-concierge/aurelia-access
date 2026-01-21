@@ -37,6 +37,7 @@ import { toast } from '@/hooks/use-toast';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
+import PartnerOnboardingWizard from '@/components/partner/PartnerOnboardingWizard';
 
 const categoryIcons: Record<ServiceCategory, React.ReactNode> = {
   aviation: <Plane className="h-5 w-5" />,
@@ -87,6 +88,7 @@ const PartnerInventory = () => {
   } = useServiceAvailability();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showOnboardingWizard, setShowOnboardingWizard] = useState(false);
   const [editingItem, setEditingItem] = useState<Partial<ServiceInventory> | null>(null);
   const [formData, setFormData] = useState<Partial<ServiceInventory>>(emptyInventoryItem);
   const [isSaving, setIsSaving] = useState(false);
@@ -508,7 +510,7 @@ const PartnerInventory = () => {
                 <p className="text-muted-foreground mb-6 max-w-md mx-auto">
                   Start adding your luxury services to showcase them on our marketplace
                 </p>
-                <Button onClick={() => handleOpenDialog()}>
+                <Button onClick={() => setShowOnboardingWizard(true)}>
                   <Plus className="h-4 w-4 mr-2" />
                   Add Your First Service
                 </Button>
@@ -519,6 +521,17 @@ const PartnerInventory = () => {
       </main>
       
       <Footer />
+
+      {/* Onboarding Wizard */}
+      {showOnboardingWizard && (
+        <PartnerOnboardingWizard
+          onComplete={() => {
+            setShowOnboardingWizard(false);
+            fetchMyInventory();
+          }}
+          onCancel={() => setShowOnboardingWizard(false)}
+        />
+      )}
     </>
   );
 };

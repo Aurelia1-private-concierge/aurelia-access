@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { META_DESCRIPTIONS, PAGE_TITLES, getPageKeywords } from "@/lib/seo-keywords";
+import { SITE_CONFIG } from "@/lib/site-config";
 
 interface SEOHeadProps {
   title?: string;
@@ -11,10 +12,9 @@ interface SEOHeadProps {
   pageType?: keyof typeof META_DESCRIPTIONS;
 }
 
-const DEFAULT_TITLE = "Aurelia | #1 Private Concierge for Billionaires";
-const DEFAULT_DESCRIPTION = "The world's most exclusive private concierge for billionaires & UHNW families. 24/7 access to private jets, superyachts, off-market properties. By invitation only.";
-const DEFAULT_IMAGE = "/og-image-new.png";
-const BASE_URL = "https://aurelia-privateconcierge.com";
+const DEFAULT_TITLE = SITE_CONFIG.seo.defaultTitle;
+const DEFAULT_DESCRIPTION = SITE_CONFIG.seo.defaultDescription;
+const DEFAULT_IMAGE = SITE_CONFIG.seo.defaultImage;
 
 export const SEOHead = ({
   title,
@@ -33,8 +33,8 @@ export const SEOHead = ({
   
   const fullTitle = title || pageTitle || DEFAULT_TITLE;
   const finalDescription = description || pageDescription || DEFAULT_DESCRIPTION;
-  const fullUrl = `${BASE_URL}${location.pathname}`;
-  const fullImage = image.startsWith("http") ? image : `${BASE_URL}${image}`;
+  const fullUrl = SITE_CONFIG.getCanonicalUrl(location.pathname);
+  const fullImage = SITE_CONFIG.getAssetUrl(image);
 
   useEffect(() => {
     // Update document title

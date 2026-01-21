@@ -65,6 +65,7 @@ import { WebCrawlerPanel } from "@/components/admin/WebCrawlerPanel";
 import AutoDiscoveryPanel from "@/components/admin/AutoDiscoveryPanel";
 import VisitorCountPanel from "@/components/admin/VisitorCountPanel";
 import ContactAutomationPanel from "@/components/admin/ContactAutomationPanel";
+import PublicationFixWizard from "@/components/admin/PublicationFixWizard";
 
 // Lazy load recharts-heavy components to prevent circular initialization errors
 const AnalyticsDashboard = lazy(() => import("@/components/admin/AnalyticsDashboard"));
@@ -354,6 +355,7 @@ const Admin = () => {
             <TabsTrigger value="auditlogs">Audit Logs</TabsTrigger>
             <TabsTrigger value="encryption">Encryption</TabsTrigger>
             <TabsTrigger value="security">Security Guide</TabsTrigger>
+            <TabsTrigger value="publication">Publication</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
@@ -390,6 +392,10 @@ const Admin = () => {
               <p className="text-muted-foreground">Enterprise-grade encryption, key rotation, and certificate management</p>
             </motion.div>
             <EncryptionManagementPanel />
+          </TabsContent>
+
+          <TabsContent value="publication" className="space-y-6">
+            <PublicationFixWizard />
           </TabsContent>
 
           <TabsContent value="scheduler" className="space-y-6">

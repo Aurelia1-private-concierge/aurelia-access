@@ -74,6 +74,139 @@ export type Database = {
         }
         Relationships: []
       }
+      auction_bids: {
+        Row: {
+          amount: number
+          auction_id: string
+          created_at: string
+          id: string
+          is_auto_bid: boolean | null
+          max_auto_bid: number | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          auction_id: string
+          created_at?: string
+          id?: string
+          is_auto_bid?: boolean | null
+          max_auto_bid?: number | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          auction_id?: string
+          created_at?: string
+          id?: string
+          is_auto_bid?: boolean | null
+          max_auto_bid?: number | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auction_bids_auction_id_fkey"
+            columns: ["auction_id"]
+            isOneToOne: false
+            referencedRelation: "auctions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      auction_watchlist: {
+        Row: {
+          auction_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          auction_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          auction_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auction_watchlist_auction_id_fkey"
+            columns: ["auction_id"]
+            isOneToOne: false
+            referencedRelation: "auctions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      auctions: {
+        Row: {
+          buy_now_price: number | null
+          category: string
+          created_at: string
+          created_by: string | null
+          currency: string
+          current_bid: number | null
+          description: string | null
+          ends_at: string
+          id: string
+          images: string[] | null
+          reserve_price: number | null
+          specifications: Json | null
+          starting_price: number
+          starts_at: string
+          status: string
+          title: string
+          updated_at: string
+          winner_id: string | null
+        }
+        Insert: {
+          buy_now_price?: number | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          current_bid?: number | null
+          description?: string | null
+          ends_at: string
+          id?: string
+          images?: string[] | null
+          reserve_price?: number | null
+          specifications?: Json | null
+          starting_price?: number
+          starts_at?: string
+          status?: string
+          title: string
+          updated_at?: string
+          winner_id?: string | null
+        }
+        Update: {
+          buy_now_price?: number | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          current_bid?: number | null
+          description?: string | null
+          ends_at?: string
+          id?: string
+          images?: string[] | null
+          reserve_price?: number | null
+          specifications?: Json | null
+          starting_price?: number
+          starts_at?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          winner_id?: string | null
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action: string

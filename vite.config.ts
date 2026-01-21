@@ -37,8 +37,13 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('node_modules/@radix-ui')) {
             return 'vendor-radix';
           }
-          // Charts - recharts and d3 MUST be in the same chunk to avoid circular dependency ReferenceError
-          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3')) {
+          // Charts - recharts and the full d3 family MUST be in the same chunk to avoid circular dependency / TDZ ReferenceError
+          // Note: d3 is often pulled in as many packages (d3-scale, d3-shape, d3-array, etc.), not just `d3/`.
+          if (
+            id.includes('node_modules/recharts') ||
+            id.includes('node_modules/d3') ||
+            id.includes('node_modules/d3-')
+          ) {
             return 'vendor-charts';
           }
           // Three.js - 3D graphics, keep together to avoid circular dependency
@@ -57,8 +62,14 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('node_modules/date-fns')) {
             return 'vendor-date';
           }
-          // Form handling - MUST include @hookform/resolvers to avoid TDZ circular dependency
-          if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/zod') || id.includes('node_modules/@hookform')) {
+          // Form handling - MUST keep resolvers + schema deps together to avoid TDZ circular dependency
+          if (
+            id.includes('node_modules/react-hook-form') ||
+            id.includes('node_modules/zod') ||
+            id.includes('node_modules/@hookform') ||
+            // Zod can pull in the Standard Schema spec packages; keep them co-located with zod/resolvers.
+            id.includes('node_modules/@standard-schema')
+          ) {
             return 'vendor-forms';
           }
           // Sentry - error tracking

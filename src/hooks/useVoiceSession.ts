@@ -51,11 +51,15 @@ export const useVoiceSession = (userId: string | undefined) => {
   const addMessage = useCallback(async (entry: TranscriptEntry) => {
     if (!currentSessionId) return;
 
+    // Map ElevenLabs roles to database-allowed roles
+    // Database allows: 'user', 'assistant', 'system'
+    const dbRole = entry.role === 'agent' ? 'assistant' : entry.role;
+
     const { error } = await supabase
       .from("conversation_messages")
       .insert({
         conversation_id: currentSessionId,
-        role: entry.role,
+        role: dbRole,
         content: entry.text,
         created_at: entry.timestamp.toISOString(),
       });

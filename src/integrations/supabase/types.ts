@@ -2405,6 +2405,250 @@ export type Database = {
         }
         Relationships: []
       }
+      service_bookings: {
+        Row: {
+          accessibility_needs: string | null
+          base_price: number | null
+          booking_details: Json | null
+          booking_status: string | null
+          category: string
+          client_id: string
+          confirmation_number: string | null
+          created_at: string
+          currency: string | null
+          deposit_amount: number | null
+          deposit_paid: boolean | null
+          dietary_requirements: string[] | null
+          duration_hours: number | null
+          end_datetime: string | null
+          extras_price: number | null
+          guest_details: Json | null
+          guests: number | null
+          id: string
+          inventory_id: string | null
+          location: string | null
+          partner_id: string
+          partner_response: Json | null
+          service_request_id: string | null
+          special_requests: string | null
+          start_datetime: string
+          title: string
+          total_amount: number | null
+          updated_at: string
+        }
+        Insert: {
+          accessibility_needs?: string | null
+          base_price?: number | null
+          booking_details?: Json | null
+          booking_status?: string | null
+          category: string
+          client_id: string
+          confirmation_number?: string | null
+          created_at?: string
+          currency?: string | null
+          deposit_amount?: number | null
+          deposit_paid?: boolean | null
+          dietary_requirements?: string[] | null
+          duration_hours?: number | null
+          end_datetime?: string | null
+          extras_price?: number | null
+          guest_details?: Json | null
+          guests?: number | null
+          id?: string
+          inventory_id?: string | null
+          location?: string | null
+          partner_id: string
+          partner_response?: Json | null
+          service_request_id?: string | null
+          special_requests?: string | null
+          start_datetime: string
+          title: string
+          total_amount?: number | null
+          updated_at?: string
+        }
+        Update: {
+          accessibility_needs?: string | null
+          base_price?: number | null
+          booking_details?: Json | null
+          booking_status?: string | null
+          category?: string
+          client_id?: string
+          confirmation_number?: string | null
+          created_at?: string
+          currency?: string | null
+          deposit_amount?: number | null
+          deposit_paid?: boolean | null
+          dietary_requirements?: string[] | null
+          duration_hours?: number | null
+          end_datetime?: string | null
+          extras_price?: number | null
+          guest_details?: Json | null
+          guests?: number | null
+          id?: string
+          inventory_id?: string | null
+          location?: string | null
+          partner_id?: string
+          partner_response?: Json | null
+          service_request_id?: string | null
+          special_requests?: string | null
+          start_datetime?: string
+          title?: string
+          total_amount?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_bookings_inventory_id_fkey"
+            columns: ["inventory_id"]
+            isOneToOne: false
+            referencedRelation: "service_inventory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_bookings_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_bookings_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_inventory: {
+        Row: {
+          amenities: string[] | null
+          availability_status: string | null
+          available_from: string | null
+          available_to: string | null
+          base_price: number | null
+          cancellation_policy: string | null
+          category: string
+          commission_rate: number | null
+          created_at: string
+          currency: string | null
+          deposit_required: number | null
+          description: string | null
+          featured: boolean | null
+          id: string
+          images: string[] | null
+          is_always_available: boolean | null
+          last_synced_at: string | null
+          lead_time_hours: number | null
+          location: string | null
+          max_duration_hours: number | null
+          max_guests: number | null
+          metadata: Json | null
+          min_duration_hours: number | null
+          min_guests: number | null
+          min_spend: number | null
+          partner_id: string
+          partner_service_id: string | null
+          price_unit: string | null
+          priority_rank: number | null
+          special_conditions: string | null
+          special_offers: string | null
+          specifications: Json | null
+          subcategory: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          amenities?: string[] | null
+          availability_status?: string | null
+          available_from?: string | null
+          available_to?: string | null
+          base_price?: number | null
+          cancellation_policy?: string | null
+          category: string
+          commission_rate?: number | null
+          created_at?: string
+          currency?: string | null
+          deposit_required?: number | null
+          description?: string | null
+          featured?: boolean | null
+          id?: string
+          images?: string[] | null
+          is_always_available?: boolean | null
+          last_synced_at?: string | null
+          lead_time_hours?: number | null
+          location?: string | null
+          max_duration_hours?: number | null
+          max_guests?: number | null
+          metadata?: Json | null
+          min_duration_hours?: number | null
+          min_guests?: number | null
+          min_spend?: number | null
+          partner_id: string
+          partner_service_id?: string | null
+          price_unit?: string | null
+          priority_rank?: number | null
+          special_conditions?: string | null
+          special_offers?: string | null
+          specifications?: Json | null
+          subcategory?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          amenities?: string[] | null
+          availability_status?: string | null
+          available_from?: string | null
+          available_to?: string | null
+          base_price?: number | null
+          cancellation_policy?: string | null
+          category?: string
+          commission_rate?: number | null
+          created_at?: string
+          currency?: string | null
+          deposit_required?: number | null
+          description?: string | null
+          featured?: boolean | null
+          id?: string
+          images?: string[] | null
+          is_always_available?: boolean | null
+          last_synced_at?: string | null
+          lead_time_hours?: number | null
+          location?: string | null
+          max_duration_hours?: number | null
+          max_guests?: number | null
+          metadata?: Json | null
+          min_duration_hours?: number | null
+          min_guests?: number | null
+          min_spend?: number | null
+          partner_id?: string
+          partner_service_id?: string | null
+          price_unit?: string | null
+          priority_rank?: number | null
+          special_conditions?: string | null
+          special_offers?: string | null
+          specifications?: Json | null
+          subcategory?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_inventory_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_inventory_partner_service_id_fkey"
+            columns: ["partner_service_id"]
+            isOneToOne: false
+            referencedRelation: "partner_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_request_updates: {
         Row: {
           created_at: string

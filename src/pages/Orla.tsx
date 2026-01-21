@@ -163,26 +163,11 @@ const Orla = () => {
       .catch(() => {});
   }, []);
 
-  // Cleanup agent on unmount if still active
+  // Clear agent ID on unmount
   useEffect(() => {
     return () => {
-      if (currentAgentId) {
-        supabase.functions.invoke("elevenlabs-cleanup-agent", {
-          body: { agentId: currentAgentId },
-        }).catch(console.error);
-      }
+      setCurrentAgentId(null);
     };
-  }, [currentAgentId]);
-
-  const cleanupAgent = useCallback(async (agentId: string) => {
-    try {
-      await supabase.functions.invoke("elevenlabs-cleanup-agent", {
-        body: { agentId },
-      });
-      console.log("Agent cleaned up:", agentId);
-    } catch (error) {
-      console.error("Failed to cleanup agent:", error);
-    }
   }, []);
 
   const startConversation = useCallback(async () => {
@@ -275,15 +260,12 @@ const Orla = () => {
     await conversation.endSession();
     await endSession(true);
     
-    // Cleanup the agent
-    if (currentAgentId) {
-      await cleanupAgent(currentAgentId);
-      setCurrentAgentId(null);
-    }
+    // Clear the agent ID
+    setCurrentAgentId(null);
     
     // Refresh history
     fetchConversations();
-  }, [conversation, endSession, currentAgentId, cleanupAgent, fetchConversations]);
+  }, [conversation, endSession, fetchConversations]);
 
   const handleDeleteConversation = async (id: string) => {
     const success = await deleteConversation(id);

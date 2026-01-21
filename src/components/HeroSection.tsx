@@ -90,7 +90,7 @@ const HeroSection = ({
             <motion.video
               key={currentVideo}
               initial={{ opacity: 0 }}
-              animate={{ opacity: videoLoaded ? 0.7 : 0 }}
+              animate={{ opacity: videoLoaded ? 0.9 : 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 1.5, ease: "easeInOut" }}
               autoPlay

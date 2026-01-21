@@ -150,83 +150,93 @@ serve(async (req) => {
     const emailResponse = await resend.emails.send({
       from: 'Aurelia Partner Network <partnerships@aurelia-access.lovable.app>',
       to: [contact_email],
-      subject: `Exclusive Partnership Invitation - Aurelia Concierge`,
+      subject: `Exclusive Invitation from Aurelia`,
       html: `
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aurelia Partnership Invitation</title>
+  <title>Exclusive Invitation from Aurelia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Fredericka+the+Great&display=swap" rel="stylesheet">
 </head>
-<body style="margin: 0; padding: 0; background-color: #0a0a0a; font-family: 'Georgia', serif;">
-  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0a0a0a;">
+<body style="margin: 0; padding: 0; font-family: 'Cormorant Garamond', Georgia, serif; background: linear-gradient(135deg, #D4AF37 0%, #1B263B 100%); min-height: 100vh;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: linear-gradient(135deg, #D4AF37 0%, #1B263B 100%);">
     <tr>
       <td style="padding: 40px 20px;">
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%); border: 1px solid #c9a55c30; border-radius: 16px; overflow: hidden;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background: linear-gradient(145deg, #f5f5f0 0%, #e8e4dc 50%, #f0ece4 100%); border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);">
           
-          <!-- Header -->
+          <!-- Marble Header -->
           <tr>
-            <td style="padding: 40px 40px 20px; text-align: center; border-bottom: 1px solid #c9a55c20;">
-              <h1 style="margin: 0; font-size: 28px; font-weight: 300; color: #c9a55c; letter-spacing: 4px;">AURELIA</h1>
-              <p style="margin: 8px 0 0; font-size: 12px; color: #888; letter-spacing: 2px; text-transform: uppercase;">Private Concierge Network</p>
+            <td style="padding: 50px 40px 30px; text-align: center; background: linear-gradient(180deg, rgba(212,175,55,0.1) 0%, transparent 100%); border-bottom: 2px solid #D4AF37;">
+              <h1 style="margin: 0; font-size: 36px; font-weight: 400; color: #D4AF37; letter-spacing: 6px; text-transform: uppercase;">AURELIA</h1>
+              <p style="margin: 12px 0 0; font-size: 13px; color: #15233A; letter-spacing: 3px; text-transform: uppercase; opacity: 0.7;">Private Concierge Network</p>
             </td>
           </tr>
           
           <!-- Main Content -->
           <tr>
-            <td style="padding: 40px;">
-              <p style="margin: 0 0 20px; font-size: 18px; color: #e5e5e5; line-height: 1.6;">
-                ${greeting},
+            <td style="padding: 45px 50px;">
+              <h2 style="margin: 0 0 25px; font-size: 24px; font-weight: 500; color: #15233A; line-height: 1.4;">
+                Dear ${contact_name ? contact_name.split(' ')[0] : company_name + ' Team'},
+              </h2>
+              
+              <p style="margin: 0 0 20px; font-size: 17px; color: #2a3a4a; line-height: 1.9;">
+                As a distinguished provider in <strong style="color: #D4AF37;">${categoryDisplay}</strong>, Aurelia invites you to experience a world of bespoke luxury partnerships, exclusive clientele, and unparalleled opportunities.
               </p>
               
-              <p style="margin: 0 0 20px; font-size: 16px; color: #a0a0a0; line-height: 1.8;">
-                We've identified <strong style="color: #c9a55c;">${company_name}</strong> as an exceptional provider in <strong style="color: #e5e5e5;">${categoryDisplay}</strong>${subcategory ? ` (${subcategory})` : ''}, and we would be honored to invite you to join the Aurelia Partner Network.
+              <p style="margin: 0 0 25px; font-size: 17px; color: #2a3a4a; line-height: 1.9;">
+                Our AI concierge crafts exclusive opportunities matched to your services and expertise, connecting you with ultra-high-net-worth individuals worldwide.
               </p>
               
               ${match_reason ? `
-              <div style="margin: 30px 0; padding: 20px; background-color: #c9a55c10; border-left: 3px solid #c9a55c; border-radius: 4px;">
-                <p style="margin: 0; font-size: 14px; color: #c9a55c; font-style: italic;">
+              <div style="margin: 30px 0; padding: 25px 30px; background: linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(212,175,55,0.05) 100%); border-left: 4px solid #D4AF37; border-radius: 0 8px 8px 0;">
+                <p style="margin: 0; font-size: 16px; color: #15233A; font-style: italic; line-height: 1.7;">
                   "${match_reason}"
                 </p>
               </div>
               ` : ''}
               
-              <p style="margin: 0 0 30px; font-size: 16px; color: #a0a0a0; line-height: 1.8;">
-                Aurelia serves ultra-high-net-worth individuals worldwide, providing white-glove concierge services across private aviation, yachts, real estate, and exclusive experiences. Our partners enjoy:
+              <p style="margin: 25px 0 15px; font-size: 17px; color: #15233A; font-weight: 500;">
+                <strong>Discover:</strong>
               </p>
               
-              <ul style="margin: 0 0 30px; padding-left: 20px; font-size: 15px; color: #a0a0a0; line-height: 2;">
-                <li>Access to a curated clientele with substantial booking power</li>
-                <li>Competitive commission structures on all referrals</li>
-                <li>Dedicated relationship manager support</li>
-                <li>Integrated booking and payment systems</li>
+              <ul style="margin: 0 0 30px; padding-left: 25px; font-size: 16px; color: #2a3a4a; line-height: 2.2;">
+                <li>VIP events & exclusive experiences</li>
+                <li>Private travel & aviation partnerships</li>
+                <li>Fine art, yachts & luxury real estate</li>
+                <li>Competitive commission structures</li>
               </ul>
               
               <!-- CTA Button -->
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 30px auto;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 35px auto;">
                 <tr>
-                  <td style="border-radius: 8px; background: linear-gradient(135deg, #c9a55c 0%, #a08040 100%);">
-                    <a href="${inviteLink}" target="_blank" style="display: inline-block; padding: 16px 40px; font-size: 14px; font-weight: 500; letter-spacing: 2px; color: #0a0a0a; text-decoration: none; text-transform: uppercase;">
+                  <td style="border-radius: 8px; background: linear-gradient(135deg, #D4AF37 0%, #b8962f 100%); box-shadow: 0 8px 25px -5px rgba(212,175,55,0.4);">
+                    <a href="${inviteLink}" target="_blank" style="display: inline-block; padding: 18px 50px; font-size: 14px; font-weight: 600; letter-spacing: 3px; color: #15233A; text-decoration: none; text-transform: uppercase; font-family: 'Cormorant Garamond', Georgia, serif;">
                       Apply Now
                     </a>
                   </td>
                 </tr>
               </table>
               
-              <p style="margin: 30px 0 0; font-size: 14px; color: #666; text-align: center; line-height: 1.6;">
-                Your application will be reviewed within 48 hours. Upon approval, you'll receive full access to our Partner Portal.
+              <p style="margin: 30px 0 0; font-size: 15px; color: #5a6a7a; text-align: center; line-height: 1.7;">
+                To connect and book your next opportunity, reply to this message or schedule a confidential call with our partnerships team.
               </p>
             </td>
           </tr>
           
-          <!-- Footer -->
+          <!-- Signature & Footer -->
           <tr>
-            <td style="padding: 30px 40px; background-color: #0d0d0d; border-top: 1px solid #c9a55c20; text-align: center;">
-              <p style="margin: 0; font-size: 12px; color: #555;">
+            <td style="padding: 35px 50px 45px; background: linear-gradient(0deg, rgba(212,175,55,0.08) 0%, transparent 100%); border-top: 1px solid rgba(212,175,55,0.3);">
+              <p style="margin: 0 0 25px; font-family: 'Fredericka the Great', cursive; font-size: 20px; color: #D4AF37; line-height: 1.6;">
+                Yours in Luxury,<br/>
+                <span style="font-size: 18px;">Aurelia Private Concierge</span>
+              </p>
+              
+              <p style="margin: 0; font-size: 12px; color: #7a8a9a; text-align: center;">
                 © ${new Date().getFullYear()} Aurelia Concierge. All rights reserved.
               </p>
-              <p style="margin: 10px 0 0; font-size: 11px; color: #444;">
+              <p style="margin: 8px 0 0; font-size: 11px; color: #9aa5b0; text-align: center;">
                 This is an exclusive invitation. Please do not forward this email.
               </p>
             </td>

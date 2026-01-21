@@ -115,6 +115,123 @@ export type Database = {
           },
         ]
       }
+      auction_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      auction_consignments: {
+        Row: {
+          auction_id: string | null
+          authenticity_documents: string[] | null
+          category_id: string | null
+          condition_report: string | null
+          created_at: string
+          description: string
+          estimated_value_max: number | null
+          estimated_value_min: number | null
+          id: string
+          images: string[] | null
+          provenance: string | null
+          reserve_price_request: number | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          reviewer_notes: string | null
+          status: string | null
+          submitter_id: string
+          submitter_type: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          auction_id?: string | null
+          authenticity_documents?: string[] | null
+          category_id?: string | null
+          condition_report?: string | null
+          created_at?: string
+          description: string
+          estimated_value_max?: number | null
+          estimated_value_min?: number | null
+          id?: string
+          images?: string[] | null
+          provenance?: string | null
+          reserve_price_request?: number | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_notes?: string | null
+          status?: string | null
+          submitter_id: string
+          submitter_type: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          auction_id?: string | null
+          authenticity_documents?: string[] | null
+          category_id?: string | null
+          condition_report?: string | null
+          created_at?: string
+          description?: string
+          estimated_value_max?: number | null
+          estimated_value_min?: number | null
+          id?: string
+          images?: string[] | null
+          provenance?: string | null
+          reserve_price_request?: number | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_notes?: string | null
+          status?: string | null
+          submitter_id?: string
+          submitter_type?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auction_consignments_auction_id_fkey"
+            columns: ["auction_id"]
+            isOneToOne: false
+            referencedRelation: "auctions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "auction_consignments_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "auction_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       auction_watchlist: {
         Row: {
           auction_id: string
@@ -146,61 +263,94 @@ export type Database = {
       }
       auctions: {
         Row: {
+          approval_status: string | null
+          authenticity_verified: boolean | null
           buy_now_price: number | null
+          buyer_premium_percent: number | null
           category: string
+          condition_report: string | null
           created_at: string
           created_by: string | null
           currency: string
           current_bid: number | null
           description: string | null
           ends_at: string
+          featured: boolean | null
           id: string
           images: string[] | null
+          provenance: string | null
+          rejection_reason: string | null
+          reserve_met: boolean | null
           reserve_price: number | null
+          seller_commission_percent: number | null
           specifications: Json | null
           starting_price: number
           starts_at: string
           status: string
+          submitted_by: string | null
+          submitted_by_type: string | null
           title: string
           updated_at: string
           winner_id: string | null
         }
         Insert: {
+          approval_status?: string | null
+          authenticity_verified?: boolean | null
           buy_now_price?: number | null
+          buyer_premium_percent?: number | null
           category?: string
+          condition_report?: string | null
           created_at?: string
           created_by?: string | null
           currency?: string
           current_bid?: number | null
           description?: string | null
           ends_at: string
+          featured?: boolean | null
           id?: string
           images?: string[] | null
+          provenance?: string | null
+          rejection_reason?: string | null
+          reserve_met?: boolean | null
           reserve_price?: number | null
+          seller_commission_percent?: number | null
           specifications?: Json | null
           starting_price?: number
           starts_at?: string
           status?: string
+          submitted_by?: string | null
+          submitted_by_type?: string | null
           title: string
           updated_at?: string
           winner_id?: string | null
         }
         Update: {
+          approval_status?: string | null
+          authenticity_verified?: boolean | null
           buy_now_price?: number | null
+          buyer_premium_percent?: number | null
           category?: string
+          condition_report?: string | null
           created_at?: string
           created_by?: string | null
           currency?: string
           current_bid?: number | null
           description?: string | null
           ends_at?: string
+          featured?: boolean | null
           id?: string
           images?: string[] | null
+          provenance?: string | null
+          rejection_reason?: string | null
+          reserve_met?: boolean | null
           reserve_price?: number | null
+          seller_commission_percent?: number | null
           specifications?: Json | null
           starting_price?: number
           starts_at?: string
           status?: string
+          submitted_by?: string | null
+          submitted_by_type?: string | null
           title?: string
           updated_at?: string
           winner_id?: string | null
@@ -2021,6 +2171,60 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_recommendations: {
+        Row: {
+          created_at: string
+          id: string
+          match_reasons: string[] | null
+          match_score: number
+          notified_at: string | null
+          partner_id: string
+          responded_at: string | null
+          service_request_id: string
+          status: Database["public"]["Enums"]["recommendation_status"] | null
+          viewed_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          match_reasons?: string[] | null
+          match_score: number
+          notified_at?: string | null
+          partner_id: string
+          responded_at?: string | null
+          service_request_id: string
+          status?: Database["public"]["Enums"]["recommendation_status"] | null
+          viewed_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          match_reasons?: string[] | null
+          match_score?: number
+          notified_at?: string | null
+          partner_id?: string
+          responded_at?: string | null
+          service_request_id?: string
+          status?: Database["public"]["Enums"]["recommendation_status"] | null
+          viewed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_recommendations_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "partner_recommendations_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       partner_services: {
         Row: {
           availability_notes: string | null
@@ -2948,6 +3152,72 @@ export type Database = {
           },
         ]
       }
+      service_request_bids: {
+        Row: {
+          attachments: string[] | null
+          bid_amount: number
+          bid_message: string
+          created_at: string
+          currency: string | null
+          estimated_duration: string | null
+          id: string
+          is_recommended: boolean | null
+          partner_id: string
+          proposed_timeline: string | null
+          response_notes: string | null
+          service_request_id: string
+          status: Database["public"]["Enums"]["bid_status"] | null
+          updated_at: string
+        }
+        Insert: {
+          attachments?: string[] | null
+          bid_amount: number
+          bid_message: string
+          created_at?: string
+          currency?: string | null
+          estimated_duration?: string | null
+          id?: string
+          is_recommended?: boolean | null
+          partner_id: string
+          proposed_timeline?: string | null
+          response_notes?: string | null
+          service_request_id: string
+          status?: Database["public"]["Enums"]["bid_status"] | null
+          updated_at?: string
+        }
+        Update: {
+          attachments?: string[] | null
+          bid_amount?: number
+          bid_message?: string
+          created_at?: string
+          currency?: string | null
+          estimated_duration?: string | null
+          id?: string
+          is_recommended?: boolean | null
+          partner_id?: string
+          proposed_timeline?: string | null
+          response_notes?: string | null
+          service_request_id?: string
+          status?: Database["public"]["Enums"]["bid_status"] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_request_bids_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_request_bids_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_request_updates: {
         Row: {
           created_at: string
@@ -3003,6 +3273,10 @@ export type Database = {
       }
       service_requests: {
         Row: {
+          auto_recommend_partners: boolean | null
+          bidding_deadline: string | null
+          bidding_enabled: boolean | null
+          blind_bidding: boolean | null
           budget_max: number | null
           budget_min: number | null
           category: Database["public"]["Enums"]["service_category"]
@@ -3011,6 +3285,8 @@ export type Database = {
           description: string
           id: string
           internal_notes: string | null
+          max_bids_allowed: number | null
+          min_bids_required: number | null
           partner_id: string | null
           partner_response: string | null
           preferred_date: string | null
@@ -3019,8 +3295,13 @@ export type Database = {
           status: Database["public"]["Enums"]["request_status"]
           title: string
           updated_at: string
+          winning_bid_id: string | null
         }
         Insert: {
+          auto_recommend_partners?: boolean | null
+          bidding_deadline?: string | null
+          bidding_enabled?: boolean | null
+          blind_bidding?: boolean | null
           budget_max?: number | null
           budget_min?: number | null
           category: Database["public"]["Enums"]["service_category"]
@@ -3029,6 +3310,8 @@ export type Database = {
           description: string
           id?: string
           internal_notes?: string | null
+          max_bids_allowed?: number | null
+          min_bids_required?: number | null
           partner_id?: string | null
           partner_response?: string | null
           preferred_date?: string | null
@@ -3037,8 +3320,13 @@ export type Database = {
           status?: Database["public"]["Enums"]["request_status"]
           title: string
           updated_at?: string
+          winning_bid_id?: string | null
         }
         Update: {
+          auto_recommend_partners?: boolean | null
+          bidding_deadline?: string | null
+          bidding_enabled?: boolean | null
+          blind_bidding?: boolean | null
           budget_max?: number | null
           budget_min?: number | null
           category?: Database["public"]["Enums"]["service_category"]
@@ -3047,6 +3335,8 @@ export type Database = {
           description?: string
           id?: string
           internal_notes?: string | null
+          max_bids_allowed?: number | null
+          min_bids_required?: number | null
           partner_id?: string | null
           partner_response?: string | null
           preferred_date?: string | null
@@ -3055,8 +3345,16 @@ export type Database = {
           status?: Database["public"]["Enums"]["request_status"]
           title?: string
           updated_at?: string
+          winning_bid_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_winning_bid"
+            columns: ["winning_bid_id"]
+            isOneToOne: false
+            referencedRelation: "service_request_bids"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "service_requests_partner_id_fkey"
             columns: ["partner_id"]
@@ -3825,9 +4123,11 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "partner" | "member"
+      bid_status: "pending" | "accepted" | "rejected" | "withdrawn" | "expired"
       certificate_status: "active" | "pending" | "expired" | "revoked"
       encryption_key_status: "active" | "rotating" | "retired" | "compromised"
       partner_status: "pending" | "approved" | "suspended" | "rejected"
+      recommendation_status: "pending" | "viewed" | "bid_submitted" | "declined"
       request_status:
         | "pending"
         | "accepted"
@@ -3974,9 +4274,11 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "partner", "member"],
+      bid_status: ["pending", "accepted", "rejected", "withdrawn", "expired"],
       certificate_status: ["active", "pending", "expired", "revoked"],
       encryption_key_status: ["active", "rotating", "retired", "compromised"],
       partner_status: ["pending", "approved", "suspended", "rejected"],
+      recommendation_status: ["pending", "viewed", "bid_submitted", "declined"],
       request_status: [
         "pending",
         "accepted",

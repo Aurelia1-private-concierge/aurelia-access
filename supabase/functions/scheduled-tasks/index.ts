@@ -13,9 +13,6 @@ interface ScheduledTask {
   config: Record<string, unknown> | null;
 }
 
-// deno-lint-ignore no-explicit-any
-type SupabaseClientType = ReturnType<typeof createClient>;
-
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -151,7 +148,8 @@ function calculateNextRun(cronExpression: string): string {
   return next.toISOString();
 }
 
-async function handleCreditReset(supabase: SupabaseClientType) {
+// deno-lint-ignore no-explicit-any
+async function handleCreditReset(supabase: any) {
   const today = new Date();
   const dayOfMonth = today.getDate();
   
@@ -175,7 +173,8 @@ async function handleCreditReset(supabase: SupabaseClientType) {
   return { message: 'Not the first of the month, skipping' };
 }
 
-async function handleNotifications(supabase: SupabaseClientType) {
+// deno-lint-ignore no-explicit-any
+async function handleNotifications(supabase: any) {
   const { data: pendingNotifications } = await supabase
     .from('proactive_notification_queue')
     .select('*')
@@ -198,7 +197,8 @@ async function handleNotifications(supabase: SupabaseClientType) {
   return { message: `Sent ${sentCount} notifications` };
 }
 
-async function handlePartnerScoring(supabase: SupabaseClientType) {
+// deno-lint-ignore no-explicit-any
+async function handlePartnerScoring(supabase: any) {
   const periodEnd = new Date();
   const periodStart = new Date();
   periodStart.setMonth(periodStart.getMonth() - 1);
@@ -228,7 +228,8 @@ async function handlePartnerScoring(supabase: SupabaseClientType) {
   return { message: `Scored ${scoredCount} partners` };
 }
 
-async function handleMaintenance(supabase: SupabaseClientType) {
+// deno-lint-ignore no-explicit-any
+async function handleMaintenance(supabase: any) {
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -238,7 +239,8 @@ async function handleMaintenance(supabase: SupabaseClientType) {
   return { message: 'Maintenance complete', deleted: { uptime_checks: uptimeDeleted || 0, performance_metrics: metricsDeleted || 0 } };
 }
 
-async function handleReportGeneration(supabase: SupabaseClientType, config: Record<string, unknown> | null) {
+// deno-lint-ignore no-explicit-any
+async function handleReportGeneration(supabase: any, config: Record<string, unknown> | null) {
   const now = new Date();
   const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 

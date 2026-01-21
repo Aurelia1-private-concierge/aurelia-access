@@ -40,27 +40,25 @@ export function usePartnerScoring(partnerId?: string) {
     if (!partnerId) return;
 
     const { data } = await supabase
-      .from('partner_performance_scores')
+      .from('partner_performance_scores' as any)
       .select('*')
       .eq('partner_id', partnerId)
       .order('created_at', { ascending: false });
 
-    if (data) setScores(data as PartnerScore[]);
+    if (data) setScores(data as unknown as PartnerScore[]);
   }, [partnerId]);
 
   const calculatePerformance = useCallback(async () => {
     if (!partnerId) return;
 
-    // Get partner info
     const { data: partner } = await supabase
       .from('partners')
-      .select('id, company_name, rating')
+      .select('id, company_name')
       .eq('id', partnerId)
       .single();
 
     if (!partner) return;
 
-    // Get service request stats
     const { data: requests, count } = await supabase
       .from('service_requests')
       .select('id, status, created_at, updated_at', { count: 'exact' })
@@ -69,7 +67,6 @@ export function usePartnerScoring(partnerId?: string) {
     const completedRequests = requests?.filter(r => r.status === 'completed').length || 0;
     const totalRequests = count || 0;
 
-    // Get latest scores by type
     const latestScores = scores.reduce((acc, score) => {
       if (!acc[score.score_type] || new Date(score.created_at) > new Date(acc[score.score_type].created_at)) {
         acc[score.score_type] = score;
@@ -77,7 +74,6 @@ export function usePartnerScoring(partnerId?: string) {
       return acc;
     }, {} as Record<string, PartnerScore>);
 
-    // Calculate overall from components if not present
     const responseTimeScore = latestScores.response_time?.score ?? 80;
     const satisfactionScore = latestScores.satisfaction?.score ?? 85;
     const reliabilityScore = latestScores.reliability?.score ?? 90;
@@ -86,7 +82,6 @@ export function usePartnerScoring(partnerId?: string) {
     const overallScore = latestScores.overall?.score ?? 
       (responseTimeScore * 0.2 + satisfactionScore * 0.3 + reliabilityScore * 0.3 + qualityScore * 0.2);
 
-    // Determine trend based on last two overall scores
     const overallScores = scores
       .filter(s => s.score_type === 'overall')
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
@@ -95,19 +90,6 @@ export function usePartnerScoring(partnerId?: string) {
     if (overallScores.length >= 2) {
       const diff = overallScores[0].score - overallScores[1].score;
       trend = diff > 2 ? 'up' : diff < -2 ? 'down' : 'stable';
-    }
-
-    // Calculate avg response time from bids
-    const { data: bids } = await supabase
-      .from('service_request_bids')
-      .select('created_at, service_request_id')
-      .eq('partner_id', partnerId)
-      .limit(50);
-
-    let avgResponseTime = 0;
-    if (bids && bids.length > 0) {
-      // This is a simplified calculation - in reality, we'd compare to request creation time
-      avgResponseTime = 2.5; // hours placeholder
     }
 
     setPerformance({
@@ -122,7 +104,7 @@ export function usePartnerScoring(partnerId?: string) {
       },
       totalRequests,
       completedRequests,
-      avgResponseTime,
+      avgResponseTime: 2.5, // Placeholder
       trend,
     });
   }, [partnerId, scores]);
@@ -151,8 +133,7 @@ export function usePartnerScoring(partnerId?: string) {
   ) => {
     if (!partnerId) return { error: 'No partner ID' };
 
-    const { data, error } = await supabase
-      .from('partner_performance_scores')
+    const { data, error } = await (supabase.from('partner_performance_scores' as any) as any)
       .insert({
         partner_id: partnerId,
         score_type: scoreType,
@@ -172,7 +153,6 @@ export function usePartnerScoring(partnerId?: string) {
     return { data, error };
   }, [partnerId]);
 
-  // Calculate all partner scores (admin function)
   const calculateAllPartnerScores = useCallback(async () => {
     const { data: partners } = await supabase
       .from('partners')
@@ -186,7 +166,6 @@ export function usePartnerScoring(partnerId?: string) {
     periodStart.setMonth(periodStart.getMonth() - 1);
 
     for (const partner of partners) {
-      // Get completed requests in period
       const { data: requests } = await supabase
         .from('service_requests')
         .select('id, status, created_at, updated_at')
@@ -199,8 +178,7 @@ export function usePartnerScoring(partnerId?: string) {
       const completed = requests.filter(r => r.status === 'completed').length;
       const reliabilityScore = (completed / requests.length) * 100;
 
-      // Insert reliability score
-      await supabase.from('partner_performance_scores').insert({
+      await (supabase.from('partner_performance_scores' as any) as any).insert({
         partner_id: partner.id,
         score_type: 'reliability',
         score: reliabilityScore,
@@ -209,12 +187,10 @@ export function usePartnerScoring(partnerId?: string) {
         sample_size: requests.length,
       });
 
-      // Calculate and insert overall score
-      const overall = reliabilityScore; // Simplified - would combine multiple scores
-      await supabase.from('partner_performance_scores').insert({
+      await (supabase.from('partner_performance_scores' as any) as any).insert({
         partner_id: partner.id,
         score_type: 'overall',
-        score: overall,
+        score: reliabilityScore,
         period_start: periodStart.toISOString(),
         period_end: periodEnd.toISOString(),
         sample_size: requests.length,

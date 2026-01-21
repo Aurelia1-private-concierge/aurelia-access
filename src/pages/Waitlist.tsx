@@ -208,13 +208,13 @@ const Waitlist = () => {
             <motion.div
               key={i}
               className="absolute w-1 h-1 bg-primary/30 rounded-full"
-              initial={{ 
-                x: Math.random() * window.innerWidth, 
-                y: Math.random() * window.innerHeight,
-                opacity: 0 
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
               }}
+              initial={{ opacity: 0 }}
               animate={{ 
-                y: [null, Math.random() * -200],
+                y: [0, Math.random() * -200],
                 opacity: [0, 1, 0],
               }}
               transition={{ 

@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-interface HealthStatus {
+export interface HealthStatus {
   database: 'healthy' | 'degraded' | 'offline';
   network: 'online' | 'offline';
   auth: 'authenticated' | 'expired' | 'none';
   lastCheck: Date;
   autoHealed: number;
+  consecutiveFailures: number;
 }
 
 interface HealingAction {
@@ -23,6 +24,7 @@ export const useSelfHealing = () => {
     auth: 'none',
     lastCheck: new Date(),
     autoHealed: 0,
+    consecutiveFailures: 0,
   });
   
   const [healingLog, setHealingLog] = useState<HealingAction[]>([]);
@@ -124,12 +126,18 @@ export const useSelfHealing = () => {
 
     const networkStatus = navigator.onLine ? 'online' : 'offline';
 
+    // Track consecutive failures for infrastructure escalation
+    const wasHealthy = healthStatus.database === 'healthy' && healthStatus.network === 'online';
+    const isHealthy = dbStatus === 'healthy' && networkStatus === 'online';
+    const newConsecutiveFailures = isHealthy ? 0 : healthStatus.consecutiveFailures + 1;
+
     setHealthStatus({
       database: dbStatus,
       network: networkStatus,
       auth: authStatus,
       lastCheck: new Date(),
       autoHealed: healthStatus.autoHealed,
+      consecutiveFailures: newConsecutiveFailures,
     });
 
     // Auto-heal if needed

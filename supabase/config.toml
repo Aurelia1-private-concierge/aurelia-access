@@ -158,3 +158,6 @@ verify_jwt = false
 
 [functions.publication-diagnostics]
 verify_jwt = false
+
+[functions.publication-health-check]
+verify_jwt = false

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { 
   Webhook, Plus, Trash2, ToggleLeft, ToggleRight, 
   Mail, Bell, Activity, TrendingUp, CheckCircle, XCircle,
-  MessageSquare, Database, Zap
+  MessageSquare, Database, Zap, Send, Loader2
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -36,8 +36,10 @@ interface WebhookEndpoint {
   url: string;
   endpoint_type: string;
   events: string[];
+  headers: Record<string, string> | null;
   is_active: boolean;
   created_at: string;
+  last_triggered_at?: string;
 }
 
 interface AutomationLog {
@@ -69,10 +71,12 @@ const ContactAutomationPanel = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isAddingWebhook, setIsAddingWebhook] = useState(false);
+  const [testingWebhookId, setTestingWebhookId] = useState<string | null>(null);
   const [newWebhook, setNewWebhook] = useState({
     name: "",
     url: "",
     endpoint_type: "n8n",
+    auth_header: "",
   });
 
   // Fetch webhooks
@@ -128,6 +132,11 @@ const ContactAutomationPanel = () => {
   // Add webhook mutation
   const addWebhookMutation = useMutation({
     mutationFn: async (webhook: typeof newWebhook) => {
+      const headers: Record<string, string> = {};
+      if (webhook.auth_header) {
+        headers['Authorization'] = webhook.auth_header;
+      }
+      
       const { data, error } = await supabase
         .from("webhook_endpoints")
         .insert({
@@ -135,6 +144,7 @@ const ContactAutomationPanel = () => {
           url: webhook.url,
           endpoint_type: webhook.endpoint_type,
           events: ["contact_form"],
+          headers: Object.keys(headers).length > 0 ? headers : null,
           is_active: true,
         })
         .select()
@@ -145,7 +155,7 @@ const ContactAutomationPanel = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["webhook-endpoints"] });
       setIsAddingWebhook(false);
-      setNewWebhook({ name: "", url: "", endpoint_type: "n8n" });
+      setNewWebhook({ name: "", url: "", endpoint_type: "n8n", auth_header: "" });
       toast({ title: "Webhook added", description: "The webhook endpoint has been configured." });
     },
     onError: (error: any) => {
@@ -179,6 +189,65 @@ const ContactAutomationPanel = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["webhook-endpoints"] });
       toast({ title: "Webhook deleted" });
+    },
+  });
+
+  // Test webhook
+  const testWebhookMutation = useMutation({
+    mutationFn: async (webhook: WebhookEndpoint) => {
+      setTestingWebhookId(webhook.id);
+      
+      const testPayload = {
+        event: 'contact_form_submission',
+        timestamp: new Date().toISOString(),
+        test: true,
+        data: {
+          id: 'test-' + Date.now(),
+          name: 'Test User',
+          email: 'test@example.com',
+          phone: '+1234567890',
+          message: 'This is a test webhook delivery from Aurelia admin panel.',
+          source: 'admin_test',
+          lead_score: 75,
+          created_at: new Date().toISOString(),
+        }
+      };
+
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Aurelia-Webhook/1.0',
+        'X-Webhook-Test': 'true',
+        ...(webhook.headers || {})
+      };
+
+      const response = await fetch(webhook.url, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(testPayload),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => 'No response body');
+        throw new Error(`HTTP ${response.status}: ${errorText.slice(0, 200)}`);
+      }
+
+      return response.status;
+    },
+    onSuccess: (status) => {
+      setTestingWebhookId(null);
+      queryClient.invalidateQueries({ queryKey: ["webhook-endpoints"] });
+      toast({ 
+        title: "✓ Webhook test successful", 
+        description: `Received HTTP ${status} response` 
+      });
+    },
+    onError: (error: any) => {
+      setTestingWebhookId(null);
+      toast({ 
+        title: "Webhook test failed", 
+        description: error.message,
+        variant: "destructive" 
+      });
     },
   });
 
@@ -251,8 +320,21 @@ const ContactAutomationPanel = () => {
               <div>
                 <p className="text-2xl font-semibold">{stats?.avgLeadScore || 0}</p>
                 <p className="text-xs text-muted-foreground">Avg Lead Score</p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="auth">Authorization Header (optional)</Label>
+                  <Input
+                    id="auth"
+                    type="password"
+                    placeholder="Bearer your-secret-token"
+                    value={newWebhook.auth_header}
+                    onChange={(e) => setNewWebhook({ ...newWebhook, auth_header: e.target.value })}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    For n8n, use your webhook authentication token
+                  </p>
+                </div>
               </div>
-            </div>
           </CardContent>
         </Card>
       </div>
@@ -371,13 +453,37 @@ const ContactAutomationPanel = () => {
                             <Badge variant={webhook.is_active ? "default" : "secondary"} className="text-[10px]">
                               {webhook.endpoint_type}
                             </Badge>
+                            {webhook.headers && Object.keys(webhook.headers).length > 0 && (
+                              <Badge variant="outline" className="text-[10px]">
+                                Auth
+                              </Badge>
+                            )}
                           </div>
                           <p className="text-xs text-muted-foreground truncate max-w-[300px]">
                             {webhook.url}
                           </p>
+                          {webhook.last_triggered_at && (
+                            <p className="text-[10px] text-muted-foreground/60 mt-0.5">
+                              Last triggered: {new Date(webhook.last_triggered_at).toLocaleString()}
+                            </p>
+                          )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          title="Test webhook"
+                          disabled={testingWebhookId === webhook.id}
+                          onClick={() => testWebhookMutation.mutate(webhook)}
+                        >
+                          {testingWebhookId === webhook.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Send className="w-4 h-4" />
+                          )}
+                        </Button>
                         <Button
                           variant="ghost"
                           size="icon"

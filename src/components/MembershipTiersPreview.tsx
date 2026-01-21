@@ -8,7 +8,6 @@ const MembershipTiersPreview = () => {
   const { t } = useTranslation();
   const { formatCurrency, currency } = useGlobal();
   
-  // Base prices in EUR, convert based on locale
   const conversionRates: Record<string, number> = {
     EUR: 1,
     USD: 1.08,
@@ -22,7 +21,7 @@ const MembershipTiersPreview = () => {
   
   const tiers = [
     {
-      name: "Silver",
+      name: "Signature",
       basePrice: 2500,
       period: "/year",
       description: t("membership.silverDesc") || "Essential luxury services",
@@ -37,49 +36,42 @@ const MembershipTiersPreview = () => {
       highlighted: false,
     },
     {
-      name: "Gold",
+      name: "Prestige",
       basePrice: 10000,
       period: "/year",
       description: t("membership.goldDesc") || "Premium lifestyle management",
       icon: Crown,
       features: [
-        t("membership.featureEverythingSilver") || "Everything in Silver",
+        t("membership.featureEverythingSilver") || "Everything in Signature",
         t("membership.featureDedicated") || "Dedicated personal concierge",
         t("membership.featureAviation") || "Private aviation booking",
         t("membership.featureCar") || "Luxury car rentals",
         t("membership.featureUnlimited") || "Unlimited priority requests",
         t("membership.featureProperty") || "Property management",
-        t("membership.featureShopping") || "Personal shopping services",
       ],
       highlighted: true,
     },
     {
-      name: "Platinum",
+      name: "Black Card",
       basePrice: 0,
       period: "",
       description: t("membership.platinumDesc") || "Ultimate bespoke experience",
       icon: Gem,
       features: [
-        t("membership.featureEverythingGold") || "Everything in Gold",
+        t("membership.featureEverythingGold") || "Everything in Prestige",
         t("membership.featureFamily") || "Family office integration",
         t("membership.featureYacht") || "Yacht charter management",
         t("membership.featureArt") || "Art acquisition advisory",
         t("membership.featureSecurity") || "Security coordination",
-        t("membership.featureRelocation") || "Global relocation services",
         t("membership.featureTeam") || "24/7 dedicated team",
-        t("membership.featureRetreat") || "Annual luxury retreat",
       ],
       highlighted: false,
     },
   ];
 
   return (
-    <section className="py-24 md:py-32 bg-background relative overflow-hidden">
-      {/* Background effects */}
-      <div className="absolute inset-0 bg-gradient-to-b from-card/30 via-transparent to-card/30 pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/[0.02] blur-[200px] rounded-full pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
+    <section id="membership" className="py-24 md:py-32 bg-background relative">
+      <div className="max-w-6xl mx-auto px-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -87,116 +79,105 @@ const MembershipTiersPreview = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center gap-4 mb-6">
-            <span className="w-12 h-px bg-primary/40" />
-            <p className="text-[11px] uppercase tracking-[0.4em] text-primary/70 font-medium">
-              {t("membership.tiers") || "Membership Tiers"}
-            </p>
-            <span className="w-12 h-px bg-primary/40" />
-          </div>
+          <span className="text-[10px] uppercase tracking-[0.4em] text-muted-foreground block mb-4">
+            {t("membership.tiers") || "Membership"}
+          </span>
           <h2 
             className="text-4xl md:text-5xl text-foreground tracking-[-0.02em] mb-4"
             style={{ fontFamily: "'Cormorant Garamond', serif" }}
           >
-            {t("membership.chooseLevel") || "Choose Your"} <span className="italic text-muted-foreground/70">{t("membership.level") || "Level"}</span>
+            {t("membership.chooseLevel") || "Choose Your Level"}
           </h2>
-          <p className="text-muted-foreground font-light max-w-2xl mx-auto">
-            {t("membership.selectTier") || "Select the tier that matches your lifestyle. Upgrade anytime as your needs evolve."}
+          <p className="text-muted-foreground font-light max-w-xl mx-auto">
+            {t("membership.selectTier") || "Select the tier that matches your lifestyle."}
           </p>
         </motion.div>
 
         {/* Tiers Grid */}
-        <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid md:grid-cols-3 gap-6">
           {tiers.map((tier, index) => (
             <motion.div
               key={tier.name}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.15 }}
-              className={`relative group p-8 transition-all duration-500 ${
+              transition={{ delay: index * 0.1 }}
+              className={`relative p-8 transition-all duration-500 ${
                 tier.highlighted
-                  ? 'bg-card border-2 border-primary/30 shadow-lg shadow-primary/10'
-                  : 'bg-card/50 border border-border/20 hover:border-border/40'
+                  ? 'bg-card border border-primary/30'
+                  : 'bg-card/30 border border-border/10 hover:border-border/30'
               }`}
             >
-              {/* Highlighted badge */}
               {tier.highlighted && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="px-4 py-1 bg-primary text-primary-foreground text-[10px] uppercase tracking-[0.2em]">
-                    {t("membership.mostPopular") || "Most Popular"}
+                  <span className="px-3 py-1 bg-primary text-primary-foreground text-[9px] uppercase tracking-[0.2em]">
+                    Popular
                   </span>
                 </div>
               )}
 
-              {/* Icon */}
-              <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-6 ${
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-6 ${
                 tier.highlighted 
-                  ? 'bg-primary/20 border border-primary/30' 
-                  : 'bg-background border border-border/30'
+                  ? 'border border-primary/30' 
+                  : 'border border-border/20'
               }`}>
-                <tier.icon className={`w-6 h-6 ${tier.highlighted ? 'text-primary' : 'text-muted-foreground'}`} />
+                <tier.icon className={`w-5 h-5 ${tier.highlighted ? 'text-primary' : 'text-muted-foreground'}`} strokeWidth={1.5} />
               </div>
 
-              {/* Tier name */}
               <h3 
-                className="text-2xl text-foreground mb-2"
+                className="text-xl text-foreground mb-2"
                 style={{ fontFamily: "'Cormorant Garamond', serif" }}
               >
                 {tier.name}
               </h3>
-              <p className="text-sm text-muted-foreground mb-6">{tier.description}</p>
+              <p className="text-xs text-muted-foreground mb-6">{tier.description}</p>
 
-              {/* Price */}
-              <div className="mb-8">
+              <div className="mb-6">
                 <span 
-                  className="text-3xl text-foreground"
+                  className="text-2xl text-foreground"
                   style={{ fontFamily: "'Cormorant Garamond', serif" }}
                 >
                   {tier.basePrice === 0 
-                    ? (t("membership.byInvitation") || "By Invitation")
+                    ? "By Invitation"
                     : formatCurrency(Math.round(tier.basePrice * rate))
                   }
                 </span>
-                <span className="text-sm text-muted-foreground">{tier.period}</span>
+                <span className="text-xs text-muted-foreground">{tier.period}</span>
               </div>
 
-              {/* Features */}
-              <ul className="space-y-3 mb-8">
+              <ul className="space-y-2 mb-8">
                 {tier.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-3 text-sm text-muted-foreground">
-                    <Check className={`w-4 h-4 mt-0.5 flex-shrink-0 ${
-                      tier.highlighted ? 'text-primary' : 'text-muted-foreground'
+                  <li key={feature} className="flex items-start gap-2 text-xs text-muted-foreground">
+                    <Check className={`w-3.5 h-3.5 mt-0.5 flex-shrink-0 ${
+                      tier.highlighted ? 'text-primary' : 'text-muted-foreground/50'
                     }`} />
                     {feature}
                   </li>
                 ))}
               </ul>
 
-              {/* CTA */}
               <Link
                 to="/auth"
-                className={`block w-full py-4 text-center text-sm font-semibold tracking-[0.15em] uppercase transition-all duration-300 rounded-md cursor-pointer ${
+                className={`block w-full py-3 text-center text-[10px] font-medium tracking-[0.2em] uppercase transition-all duration-300 ${
                   tier.highlighted
-                    ? 'bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] hover:-translate-y-0.5 shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.6)] hover:shadow-[0_8px_30px_-4px_hsl(var(--primary)/0.7)] active:scale-[0.98]'
-                    : 'bg-foreground/10 border-2 border-foreground/30 text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary hover:scale-[1.02] hover:-translate-y-0.5 shadow-[0_4px_15px_-4px_hsl(var(--foreground)/0.2)] hover:shadow-[0_8px_25px_-4px_hsl(var(--primary)/0.5)] active:scale-[0.98]'
+                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                    : 'bg-transparent border border-primary/30 text-foreground hover:bg-primary/5'
                 }`}
               >
-                {tier.basePrice === 0 ? (t("membership.requestAccess") || "Request Access") : (t("membership.applyNow") || "Apply Now")}
+                {tier.basePrice === 0 ? "Request Access" : "Apply Now"}
               </Link>
             </motion.div>
           ))}
         </div>
 
-        {/* Bottom note */}
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
-          className="text-center text-xs text-muted-foreground/50 mt-12"
+          transition={{ delay: 0.4 }}
+          className="text-center text-[10px] text-muted-foreground/40 mt-10"
         >
-          {t("membership.guarantee") || "All memberships include a 30-day satisfaction guarantee"}
+          30-day satisfaction guarantee on all memberships
         </motion.p>
       </div>
     </section>

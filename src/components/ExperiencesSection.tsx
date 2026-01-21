@@ -1,66 +1,102 @@
 import { Check, ArrowRight } from "lucide-react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import OptimizedImage from "./OptimizedImage";
 
 const images = [
-  { src: "https://images.unsplash.com/photo-1577705998148-6da4f3963bc8", alt: "Luxury Yacht", offset: false },
-  { src: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3", alt: "Luxury Watch", offset: true },
-  { src: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c", alt: "Luxury Interiors", offset: false },
-  { src: "https://images.unsplash.com/photo-1540962351504-03099e0a754b", alt: "Private Jet", offset: true },
+  { src: "https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?w=600", alt: "Luxury Yacht", offset: false },
+  { src: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=600", alt: "Luxury Watch", offset: true },
+  { src: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600", alt: "Luxury Interiors", offset: false },
+  { src: "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=600", alt: "Private Jet", offset: true },
 ];
 
 const ExperiencesSection = () => {
   const { t } = useTranslation();
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const glowY = useTransform(scrollYProgress, [0, 1], ["-30%", "30%"]);
-  const imagesY = useTransform(scrollYProgress, [0, 1], ["5%", "-5%"]);
 
-  const benefits = [t("experiences.benefit1"), t("experiences.benefit2"), t("experiences.benefit3")];
+  const benefits = [
+    t("experiences.benefit1"),
+    t("experiences.benefit2"),
+    t("experiences.benefit3")
+  ];
 
   return (
-    <section ref={ref} id="experiences" className="py-24 bg-secondary/20 relative overflow-hidden">
-      <motion.div style={{ y: glowY }} className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="space-y-8 order-2 lg:order-1">
-          <div className="space-y-4">
-            <p className="text-primary text-xs font-medium tracking-[0.2em] uppercase">{t("experiences.label")}</p>
-            <h2 className="font-serif text-4xl md:text-5xl text-foreground tracking-tight">
-              {t("experiences.title")} <br /><span className="italic text-muted-foreground">{t("experiences.titleHighlight")}</span>
+    <section id="experiences" className="py-24 md:py-32 bg-card/20 relative">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          {/* Content */}
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }} 
+            whileInView={{ opacity: 1, x: 0 }} 
+            viewport={{ once: true }}
+            className="order-2 lg:order-1"
+          >
+            <span className="text-[10px] uppercase tracking-[0.4em] text-muted-foreground block mb-4">
+              {t("experiences.label")}
+            </span>
+            <h2 
+              className="text-4xl md:text-5xl text-foreground tracking-[-0.02em] mb-6"
+              style={{ fontFamily: "'Cormorant Garamond', serif" }}
+            >
+              {t("experiences.title")}
             </h2>
-          </div>
-          <p className="font-light text-muted-foreground leading-relaxed">{t("experiences.subtitle")}</p>
-          <ul className="space-y-4 pt-4">
-            {benefits.map((benefit, index) => (
-              <motion.li key={index} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: index * 0.1 }} className="flex items-start space-x-3">
-                <Check className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                <span className="text-sm text-foreground/80 font-light">{benefit}</span>
-              </motion.li>
-            ))}
-          </ul>
-          <Link to="/services" className="group inline-flex items-center gap-3 text-sm font-semibold tracking-widest uppercase bg-primary text-primary-foreground px-8 py-4 mt-6 hover:bg-primary/90 hover:scale-105 hover:-translate-y-1 shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.6)] hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.7)] active:scale-95 active:translate-y-0 transition-all duration-300 rounded-md cursor-pointer">
-            {t("experiences.viewAcquisitions")}
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </motion.div>
-        <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} style={{ y: imagesY }} className="relative order-1 lg:order-2">
-          <div className="grid grid-cols-2 gap-4">
-            {images.map((image, index) => (
-              <motion.div key={index} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className={`relative overflow-hidden group ${image.offset ? "translate-y-8" : ""}`}>
-                <OptimizedImage 
-                  src={image.src} 
-                  alt={image.alt}
-                  sizes="(max-width: 768px) 50vw, 25vw"
-                  className="w-full h-64 object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" 
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+            <p className="text-muted-foreground font-light mb-8 leading-relaxed">
+              {t("experiences.subtitle")}
+            </p>
+
+            <ul className="space-y-3 mb-8">
+              {benefits.map((benefit, index) => (
+                <motion.li 
+                  key={index}
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="flex items-start gap-3"
+                >
+                  <Check className="w-4 h-4 text-primary/70 mt-0.5 flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">{benefit}</span>
+                </motion.li>
+              ))}
+            </ul>
+
+            <Link 
+              to="/services" 
+              className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground text-xs font-medium tracking-[0.2em] uppercase hover:bg-primary/90 transition-all duration-300 group"
+            >
+              {t("experiences.viewAcquisitions")}
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </motion.div>
+
+          {/* Images Grid */}
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }} 
+            whileInView={{ opacity: 1, x: 0 }} 
+            viewport={{ once: true }}
+            className="order-1 lg:order-2"
+          >
+            <div className="grid grid-cols-2 gap-3">
+              {images.map((image, index) => (
+                <motion.div 
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className={`overflow-hidden group ${image.offset ? 'translate-y-6' : ''}`}
+                >
+                  <OptimizedImage 
+                    src={image.src} 
+                    alt={image.alt}
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                    className="w-full h-48 md:h-56 object-cover grayscale group-hover:grayscale-0 transition-all duration-700" 
+                  />
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );

@@ -111,6 +111,7 @@ const PartnerOpportunitiesPanel = () => {
   const [sortBy, setSortBy] = useState("recommended");
   
   // Bid dialog state
+  // Bid dialog state
   const [bidDialogOpen, setBidDialogOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<ServiceRequest | null>(null);
   const [bidForm, setBidForm] = useState({
@@ -119,6 +120,17 @@ const PartnerOpportunitiesPanel = () => {
     message: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  
+  // Revision dialog state
+  const [reviseDialogOpen, setReviseDialogOpen] = useState(false);
+  const [selectedBid, setSelectedBid] = useState<PartnerBid | null>(null);
+  const [revisionForm, setRevisionForm] = useState({
+    amount: "",
+    timeline: "",
+    message: "",
+    reason: "",
+  });
+  const [revising, setRevising] = useState(false);
 
   useEffect(() => {
     if (user) {

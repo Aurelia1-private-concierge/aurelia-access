@@ -153,12 +153,12 @@ const PartnerOpportunitiesPanel = () => {
 
       if (requestsError) throw requestsError;
 
-      // Get partner's existing bids
+      // Get partner's existing bids - use explicit FK relationship
       const { data: bidsData, error: bidsError } = await supabase
         .from("service_request_bids")
         .select(`
           *,
-          service_request:service_requests(title, category, status)
+          service_request:service_requests!service_request_bids_service_request_id_fkey(title, category, status)
         `)
         .eq("partner_id", partnerData.id)
         .order("created_at", { ascending: false });

@@ -24,10 +24,10 @@ import aureliaSocialBanner from "@/assets/aurelia-social-banner.png";
 
 const teamMembers = [
   {
-    name: "Alexandra Sterling",
+    name: "Tyrone Mitchell",
     role: "Founder & CEO",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face",
-    linkedin: "https://linkedin.com"
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
+    linkedin: "https://www.linkedin.com/comm/mynetwork/discovery-see-all?usecase=PEOPLE_FOLLOWS&followMember=tyrone-mitchell-730a253a4"
   },
   {
     name: "James Rothwell",
@@ -44,7 +44,7 @@ const teamMembers = [
   {
     name: "Marcus Webb",
     role: "Director of Partnerships",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
+    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop&crop=face",
     linkedin: "https://linkedin.com"
   }
 ];

@@ -261,15 +261,15 @@
     background-size: 100px 100px;
   }
 
-  /* Hero overlay - rich gradient with gold tint */
+  /* Hero overlay - lighter gradient for visible video */
   .hero-overlay {
     background: linear-gradient(
       to top, 
       hsl(30 8% 3%) 0%, 
-      hsl(30 8% 3% / 0.95) 15%,
-      hsl(30 10% 5% / 0.8) 40%, 
-      hsl(30 12% 8% / 0.6) 70%,
-      hsl(43 20% 10% / 0.4) 100%
+      hsl(30 8% 3% / 0.85) 10%,
+      hsl(30 10% 5% / 0.5) 35%, 
+      hsl(30 12% 8% / 0.3) 60%,
+      hsl(43 20% 10% / 0.15) 100%
     );
   }
 

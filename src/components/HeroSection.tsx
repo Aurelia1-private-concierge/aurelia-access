@@ -90,7 +90,7 @@ const HeroSection = ({
             <motion.video
               key={currentVideo}
               initial={{ opacity: 0 }}
-              animate={{ opacity: videoLoaded ? 0.4 : 0 }}
+              animate={{ opacity: videoLoaded ? 0.7 : 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 1.5, ease: "easeInOut" }}
               autoPlay
@@ -141,11 +141,11 @@ const HeroSection = ({
       {/* Subtle grain texture */}
       <div className="grain absolute inset-0 z-10 pointer-events-none" />
 
-      {/* Radial vignette */}
+      {/* Radial vignette - lighter */}
       <div 
         className="absolute inset-0 z-10 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse 60% 50% at 50% 45%, transparent 0%, hsl(0 0% 0% / 0.6) 100%)'
+          background: 'radial-gradient(ellipse 70% 60% at 50% 45%, transparent 0%, hsl(30 8% 3% / 0.5) 100%)'
         }}
       />
 

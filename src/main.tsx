@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 
-// Production debugging - Force CDN refresh: 2026-01-21T15:57:00Z
+// Production debugging - Force CDN refresh: 2026-01-21T16:10:00Z
 const DEBUG = true;
 const log = (msg: string) => DEBUG && console.log(`[Aurelia ${Date.now()}] ${msg}`);
 
@@ -37,18 +37,41 @@ if ("serviceWorker" in navigator) {
   }
 }
 
+// Helper to remove loader gracefully
+const removeLoader = () => {
+  const loader = document.getElementById('initial-loader');
+  if (loader) {
+    loader.style.transition = 'opacity 0.5s ease';
+    loader.style.opacity = '0';
+    setTimeout(() => loader.remove(), 500);
+  }
+};
+
+// Helper to show error in loader
+const showError = (error: unknown) => {
+  console.error("Failed to mount React app:", error);
+  const loader = document.getElementById('initial-loader');
+  if (loader) {
+    loader.innerHTML = `
+      <div style="text-align:center;padding:40px;">
+        <h1 style="color:#D4AF37;font-size:28px;font-weight:300;margin-bottom:16px;">AURELIA</h1>
+        <p style="color:#888;margin-bottom:24px;max-width:400px;">We encountered an issue loading the application. Please refresh.</p>
+        <button onclick="localStorage.clear();sessionStorage.clear();location.reload()" style="padding:14px 32px;background:linear-gradient(135deg,#D4AF37,#B8962E);color:#080a0f;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:14px;letter-spacing:0.05em;text-transform:uppercase;">
+          Refresh Page
+        </button>
+        <p style="color:#555;font-size:11px;margin-top:16px;">${String(error).substring(0, 100)}</p>
+      </div>
+    `;
+  }
+};
+
 // Mount React with error handling
 const rootElement = document.getElementById("root");
 log("main.tsx: Root element found: " + !!rootElement);
 
 if (rootElement) {
-  // Remove the initial HTML loader
-  const initialLoader = document.getElementById('initial-loader');
-  if (initialLoader) {
-    initialLoader.remove();
-  }
-  
-  // Clear any existing content
+  // DON'T remove loader yet - wait for successful mount
+  // Clear any existing content in root (but keep loader visible)
   rootElement.innerHTML = "";
   
   try {
@@ -61,35 +84,20 @@ if (rootElement) {
       </React.StrictMode>
     );
     log("main.tsx: React render called");
-    // Signal successful mount to remove the HTML loader
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (typeof (window as any).__AURELIA_MOUNTED__ === 'function') {
-      setTimeout(() => (window as any).__AURELIA_MOUNTED__(), 100);
-    }
+    
+    // Signal successful mount - remove loader after a short delay
+    // This gives React time to actually render content
+    setTimeout(() => {
+      removeLoader();
+      // Also call the window function if it exists
+      if (typeof (window as any).__AURELIA_MOUNTED__ === 'function') {
+        (window as any).__AURELIA_MOUNTED__();
+      }
+    }, 100);
   } catch (error) {
-    console.error("Failed to mount React app:", error);
-    // Show fallback error UI with visible colors
-    rootElement.innerHTML = `
-      <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#080a0f;color:#e8e4dc;font-family:system-ui,sans-serif;text-align:center;padding:20px;">
-        <h1 style="font-size:28px;margin-bottom:16px;color:#D4AF37;font-weight:300;letter-spacing:0.1em;">AURELIA</h1>
-        <p style="color:#888;margin-bottom:24px;max-width:400px;">We encountered an issue loading the application. Please refresh the page or try again later.</p>
-        <button onclick="location.reload()" style="padding:14px 32px;background:linear-gradient(135deg,#D4AF37,#B8962E);color:#080a0f;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:14px;letter-spacing:0.05em;text-transform:uppercase;">
-          Refresh Page
-        </button>
-      </div>
-    `;
+    showError(error);
   }
 } else {
   console.error("Root element not found");
-  // Emergency fallback - create root element
-  const body = document.body;
-  body.innerHTML = `
-    <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#080a0f;color:#e8e4dc;font-family:system-ui,sans-serif;text-align:center;padding:20px;">
-      <h1 style="font-size:28px;margin-bottom:16px;color:#D4AF37;font-weight:300;">Aurelia</h1>
-      <p style="color:#888;margin-bottom:24px;">Application failed to initialize. Please refresh.</p>
-      <button onclick="location.reload()" style="padding:14px 32px;background:#D4AF37;color:#080a0f;border:none;border-radius:4px;cursor:pointer;font-weight:600;">
-        Refresh
-      </button>
-    </div>
-  `;
+  showError("Root element not found");
 }

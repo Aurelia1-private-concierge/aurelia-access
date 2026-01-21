@@ -135,19 +135,19 @@ const HeroSection = ({
         )}
       </motion.div>
 
-      {/* Dark overlay */}
+      {/* Dark overlay - ensures text readability */}
       <div className="absolute inset-0 hero-overlay z-10" />
       
-      {/* Subtle grain texture */}
-      <div className="grain absolute inset-0 z-10 pointer-events-none" />
-
-      {/* Radial vignette - lighter */}
+      {/* Text backdrop for accessibility */}
       <div 
         className="absolute inset-0 z-10 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse 70% 60% at 50% 45%, transparent 0%, hsl(30 8% 3% / 0.5) 100%)'
+          background: 'radial-gradient(ellipse 80% 70% at 50% 50%, hsl(30 8% 3% / 0.5) 0%, transparent 70%)'
         }}
       />
+      
+      {/* Subtle grain texture */}
+      <div className="grain absolute inset-0 z-10 pointer-events-none" />
 
       {/* Content */}
       <motion.div 
@@ -162,37 +162,41 @@ const HeroSection = ({
           className="w-12 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent mx-auto mb-16 origin-center"
         />
 
-        {/* Badge */}
+        {/* Badge - improved contrast */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.5 }}
           className="mb-10"
         >
-          <span className="text-[10px] uppercase tracking-[0.5em] text-muted-foreground font-light">
+          <span className="text-xs uppercase tracking-[0.4em] text-foreground/80 font-medium">
             {campaign.badge || t("hero.badge")}
           </span>
         </motion.div>
 
-        {/* Headline */}
+        {/* Headline - high contrast white text */}
         <h1
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-foreground font-normal tracking-[-0.03em] leading-[0.9] mb-8 animate-fade-in"
-          style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-white font-medium tracking-[-0.02em] leading-[0.95] mb-8 animate-fade-in drop-shadow-lg"
+          style={{ 
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            textShadow: '0 2px 20px hsl(30 8% 3% / 0.8)'
+          }}
         >
           {campaign.title || t("hero.title")}
         </h1>
 
-        {/* Subtitle */}
+        {/* Subtitle - improved visibility */}
         <motion.p
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="text-sm sm:text-base md:text-lg text-muted-foreground font-light tracking-wide max-w-xl mx-auto leading-relaxed mb-12"
+          className="text-base sm:text-lg md:text-xl text-foreground/90 font-normal tracking-wide max-w-xl mx-auto leading-relaxed mb-12 drop-shadow-md"
+          style={{ textShadow: '0 1px 10px hsl(30 8% 3% / 0.6)' }}
         >
           {campaign.subtitle || t("hero.subtitle")}
         </motion.p>
 
-        {/* CTAs */}
+        {/* CTAs - larger touch targets, better contrast */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -201,22 +205,24 @@ const HeroSection = ({
         >
           <Link 
             to="/auth" 
-            className="group w-full sm:w-auto px-10 py-4 bg-primary text-primary-foreground text-xs font-medium tracking-[0.2em] uppercase transition-all duration-300 hover:bg-primary/90 flex items-center justify-center gap-3"
+            className="group w-full sm:w-auto min-h-[52px] px-10 py-4 bg-primary text-primary-foreground text-sm font-semibold tracking-[0.15em] uppercase transition-all duration-300 hover:bg-primary/90 flex items-center justify-center gap-3 rounded focus-visible:ring-4 focus-visible:ring-primary/50"
+            aria-label="Begin your membership application"
           >
             {campaign.ctaText || t("hero.joinButton")}
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
           </Link>
 
           <a 
             href="#experiences" 
-            className="group w-full sm:w-auto px-10 py-4 bg-transparent border border-primary/30 text-foreground text-xs font-medium tracking-[0.2em] uppercase hover:border-primary/60 hover:bg-primary/5 transition-all duration-300 flex items-center justify-center gap-3"
+            className="group w-full sm:w-auto min-h-[52px] px-10 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/40 text-white text-sm font-semibold tracking-[0.15em] uppercase hover:border-white/70 hover:bg-white/20 transition-all duration-300 flex items-center justify-center gap-3 rounded focus-visible:ring-4 focus-visible:ring-white/50"
+            aria-label="Explore our experiences"
           >
             {t("hero.discoverButton")}
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
           </a>
         </motion.div>
 
-        {/* Waitlist link */}
+        {/* Waitlist link - improved visibility */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -225,11 +231,12 @@ const HeroSection = ({
         >
           <Link 
             to="/waitlist" 
-            className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors duration-300 tracking-wide group"
+            className="inline-flex items-center gap-2 text-sm text-foreground/80 hover:text-white transition-colors duration-300 tracking-wide group underline-offset-4 hover:underline"
+            aria-label="Join our waitlist if you're not ready to apply yet"
           >
             <span>Not ready to join?</span>
-            <span className="text-primary">Join Waitlist</span>
-            <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+            <span className="text-primary font-medium">Join Waitlist</span>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
           </Link>
         </motion.div>
 
@@ -267,19 +274,20 @@ const HeroSection = ({
         />
       </motion.div>
 
-      {/* Scroll indicator */}
+      {/* Scroll indicator - improved visibility */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2, duration: 1 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-3"
+        aria-hidden="true"
       >
-        <span className="text-[9px] uppercase tracking-[0.4em] text-muted-foreground/50 font-light">Scroll</span>
+        <span className="text-xs uppercase tracking-[0.3em] text-foreground/60 font-medium">Scroll</span>
         <motion.div
           animate={{ y: [0, 6, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         >
-          <ChevronDown className="w-4 h-4 text-muted-foreground/50" />
+          <ChevronDown className="w-5 h-5 text-foreground/60" />
         </motion.div>
       </motion.div>
 

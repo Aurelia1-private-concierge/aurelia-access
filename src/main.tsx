@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 
-// Production debugging
+// Production debugging - Force CDN refresh: 2026-01-21T15:57:00Z
 const DEBUG = true;
 const log = (msg: string) => DEBUG && console.log(`[Aurelia ${Date.now()}] ${msg}`);
 

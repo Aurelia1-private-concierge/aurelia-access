@@ -120,6 +120,8 @@ const PartnerPortal = () => {
 
   const fetchPartnerData = async () => {
     try {
+      console.log("[PartnerPortal] Fetching partner data for user:", user?.id);
+      
       // Fetch partner profile
       const { data: partnerData, error: partnerError } = await supabase
         .from("partners")
@@ -127,13 +129,20 @@ const PartnerPortal = () => {
         .eq("user_id", user!.id)
         .maybeSingle();
 
-      if (partnerError) throw partnerError;
+      console.log("[PartnerPortal] Partner query result:", { partnerData, partnerError });
+
+      if (partnerError) {
+        console.error("[PartnerPortal] Partner fetch error:", partnerError);
+        throw partnerError;
+      }
 
       if (!partnerData) {
+        console.log("[PartnerPortal] No partner found, redirecting to apply");
         navigate("/partner/apply");
         return;
       }
 
+      console.log("[PartnerPortal] Partner found:", partnerData.company_name, "Status:", partnerData.status);
       setPartner(partnerData);
 
       // Fetch services

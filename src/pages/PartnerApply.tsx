@@ -53,10 +53,11 @@ const categoryMapping: Record<string, ServiceCategory> = {
 };
 
 const PartnerApply = () => {
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [checkingExisting, setCheckingExisting] = useState(true);
   const [step, setStep] = useState(1);
   const [isInvited, setIsInvited] = useState(false);
   const [inviteToken, setInviteToken] = useState<string | null>(null);
@@ -70,6 +71,46 @@ const PartnerApply = () => {
     description: "",
     categories: [] as ServiceCategory[],
   });
+
+  // Check if user already has a partner record - redirect to portal if so
+  useEffect(() => {
+    const checkExistingPartner = async () => {
+      if (!user) {
+        setCheckingExisting(false);
+        return;
+      }
+      
+      try {
+        const { data: existingPartner, error } = await supabase
+          .from("partners")
+          .select("id, status")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        
+        if (error) {
+          console.error("Error checking partner status:", error);
+          setCheckingExisting(false);
+          return;
+        }
+        
+        if (existingPartner) {
+          // User already has a partner record, redirect to portal
+          console.log("Existing partner found, redirecting to portal:", existingPartner);
+          navigate("/partner-portal", { replace: true });
+          return;
+        }
+        
+        setCheckingExisting(false);
+      } catch (err) {
+        console.error("Partner check error:", err);
+        setCheckingExisting(false);
+      }
+    };
+
+    if (!authLoading) {
+      checkExistingPartner();
+    }
+  }, [user, authLoading, navigate]);
 
   // Pre-fill form from invite link
   useEffect(() => {
@@ -177,6 +218,15 @@ const PartnerApply = () => {
       setIsSubmitting(false);
     }
   };
+
+  // Show loading while checking existing partner
+  if (authLoading || checkingExisting) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">

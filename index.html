@@ -468,35 +468,60 @@
   </head>
 
   <body style="margin:0;padding:0;background-color:#080a0f;color:#e8e4dc;min-height:100vh;">
+    <!-- VISIBLE GOLD LOADER - Shown immediately before any JS loads -->
+    <div id="initial-loader" style="position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#080a0f;font-family:'Cormorant Garamond',Georgia,serif;">
+      <!-- Gold spinning ring -->
+      <div style="width:80px;height:80px;position:relative;">
+        <div style="position:absolute;inset:0;border:2px solid rgba(212,175,55,0.2);border-radius:50%;"></div>
+        <div style="position:absolute;inset:0;border:2px solid transparent;border-top-color:#D4AF37;border-radius:50%;animation:aurelia-spin 1s linear infinite;"></div>
+        <div style="position:absolute;inset:8px;border:1px solid transparent;border-bottom-color:rgba(212,175,55,0.5);border-radius:50%;animation:aurelia-spin 1.5s linear infinite reverse;"></div>
+      </div>
+      <!-- Brand text -->
+      <div style="margin-top:24px;font-size:18px;letter-spacing:0.3em;color:#D4AF37;font-weight:300;">AURELIA</div>
+      <div style="margin-top:8px;font-size:11px;letter-spacing:0.15em;color:rgba(232,228,220,0.4);text-transform:uppercase;">Curated for the Discerning Few</div>
+      <style>
+        @keyframes aurelia-spin { to { transform: rotate(360deg); } }
+        @keyframes aurelia-pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+      </style>
+    </div>
+
     <div id="root" style="min-height:100vh;background-color:#080a0f;">
-      <!-- Fallback loading state in case React fails to mount -->
       <noscript>
         <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#080a0f;color:#e8e4dc;font-family:system-ui,sans-serif;text-align:center;padding:20px;">
           <h1 style="font-size:28px;margin-bottom:16px;color:#D4AF37;font-weight:300;">Aurelia</h1>
           <p style="color:#888;margin-bottom:24px;">Please enable JavaScript to experience Aurelia.</p>
         </div>
       </noscript>
-      <div id="initial-loader" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#080a0f;color:#e8e4dc;font-family:system-ui,sans-serif;text-align:center;padding:20px;">
-        <div style="width:48px;height:48px;border:2px solid #D4AF37;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;"></div>
-        <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-      </div>
     </div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
-      // Remove initial loader once React mounts
-      window.addEventListener('DOMContentLoaded', function() {
-        setTimeout(function() {
-          var loader = document.getElementById('initial-loader');
-          if (loader && document.getElementById('root').children.length > 1) {
-            loader.remove();
-          }
-        }, 100);
-      });
-      // Fallback: remove loader after 5 seconds regardless
+      // Error handler - show fallback UI if app fails to load
+      window.onerror = function(msg, url, line) {
+        console.error('Aurelia load error:', msg, url, line);
+        var loader = document.getElementById('initial-loader');
+        if (loader) {
+          loader.innerHTML = '<div style="text-align:center;padding:40px;"><h1 style="color:#D4AF37;font-size:28px;font-weight:300;margin-bottom:16px;">AURELIA</h1><p style="color:#888;margin-bottom:24px;">We encountered an issue. Please refresh.</p><button onclick="location.reload()" style="padding:14px 32px;background:linear-gradient(135deg,#D4AF37,#B8962E);color:#080a0f;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:14px;letter-spacing:0.05em;text-transform:uppercase;">Refresh Page</button></div>';
+        }
+        return false;
+      };
+      // Remove loader when React mounts successfully
+      window.__AURELIA_MOUNTED__ = function() {
+        var loader = document.getElementById('initial-loader');
+        if (loader) {
+          loader.style.transition = 'opacity 0.5s ease';
+          loader.style.opacity = '0';
+          setTimeout(function() { loader.remove(); }, 500);
+        }
+      };
+      // Safety timeout - remove loader after 8 seconds
       setTimeout(function() {
         var loader = document.getElementById('initial-loader');
-        if (loader) loader.style.display = 'none';
-      }, 5000);
+        if (loader) {
+          loader.style.transition = 'opacity 0.3s ease';
+          loader.style.opacity = '0';
+          setTimeout(function() { if (loader.parentNode) loader.remove(); }, 300);
+        }
+      }, 8000);
     </script>
   </body>
 </html>

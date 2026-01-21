@@ -61,6 +61,11 @@ if (rootElement) {
       </React.StrictMode>
     );
     log("main.tsx: React render called");
+    // Signal successful mount to remove the HTML loader
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (typeof (window as any).__AURELIA_MOUNTED__ === 'function') {
+      setTimeout(() => (window as any).__AURELIA_MOUNTED__(), 100);
+    }
   } catch (error) {
     console.error("Failed to mount React app:", error);
     // Show fallback error UI with visible colors

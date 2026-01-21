@@ -85,13 +85,22 @@ const HeroSection = ({
   const showContent = videoLoaded || forcedShowContent;
 
   return (
-    <header ref={ref} className="relative w-full min-h-[100dvh] overflow-hidden flex items-center justify-center">
-      {/* PERMANENT gradient background - always visible, prevents blank/black screen */}
+    <header 
+      ref={ref} 
+      className="relative w-full min-h-[100dvh] overflow-hidden flex items-center justify-center"
+      style={{
+        // PERMANENT fallback background - ensures never blank/black
+        background: 'linear-gradient(135deg, #252525 0%, #2c2f34 60%, #141418 100%)',
+      }}
+    >
+      {/* Permanent gradient layer - always visible at 0.75 opacity to prevent gaps */}
       <div 
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-0 pointer-events-none"
         style={{
-          background: 'linear-gradient(135deg, hsl(var(--background)) 0%, hsl(220 15% 10%) 60%, hsl(var(--background)) 100%)',
+          background: 'linear-gradient(135deg, #252525 0%, #2c2f34 60%, #141418 100%)',
+          opacity: videoLoaded ? 0.5 : 0.75,
         }}
+        aria-hidden="true"
       />
       
       {/* Background Video with parallax */}

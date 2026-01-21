@@ -31,6 +31,43 @@ interface VoiceEvent {
   };
 }
 
+// HMAC signature verification for webhook security
+async function verifySignature(body: string, signature: string | null, secret: string): Promise<boolean> {
+  if (!signature || !secret) {
+    return false;
+  }
+
+  try {
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      "raw",
+      encoder.encode(secret),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["sign"]
+    );
+
+    const signatureBytes = await crypto.subtle.sign("HMAC", key, encoder.encode(body));
+    const expectedSignature = Array.from(new Uint8Array(signatureBytes))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+
+    // Constant-time comparison to prevent timing attacks
+    if (signature.length !== expectedSignature.length) {
+      return false;
+    }
+    
+    let result = 0;
+    for (let i = 0; i < signature.length; i++) {
+      result |= signature.charCodeAt(i) ^ expectedSignature.charCodeAt(i);
+    }
+    return result === 0;
+  } catch (error) {
+    console.error('Signature verification error:', error);
+    return false;
+  }
+}
+
 // Basic validation - checks event structure matches expected ElevenLabs format
 function isValidEvent(event: unknown): event is VoiceEvent {
   if (!event || typeof event !== 'object') return false;
@@ -54,6 +91,15 @@ function isValidEvent(event: unknown): event is VoiceEvent {
   return true;
 }
 
+// Extract client IP for rate limiting
+function getClientIP(req: Request): string {
+  const forwardedFor = req.headers.get("x-forwarded-for");
+  if (forwardedFor) {
+    return forwardedFor.split(",")[0].trim();
+  }
+  return req.headers.get("x-real-ip") || "unknown";
+}
+
 Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -69,6 +115,25 @@ Deno.serve(async (req) => {
 
   try {
     const body = await req.text();
+    
+    // Verify webhook signature if secret is configured
+    const webhookSecret = Deno.env.get('ELEVENLABS_WEBHOOK_SECRET');
+    const signature = req.headers.get('x-elevenlabs-signature');
+    
+    if (webhookSecret) {
+      const isValid = await verifySignature(body, signature, webhookSecret);
+      if (!isValid) {
+        console.error('Invalid webhook signature');
+        return new Response(
+          JSON.stringify({ error: 'Invalid signature' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      console.log('Webhook signature verified successfully');
+    } else {
+      console.log('No webhook secret configured, skipping signature verification');
+    }
+    
     let event: unknown;
     
     try {
@@ -81,6 +146,31 @@ Deno.serve(async (req) => {
       );
     }
     
+    // Rate limiting by IP
+    const clientIP = getClientIP(req);
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+    
+    const { data: rateLimitAllowed } = await supabase.rpc(
+      "check_rate_limit",
+      {
+        p_identifier: `voice_webhook_${clientIP}`,
+        p_action_type: "voice_webhook",
+        p_max_requests: 100,
+        p_window_minutes: 1,
+      }
+    );
+
+    if (rateLimitAllowed === false) {
+      console.error(`Rate limited voice webhook from IP: ${clientIP}`);
+      return new Response(
+        JSON.stringify({ error: 'Rate limited' }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
     // Validate event structure
     if (!isValidEvent(event)) {
       console.error('Invalid event structure:', JSON.stringify(event).slice(0, 200));
@@ -89,11 +179,6 @@ Deno.serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
     
     console.log('Received voice event:', JSON.stringify(event, null, 2));
 

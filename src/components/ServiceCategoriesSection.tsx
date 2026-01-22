@@ -20,7 +20,7 @@ const categories = [
 
 const ServiceCategoriesSection = () => {
   return (
-    <section id="services" className="py-24 md:py-32 bg-background relative">
+    <section id="services" data-tour="service-categories" className="py-24 md:py-32 bg-background relative">
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
         <motion.div

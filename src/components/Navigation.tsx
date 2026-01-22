@@ -114,6 +114,7 @@ const Navigation = () => {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 2 }}
+        data-tour="navigation"
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
           isScrolled 
             ? "border-b border-border/20 glass" 

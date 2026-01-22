@@ -3650,6 +3650,10 @@ export type Database = {
           service_id: string | null
           status: Database["public"]["Enums"]["request_status"]
           title: string
+          tracking_link: string | null
+          tracking_link_added_at: string | null
+          tracking_link_expires_at: string | null
+          tracking_link_label: string | null
           updated_at: string
           winning_bid_id: string | null
         }
@@ -3677,6 +3681,10 @@ export type Database = {
           service_id?: string | null
           status?: Database["public"]["Enums"]["request_status"]
           title: string
+          tracking_link?: string | null
+          tracking_link_added_at?: string | null
+          tracking_link_expires_at?: string | null
+          tracking_link_label?: string | null
           updated_at?: string
           winning_bid_id?: string | null
         }
@@ -3704,6 +3712,10 @@ export type Database = {
           service_id?: string | null
           status?: Database["public"]["Enums"]["request_status"]
           title?: string
+          tracking_link?: string | null
+          tracking_link_added_at?: string | null
+          tracking_link_expires_at?: string | null
+          tracking_link_label?: string | null
           updated_at?: string
           winning_bid_id?: string | null
         }

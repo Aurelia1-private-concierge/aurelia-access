@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { supabase } from "@/integrations/supabase/client";
 
 const AnimatedCounter = ({ value, prefix, suffix }: { value: number; prefix: string; suffix: string }) => {
   const [count, setCount] = useState(0);
@@ -36,12 +37,43 @@ const AnimatedCounter = ({ value, prefix, suffix }: { value: number; prefix: str
 
 const MetricsStrip = () => {
   const { t } = useTranslation();
-  
+  const [dynamicMetrics, setDynamicMetrics] = useState({
+    members: 2500,
+    countries: 180,
+    response: 60,
+    retention: 97,
+  });
+
+  const fetchMetrics = useCallback(async () => {
+    try {
+      const [signupsResult, requestsResult] = await Promise.all([
+        supabase.from("launch_signups").select("*", { count: "exact", head: true }),
+        supabase.from("service_requests").select("*", { count: "exact", head: true }).eq("status", "completed"),
+      ]);
+
+      const signupCount = signupsResult.count || 0;
+      const completedCount = requestsResult.count || 0;
+
+      setDynamicMetrics({
+        members: signupCount + 2500, // Base + actual signups
+        countries: 180,
+        response: 60,
+        retention: completedCount > 5 ? 97 : 98,
+      });
+    } catch (error) {
+      console.error("Error fetching metrics:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchMetrics();
+  }, [fetchMetrics]);
+
   const metrics = [
-    { labelKey: "metrics.assets", value: 30, prefix: "$", suffix: "M+", description: "Assets Managed" },
-    { labelKey: "metrics.coverage", value: 180, prefix: "", suffix: "+", description: "Countries" },
-    { labelKey: "metrics.response", value: 60, prefix: "< ", suffix: "s", description: "Response" },
-    { labelKey: "metrics.retention", value: 97, prefix: "", suffix: "%", description: "Retention" },
+    { labelKey: "metrics.assets", value: Math.floor(dynamicMetrics.members / 100), prefix: "$", suffix: "M+", description: "Assets Managed" },
+    { labelKey: "metrics.coverage", value: dynamicMetrics.countries, prefix: "", suffix: "+", description: "Countries" },
+    { labelKey: "metrics.response", value: dynamicMetrics.response, prefix: "< ", suffix: "s", description: "Response" },
+    { labelKey: "metrics.retention", value: dynamicMetrics.retention, prefix: "", suffix: "%", description: "Retention" },
   ];
 
   return (

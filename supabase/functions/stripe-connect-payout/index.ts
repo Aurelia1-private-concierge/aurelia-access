@@ -122,13 +122,16 @@ serve(async (req) => {
         ? "Payout temporarily unavailable: Platform account needs funds. This is a test mode limitation—use card 4000000000000077 to add test funds, or wait for production mode."
         : `Stripe error: ${stripeMessage}`;
       
+      // Return 200 with success=false so the client can handle it properly
+      // (supabase.functions.invoke throws on non-2xx status codes)
       return new Response(JSON.stringify({ 
+        success: false,
         error: userMessage,
         retryable: isInsufficientFunds,
-        code: "INSUFFICIENT_FUNDS"
+        code: isInsufficientFunds ? "INSUFFICIENT_FUNDS" : "STRIPE_ERROR"
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 402, // Payment Required
+        status: 200,
       });
     }
 

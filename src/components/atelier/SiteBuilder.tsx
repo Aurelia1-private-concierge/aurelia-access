@@ -4,8 +4,6 @@ import { motion } from "framer-motion";
 import { 
   ArrowLeft, 
   Save, 
-  Eye, 
-  Settings, 
   Sparkles, 
   Loader2,
   Monitor,
@@ -20,16 +18,58 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { useAtelier, type MemberSite } from "@/hooks/useAtelier";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import type { SiteBlock, SiteBranding } from "@/lib/atelier-templates";
 import { DEFAULT_BRANDING } from "@/lib/atelier-templates";
+import type { Json } from "@/integrations/supabase/types";
 import BlockEditor from "./BlockEditor";
 import BrandingPanel from "./BrandingPanel";
 import SitePreview from "./SitePreview";
 import OrlaContentAssist from "./OrlaContentAssist";
 
 type ViewMode = "desktop" | "tablet" | "mobile";
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+// Raw database response type
+interface RawMemberSite {
+  id: string;
+  user_id: string;
+  name: string;
+  slug: string;
+  template_id: string;
+  status: string;
+  content: Json;
+  branding: Json;
+  custom_domain: string | null;
+  analytics_enabled: boolean;
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+const getAuthHeaders = async () => {
+  const storedSession = localStorage.getItem(`sb-${import.meta.env.VITE_SUPABASE_PROJECT_ID}-auth-token`);
+  let authToken = SUPABASE_KEY;
+  
+  if (storedSession) {
+    try {
+      const session = JSON.parse(storedSession);
+      if (session?.access_token) {
+        authToken = session.access_token;
+      }
+    } catch {
+      // Use default key
+    }
+  }
+  
+  return {
+    apikey: SUPABASE_KEY,
+    Authorization: `Bearer ${authToken}`,
+    "Content-Type": "application/json",
+  };
+};
 
 const SiteBuilder = () => {
   const { siteId } = useParams<{ siteId: string }>();
@@ -52,20 +92,26 @@ const SiteBuilder = () => {
       if (!siteId || !user) return;
 
       try {
-        const { data, error } = await supabase
-          .from("member_sites")
-          .select("*")
-          .eq("id", siteId)
-          .eq("user_id", user.id)
-          .single();
+        const headers = await getAuthHeaders();
+        const response = await fetch(
+          `${SUPABASE_URL}/rest/v1/member_sites?id=eq.${siteId}&user_id=eq.${user.id}&select=*`,
+          { headers }
+        );
 
-        if (error) throw error;
+        if (!response.ok) throw new Error("Failed to fetch site");
 
+        const data: RawMemberSite[] = await response.json();
+        
+        if (!data || data.length === 0) {
+          throw new Error("Site not found");
+        }
+
+        const rawSite = data[0];
         setSite({
-          ...data,
-          content: (data.content as unknown as SiteBlock[]) || [],
-          branding: (data.branding as unknown as SiteBranding) || DEFAULT_BRANDING,
-          status: data.status as "draft" | "published" | "archived",
+          ...rawSite,
+          content: (rawSite.content as unknown as SiteBlock[]) || [],
+          branding: (rawSite.branding as unknown as SiteBranding) || DEFAULT_BRANDING,
+          status: rawSite.status as "draft" | "published" | "archived",
         });
       } catch (err) {
         console.error("Error fetching site:", err);
@@ -99,7 +145,6 @@ const SiteBuilder = () => {
   const handlePublish = async () => {
     if (!site) return;
 
-    // Save first if there are changes
     if (hasChanges) {
       await handleSave();
     }

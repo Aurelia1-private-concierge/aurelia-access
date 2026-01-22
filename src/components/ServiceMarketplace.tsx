@@ -467,12 +467,12 @@ export const ServiceMarketplace: React.FC = () => {
                     {/* Star Rating */}
                     <div className="space-y-2">
                       <Label className="text-xs text-muted-foreground">Star Rating</Label>
-                      <Select value={starRating} onValueChange={setStarRating}>
+                      <Select value={starRating || "any"} onValueChange={(val) => setStarRating(val === "any" ? "" : val)}>
                         <SelectTrigger className="h-9">
                           <SelectValue placeholder="Any rating" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Any rating</SelectItem>
+                          <SelectItem value="any">Any rating</SelectItem>
                           <SelectItem value="3">3+ Stars</SelectItem>
                           <SelectItem value="4">4+ Stars</SelectItem>
                           <SelectItem value="5">5 Stars Only</SelectItem>
@@ -483,12 +483,12 @@ export const ServiceMarketplace: React.FC = () => {
                     {/* Room Type */}
                     <div className="space-y-2">
                       <Label className="text-xs text-muted-foreground">Room Type</Label>
-                      <Select value={roomType} onValueChange={setRoomType}>
+                      <Select value={roomType || "any"} onValueChange={(val) => setRoomType(val === "any" ? "" : val)}>
                         <SelectTrigger className="h-9">
                           <SelectValue placeholder="Any type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Any type</SelectItem>
+                          <SelectItem value="any">Any type</SelectItem>
                           {roomTypeOptions.map(type => (
                             <SelectItem key={type} value={type}>{type}</SelectItem>
                           ))}

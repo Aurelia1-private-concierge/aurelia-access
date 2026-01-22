@@ -203,16 +203,16 @@ export function AutoPartnerFinder({ onPartnerSelect }: AutoPartnerFinderProps) {
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Service Category</label>
                   <Select
-                    value={criteria.category || ''}
+                    value={criteria.category || "all"}
                     onValueChange={(value) =>
-                      setCriteria({ ...criteria, category: value || undefined })
+                      setCriteria({ ...criteria, category: value === "all" ? undefined : value })
                     }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="All categories" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All categories</SelectItem>
+                      <SelectItem value="all">All categories</SelectItem>
                       {categories.map((cat) => (
                         <SelectItem key={cat} value={cat}>
                           {cat.charAt(0).toUpperCase() + cat.slice(1).replace('_', ' ')}
@@ -329,12 +329,12 @@ export function AutoPartnerFinder({ onPartnerSelect }: AutoPartnerFinderProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Category Focus</label>
-                  <Select value={aiCategory} onValueChange={setAiCategory}>
+                  <Select value={aiCategory || "any"} onValueChange={(val) => setAiCategory(val === "any" ? "" : val)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Any category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Any category</SelectItem>
+                      <SelectItem value="any">Any category</SelectItem>
                       {categories.map((cat) => (
                         <SelectItem key={cat} value={cat}>
                           {cat.charAt(0).toUpperCase() + cat.slice(1).replace('_', ' ')}

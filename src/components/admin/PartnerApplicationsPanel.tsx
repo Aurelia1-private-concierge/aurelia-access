@@ -4,7 +4,7 @@ import {
   Building2, Clock, CheckCircle, XCircle, 
   Search, ChevronDown, ChevronUp, Globe, Mail, Phone,
   ExternalLink, Calendar, ClipboardCheck, AlertTriangle,
-  UserPlus, Shield
+  UserPlus, Shield, Sparkles
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { useAdminAuditLog } from "@/hooks/useAdminAuditLog";
+import { useAIVetting } from "@/hooks/useAIVetting";
+import AIVettingPanel from "./AIVettingPanel";
 
 interface PartnerApplication {
   id: string;
@@ -108,7 +110,7 @@ const PartnerApplicationsPanel = () => {
     noRedFlags: false,
   });
   const { logPartnerAction, logListAccess, logDataAccess } = useAdminAuditLog();
-
+  const { isVetting, vettingResult, runVetting, clearResult } = useAIVetting();
   const fetchApplications = async () => {
     setLoading(true);
     try {
@@ -540,9 +542,12 @@ const PartnerApplicationsPanel = () => {
       {/* Review Dialog */}
       <Dialog open={reviewDialogOpen} onOpenChange={(open) => {
         setReviewDialogOpen(open);
-        if (!open) resetVettingChecklist();
+        if (!open) {
+          resetVettingChecklist();
+          clearResult();
+        }
       }}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <ClipboardCheck className="w-5 h-5 text-primary" />
@@ -554,6 +559,40 @@ const PartnerApplicationsPanel = () => {
           </DialogHeader>
           
           <div className="space-y-6 py-4">
+            {/* AI Vetting Panel */}
+            <AIVettingPanel
+              isVetting={isVetting}
+              result={vettingResult}
+              onRunVetting={() => {
+                if (selectedApp) {
+                  runVetting({
+                    application_id: selectedApp.id,
+                    company_name: selectedApp.company_name,
+                    website: selectedApp.website || undefined,
+                    email: selectedApp.email,
+                    description: selectedApp.description || undefined,
+                    categories: selectedApp.categories,
+                    experience_years: selectedApp.experience_years || undefined,
+                    notable_clients: selectedApp.notable_clients || undefined,
+                    coverage_regions: selectedApp.coverage_regions || undefined,
+                  });
+                }
+              }}
+              onApplyRecommendation={(items) => {
+                setVettingChecklist({
+                  websiteVerified: items.websiteVerified ?? false,
+                  businessLegitimate: items.businessLegitimate ?? false,
+                  experienceConfirmed: items.experienceConfirmed ?? false,
+                  categoriesMatch: items.categoriesMatch ?? false,
+                  noRedFlags: items.noRedFlags ?? false,
+                });
+                toast({
+                  title: "Checklist Updated",
+                  description: "AI vetting results applied to checklist",
+                });
+              }}
+            />
+
             {/* Vetting Checklist */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">

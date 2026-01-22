@@ -188,7 +188,20 @@ const HeroSection = ({
       {/* Subtle grain texture */}
       <div className="grain absolute inset-0 z-10 pointer-events-none" />
 
-      {/* Content - always render, animate in when ready */}
+      {/* LCP Critical: H1 renders immediately without animation delay */}
+      <div className="relative z-20 text-center px-6 max-w-4xl mx-auto w-full">
+        {/* Headline - LCP element, renders immediately for fast paint */}
+        <h1
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-white font-medium tracking-[-0.02em] leading-[0.95] mb-8 drop-shadow-lg"
+          style={{ 
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            textShadow: '0 2px 20px hsl(30 8% 3% / 0.8)'
+          }}
+        >
+          {campaign.title || t("hero.title")}
+        </h1>
+        
+      {/* Animated content wrapper - decorative elements can wait */}
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
         animate={{ 
@@ -197,14 +210,13 @@ const HeroSection = ({
         }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         style={{ willChange: 'transform, opacity' }}
-        className="relative z-20 text-center px-6 max-w-4xl mx-auto w-full"
       >
         {/* Top line */}
         <motion.div
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ duration: 1, delay: 0.3, ease: [0.4, 0, 0.2, 1] }}
-          className="w-12 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent mx-auto mb-16 origin-center"
+          className="w-12 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent mx-auto mb-16 origin-center absolute top-0 left-1/2 -translate-x-1/2 -mt-20"
         />
 
         {/* Badge - improved contrast */}
@@ -212,23 +224,12 @@ const HeroSection = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="mb-10"
+          className="mb-6 -mt-2"
         >
           <span className="text-xs uppercase tracking-[0.4em] text-foreground/80 font-medium">
             {campaign.badge || t("hero.badge")}
           </span>
         </motion.div>
-
-        {/* Headline - high contrast white text */}
-        <h1
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-white font-medium tracking-[-0.02em] leading-[0.95] mb-8 animate-fade-in drop-shadow-lg"
-          style={{ 
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            textShadow: '0 2px 20px hsl(30 8% 3% / 0.8)'
-          }}
-        >
-          {campaign.title || t("hero.title")}
-        </h1>
 
         {/* Subtitle - improved visibility */}
         <motion.p
@@ -294,6 +295,7 @@ const HeroSection = ({
           className="w-16 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent mx-auto mt-16 origin-center"
         />
       </motion.div>
+      </div>
 
       {/* Scroll indicator - improved visibility */}
       <motion.div

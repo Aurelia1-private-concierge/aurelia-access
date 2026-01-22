@@ -167,13 +167,13 @@ export const LoginSecurityPanel = () => {
                         key={device.id}
                         className="p-4 hover:bg-muted/20 transition-colors"
                       >
-                        <div className="flex items-start justify-between gap-4">
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                           <div className="flex items-start gap-3">
-                            <div className="w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center">
+                            <div className="w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center flex-shrink-0">
                               <DeviceIcon className="w-5 h-5 text-muted-foreground" />
                             </div>
                             <div className="space-y-1">
-                              <div className="flex items-center gap-2">
+                              <div className="flex flex-wrap items-center gap-1.5">
                                 <span className="font-medium text-sm text-foreground">
                                   {device.device_name || "Unknown Device"}
                                 </span>
@@ -189,7 +189,7 @@ export const LoginSecurityPanel = () => {
                                   </Badge>
                                 )}
                               </div>
-                              <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                              <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-muted-foreground">
                                 <span className="flex items-center gap-1">
                                   <Clock className="w-3 h-3" />
                                   {formatDistanceToNow(new Date(device.last_login_at), {
@@ -199,7 +199,7 @@ export const LoginSecurityPanel = () => {
                                 {device.ip_address && (
                                   <span className="flex items-center gap-1">
                                     <Globe className="w-3 h-3" />
-                                    {device.ip_address}
+                                    <span className="truncate max-w-[120px]">{device.ip_address}</span>
                                   </span>
                                 )}
                               </div>
@@ -208,7 +208,7 @@ export const LoginSecurityPanel = () => {
                               </p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 self-end sm:self-start">
                             {!device.is_trusted && (
                               <Button
                                 variant="ghost"

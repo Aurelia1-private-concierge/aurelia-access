@@ -117,7 +117,7 @@ const OrlaFAB = forwardRef<HTMLAnchorElement, OrlaFABProps>((_, ref) => {
         whileTap={{ scale: 0.95 }}
         onHoverStart={() => setIsHovered(true)}
         onHoverEnd={() => setIsHovered(false)}
-        className="fixed bottom-28 right-6 md:right-8 z-50 w-14 h-14 rounded-full overflow-hidden border-2 border-primary/60 flex items-center justify-center transition-all duration-300 group cursor-pointer"
+        className="fixed bottom-20 right-4 sm:bottom-28 sm:right-6 md:right-8 z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden border-2 border-primary/60 flex items-center justify-center transition-all duration-300 group cursor-pointer"
         style={{
           background: `linear-gradient(135deg, ${currentStyle.colors.primary}E6, ${currentStyle.colors.primary})`,
           boxShadow: `0 0 40px ${currentStyle.colors.glow}`,

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import DashboardSidebar, { type ActiveView } from "@/components/dashboard/DashboardSidebar";
+import MobileSidebar from "@/components/dashboard/MobileSidebar";
 import PortfolioOverview from "@/components/dashboard/PortfolioOverview";
 import SecureMessaging from "@/components/dashboard/SecureMessaging";
 import DocumentVault from "@/components/dashboard/DocumentVault";
@@ -125,9 +126,13 @@ const DashboardContent = () => {
         }}
       />
       
+      {/* Mobile sidebar */}
+      <MobileSidebar activeView={activeView} setActiveView={setActiveView} />
+      
+      {/* Desktop sidebar */}
       <DashboardSidebar activeView={activeView} setActiveView={setActiveView} />
       
-      <div className="flex-1 flex flex-col min-h-screen relative z-10">
+      <div className="flex-1 flex flex-col min-h-screen relative z-10 pt-16 lg:pt-0">
         <DashboardHeader activeView={activeView} />
         
         <AnimatePresence mode="wait">
@@ -137,7 +142,7 @@ const DashboardContent = () => {
             initial="initial"
             animate="animate"
             exit="exit"
-            className="flex-1 p-6 lg:p-8 overflow-auto"
+            className="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto"
           >
             {renderView()}
           </motion.main>

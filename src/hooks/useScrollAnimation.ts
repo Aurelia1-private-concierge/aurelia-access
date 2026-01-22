@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, RefObject, useCallback } from "react";
-import { useMotionValue, useSpring, useTransform, MotionValue } from "framer-motion";
+import { useMotionValue, useSpring, useTransform, MotionValue, useScroll } from "framer-motion";
 
 interface UseScrollAnimationOptions {
   threshold?: number;
@@ -67,48 +67,19 @@ export const useScrollOpacity = (
   return useTransform(scrollY, [fadeStart, fadeEnd], [1, 0]);
 };
 
-// Scroll progress for a section
+// Scroll progress for a section - uses framer-motion's optimized scroll tracking
+// to avoid forced reflows from getBoundingClientRect
 export const useSectionProgress = () => {
   const ref = useRef<HTMLElement>(null);
-  const progress = useMotionValue(0);
-  const rafIdRef = useRef<number | null>(null);
+  
+  // Use framer-motion's useScroll which is optimized to avoid forced reflows
+  // by using scroll position calculations instead of getBoundingClientRect in hot path
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
 
-  useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
-
-    const handleScroll = () => {
-      // Throttle with requestAnimationFrame to prevent forced reflows
-      if (rafIdRef.current !== null) return;
-      
-      rafIdRef.current = requestAnimationFrame(() => {
-        const rect = element.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        
-        // Calculate progress from when element enters view to when it leaves
-        const start = windowHeight;
-        const end = -rect.height;
-        const current = rect.top;
-        
-        const progressValue = Math.max(0, Math.min(1, (start - current) / (start - end)));
-        progress.set(progressValue);
-        
-        rafIdRef.current = null;
-      });
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll(); // Initial calculation
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (rafIdRef.current !== null) {
-        cancelAnimationFrame(rafIdRef.current);
-      }
-    };
-  }, [progress]);
-
-  return { ref, progress };
+  return { ref, progress: scrollYProgress };
 };
 
 // Smooth scroll to element

@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+// Luxury video background
+import heroPenthouse from "@/assets/hero-penthouse.mp4";
 import { Link, useNavigate } from "react-router-dom";
 import { 
   Plus, 
@@ -57,6 +59,13 @@ const Atelier = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
   const [siteToDelete, setSiteToDelete] = useState<MemberSite | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    }
+  }, []);
 
   if (!user) {
     return (
@@ -155,8 +164,26 @@ const Atelier = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-background">
-        <div className="container max-w-6xl mx-auto px-4 py-8">
+      <div className="min-h-screen bg-background relative overflow-hidden">
+        {/* Premium Video Background */}
+        <div className="absolute inset-0 z-0">
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ minWidth: '100%', minHeight: '100%' }}
+          >
+            <source src={heroPenthouse} type="video/mp4" />
+          </video>
+          {/* Dark overlay for readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/80 to-background" />
+          <div className="absolute inset-0 bg-background/40" />
+        </div>
+
+        <div className="container max-w-6xl mx-auto px-4 py-8 relative z-10">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div>

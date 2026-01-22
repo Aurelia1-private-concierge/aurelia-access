@@ -240,12 +240,7 @@ const VisitorAnalytics = () => {
       if (e.event_name === "page_view") hours[hour].pageViews++;
     });
 
-    // Add some realistic variance if no data
-    return hours.map(h => ({
-      ...h,
-      visitors: h.visitors || Math.floor(Math.random() * 50 + 10),
-      pageViews: h.pageViews || Math.floor(Math.random() * 80 + 20),
-    }));
+    return hours;
   };
 
   const processTrafficSources = (funnelEvents: any[]) => {
@@ -257,15 +252,9 @@ const VisitorAnalytics = () => {
 
     const total = Object.values(sources).reduce((a, b) => a + b, 0) || 1;
     
-    // Default sources if none exist
+    // Return empty array if no data
     if (Object.keys(sources).length === 0) {
-      return [
-        { name: "Direct", value: 35, color: COLORS[0] },
-        { name: "Organic Search", value: 28, color: COLORS[1] },
-        { name: "Social Media", value: 22, color: COLORS[2] },
-        { name: "Referral", value: 10, color: COLORS[3] },
-        { name: "Paid Ads", value: 5, color: COLORS[4] },
-      ];
+      return [];
     }
 
     return Object.entries(sources).map(([name, value], i) => ({

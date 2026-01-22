@@ -147,22 +147,26 @@ const VisitorAnalytics = () => {
         returningVisitors: calculateReturningVisitors(events || []),
       });
 
-      // Simulated realtime visitors (would be websocket in production)
-      setRealtimeVisitors(Math.floor(Math.random() * 15) + 3);
+      // Calculate realtime visitors from recent sessions (last 5 minutes)
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+      const recentSessions = new Set(
+        events?.filter(e => e.created_at > fiveMinutesAgo).map(e => e.session_id) || []
+      );
+      setRealtimeVisitors(recentSessions.size);
 
-      // Generate hourly data
+      // Generate hourly data from actual events
       setHourlyData(generateHourlyData(events || []));
 
       // Process traffic sources from funnel events
       setTrafficSources(processTrafficSources(funnelEvents || []));
 
-      // Process top pages
+      // Process top pages from actual events
       setTopPages(processTopPages(events || []));
 
-      // Process geo data (simulated - would need IP geolocation service)
-      setGeoData(generateGeoData());
+      // Process geo data from funnel events metadata
+      setGeoData(processGeoData(funnelEvents || []));
 
-      // Process device data
+      // Process device data from behavior events
       setDeviceData(processDeviceData(behaviorEvents || []));
 
       setLastUpdated(new Date());
@@ -281,44 +285,68 @@ const VisitorAnalytics = () => {
       if (e.session_id) pages[page].sessions.add(e.session_id);
     });
 
-    // Default pages if none exist
+    // Return empty array if no pages
     if (Object.keys(pages).length === 0) {
-      return [
-        { page: "/", views: 1250, avgTime: "2:45", bounceRate: 32 },
-        { page: "/membership", views: 890, avgTime: "4:12", bounceRate: 18 },
-        { page: "/services", views: 654, avgTime: "3:28", bounceRate: 24 },
-        { page: "/auth", views: 432, avgTime: "1:55", bounceRate: 45 },
-        { page: "/orla", views: 321, avgTime: "5:30", bounceRate: 12 },
-      ];
+      return [];
     }
 
     return Object.entries(pages)
       .sort((a, b) => b[1].views - a[1].views)
       .slice(0, 5)
-      .map(([page, data]) => ({
-        page,
-        views: data.views,
-        avgTime: `${Math.floor(Math.random() * 4 + 1)}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
-        bounceRate: Math.floor(Math.random() * 40 + 10),
+      .map(([page, data]) => {
+        const singleViewSessions = Array.from(data.sessions).filter(
+          sid => pages[page].views === 1
+        ).length;
+        const bounceRate = data.sessions.size > 0 
+          ? Math.round((singleViewSessions / data.sessions.size) * 100)
+          : 0;
+        return {
+          page,
+          views: data.views,
+          avgTime: `${Math.floor(data.views / 60)}:${(data.views % 60).toString().padStart(2, '0')}`,
+          bounceRate,
+        };
+      });
+  };
+
+  const processGeoData = (funnelEvents: any[]) => {
+    const geoCounts: { [key: string]: number } = {};
+    
+    funnelEvents.forEach(e => {
+      const metadata = e.metadata as { country?: string } | null;
+      const country = metadata?.country || "Unknown";
+      geoCounts[country] = (geoCounts[country] || 0) + 1;
+    });
+
+    const total = Object.values(geoCounts).reduce((a, b) => a + b, 0) || 1;
+    
+    return Object.entries(geoCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 7)
+      .map(([country, visitors]) => ({
+        country,
+        visitors,
+        percentage: Math.round((visitors / total) * 100),
       }));
   };
 
-  const generateGeoData = () => [
-    { country: "United Kingdom", visitors: 2840, percentage: 32 },
-    { country: "United States", visitors: 1920, percentage: 22 },
-    { country: "United Arab Emirates", visitors: 1280, percentage: 15 },
-    { country: "Switzerland", visitors: 890, percentage: 10 },
-    { country: "Singapore", visitors: 756, percentage: 9 },
-    { country: "France", visitors: 512, percentage: 6 },
-    { country: "Other", visitors: 502, percentage: 6 },
-  ];
-
   const processDeviceData = (events: any[]) => {
-    // Simulated device breakdown - would parse user agent in production
+    const deviceCounts: { [key: string]: number } = { Desktop: 0, Mobile: 0, Tablet: 0 };
+    
+    events.forEach(e => {
+      const metadata = e.metadata as { device_type?: string } | null;
+      const device = metadata?.device_type || "Desktop";
+      if (deviceCounts[device] !== undefined) {
+        deviceCounts[device]++;
+      }
+    });
+
+    const total = Object.values(deviceCounts).reduce((a, b) => a + b, 0) || 1;
+    
     return [
-      { name: "Desktop", value: 58, icon: Monitor },
-      { name: "Mobile", value: 35, icon: Smartphone },
-      { name: "Tablet", value: 7, icon: Tablet },
+      { name: "Desktop", value: Math.round((deviceCounts.Desktop / total) * 100) || 0, icon: Monitor },
+      { name: "Mobile", value: Math.round((deviceCounts.Mobile / total) * 100) || 0, icon: Smartphone },
+      { name: "Tablet", value: Math.round((deviceCounts.Tablet / total) * 100) || 0, icon: Tablet },
     ];
   };
 

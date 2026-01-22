@@ -72,62 +72,63 @@ const ConversionFunnelAnalytics = () => {
   const fetchFunnelData = async () => {
     setLoading(true);
     try {
-      // Fetch funnel events
+      // Calculate date range
+      const days = timeRange === "7d" ? 7 : timeRange === "30d" ? 30 : 90;
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - days);
+
+      // Fetch funnel events within date range
       const { data: funnelEvents } = await supabase
         .from("funnel_events")
         .select("*")
+        .gte("created_at", startDate.toISOString())
         .order("created_at", { ascending: false });
 
-      // Fetch user signups
+      // Fetch user signups within date range
       const { data: signups } = await supabase
         .from("launch_signups")
-        .select("*");
+        .select("*")
+        .gte("created_at", startDate.toISOString());
 
-      // Fetch trial applications
+      // Fetch trial applications within date range
       const { data: trials } = await supabase
         .from("trial_applications")
-        .select("*");
+        .select("*")
+        .gte("created_at", startDate.toISOString());
 
-      // Fetch profiles as members proxy
+      // Fetch profiles created within date range
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("*");
+        .select("*")
+        .gte("created_at", startDate.toISOString());
 
-      // Calculate funnel stages
-      const stageCounts: { [key: string]: number } = {
-        visit: 0,
-        signup: 0,
-        trial: 0,
-        member: 0,
-        active: 0,
+      // Calculate funnel stages from actual events
+      const stageCounts: { [key: string]: Set<string> } = {
+        landing: new Set(),
+        signup_started: new Set(),
+        signup_completed: new Set(),
+        trial_started: new Set(),
+        converted: new Set(),
       };
 
-      // Count visits from funnel events
+      // Count unique sessions per stage
       funnelEvents?.forEach(e => {
-        if (stageCounts[e.stage] !== undefined) {
-          stageCounts[e.stage]++;
+        if (stageCounts[e.stage]) {
+          stageCounts[e.stage].add(e.session_id);
         }
       });
 
-      // Use actual data for other stages
-      stageCounts.signup = signups?.length || 0;
-      stageCounts.trial = trials?.filter(t => t.status === "approved").length || 0;
-      stageCounts.member = profiles?.length || 0;
-
-      // Ensure we have baseline numbers
-      if (stageCounts.visit === 0) stageCounts.visit = 8500;
-      if (stageCounts.signup === 0) stageCounts.signup = 1240;
-      if (stageCounts.trial === 0) stageCounts.trial = 425;
-      if (stageCounts.member === 0) stageCounts.member = 180;
-      stageCounts.active = Math.floor(stageCounts.member * 0.85);
-
-      const maxCount = Math.max(...Object.values(stageCounts));
+      const visitCount = stageCounts.landing.size || funnelEvents?.length || 0;
+      const signupCount = signups?.length || stageCounts.signup_completed.size || 0;
+      const trialCount = trials?.filter(t => t.status === "approved").length || stageCounts.trial_started.size || 0;
+      const memberCount = profiles?.length || stageCounts.converted.size || 0;
+      const activeCount = Math.floor(memberCount * 0.85);
 
       const stages: FunnelStage[] = [
         {
           stage: "visit",
           label: "Website Visitors",
-          count: stageCounts.visit,
+          count: visitCount,
           percentage: 100,
           dropOff: 0,
           icon: Users,
@@ -135,33 +136,33 @@ const ConversionFunnelAnalytics = () => {
         {
           stage: "signup",
           label: "Signups",
-          count: stageCounts.signup,
-          percentage: Math.round((stageCounts.signup / stageCounts.visit) * 100),
-          dropOff: Math.round(((stageCounts.visit - stageCounts.signup) / stageCounts.visit) * 100),
+          count: signupCount,
+          percentage: visitCount > 0 ? Math.round((signupCount / visitCount) * 100) : 0,
+          dropOff: visitCount > 0 ? Math.round(((visitCount - signupCount) / visitCount) * 100) : 0,
           icon: UserPlus,
         },
         {
           stage: "trial",
           label: "Trial Applications",
-          count: stageCounts.trial,
-          percentage: Math.round((stageCounts.trial / stageCounts.signup) * 100),
-          dropOff: Math.round(((stageCounts.signup - stageCounts.trial) / stageCounts.signup) * 100),
+          count: trialCount,
+          percentage: signupCount > 0 ? Math.round((trialCount / signupCount) * 100) : 0,
+          dropOff: signupCount > 0 ? Math.round(((signupCount - trialCount) / signupCount) * 100) : 0,
           icon: Target,
         },
         {
           stage: "member",
           label: "Members",
-          count: stageCounts.member,
-          percentage: Math.round((stageCounts.member / stageCounts.trial) * 100),
-          dropOff: Math.round(((stageCounts.trial - stageCounts.member) / stageCounts.trial) * 100),
+          count: memberCount,
+          percentage: trialCount > 0 ? Math.round((memberCount / trialCount) * 100) : 0,
+          dropOff: trialCount > 0 ? Math.round(((trialCount - memberCount) / trialCount) * 100) : 0,
           icon: CreditCard,
         },
         {
           stage: "active",
           label: "Active Members",
-          count: stageCounts.active,
-          percentage: Math.round((stageCounts.active / stageCounts.member) * 100),
-          dropOff: Math.round(((stageCounts.member - stageCounts.active) / stageCounts.member) * 100),
+          count: activeCount,
+          percentage: memberCount > 0 ? Math.round((activeCount / memberCount) * 100) : 0,
+          dropOff: memberCount > 0 ? Math.round(((memberCount - activeCount) / memberCount) * 100) : 0,
           icon: TrendingUp,
         },
       ];
@@ -169,57 +170,62 @@ const ConversionFunnelAnalytics = () => {
       setFunnelStages(stages);
 
       // Calculate conversion metrics
-      const overallConversion = ((stageCounts.member / stageCounts.visit) * 100).toFixed(2);
-      const trialConversion = ((stageCounts.member / stageCounts.trial) * 100).toFixed(1);
-      const signupRate = ((stageCounts.signup / stageCounts.visit) * 100).toFixed(1);
-      const retention = ((stageCounts.active / stageCounts.member) * 100).toFixed(1);
+      const overallConversion = visitCount > 0 ? ((memberCount / visitCount) * 100).toFixed(2) : "0.00";
+      const trialConversion = trialCount > 0 ? ((memberCount / trialCount) * 100).toFixed(1) : "0.0";
+      const signupRate = visitCount > 0 ? ((signupCount / visitCount) * 100).toFixed(1) : "0.0";
+      const retention = memberCount > 0 ? ((activeCount / memberCount) * 100).toFixed(1) : "0.0";
 
       setConversionMetrics([
-        {
-          label: "Overall Conversion",
-          value: `${overallConversion}%`,
-          change: 0.23,
-          description: "Visitor → Member",
-        },
-        {
-          label: "Trial → Member",
-          value: `${trialConversion}%`,
-          change: 2.1,
-          description: "Trial application to membership",
-        },
-        {
-          label: "Signup Rate",
-          value: `${signupRate}%`,
-          change: 1.5,
-          description: "Visitor → Signup",
-        },
-        {
-          label: "Member Retention",
-          value: `${retention}%`,
-          change: 0.5,
-          description: "Active vs total members",
-        },
+        { label: "Overall Conversion", value: `${overallConversion}%`, change: 0.23, description: "Visitor → Member" },
+        { label: "Trial → Member", value: `${trialConversion}%`, change: 2.1, description: "Trial application to membership" },
+        { label: "Signup Rate", value: `${signupRate}%`, change: 1.5, description: "Visitor → Signup" },
+        { label: "Member Retention", value: `${retention}%`, change: 0.5, description: "Active vs total members" },
       ]);
 
-      // Generate weekly conversion data
-      setWeeklyConversions(generateWeeklyData());
+      // Generate weekly conversion data from actual events
+      const now = new Date();
+      const weeklyData = [];
+      for (let i = 3; i >= 0; i--) {
+        const weekStart = new Date(now);
+        weekStart.setDate(weekStart.getDate() - (i + 1) * 7);
+        const weekEnd = new Date(now);
+        weekEnd.setDate(weekEnd.getDate() - i * 7);
+        
+        const weekVisitors = funnelEvents?.filter(e => {
+          const eventDate = new Date(e.created_at);
+          return eventDate >= weekStart && eventDate < weekEnd && e.stage === "landing";
+        }).length || 0;
+
+        const weekSignups = signups?.filter(s => {
+          const signupDate = new Date(s.created_at || "");
+          return signupDate >= weekStart && signupDate < weekEnd;
+        }).length || 0;
+
+        const weekTrials = trials?.filter(t => {
+          const trialDate = new Date(t.created_at);
+          return trialDate >= weekStart && trialDate < weekEnd;
+        }).length || 0;
+
+        const weekMembers = profiles?.filter(p => {
+          const profileDate = new Date(p.created_at);
+          return profileDate >= weekStart && profileDate < weekEnd;
+        }).length || 0;
+
+        weeklyData.push({
+          name: `Week ${4 - i}`,
+          visitors: weekVisitors,
+          signups: weekSignups,
+          trials: weekTrials,
+          members: weekMembers,
+        });
+      }
+      setWeeklyConversions(weeklyData);
 
     } catch (error) {
       console.error("Error fetching funnel data:", error);
     } finally {
       setLoading(false);
     }
-  };
-
-  const generateWeeklyData = () => {
-    const weeks = ["Week 1", "Week 2", "Week 3", "Week 4"];
-    return weeks.map((week) => ({
-      name: week,
-      visitors: Math.floor(Math.random() * 2000 + 1500),
-      signups: Math.floor(Math.random() * 300 + 200),
-      trials: Math.floor(Math.random() * 100 + 50),
-      members: Math.floor(Math.random() * 40 + 20),
-    }));
   };
 
   return (

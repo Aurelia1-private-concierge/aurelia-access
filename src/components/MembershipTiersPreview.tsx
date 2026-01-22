@@ -157,7 +157,7 @@ const MembershipTiersPreview = () => {
               </ul>
 
               <Link
-                to="/auth"
+                to="/membership"
                 className={`block w-full py-3 text-center text-[10px] font-medium tracking-[0.2em] uppercase transition-all duration-300 ${
                   tier.highlighted
                     ? 'bg-primary text-primary-foreground hover:bg-primary/90'

@@ -35,6 +35,12 @@
     --destructive: 0 65% 55%;
     --destructive-foreground: 0 0% 98%;
 
+    /* Semantic feedback colors */
+    --success: 142 65% 45%;
+    --success-foreground: 0 0% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 30 8% 5%;
+
     --border: 43 20% 22%;
     --input: 30 5% 15%;
     --ring: 43 70% 58%;

@@ -1089,6 +1089,30 @@ export type Database = {
           },
         ]
       }
+      currency_rates_cache: {
+        Row: {
+          base_currency: string
+          expires_at: string
+          fetched_at: string
+          id: string
+          rates: Json
+        }
+        Insert: {
+          base_currency: string
+          expires_at?: string
+          fetched_at?: string
+          id?: string
+          rates?: Json
+        }
+        Update: {
+          base_currency?: string
+          expires_at?: string
+          fetched_at?: string
+          id?: string
+          rates?: Json
+        }
+        Relationships: []
+      }
       discovery_logs: {
         Row: {
           created_at: string | null
@@ -2772,6 +2796,89 @@ export type Database = {
           status?: string | null
           title?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      pricing_history: {
+        Row: {
+          change_type: string
+          changed_by: string | null
+          created_at: string
+          id: string
+          new_values: Json | null
+          previous_values: Json | null
+          pricing_rule_id: string | null
+        }
+        Insert: {
+          change_type: string
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          new_values?: Json | null
+          previous_values?: Json | null
+          pricing_rule_id?: string | null
+        }
+        Update: {
+          change_type?: string
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          new_values?: Json | null
+          previous_values?: Json | null
+          pricing_rule_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pricing_history_pricing_rule_id_fkey"
+            columns: ["pricing_rule_id"]
+            isOneToOne: false
+            referencedRelation: "pricing_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pricing_rules: {
+        Row: {
+          base_credits: number
+          budget_multipliers: Json | null
+          category: string
+          created_at: string
+          effective_from: string | null
+          effective_to: string | null
+          id: string
+          is_active: boolean
+          partner_price_tiers: Json | null
+          priority_multipliers: Json | null
+          time_multipliers: Json | null
+          updated_at: string
+        }
+        Insert: {
+          base_credits?: number
+          budget_multipliers?: Json | null
+          category: string
+          created_at?: string
+          effective_from?: string | null
+          effective_to?: string | null
+          id?: string
+          is_active?: boolean
+          partner_price_tiers?: Json | null
+          priority_multipliers?: Json | null
+          time_multipliers?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          base_credits?: number
+          budget_multipliers?: Json | null
+          category?: string
+          created_at?: string
+          effective_from?: string | null
+          effective_to?: string | null
+          id?: string
+          is_active?: boolean
+          partner_price_tiers?: Json | null
+          priority_multipliers?: Json | null
+          time_multipliers?: Json | null
+          updated_at?: string
         }
         Relationships: []
       }

@@ -2712,6 +2712,36 @@ export type Database = {
           },
         ]
       }
+      partner_waitlist: {
+        Row: {
+          category_preferences: string[] | null
+          company_name: string | null
+          created_at: string | null
+          email: string
+          id: string
+          interest_type: string
+          message: string | null
+        }
+        Insert: {
+          category_preferences?: string[] | null
+          company_name?: string | null
+          created_at?: string | null
+          email: string
+          id?: string
+          interest_type: string
+          message?: string | null
+        }
+        Update: {
+          category_preferences?: string[] | null
+          company_name?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          interest_type?: string
+          message?: string | null
+        }
+        Relationships: []
+      }
       partners: {
         Row: {
           categories: Database["public"]["Enums"]["service_category"][]

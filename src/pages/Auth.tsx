@@ -77,7 +77,21 @@ const Auth = () => {
   
   const { needsVerification, checkMFAStatus } = useMFA();
   const { logLogin, logLogout, logSignup, logPasswordReset, logMFAEvent, logOAuthLogin } = useAuthAuditLog();
-  const { trackSignupStarted, trackSignupCompleted } = useFunnelTracking();
+  const { 
+    trackAuthPageView, 
+    trackLoginAttempt, 
+    trackLoginSuccess, 
+    trackLoginFailed,
+    trackSignupView,
+    trackSignupStarted, 
+    trackSignupCompleted,
+    trackSignupFailed,
+    trackPasswordReset,
+    trackGoogleAuthAttempt,
+    trackMFARequired,
+    trackMFASuccess,
+    trackMFAFailed,
+  } = useFunnelTracking();
   const { checkPasswordDebounced, isChecking: isCheckingBreach, lastResult: breachResult } = usePasswordBreachCheck();
   const { recordDeviceLogin, createBreachAlert } = useLoginDeviceTracking();
   const [breachChecked, setBreachChecked] = useState(false);
@@ -104,6 +118,13 @@ const Auth = () => {
       }
     }
   }, [user, authLoading, navigate, needsVerification, checkMFAStatus]);
+
+  // Track auth page view when component mounts (for non-authenticated users)
+  useEffect(() => {
+    if (!user && !authLoading) {
+      trackAuthPageView(isLogin);
+    }
+  }, [user, authLoading, isLogin, trackAuthPageView]);
 
   // Countdown timer for password reset cooldown
   useEffect(() => {
@@ -228,6 +249,8 @@ const Auth = () => {
           variant: "destructive",
         });
       } else {
+        // Track password reset
+        trackPasswordReset();
         // Set cooldown after successful request
         setLastResetRequest(now);
         setCooldownRemaining(60);
@@ -243,6 +266,7 @@ const Auth = () => {
   };
 
   const handleGoogleSignIn = async () => {
+    trackGoogleAuthAttempt();
     setIsLoading(true);
     try {
       logOAuthLogin("google");
@@ -283,6 +307,7 @@ const Auth = () => {
 
     try {
       if (isLogin) {
+        trackLoginAttempt();
         // Check server-side IP rate limit before attempting
         const ipStatus = await checkIPRateLimit();
         if (ipStatus.isLimited) {
@@ -303,6 +328,7 @@ const Auth = () => {
             recordIPFailedAttempt(email),
           ]);
           logLogin(false, email);
+          trackLoginFailed(error.message);
           
           if (error.message.includes("Invalid login credentials")) {
             toast({
@@ -320,6 +346,7 @@ const Auth = () => {
             });
           }
         } else {
+          trackLoginSuccess(email);
           // Save or clear remembered email
           if (rememberMe) {
             localStorage.setItem("aurelia_remembered_email", email);
@@ -350,6 +377,7 @@ const Auth = () => {
           const needsMFA = hasVerifiedFactors && aalData?.currentLevel === "aal1";
           
           if (needsMFA) {
+            trackMFARequired();
             setShowMFAVerify(true);
           } else {
             toast({
@@ -363,6 +391,7 @@ const Auth = () => {
         trackSignupStarted();
         const { error } = await signUp(email, password);
         if (error) {
+          trackSignupFailed(error.message);
           if (error.message.includes("User already registered")) {
             toast({
               title: "Account Exists",
@@ -398,6 +427,7 @@ const Auth = () => {
   const handleMFASuccess = () => {
     setShowMFAVerify(false);
     logMFAEvent("verify");
+    trackMFASuccess();
     toast({
       title: "Welcome Back",
       description: "You have successfully signed in with 2FA.",
@@ -409,6 +439,7 @@ const Auth = () => {
   const handleMFACancel = async () => {
     setShowMFAVerify(false);
     logLogout("mfa_cancelled");
+    trackMFAFailed();
     await supabase.auth.signOut();
     setEmail("");
     setPassword("");

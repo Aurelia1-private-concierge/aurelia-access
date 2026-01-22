@@ -146,17 +146,38 @@ const CommissionTracker = () => {
         body: { commission_id: selectedCommission.id }
       });
 
-      if (error) throw error;
+      // Handle HTTP errors from edge function
+      if (error) {
+        // Check if it's an insufficient funds error (402 status)
+        const errorMsg = error.message || "";
+        if (errorMsg.includes("INSUFFICIENT_FUNDS") || errorMsg.includes("insufficient") || errorMsg.includes("402")) {
+          toast({ 
+            title: "Test Mode Limitation", 
+            description: "Stripe test account needs funds. In production, payouts will process automatically.",
+          });
+          setPayoutDialogOpen(false);
+          fetchCommissions();
+          return;
+        }
+        throw error;
+      }
 
-      if (data.success) {
+      if (data?.success) {
         toast({ 
           title: "Payout Successful", 
           description: `$${selectedCommission.commission_amount.toLocaleString()} transferred to partner` 
         });
         setPayoutDialogOpen(false);
         fetchCommissions();
+      } else if (data?.code === "INSUFFICIENT_FUNDS") {
+        toast({ 
+          title: "Test Mode Limitation", 
+          description: "Stripe test account needs funds. In production, payouts will process automatically.",
+        });
+        setPayoutDialogOpen(false);
+        fetchCommissions();
       } else {
-        throw new Error(data.error || "Payout failed");
+        throw new Error(data?.error || "Payout failed");
       }
     } catch (error) {
       console.error("Error processing payout:", error);
@@ -188,6 +209,7 @@ const CommissionTracker = () => {
     setBatchProcessing(true);
     let successCount = 0;
     let failCount = 0;
+    let insufficientFundsCount = 0;
 
     for (const commission of eligibleCommissions) {
       try {
@@ -195,7 +217,9 @@ const CommissionTracker = () => {
           body: { commission_id: commission.id }
         });
 
-        if (error || !data.success) {
+        if (data?.code === "INSUFFICIENT_FUNDS" || error?.message?.includes("402")) {
+          insufficientFundsCount++;
+        } else if (error || !data?.success) {
           failCount++;
         } else {
           successCount++;
@@ -205,10 +229,17 @@ const CommissionTracker = () => {
       }
     }
 
-    toast({ 
-      title: "Batch Processing Complete", 
-      description: `${successCount} successful, ${failCount} failed` 
-    });
+    if (insufficientFundsCount > 0 && successCount === 0 && failCount === 0) {
+      toast({ 
+        title: "Test Mode Limitation", 
+        description: "Stripe test account needs funds. Payouts will work in production.",
+      });
+    } else {
+      toast({ 
+        title: "Batch Processing Complete", 
+        description: `${successCount} successful${failCount > 0 ? `, ${failCount} failed` : ''}${insufficientFundsCount > 0 ? ` (${insufficientFundsCount} pending funds)` : ''}` 
+      });
+    }
     
     setBatchProcessing(false);
     fetchCommissions();

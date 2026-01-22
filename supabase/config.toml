@@ -1,5 +1,8 @@
 project_id = "dukohtdvhsdckizneksr"
 
+[functions.generate-site-content]
+verify_jwt = false
+
 [functions.chat]
 verify_jwt = false
 

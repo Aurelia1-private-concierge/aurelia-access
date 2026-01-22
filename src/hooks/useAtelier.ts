@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/hooks/useSubscription";
 import { toast } from "sonner";
@@ -40,6 +39,50 @@ interface AtelierState {
   error: string | null;
 }
 
+// Raw database response type
+interface RawMemberSite {
+  id: string;
+  user_id: string;
+  name: string;
+  slug: string;
+  template_id: string;
+  status: string;
+  content: Json;
+  branding: Json;
+  custom_domain: string | null;
+  analytics_enabled: boolean;
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+const getAuthHeaders = async () => {
+  // Get the current session token from localStorage
+  const storedSession = localStorage.getItem(`sb-${import.meta.env.VITE_SUPABASE_PROJECT_ID}-auth-token`);
+  let authToken = SUPABASE_KEY;
+  
+  if (storedSession) {
+    try {
+      const session = JSON.parse(storedSession);
+      if (session?.access_token) {
+        authToken = session.access_token;
+      }
+    } catch {
+      // Use default key
+    }
+  }
+  
+  return {
+    apikey: SUPABASE_KEY,
+    Authorization: `Bearer ${authToken}`,
+    "Content-Type": "application/json",
+    Prefer: "return=representation",
+  };
+};
+
 export function useAtelier() {
   const { user } = useAuth();
   const { tier, subscribed } = useSubscription();
@@ -68,23 +111,24 @@ export function useAtelier() {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase
-        .from("member_sites")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
+      const headers = await getAuthHeaders();
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/member_sites?user_id=eq.${user.id}&order=created_at.desc`,
+        { headers }
+      );
 
-      if (error) throw error;
+      if (!response.ok) throw new Error("Failed to fetch sites");
 
-      setState(prev => ({
-        ...prev,
-        sites: (data || []).map(site => ({
-          ...site,
-          content: (site.content as unknown as SiteBlock[]) || [],
-          branding: (site.branding as unknown as SiteBranding) || DEFAULT_BRANDING,
-          status: site.status as "draft" | "published" | "archived",
-        })),
+      const data: RawMemberSite[] = await response.json();
+
+      const sites: MemberSite[] = data.map(site => ({
+        ...site,
+        content: (site.content as unknown as SiteBlock[]) || [],
+        branding: (site.branding as unknown as SiteBranding) || DEFAULT_BRANDING,
+        status: site.status as "draft" | "published" | "archived",
       }));
+
+      setState(prev => ({ ...prev, sites }));
     } catch (err) {
       console.error("Error fetching sites:", err);
       setState(prev => ({ ...prev, error: "Failed to load sites" }));
@@ -93,18 +137,17 @@ export function useAtelier() {
 
   const fetchTemplates = useCallback(async () => {
     try {
-      const { data, error } = await supabase
-        .from("site_templates")
-        .select("*")
-        .eq("is_active", true)
-        .order("category");
+      const headers = await getAuthHeaders();
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/site_templates?is_active=eq.true&order=category`,
+        { headers }
+      );
 
-      if (error) throw error;
+      if (!response.ok) throw new Error("Failed to fetch templates");
 
-      setState(prev => ({
-        ...prev,
-        templates: data || [],
-      }));
+      const data: SiteTemplate[] = await response.json();
+
+      setState(prev => ({ ...prev, templates: data || [] }));
     } catch (err) {
       console.error("Error fetching templates:", err);
     }
@@ -129,27 +172,31 @@ export function useAtelier() {
     const finalSlug = slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
     try {
-      const { data, error } = await supabase
-        .from("member_sites")
-        .insert({
+      const headers = await getAuthHeaders();
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/member_sites`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
           user_id: user.id,
           name,
           slug: finalSlug,
           template_id: templateId,
           content: template.default_blocks,
-          branding: DEFAULT_BRANDING as unknown as Json,
-        })
-        .select()
-        .single();
+          branding: DEFAULT_BRANDING,
+        }),
+      });
 
-      if (error) {
-        if (error.code === "23505") {
+      if (!response.ok) {
+        const error = await response.json();
+        if (error?.code === "23505") {
           toast.error("A site with this URL already exists. Try a different name.");
         } else {
-          throw error;
+          throw new Error(error?.message || "Failed to create site");
         }
         return null;
       }
+
+      const [data]: RawMemberSite[] = await response.json();
 
       const newSite: MemberSite = {
         ...data,
@@ -158,11 +205,7 @@ export function useAtelier() {
         status: data.status as "draft" | "published" | "archived",
       };
 
-      setState(prev => ({
-        ...prev,
-        sites: [newSite, ...prev.sites],
-      }));
-
+      setState(prev => ({ ...prev, sites: [newSite, ...prev.sites] }));
       toast.success("Site created successfully!");
       return newSite;
     } catch (err) {
@@ -191,16 +234,20 @@ export function useAtelier() {
         }
       }
       if (updates.analytics_enabled !== undefined) dbUpdates.analytics_enabled = updates.analytics_enabled;
-      if (updates.content !== undefined) dbUpdates.content = updates.content as unknown as Json;
-      if (updates.branding !== undefined) dbUpdates.branding = updates.branding as unknown as Json;
+      if (updates.content !== undefined) dbUpdates.content = updates.content;
+      if (updates.branding !== undefined) dbUpdates.branding = updates.branding;
 
-      const { error } = await supabase
-        .from("member_sites")
-        .update(dbUpdates)
-        .eq("id", siteId)
-        .eq("user_id", user.id);
+      const headers = await getAuthHeaders();
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/member_sites?id=eq.${siteId}&user_id=eq.${user.id}`,
+        {
+          method: "PATCH",
+          headers,
+          body: JSON.stringify(dbUpdates),
+        }
+      );
 
-      if (error) throw error;
+      if (!response.ok) throw new Error("Failed to update site");
 
       setState(prev => ({
         ...prev,
@@ -223,13 +270,13 @@ export function useAtelier() {
     if (!user) return false;
 
     try {
-      const { error } = await supabase
-        .from("member_sites")
-        .delete()
-        .eq("id", siteId)
-        .eq("user_id", user.id);
+      const headers = await getAuthHeaders();
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/member_sites?id=eq.${siteId}&user_id=eq.${user.id}`,
+        { method: "DELETE", headers }
+      );
 
-      if (error) throw error;
+      if (!response.ok) throw new Error("Failed to delete site");
 
       setState(prev => ({
         ...prev,

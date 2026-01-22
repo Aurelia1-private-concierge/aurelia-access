@@ -73,6 +73,8 @@ const PartnerPlatform = lazy(() => import("./pages/PartnerPlatform"));
 const Marketplace = lazy(() => import("./pages/Marketplace"));
 const PartnerInventory = lazy(() => import("./pages/PartnerInventory"));
 const Auctions = lazy(() => import("./pages/Auctions"));
+const Atelier = lazy(() => import("./pages/Atelier"));
+const SiteBuilder = lazy(() => import("./components/atelier/SiteBuilder"));
 
 // Production debugging
 const log = (msg: string) => console.log(`[App ${Date.now()}] ${msg}`);
@@ -269,6 +271,26 @@ const AnimatedRoutes = forwardRef<HTMLDivElement>((props, ref) => {
               <ProtectedRoute>
                 <PageTransition>
                   <Membership />
+                </PageTransition>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/atelier"
+            element={
+              <ProtectedRoute>
+                <PageTransition>
+                  <Atelier />
+                </PageTransition>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/atelier/:siteId"
+            element={
+              <ProtectedRoute>
+                <PageTransition>
+                  <SiteBuilder />
                 </PageTransition>
               </ProtectedRoute>
             }

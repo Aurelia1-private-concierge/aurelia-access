@@ -143,7 +143,7 @@ const Atelier = () => {
   const getStatusBadge = (status: MemberSite["status"]) => {
     switch (status) {
       case "published":
-        return <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">Published</Badge>;
+        return <Badge className="bg-green-500/20 text-green-500 border-green-500/30">Published</Badge>;
       case "draft":
         return <Badge variant="secondary">Draft</Badge>;
       case "archived":
@@ -154,10 +154,11 @@ const Atelier = () => {
   const tierForGallery = currentTier as "gold" | "platinum";
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-6xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+    <>
+      <div className="min-h-screen bg-background">
+        <div className="container max-w-6xl mx-auto px-4 py-8">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-8">
             <div>
               <Link 
                 to="/dashboard" 
@@ -325,41 +326,41 @@ const Atelier = () => {
         </div>
       </div>
 
-    {/* Template Gallery Modal */}
-    <TemplateGallery
-      open={showTemplates}
-      onOpenChange={setShowTemplates}
-      templates={templates}
-      onSelect={handleSelectTemplate}
-      currentTier={tierForGallery}
-    />
+      {/* Template Gallery Modal */}
+      <TemplateGallery
+        open={showTemplates}
+        onOpenChange={setShowTemplates}
+        templates={templates}
+        onSelect={handleSelectTemplate}
+        currentTier={tierForGallery}
+      />
 
-    {/* Create Site Dialog */}
-    <CreateSiteDialog
-      open={showCreateDialog}
-      onOpenChange={setShowCreateDialog}
-      templateId={selectedTemplateId}
-      templates={templates}
-    />
+      {/* Create Site Dialog */}
+      <CreateSiteDialog
+        open={showCreateDialog}
+        onOpenChange={setShowCreateDialog}
+        templateId={selectedTemplateId}
+        templates={templates}
+      />
 
-    {/* Delete Confirmation */}
-    <AlertDialog open={!!siteToDelete} onOpenChange={() => setSiteToDelete(null)}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Delete Site</AlertDialogTitle>
-          <AlertDialogDescription>
-            Are you sure you want to delete "{siteToDelete?.name}"? This action cannot be undone.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive text-destructive-foreground">
-            Delete
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  </div>
+      {/* Delete Confirmation */}
+      <AlertDialog open={!!siteToDelete} onOpenChange={() => setSiteToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Site</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{siteToDelete?.name}"? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive text-destructive-foreground">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 };
 

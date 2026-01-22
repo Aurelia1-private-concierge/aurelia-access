@@ -1926,6 +1926,54 @@ export type Database = {
         }
         Relationships: []
       }
+      member_sites: {
+        Row: {
+          analytics_enabled: boolean | null
+          branding: Json | null
+          content: Json | null
+          created_at: string
+          custom_domain: string | null
+          id: string
+          name: string
+          published_at: string | null
+          slug: string
+          status: Database["public"]["Enums"]["site_status"]
+          template_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          analytics_enabled?: boolean | null
+          branding?: Json | null
+          content?: Json | null
+          created_at?: string
+          custom_domain?: string | null
+          id?: string
+          name: string
+          published_at?: string | null
+          slug: string
+          status?: Database["public"]["Enums"]["site_status"]
+          template_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          analytics_enabled?: boolean | null
+          branding?: Json | null
+          content?: Json | null
+          created_at?: string
+          custom_domain?: string | null
+          id?: string
+          name?: string
+          published_at?: string | null
+          slug?: string
+          status?: Database["public"]["Enums"]["site_status"]
+          template_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notification_settings: {
         Row: {
           alert_types: string[]
@@ -3850,6 +3898,77 @@ export type Database = {
           },
         ]
       }
+      site_generation_credits: {
+        Row: {
+          created_at: string
+          credit_type: string
+          id: string
+          site_id: string | null
+          tokens_used: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          credit_type: string
+          id?: string
+          site_id?: string | null
+          tokens_used?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          credit_type?: string
+          id?: string
+          site_id?: string | null
+          tokens_used?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_generation_credits_site_id_fkey"
+            columns: ["site_id"]
+            isOneToOne: false
+            referencedRelation: "member_sites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_templates: {
+        Row: {
+          category: string
+          created_at: string
+          default_blocks: Json | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          min_tier: string
+          name: string
+          preview_image: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          default_blocks?: Json | null
+          description?: string | null
+          id: string
+          is_active?: boolean | null
+          min_tier?: string
+          name: string
+          preview_image?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          default_blocks?: Json | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          min_tier?: string
+          name?: string
+          preview_image?: string | null
+        }
+        Relationships: []
+      }
       social_posts: {
         Row: {
           campaign: string | null
@@ -4661,6 +4780,7 @@ export type Database = {
         | "wellness"
         | "shopping"
         | "chauffeur"
+      site_status: "draft" | "published" | "archived"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -4814,6 +4934,7 @@ export const Constants = {
         "shopping",
         "chauffeur",
       ],
+      site_status: ["draft", "published", "archived"],
     },
   },
 } as const

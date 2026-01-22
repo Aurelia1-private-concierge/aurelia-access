@@ -101,15 +101,23 @@ const Index = () => {
   const musicToggleRef = useRef<(() => void) | null>(null);
   const narratorToggleRef = useRef<(() => void) | null>(null);
 
-  // Defer ambient effects to reduce TBT
+  // Defer ambient effects significantly to reduce main-thread work during LCP
   useEffect(() => {
-    const timer = setTimeout(() => {
+    // Use requestIdleCallback for non-critical ambient effects
+    const scheduleAmbient = () => {
       startTransition(() => {
         setShowAmbient(true);
       });
-    }, 100);
+    };
 
-    return () => clearTimeout(timer);
+    // Defer to idle time or 2 seconds, whichever comes first
+    if ('requestIdleCallback' in window) {
+      const idleId = window.requestIdleCallback(scheduleAmbient, { timeout: 2000 });
+      return () => window.cancelIdleCallback(idleId);
+    } else {
+      const timer = setTimeout(scheduleAmbient, 2000);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   // Callbacks for voice commands

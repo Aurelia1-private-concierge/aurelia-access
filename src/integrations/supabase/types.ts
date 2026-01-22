@@ -14,6 +14,128 @@ export type Database = {
   }
   public: {
     Tables: {
+      ab_test_assignments: {
+        Row: {
+          converted: boolean
+          created_at: string
+          id: string
+          session_id: string
+          test_id: string
+          user_id: string | null
+          variant_id: string
+        }
+        Insert: {
+          converted?: boolean
+          created_at?: string
+          id?: string
+          session_id: string
+          test_id: string
+          user_id?: string | null
+          variant_id: string
+        }
+        Update: {
+          converted?: boolean
+          created_at?: string
+          id?: string
+          session_id?: string
+          test_id?: string
+          user_id?: string | null
+          variant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ab_test_assignments_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "ab_tests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ab_test_assignments_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "ab_test_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ab_test_variants: {
+        Row: {
+          conversions: number
+          created_at: string
+          id: string
+          impressions: number
+          name: string
+          test_id: string
+          traffic_percentage: number
+        }
+        Insert: {
+          conversions?: number
+          created_at?: string
+          id?: string
+          impressions?: number
+          name: string
+          test_id: string
+          traffic_percentage?: number
+        }
+        Update: {
+          conversions?: number
+          created_at?: string
+          id?: string
+          impressions?: number
+          name?: string
+          test_id?: string
+          traffic_percentage?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ab_test_variants_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "ab_tests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ab_tests: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          end_date: string | null
+          id: string
+          name: string
+          start_date: string | null
+          status: string
+          updated_at: string
+          winner_variant_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name: string
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+          winner_variant_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name?: string
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+          winner_variant_id?: string | null
+        }
+        Relationships: []
+      }
       ai_conversation_memory: {
         Row: {
           confidence: number | null

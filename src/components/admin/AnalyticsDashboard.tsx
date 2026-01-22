@@ -47,6 +47,13 @@ interface DashboardStats {
   memberChange: number;
 }
 
+interface PerformanceMetrics {
+  avgRequestValue: number;
+  completionRate: number;
+  commissionRate: number;
+  retentionRate: number;
+}
+
 const COLORS = ["hsl(var(--primary))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))"];
 
 const AnalyticsDashboard = () => {
@@ -62,6 +69,12 @@ const AnalyticsDashboard = () => {
   const [revenueData, setRevenueData] = useState<any[]>([]);
   const [membershipData, setMembershipData] = useState<any[]>([]);
   const [requestsByCategory, setRequestsByCategory] = useState<any[]>([]);
+  const [performanceMetrics, setPerformanceMetrics] = useState<PerformanceMetrics>({
+    avgRequestValue: 0,
+    completionRate: 0,
+    commissionRate: 15,
+    retentionRate: 0,
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -91,13 +104,39 @@ const AnalyticsDashboard = () => {
       const activeReqs = requests?.filter(r => r.status === 'pending' || r.status === 'in_progress').length || 0;
       const paidCommissions = commissions?.filter(c => c.status === 'paid').reduce((sum, c) => sum + Number(c.commission_amount), 0) || 0;
 
+      // Calculate changes based on time periods
+      const now = new Date();
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+
+      const recentSignups = signups?.filter(s => new Date(s.created_at) >= thirtyDaysAgo).length || 0;
+      const previousSignups = signups?.filter(s => {
+        const date = new Date(s.created_at);
+        return date >= sixtyDaysAgo && date < thirtyDaysAgo;
+      }).length || 0;
+
+      const memberChange = previousSignups > 0 
+        ? Math.round(((recentSignups - previousSignups) / previousSignups) * 100 * 10) / 10
+        : recentSignups > 0 ? 100 : 0;
+
+      const recentCommissions = commissions?.filter(c => new Date(c.created_at) >= thirtyDaysAgo)
+        .reduce((sum, c) => sum + Number(c.commission_amount), 0) || 0;
+      const previousCommissions = commissions?.filter(c => {
+        const date = new Date(c.created_at);
+        return date >= sixtyDaysAgo && date < thirtyDaysAgo;
+      }).reduce((sum, c) => sum + Number(c.commission_amount), 0) || 0;
+
+      const revenueChange = previousCommissions > 0 
+        ? Math.round(((recentCommissions - previousCommissions) / previousCommissions) * 100 * 10) / 10
+        : recentCommissions > 0 ? 100 : 0;
+
       setStats({
         totalRevenue: totalCommissions * 6.67, // Estimate from commissions (15% rate)
         totalMembers: signups?.length || 0,
         activeRequests: activeReqs,
         partnerPayouts: paidCommissions,
-        revenueChange: 12.5,
-        memberChange: 8.3,
+        revenueChange,
+        memberChange,
       });
 
       // Generate revenue trend data
@@ -120,6 +159,33 @@ const AnalyticsDashboard = () => {
           value,
         }))
       );
+
+      // Calculate performance metrics from real data
+      const completedRequests = requests?.filter(r => r.status === 'completed') || [];
+      const totalRequests = requests?.length || 0;
+      const completionRate = totalRequests > 0 
+        ? Math.round((completedRequests.length / totalRequests) * 1000) / 10
+        : 0;
+
+      // Calculate avg request value from budget data
+      const requestsWithBudget = requests?.filter(r => r.budget_max || r.budget_min) || [];
+      const avgRequestValue = requestsWithBudget.length > 0
+        ? Math.round(requestsWithBudget.reduce((sum, r) => sum + (Number(r.budget_max) || Number(r.budget_min) || 0), 0) / requestsWithBudget.length)
+        : 0;
+
+      // Calculate retention (users with multiple requests or active profiles)
+      const { data: profiles } = await supabase.from("profiles").select("user_id, created_at");
+      const activeProfiles = profiles?.length || 0;
+      const retentionRate = signups && signups.length > 0 && activeProfiles > 0
+        ? Math.min(100, Math.round((activeProfiles / signups.length) * 1000) / 10)
+        : 0;
+
+      setPerformanceMetrics({
+        avgRequestValue,
+        completionRate,
+        commissionRate: 15,
+        retentionRate,
+      });
     } catch (error) {
       console.error("Error fetching analytics:", error);
     } finally {
@@ -132,7 +198,7 @@ const AnalyticsDashboard = () => {
     return months.map((month, i) => {
       const monthData = data.filter(d => new Date(d.created_at).getMonth() === i);
       const total = monthData.reduce((sum, d) => sum + Number(d[amountField] || 0), 0);
-      return { name: month, value: total || Math.random() * 50000 + 10000 };
+      return { name: month, value: total };
     });
   };
 
@@ -140,7 +206,7 @@ const AnalyticsDashboard = () => {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     return months.map((month, i) => {
       const count = data.filter(d => new Date(d.created_at || Date.now()).getMonth() === i).length;
-      return { name: month, members: count || Math.floor(Math.random() * 50 + 10) };
+      return { name: month, members: count };
     });
   };
 
@@ -380,23 +446,23 @@ const AnalyticsDashboard = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 bg-muted/20 rounded-lg">
                 <p className="text-sm text-muted-foreground">Avg. Request Value</p>
-                <p className="text-2xl font-semibold text-foreground mt-1">£24,500</p>
-                <p className="text-xs text-emerald-500 mt-1">+15% vs last month</p>
+                <p className="text-2xl font-semibold text-foreground mt-1">{formatCurrency(performanceMetrics.avgRequestValue)}</p>
+                <p className="text-xs text-muted-foreground mt-1">Based on budgets</p>
               </div>
               <div className="p-4 bg-muted/20 rounded-lg">
                 <p className="text-sm text-muted-foreground">Request Completion Rate</p>
-                <p className="text-2xl font-semibold text-foreground mt-1">94.2%</p>
-                <p className="text-xs text-emerald-500 mt-1">+2.3% vs last month</p>
+                <p className="text-2xl font-semibold text-foreground mt-1">{performanceMetrics.completionRate}%</p>
+                <p className="text-xs text-muted-foreground mt-1">Completed / Total</p>
               </div>
               <div className="p-4 bg-muted/20 rounded-lg">
                 <p className="text-sm text-muted-foreground">Partner Commission Rate</p>
-                <p className="text-2xl font-semibold text-foreground mt-1">15%</p>
+                <p className="text-2xl font-semibold text-foreground mt-1">{performanceMetrics.commissionRate}%</p>
                 <p className="text-xs text-muted-foreground mt-1">Standard rate</p>
               </div>
               <div className="p-4 bg-muted/20 rounded-lg">
                 <p className="text-sm text-muted-foreground">Member Retention</p>
-                <p className="text-2xl font-semibold text-foreground mt-1">97.8%</p>
-                <p className="text-xs text-emerald-500 mt-1">+0.5% vs last month</p>
+                <p className="text-2xl font-semibold text-foreground mt-1">{performanceMetrics.retentionRate}%</p>
+                <p className="text-xs text-muted-foreground mt-1">Active profiles</p>
               </div>
             </div>
           </CardContent>

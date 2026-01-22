@@ -1,0 +1,10 @@
+# Redirect to primary domain to avoid redirect penalty
+# All traffic should go directly to the primary custom domain
+https://aureliaprivateconcierge.lovable.app/* https://www.aurelia-privateconcierge.com/:splat 301!
+
+# Handle www to non-www or vice versa (choose one as canonical)
+# Currently www is primary, so redirect non-www to www
+https://aurelia-privateconcierge.com/* https://www.aurelia-privateconcierge.com/:splat 301!
+
+# SPA fallback - serve index.html for all routes
+/*    /index.html   200

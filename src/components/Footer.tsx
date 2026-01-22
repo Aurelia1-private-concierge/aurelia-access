@@ -27,7 +27,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-background border-t border-border/10 relative">
+    <footer role="contentinfo" aria-label="Site footer" className="bg-background border-t border-border/10 relative">
       <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8">
           {/* Brand Column */}

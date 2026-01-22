@@ -69,8 +69,25 @@ const Atelier = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="max-w-md mx-auto">
+      <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
+        {/* Premium Video Background */}
+        <div className="absolute inset-0 z-0">
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ minWidth: '100%', minHeight: '100%' }}
+          >
+            <source src={heroPenthouse} type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/80 to-background" />
+          <div className="absolute inset-0 bg-background/40" />
+        </div>
+        
+        <Card className="max-w-md mx-auto relative z-10 backdrop-blur-sm bg-background/80 border-primary/20">
           <CardHeader className="text-center">
             <Sparkles className="w-12 h-12 mx-auto text-primary mb-4" />
             <CardTitle>Aurelia Atelier</CardTitle>
@@ -90,8 +107,24 @@ const Atelier = () => {
 
   if (!currentTier) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="container max-w-4xl mx-auto px-4 py-12">
+      <div className="min-h-screen bg-background relative overflow-hidden">
+        {/* Premium Video Background */}
+        <div className="absolute inset-0 z-0">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ minWidth: '100%', minHeight: '100%' }}
+          >
+            <source src={heroPenthouse} type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/80 to-background" />
+          <div className="absolute inset-0 bg-background/40" />
+        </div>
+        
+        <div className="container max-w-4xl mx-auto px-4 py-12 relative z-10">
           <Link 
             to="/dashboard" 
             className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8"
@@ -100,7 +133,7 @@ const Atelier = () => {
             Back to Dashboard
           </Link>
           
-          <Card className="border-primary/20 bg-gradient-to-br from-background to-muted/20">
+          <Card className="border-primary/20 bg-gradient-to-br from-background/90 to-muted/20 backdrop-blur-sm">
             <CardHeader className="text-center pb-8">
               <Crown className="w-16 h-16 mx-auto text-primary mb-4" />
               <CardTitle className="text-3xl font-serif">Aurelia Atelier</CardTitle>
@@ -123,7 +156,7 @@ const Atelier = () => {
           {/* Feature preview */}
           <div className="grid md:grid-cols-2 gap-6 mt-12">
             {TEMPLATE_CATEGORIES.map((category) => (
-              <Card key={category.id} className="bg-muted/30">
+              <Card key={category.id} className="bg-muted/30 backdrop-blur-sm border-primary/10">
                 <CardHeader>
                   <CardTitle className="text-lg">{category.name}</CardTitle>
                   <CardDescription>{category.description}</CardDescription>

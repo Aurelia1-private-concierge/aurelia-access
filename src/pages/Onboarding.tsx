@@ -26,7 +26,7 @@ const Onboarding = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { profile, saveProfile, isLoading: profileLoading } = useTravelDNA();
-  const { trackOnboardingStarted, trackOnboardingCompleted } = useFunnelTracking();
+  const { trackOnboardingStarted, trackOnboardingStep, trackOnboardingSkipped, trackOnboardingCompleted } = useFunnelTracking();
   const [step, setStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasTrackedStart, setHasTrackedStart] = useState(false);
@@ -152,6 +152,17 @@ const Onboarding = () => {
   };
 
   const handleNext = async () => {
+    // Track the current step before moving to next
+    if (step > 0 && step < steps.length - 1) {
+      trackOnboardingStep(step, steps[step].id, {
+        archetype: step >= 1 ? archetype : undefined,
+        pace: step >= 2 ? pace : undefined,
+        accommodation: step >= 3 ? accommodation : undefined,
+        cuisinesCount: step >= 4 ? cuisines.length : undefined,
+        activitiesCount: step >= 5 ? Object.values(activities).filter(Boolean).length : undefined,
+      });
+    }
+    
     if (step < steps.length - 2) {
       setStep(prev => prev + 1);
     } else if (step === steps.length - 2) {
@@ -179,7 +190,14 @@ const Onboarding = () => {
       if (error) throw new Error(error);
       
       // Track onboarding completed
-      trackOnboardingCompleted({ archetype, pace, accommodation });
+      trackOnboardingCompleted({ 
+        archetype, 
+        pace, 
+        accommodation,
+        cuisinesCount: cuisines.length,
+        activitiesCount: Object.values(activities).filter(Boolean).length,
+        hasSpecialRequirements: specialRequirements.length > 0,
+      });
       
       setStep(steps.length - 1); // Go to completion step
       toast.success("Your preferences have been saved");
@@ -192,6 +210,7 @@ const Onboarding = () => {
   };
 
   const handleSkip = () => {
+    trackOnboardingSkipped(step);
     navigate("/dashboard");
   };
 

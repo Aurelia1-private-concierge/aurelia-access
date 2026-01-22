@@ -80,6 +80,7 @@ const ABTestingPanel = lazy(() => import("@/components/admin/ABTestingPanel"));
 const BehaviorAnalytics = lazy(() => import("@/components/admin/BehaviorAnalytics"));
 const ConversionFunnelDashboard = lazy(() => import("@/components/admin/ConversionFunnelDashboard"));
 const AttributionAnalytics = lazy(() => import("@/components/admin/AttributionAnalytics"));
+const FunnelDropoffAnalytics = lazy(() => import("@/components/admin/FunnelDropoffAnalytics"));
 
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -349,6 +350,7 @@ const Admin = () => {
             <TabsTrigger value="visitors">Visitors</TabsTrigger>
             <TabsTrigger value="behavior">Behavior</TabsTrigger>
             <TabsTrigger value="funnel">Funnel</TabsTrigger>
+            <TabsTrigger value="dropoff">Drop-off Analysis</TabsTrigger>
             <TabsTrigger value="funneldashboard">Funnel Dashboard</TabsTrigger>
             <TabsTrigger value="attribution">Attribution</TabsTrigger>
             <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
@@ -465,6 +467,16 @@ const Admin = () => {
           <TabsContent value="funnel" className="space-y-6">
             <Suspense fallback={<ChartLoading />}>
               <ConversionFunnelAnalytics />
+            </Suspense>
+          </TabsContent>
+
+          <TabsContent value="dropoff" className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-serif text-3xl text-foreground mb-2">Drop-off Analysis</h1>
+              <p className="text-muted-foreground">Identify friction points in authentication and onboarding</p>
+            </motion.div>
+            <Suspense fallback={<ChartLoading />}>
+              <FunnelDropoffAnalytics />
             </Suspense>
           </TabsContent>
 

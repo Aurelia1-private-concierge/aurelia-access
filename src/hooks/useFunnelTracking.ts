@@ -6,10 +6,33 @@ import { useAuth } from "@/contexts/AuthContext";
 export type FunnelStage =
   | "landing"
   | "page_view"
+  // Auth flow stages
+  | "auth_page_view"
+  | "auth_form_focus"
+  | "auth_login_attempt"
+  | "auth_login_success"
+  | "auth_login_failed"
+  | "auth_signup_view"
   | "signup_started"
   | "signup_completed"
+  | "signup_failed"
+  | "auth_password_reset"
+  | "auth_google_attempt"
+  | "auth_mfa_required"
+  | "auth_mfa_success"
+  | "auth_mfa_failed"
+  // Onboarding flow stages
   | "onboarding_started"
+  | "onboarding_step_1"
+  | "onboarding_step_2"
+  | "onboarding_step_3"
+  | "onboarding_step_4"
+  | "onboarding_step_5"
+  | "onboarding_step_6"
+  | "onboarding_step_7"
+  | "onboarding_skipped"
   | "onboarding_completed"
+  // Conversion stages
   | "trial_started"
   | "trial_completed"
   | "subscription_started"
@@ -102,7 +125,37 @@ export const useFunnelTracking = () => {
     }
   }, [trackStage, location.pathname, location.search]);
 
-  // Helper functions for common stages
+  // ===== Auth Flow Tracking =====
+  const trackAuthPageView = useCallback(
+    (isLogin: boolean) => trackStage("auth_page_view", { mode: isLogin ? "login" : "signup" }),
+    [trackStage]
+  );
+
+  const trackAuthFormFocus = useCallback(
+    (field: string) => trackStage("auth_form_focus", { field }),
+    [trackStage]
+  );
+
+  const trackLoginAttempt = useCallback(
+    () => trackStage("auth_login_attempt"),
+    [trackStage]
+  );
+
+  const trackLoginSuccess = useCallback(
+    (email?: string) => trackStage("auth_login_success", { email }),
+    [trackStage]
+  );
+
+  const trackLoginFailed = useCallback(
+    (reason?: string) => trackStage("auth_login_failed", { reason }),
+    [trackStage]
+  );
+
+  const trackSignupView = useCallback(
+    () => trackStage("auth_signup_view"),
+    [trackStage]
+  );
+
   const trackSignupStarted = useCallback(
     () => trackStage("signup_started"),
     [trackStage]
@@ -113,8 +166,61 @@ export const useFunnelTracking = () => {
     [trackStage]
   );
 
+  const trackSignupFailed = useCallback(
+    (reason?: string) => trackStage("signup_failed", { reason }),
+    [trackStage]
+  );
+
+  const trackPasswordReset = useCallback(
+    () => trackStage("auth_password_reset"),
+    [trackStage]
+  );
+
+  const trackGoogleAuthAttempt = useCallback(
+    () => trackStage("auth_google_attempt"),
+    [trackStage]
+  );
+
+  const trackMFARequired = useCallback(
+    () => trackStage("auth_mfa_required"),
+    [trackStage]
+  );
+
+  const trackMFASuccess = useCallback(
+    () => trackStage("auth_mfa_success"),
+    [trackStage]
+  );
+
+  const trackMFAFailed = useCallback(
+    () => trackStage("auth_mfa_failed"),
+    [trackStage]
+  );
+
+  // ===== Onboarding Flow Tracking =====
   const trackOnboardingStarted = useCallback(
     () => trackStage("onboarding_started"),
+    [trackStage]
+  );
+
+  const trackOnboardingStep = useCallback(
+    (step: number, stepName: string, data?: Record<string, unknown>) => {
+      const stageMap: Record<number, FunnelStage> = {
+        1: "onboarding_step_1",
+        2: "onboarding_step_2",
+        3: "onboarding_step_3",
+        4: "onboarding_step_4",
+        5: "onboarding_step_5",
+        6: "onboarding_step_6",
+        7: "onboarding_step_7",
+      };
+      const stage = stageMap[step] || "page_view";
+      trackStage(stage, { stepName, step, ...data });
+    },
+    [trackStage]
+  );
+
+  const trackOnboardingSkipped = useCallback(
+    (atStep: number) => trackStage("onboarding_skipped", { atStep }),
     [trackStage]
   );
 
@@ -123,6 +229,7 @@ export const useFunnelTracking = () => {
     [trackStage]
   );
 
+  // ===== Conversion Tracking =====
   const trackTrialStarted = useCallback(
     () => trackStage("trial_started"),
     [trackStage]
@@ -150,10 +257,27 @@ export const useFunnelTracking = () => {
 
   return {
     trackStage,
+    // Auth tracking
+    trackAuthPageView,
+    trackAuthFormFocus,
+    trackLoginAttempt,
+    trackLoginSuccess,
+    trackLoginFailed,
+    trackSignupView,
     trackSignupStarted,
     trackSignupCompleted,
+    trackSignupFailed,
+    trackPasswordReset,
+    trackGoogleAuthAttempt,
+    trackMFARequired,
+    trackMFASuccess,
+    trackMFAFailed,
+    // Onboarding tracking
     trackOnboardingStarted,
+    trackOnboardingStep,
+    trackOnboardingSkipped,
     trackOnboardingCompleted,
+    // Conversion tracking
     trackTrialStarted,
     trackTrialCompleted,
     trackSubscriptionStarted,

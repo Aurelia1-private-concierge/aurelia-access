@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronDown, Play } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useRef, useState, useMemo, useEffect } from "react";
@@ -9,14 +9,12 @@ interface HeroSectionProps {
   videoSrc?: string;
   videoSources?: string[];
   rotationInterval?: number;
-  onPlayVideo?: () => void;
 }
 
 const HeroSection = ({ 
   videoSrc, 
   videoSources = [], 
-  rotationInterval = 15000,
-  onPlayVideo 
+  rotationInterval = 15000
 }: HeroSectionProps) => {
   const { t } = useTranslation();
   const campaign = useCampaignPersonalization();
@@ -286,30 +284,6 @@ const HeroSection = ({
           </Link>
         </motion.div>
 
-        {/* Video button */}
-        {onPlayVideo && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1.4 }}
-            className="mt-12"
-          >
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onPlayVideo();
-              }}
-              className="group inline-flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors duration-300"
-            >
-              <div className="w-10 h-10 rounded-full border border-primary/20 group-hover:border-primary/40 flex items-center justify-center transition-all duration-300">
-                <Play className="w-3.5 h-3.5 ml-0.5" fill="currentColor" />
-              </div>
-              <span className="text-[10px] uppercase tracking-[0.3em] font-light">Watch</span>
-            </button>
-          </motion.div>
-        )}
 
         {/* Bottom line */}
         <motion.div

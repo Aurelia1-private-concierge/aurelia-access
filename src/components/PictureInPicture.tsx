@@ -152,21 +152,23 @@ const PictureInPicture = forwardRef<HTMLDivElement, PictureInPictureProps>(({ is
                 <button
                   onClick={togglePlay}
                   className="p-1.5 rounded-full bg-background/50 hover:bg-background/70 transition-colors"
+                  aria-label={isPlaying ? "Pause video" : "Play video"}
                 >
                   {isPlaying ? (
-                    <Pause className="w-3 h-3 text-foreground" />
+                    <Pause className="w-3 h-3 text-foreground" aria-hidden="true" />
                   ) : (
-                    <Play className="w-3 h-3 text-foreground" />
+                    <Play className="w-3 h-3 text-foreground" aria-hidden="true" />
                   )}
                 </button>
                 <button
                   onClick={toggleMute}
                   className="p-1.5 rounded-full bg-background/50 hover:bg-background/70 transition-colors"
+                  aria-label={isMuted ? "Unmute video" : "Mute video"}
                 >
                   {isMuted ? (
-                    <VolumeX className="w-3 h-3 text-foreground" />
+                    <VolumeX className="w-3 h-3 text-foreground" aria-hidden="true" />
                   ) : (
-                    <Volume2 className="w-3 h-3 text-foreground" />
+                    <Volume2 className="w-3 h-3 text-foreground" aria-hidden="true" />
                   )}
                 </button>
               </div>
@@ -182,18 +184,20 @@ const PictureInPicture = forwardRef<HTMLDivElement, PictureInPictureProps>(({ is
             <button
               onClick={() => setIsMinimized(!isMinimized)}
               className="p-1 rounded bg-background/50 hover:bg-background/70 transition-colors"
+              aria-label={isMinimized ? "Maximize video" : "Minimize video"}
             >
               {isMinimized ? (
-                <Maximize2 className="w-3 h-3 text-foreground" />
+                <Maximize2 className="w-3 h-3 text-foreground" aria-hidden="true" />
               ) : (
-                <Minimize2 className="w-3 h-3 text-foreground" />
+                <Minimize2 className="w-3 h-3 text-foreground" aria-hidden="true" />
               )}
             </button>
             <button
               onClick={handleClose}
               className="p-1 rounded bg-background/50 hover:bg-background/70 transition-colors"
+              aria-label="Close video"
             >
-              <X className="w-3 h-3 text-foreground" />
+              <X className="w-3 h-3 text-foreground" aria-hidden="true" />
             </button>
           </div>
 

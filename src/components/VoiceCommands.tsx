@@ -198,6 +198,8 @@ const VoiceCommands: React.FC<VoiceCommandsProps> = ({
           }
         `}
         title="Voice Commands"
+        aria-label={isListening ? "Stop voice commands" : "Start voice commands"}
+        aria-pressed={isListening}
       >
         {isListening ? (
           <MicOff className="w-6 h-6" />

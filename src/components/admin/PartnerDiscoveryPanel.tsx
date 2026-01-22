@@ -170,6 +170,14 @@ const PartnerDiscoveryPanel = () => {
   const [emailBody, setEmailBody] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [bulkSendingProgress, setBulkSendingProgress] = useState({ sent: 0, total: 0, inProgress: false });
+  
+  // Bulk outreach filters
+  const [bulkCategoryFilter, setBulkCategoryFilter] = useState("all");
+  const [bulkStatusFilter, setBulkStatusFilter] = useState("all");
+  const [bulkPriorityFilter, setBulkPriorityFilter] = useState("all");
+  const [useCustomMessage, setUseCustomMessage] = useState(false);
+  const [customSubject, setCustomSubject] = useState("Exclusive Partnership Invitation from Aurelia");
+  const [customMessage, setCustomMessage] = useState("");
 
   const { logAdminAction, logListAccess } = useAdminAuditLog();
 
@@ -413,23 +421,37 @@ const PartnerDiscoveryPanel = () => {
     URL.revokeObjectURL(url);
   };
 
-  // Get prospects eligible for bulk outreach (have email, not already converted/declined)
-  const eligibleForOutreach = prospects.filter(
-    (p) => p.email && !["converted", "declined"].includes(p.status)
-  );
+  // Get prospects eligible for bulk outreach with filters applied
+  const getFilteredEligibleProspects = () => {
+    return prospects.filter((p) => {
+      // Must have email and not be converted/declined
+      if (!p.email || ["converted", "declined"].includes(p.status)) return false;
+      
+      // Apply bulk filters
+      if (bulkCategoryFilter !== "all" && p.category !== bulkCategoryFilter) return false;
+      if (bulkStatusFilter !== "all" && p.status !== bulkStatusFilter) return false;
+      if (bulkPriorityFilter !== "all" && p.priority !== bulkPriorityFilter) return false;
+      
+      return true;
+    });
+  };
+
+  const eligibleForOutreach = getFilteredEligibleProspects();
 
   const handleBulkOutreach = async () => {
-    if (eligibleForOutreach.length === 0) {
-      toast({ title: "No Eligible Prospects", description: "No prospects with emails available for outreach.", variant: "destructive" });
+    const targetProspects = getFilteredEligibleProspects();
+    
+    if (targetProspects.length === 0) {
+      toast({ title: "No Eligible Prospects", description: "No prospects match your filters.", variant: "destructive" });
       return;
     }
 
-    setBulkSendingProgress({ sent: 0, total: eligibleForOutreach.length, inProgress: true });
+    setBulkSendingProgress({ sent: 0, total: targetProspects.length, inProgress: true });
 
     let successCount = 0;
     let failCount = 0;
 
-    for (const prospect of eligibleForOutreach) {
+    for (const prospect of targetProspects) {
       try {
         const { data, error } = await supabase.functions.invoke("partner-invite", {
           body: {
@@ -441,6 +463,11 @@ const PartnerDiscoveryPanel = () => {
             website: prospect.website,
             description: prospect.description,
             coverage_regions: prospect.coverage_regions,
+            // Custom message if enabled
+            ...(useCustomMessage && customMessage && {
+              custom_subject: customSubject,
+              custom_message: customMessage,
+            }),
           },
         });
 
@@ -464,6 +491,8 @@ const PartnerDiscoveryPanel = () => {
       type: "bulk_outreach",
       success_count: successCount,
       fail_count: failCount,
+      filters: { category: bulkCategoryFilter, status: bulkStatusFilter, priority: bulkPriorityFilter },
+      custom_message: useCustomMessage,
     });
 
     toast({
@@ -471,6 +500,13 @@ const PartnerDiscoveryPanel = () => {
       description: `Sent ${successCount} invitations${failCount > 0 ? `, ${failCount} failed` : ""}.`,
     });
 
+    // Reset filters
+    setBulkCategoryFilter("all");
+    setBulkStatusFilter("all");
+    setBulkPriorityFilter("all");
+    setUseCustomMessage(false);
+    setCustomMessage("");
+    
     fetchProspects();
   };
 
@@ -1031,63 +1067,217 @@ const PartnerDiscoveryPanel = () => {
       </Dialog>
 
       {/* Bulk Outreach Dialog */}
-      <Dialog open={bulkOutreachDialogOpen} onOpenChange={setBulkOutreachDialogOpen}>
-        <DialogContent className="max-w-lg">
+      <Dialog open={bulkOutreachDialogOpen} onOpenChange={(open) => {
+        setBulkOutreachDialogOpen(open);
+        if (!open) {
+          setBulkCategoryFilter("all");
+          setBulkStatusFilter("all");
+          setBulkPriorityFilter("all");
+          setUseCustomMessage(false);
+        }
+      }}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Send className="h-5 w-5 text-primary" />
-              Broadcast Invitation to All Prospects
+              Broadcast Partnership Invitation
             </DialogTitle>
             <DialogDescription>
-              Send the Aurelia partnership invitation to all eligible prospects.
+              Send customized invitations to filtered prospect segments.
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-4 py-4">
-            <div className="p-4 bg-muted/30 rounded-lg space-y-3">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Total prospects:</span>
-                <span className="font-medium">{prospects.length}</span>
+          <Tabs defaultValue="filters" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="filters">
+                <Filter className="h-4 w-4 mr-2" />
+                Filter & Target
+              </TabsTrigger>
+              <TabsTrigger value="customize">
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Customize Message
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="filters" className="space-y-4 pt-4">
+              {/* Filter Controls */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Category</Label>
+                  <Select value={bulkCategoryFilter} onValueChange={setBulkCategoryFilter}>
+                    <SelectTrigger className="h-9">
+                      <SelectValue placeholder="All" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Categories</SelectItem>
+                      {Object.entries(categoryLabels).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Status</Label>
+                  <Select value={bulkStatusFilter} onValueChange={setBulkStatusFilter}>
+                    <SelectTrigger className="h-9">
+                      <SelectValue placeholder="All" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="new">New</SelectItem>
+                      <SelectItem value="contacted">Contacted</SelectItem>
+                      <SelectItem value="responded">Responded</SelectItem>
+                      <SelectItem value="interested">Interested</SelectItem>
+                      <SelectItem value="negotiating">Negotiating</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Priority</Label>
+                  <Select value={bulkPriorityFilter} onValueChange={setBulkPriorityFilter}>
+                    <SelectTrigger className="h-9">
+                      <SelectValue placeholder="All" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Priority</SelectItem>
+                      <SelectItem value="high">High</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="low">Low</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">With valid email:</span>
-                <span className="font-medium">{prospects.filter(p => p.email).length}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Already converted/declined:</span>
-                <span className="font-medium text-muted-foreground">
-                  {prospects.filter(p => ["converted", "declined"].includes(p.status)).length}
-                </span>
-              </div>
-              <div className="border-t border-border/50 pt-3 flex justify-between text-sm">
-                <span className="text-foreground font-medium">Eligible for outreach:</span>
-                <span className="font-semibold text-primary">{eligibleForOutreach.length}</span>
-              </div>
-            </div>
-
-            {bulkSendingProgress.inProgress && (
-              <div className="space-y-2">
+              
+              {/* Stats Summary */}
+              <div className="p-4 bg-muted/30 rounded-lg space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span>Sending invitations...</span>
-                  <span>{bulkSendingProgress.sent} / {bulkSendingProgress.total}</span>
+                  <span className="text-muted-foreground">Total prospects:</span>
+                  <span className="font-medium">{prospects.length}</span>
                 </div>
-                <div className="h-2 bg-muted rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-primary transition-all duration-300"
-                    style={{ width: `${(bulkSendingProgress.sent / bulkSendingProgress.total) * 100}%` }}
-                  />
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">With valid email:</span>
+                  <span className="font-medium">{prospects.filter(p => p.email).length}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Excluded (converted/declined):</span>
+                  <span className="font-medium text-muted-foreground">
+                    {prospects.filter(p => ["converted", "declined"].includes(p.status)).length}
+                  </span>
+                </div>
+                <div className="border-t border-border/50 pt-3 flex justify-between text-sm">
+                  <span className="text-foreground font-medium">Matching filters:</span>
+                  <span className="font-semibold text-primary">{eligibleForOutreach.length}</span>
                 </div>
               </div>
-            )}
+              
+              {/* Preview matching prospects */}
+              {eligibleForOutreach.length > 0 && eligibleForOutreach.length <= 10 && (
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Recipients Preview</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {eligibleForOutreach.map((p) => (
+                      <Badge key={p.id} variant="outline" className="text-xs">
+                        {p.company_name}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </TabsContent>
+            
+            <TabsContent value="customize" className="space-y-4 pt-4">
+              {/* Toggle custom message */}
+              <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                <div>
+                  <p className="text-sm font-medium">Custom Message</p>
+                  <p className="text-xs text-muted-foreground">Override the default Aurelia invitation template</p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={useCustomMessage}
+                  onChange={(e) => setUseCustomMessage(e.target.checked)}
+                  className="h-4 w-4 rounded border-border"
+                />
+              </div>
+              
+              {useCustomMessage ? (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Email Subject</Label>
+                    <Input
+                      value={customSubject}
+                      onChange={(e) => setCustomSubject(e.target.value)}
+                      placeholder="Exclusive Partnership Invitation from Aurelia"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label>Message Body</Label>
+                    <Textarea
+                      value={customMessage}
+                      onChange={(e) => setCustomMessage(e.target.value)}
+                      placeholder="Write your custom message here. Use {{company_name}}, {{contact_name}}, {{category}} as placeholders..."
+                      rows={8}
+                      className="font-mono text-sm"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Available placeholders: {"{{company_name}}"}, {"{{contact_name}}"}, {"{{category}}"}, {"{{invite_link}}"}
+                    </p>
+                  </div>
+                  
+                  {/* Template quick-select */}
+                  {templates.length > 0 && (
+                    <div className="space-y-2">
+                      <Label className="text-xs text-muted-foreground">Or use a template</Label>
+                      <Select onValueChange={(id) => {
+                        const template = templates.find(t => t.id === id);
+                        if (template) {
+                          setCustomSubject(template.subject);
+                          setCustomMessage(template.body);
+                        }
+                      }}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a template..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {templates.map((t) => (
+                            <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                  <p className="text-sm text-foreground font-medium mb-2">Default Aurelia Invitation</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Recipients will receive the beautifully branded Aurelia partnership invitation with gold accents, 
+                    personalized greeting, category-specific content, and a unique application link.
+                  </p>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
 
-            <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
-              <p className="text-sm text-amber-600 dark:text-amber-400">
-                <strong>Note:</strong> Each prospect will receive Aurelia's branded partnership invitation email with a unique application link.
-              </p>
+          {bulkSendingProgress.inProgress && (
+            <div className="space-y-2 pt-2">
+              <div className="flex justify-between text-sm">
+                <span>Sending invitations...</span>
+                <span>{bulkSendingProgress.sent} / {bulkSendingProgress.total}</span>
+              </div>
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-primary transition-all duration-300"
+                  style={{ width: `${(bulkSendingProgress.sent / bulkSendingProgress.total) * 100}%` }}
+                />
+              </div>
             </div>
-          </div>
+          )}
 
-          <DialogFooter>
+          <DialogFooter className="pt-4">
             <Button 
               variant="outline" 
               onClick={() => setBulkOutreachDialogOpen(false)}

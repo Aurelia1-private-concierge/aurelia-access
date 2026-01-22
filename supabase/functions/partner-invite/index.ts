@@ -20,6 +20,9 @@ interface PartnerInviteRequest {
   match_score?: number;
   match_reason?: string;
   auto_outreach?: boolean;
+  // Custom message support
+  custom_subject?: string;
+  custom_message?: string;
 }
 
 serve(async (req) => {
@@ -57,6 +60,8 @@ serve(async (req) => {
       match_score,
       match_reason,
       auto_outreach,
+      custom_subject,
+      custom_message,
     } = data;
 
     if (!company_name || !contact_email) {
@@ -146,12 +151,87 @@ serve(async (req) => {
       .replace(/_/g, ' ')
       .replace(/\b\w/g, l => l.toUpperCase());
 
-    // Send invitation email
-    const emailResponse = await resend.emails.send({
-      from: 'Aurelia Partner Network <partnerships@aurelia-access.lovable.app>',
-      to: [contact_email],
-      subject: `Exclusive Invitation from Aurelia`,
-      html: `
+    // Build email content - use custom or default template
+    const emailSubject = custom_subject || `Exclusive Invitation from Aurelia`;
+    
+    // Replace placeholders in custom message if provided
+    let emailHtml: string;
+    
+    if (custom_message) {
+      // Process custom message with placeholder replacements
+      let processedMessage = custom_message
+        .replace(/\{\{company_name\}\}/g, company_name)
+        .replace(/\{\{contact_name\}\}/g, contact_name || company_name + ' Team')
+        .replace(/\{\{category\}\}/g, categoryDisplay)
+        .replace(/\{\{invite_link\}\}/g, inviteLink);
+      
+      // Wrap custom message in styled template
+      emailHtml = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${emailSubject}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Fredericka+the+Great&display=swap" rel="stylesheet">
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Cormorant Garamond', Georgia, serif; background: linear-gradient(135deg, #D4AF37 0%, #1B263B 100%); min-height: 100vh;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: linear-gradient(135deg, #D4AF37 0%, #1B263B 100%);">
+    <tr>
+      <td style="padding: 40px 20px;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background: linear-gradient(145deg, #f5f5f0 0%, #e8e4dc 50%, #f0ece4 100%); border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="padding: 50px 40px 30px; text-align: center; background: linear-gradient(180deg, rgba(212,175,55,0.1) 0%, transparent 100%); border-bottom: 2px solid #D4AF37;">
+              <h1 style="margin: 0; font-size: 36px; font-weight: 400; color: #D4AF37; letter-spacing: 6px; text-transform: uppercase;">AURELIA</h1>
+              <p style="margin: 12px 0 0; font-size: 13px; color: #15233A; letter-spacing: 3px; text-transform: uppercase; opacity: 0.7;">Private Concierge Network</p>
+            </td>
+          </tr>
+          
+          <!-- Custom Content -->
+          <tr>
+            <td style="padding: 45px 50px;">
+              <div style="font-size: 17px; color: #2a3a4a; line-height: 1.9;">
+                ${processedMessage.replace(/\n/g, '<br>')}
+              </div>
+              
+              <!-- CTA Button -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 35px auto;">
+                <tr>
+                  <td style="border-radius: 8px; background: linear-gradient(135deg, #D4AF37 0%, #b8962f 100%); box-shadow: 0 8px 25px -5px rgba(212,175,55,0.4);">
+                    <a href="${inviteLink}" target="_blank" style="display: inline-block; padding: 18px 50px; font-size: 14px; font-weight: 600; letter-spacing: 3px; color: #15233A; text-decoration: none; text-transform: uppercase; font-family: 'Cormorant Garamond', Georgia, serif;">
+                      Apply Now
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 35px 50px 45px; background: linear-gradient(0deg, rgba(212,175,55,0.08) 0%, transparent 100%); border-top: 1px solid rgba(212,175,55,0.3);">
+              <p style="margin: 0 0 25px; font-family: 'Fredericka the Great', cursive; font-size: 20px; color: #D4AF37; line-height: 1.6;">
+                Yours in Luxury,<br/>
+                <span style="font-size: 18px;">Aurelia Private Concierge</span>
+              </p>
+              <p style="margin: 0; font-size: 12px; color: #7a8a9a; text-align: center;">
+                © ${new Date().getFullYear()} Aurelia Concierge. All rights reserved.
+              </p>
+            </td>
+          </tr>
+          
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+      `;
+    } else {
+      // Use default branded template
+      emailHtml = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -248,7 +328,15 @@ serve(async (req) => {
   </table>
 </body>
 </html>
-      `,
+      `;
+    }
+
+    // Send invitation email
+    const emailResponse = await resend.emails.send({
+      from: 'Aurelia Partner Network <partnerships@aurelia-access.lovable.app>',
+      to: [contact_email],
+      subject: emailSubject,
+      html: emailHtml,
     });
 
     console.log('Email sent:', emailResponse);

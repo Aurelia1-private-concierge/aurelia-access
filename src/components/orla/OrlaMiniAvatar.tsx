@@ -1,6 +1,6 @@
 import { memo, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import orlaAvatarTiny from "@/assets/orla-avatar-tiny.webp";
+import orlaAvatarSmall from "@/assets/orla-avatar-small.webp";
 
 interface OrlaMiniAvatarProps {
   size?: number;
@@ -128,7 +128,7 @@ const OrlaMiniAvatar = memo(({
 
       {/* Static avatar image - using optimized smaller version */}
       <motion.img
-        src={orlaAvatarTiny}
+        src={orlaAvatarSmall}
         alt="Orla"
         className="rounded-full object-cover"
         style={{ width: size, height: size }}

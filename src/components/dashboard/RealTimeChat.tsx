@@ -106,58 +106,89 @@ const RealTimeChat = forwardRef<HTMLDivElement>((_, ref) => {
     setMessages(prev => [...prev, tempUserMsg]);
 
     try {
-      // Call the chat edge function
-      const response = await supabase.functions.invoke("chat", {
-        body: {
+      // Get session for auth
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      // Use fetch to properly handle streaming response
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const response = await fetch(`${supabaseUrl}/functions/v1/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+        },
+        body: JSON.stringify({
           messages: [
             ...messages.map(m => ({ role: m.role, content: m.content })),
             { role: "user", content: userMessage }
           ],
           conversationId,
           channel: "chat",
-        },
+        }),
       });
 
-      if (response.error) {
-        throw new Error(response.error.message);
+      if (!response.ok) {
+        throw new Error(`Chat request failed: ${response.status}`);
       }
 
       // Get the conversation ID from response headers if new
-      const newConvId = response.data?.conversationId;
+      const newConvId = response.headers.get("X-Conversation-Id");
       if (newConvId && !conversationId) {
         setConversationId(newConvId);
       }
 
       // Handle streaming response
-      if (response.data) {
-        // For non-streaming response, parse the content
-        let assistantContent = "";
-        
-        if (typeof response.data === "string") {
-          // Parse SSE stream
-          const lines = response.data.split("\n");
-          for (const line of lines) {
-            if (line.startsWith("data: ") && line !== "data: [DONE]") {
-              try {
-                const json = JSON.parse(line.slice(6));
-                const content = json.choices?.[0]?.delta?.content || json.choices?.[0]?.message?.content;
-                if (content) assistantContent += content;
-              } catch { /* ignore parse errors */ }
-            }
-          }
-        } else if (response.data.choices?.[0]?.message?.content) {
-          assistantContent = response.data.choices[0].message.content;
-        }
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error("No response body");
+      }
 
-        if (assistantContent) {
-          const assistantMsg: ChatMessage = {
-            id: `assistant-${Date.now()}`,
-            role: "assistant",
-            content: assistantContent,
-            created_at: new Date().toISOString(),
-          };
-          setMessages(prev => [...prev, assistantMsg]);
+      const decoder = new TextDecoder();
+      let assistantContent = "";
+      let textBuffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        textBuffer += decoder.decode(value, { stream: true });
+
+        // Process line by line
+        let newlineIndex: number;
+        while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
+          let line = textBuffer.slice(0, newlineIndex);
+          textBuffer = textBuffer.slice(newlineIndex + 1);
+
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") continue;
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              assistantContent += content;
+              setStreamingContent(assistantContent);
+            }
+          } catch {
+            // Ignore parse errors for incomplete chunks
+          }
         }
+      }
+
+      // Add final assistant message
+      if (assistantContent) {
+        const assistantMsg: ChatMessage = {
+          id: `assistant-${Date.now()}`,
+          role: "assistant",
+          content: assistantContent,
+          created_at: new Date().toISOString(),
+        };
+        setMessages(prev => [...prev, assistantMsg]);
       }
     } catch (error) {
       console.error("Error sending message:", error);
@@ -250,8 +281,28 @@ const RealTimeChat = forwardRef<HTMLDivElement>((_, ref) => {
                 })}
               </AnimatePresence>
               
-              {/* Streaming indicator */}
-              {sending && (
+              {/* Streaming content display */}
+              {sending && streamingContent && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex justify-start"
+                >
+                  <div className="flex gap-2 max-w-[80%]">
+                    <Avatar className="h-8 w-8 shrink-0">
+                      <AvatarFallback className="bg-muted">
+                        <Shield className="h-4 w-4" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="rounded-2xl px-4 py-2 bg-muted rounded-bl-sm">
+                      <p className="text-sm whitespace-pre-wrap">{streamingContent}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+              
+              {/* Typing indicator when no streaming content yet */}
+              {sending && !streamingContent && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}

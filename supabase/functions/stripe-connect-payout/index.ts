@@ -86,17 +86,51 @@ serve(async (req) => {
     // Create transfer to partner's connected account
     const amountInCents = Math.round(commission.commission_amount * 100);
     
-    const transfer = await stripe.transfers.create({
-      amount: amountInCents,
-      currency: "usd",
-      destination: partner.stripe_account_id,
-      metadata: {
-        commission_id: commission.id,
-        partner_id: partner.id,
-        service_title: commission.service_title,
-      },
-      description: `Commission for: ${commission.service_title}`,
-    });
+    let transfer;
+    try {
+      transfer = await stripe.transfers.create({
+        amount: amountInCents,
+        currency: "usd",
+        destination: partner.stripe_account_id,
+        metadata: {
+          commission_id: commission.id,
+          partner_id: partner.id,
+          service_title: commission.service_title,
+        },
+        description: `Commission for: ${commission.service_title}`,
+      });
+    } catch (stripeError) {
+      const stripeMessage = stripeError instanceof Error ? stripeError.message : String(stripeError);
+      logStep("Stripe transfer failed", { error: stripeMessage });
+      
+      // Check if it's an insufficient funds error
+      const isInsufficientFunds = stripeMessage.includes("insufficient") || 
+                                   stripeMessage.includes("available funds");
+      
+      // Update commission with error details
+      await supabaseClient
+        .from("partner_commissions")
+        .update({
+          payout_error: isInsufficientFunds 
+            ? "Platform account has insufficient funds. Payout will be retried when funds are available."
+            : stripeMessage,
+          status: "pending", // Keep as pending for retry
+        })
+        .eq("id", commission_id);
+      
+      const userMessage = isInsufficientFunds
+        ? "Payout temporarily unavailable: Platform account needs funds. This is a test mode limitation—use card 4000000000000077 to add test funds, or wait for production mode."
+        : `Stripe error: ${stripeMessage}`;
+      
+      return new Response(JSON.stringify({ 
+        error: userMessage,
+        retryable: isInsufficientFunds,
+        code: "INSUFFICIENT_FUNDS"
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 402, // Payment Required
+      });
+    }
 
     logStep("Transfer created", { 
       transferId: transfer.id, 
@@ -110,12 +144,12 @@ serve(async (req) => {
         status: "paid",
         paid_at: new Date().toISOString(),
         stripe_transfer_id: transfer.id,
+        payout_error: null, // Clear any previous errors
       })
       .eq("id", commission_id);
 
     if (updateError) {
       logStep("Error updating commission", { error: updateError.message });
-      // Transfer was successful, so we log but don't throw
     }
 
     logStep("Payout completed successfully");

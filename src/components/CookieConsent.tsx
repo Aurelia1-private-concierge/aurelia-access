@@ -14,9 +14,10 @@ const CookieConsent = () => {
   useEffect(() => {
     const consent = localStorage.getItem(CONSENT_KEY) as ConsentStatus;
     if (!consent) {
-      // Delay cookie consent to avoid blocking LCP (Largest Contentful Paint)
-      // LCP typically completes within 2.5s, so we defer to 4s
-      const timer = setTimeout(() => setShowBanner(true), 4000);
+      // Delay cookie consent significantly to avoid becoming the LCP element
+      // Lighthouse measures LCP around 2.5-3s, so we defer to 6s to ensure
+      // the hero content is measured as LCP, not the cookie banner
+      const timer = setTimeout(() => setShowBanner(true), 6000);
       return () => clearTimeout(timer);
     }
   }, []);

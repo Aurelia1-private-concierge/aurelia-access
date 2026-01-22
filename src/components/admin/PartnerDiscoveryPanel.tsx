@@ -150,6 +150,7 @@ const PartnerDiscoveryPanel = () => {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [outreachDialogOpen, setOutreachDialogOpen] = useState(false);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [bulkOutreachDialogOpen, setBulkOutreachDialogOpen] = useState(false);
   const [selectedProspect, setSelectedProspect] = useState<PartnerProspect | null>(null);
   const [outreachLogs, setOutreachLogs] = useState<OutreachLog[]>([]);
   
@@ -168,6 +169,7 @@ const PartnerDiscoveryPanel = () => {
   const [emailSubject, setEmailSubject] = useState("");
   const [emailBody, setEmailBody] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [bulkSendingProgress, setBulkSendingProgress] = useState({ sent: 0, total: 0, inProgress: false });
 
   const { logAdminAction, logListAccess } = useAdminAuditLog();
 
@@ -411,6 +413,67 @@ const PartnerDiscoveryPanel = () => {
     URL.revokeObjectURL(url);
   };
 
+  // Get prospects eligible for bulk outreach (have email, not already converted/declined)
+  const eligibleForOutreach = prospects.filter(
+    (p) => p.email && !["converted", "declined"].includes(p.status)
+  );
+
+  const handleBulkOutreach = async () => {
+    if (eligibleForOutreach.length === 0) {
+      toast({ title: "No Eligible Prospects", description: "No prospects with emails available for outreach.", variant: "destructive" });
+      return;
+    }
+
+    setBulkSendingProgress({ sent: 0, total: eligibleForOutreach.length, inProgress: true });
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const prospect of eligibleForOutreach) {
+      try {
+        const { data, error } = await supabase.functions.invoke("partner-invite", {
+          body: {
+            prospect_id: prospect.id,
+            company_name: prospect.company_name,
+            contact_email: prospect.email,
+            contact_name: prospect.contact_name,
+            category: prospect.category,
+            website: prospect.website,
+            description: prospect.description,
+            coverage_regions: prospect.coverage_regions,
+          },
+        });
+
+        if (error) throw error;
+        successCount++;
+      } catch (err) {
+        console.error(`Failed to send to ${prospect.company_name}:`, err);
+        failCount++;
+      }
+
+      setBulkSendingProgress((prev) => ({ ...prev, sent: prev.sent + 1 }));
+      
+      // Small delay to avoid rate limiting
+      await new Promise((resolve) => setTimeout(resolve, 300));
+    }
+
+    setBulkSendingProgress((prev) => ({ ...prev, inProgress: false }));
+    setBulkOutreachDialogOpen(false);
+
+    logAdminAction("admin.notification_sent", "partner", undefined, {
+      type: "bulk_outreach",
+      success_count: successCount,
+      fail_count: failCount,
+    });
+
+    toast({
+      title: "Bulk Outreach Complete",
+      description: `Sent ${successCount} invitations${failCount > 0 ? `, ${failCount} failed` : ""}.`,
+    });
+
+    fetchProspects();
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -422,10 +485,20 @@ const PartnerDiscoveryPanel = () => {
               Find, track, and onboard luxury service partners worldwide
             </p>
           </div>
-          <Button onClick={() => setAddDialogOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Prospect
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => setBulkOutreachDialogOpen(true)}
+              disabled={eligibleForOutreach.length === 0}
+            >
+              <Send className="h-4 w-4 mr-2" />
+              Broadcast to All ({eligibleForOutreach.length})
+            </Button>
+            <Button onClick={() => setAddDialogOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Prospect
+            </Button>
+          </div>
         </div>
       </motion.div>
 
@@ -954,6 +1027,91 @@ const PartnerDiscoveryPanel = () => {
               </TabsContent>
             </Tabs>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Bulk Outreach Dialog */}
+      <Dialog open={bulkOutreachDialogOpen} onOpenChange={setBulkOutreachDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Send className="h-5 w-5 text-primary" />
+              Broadcast Invitation to All Prospects
+            </DialogTitle>
+            <DialogDescription>
+              Send the Aurelia partnership invitation to all eligible prospects.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="p-4 bg-muted/30 rounded-lg space-y-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Total prospects:</span>
+                <span className="font-medium">{prospects.length}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">With valid email:</span>
+                <span className="font-medium">{prospects.filter(p => p.email).length}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Already converted/declined:</span>
+                <span className="font-medium text-muted-foreground">
+                  {prospects.filter(p => ["converted", "declined"].includes(p.status)).length}
+                </span>
+              </div>
+              <div className="border-t border-border/50 pt-3 flex justify-between text-sm">
+                <span className="text-foreground font-medium">Eligible for outreach:</span>
+                <span className="font-semibold text-primary">{eligibleForOutreach.length}</span>
+              </div>
+            </div>
+
+            {bulkSendingProgress.inProgress && (
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Sending invitations...</span>
+                  <span>{bulkSendingProgress.sent} / {bulkSendingProgress.total}</span>
+                </div>
+                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-primary transition-all duration-300"
+                    style={{ width: `${(bulkSendingProgress.sent / bulkSendingProgress.total) * 100}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+              <p className="text-sm text-amber-600 dark:text-amber-400">
+                <strong>Note:</strong> Each prospect will receive Aurelia's branded partnership invitation email with a unique application link.
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setBulkOutreachDialogOpen(false)}
+              disabled={bulkSendingProgress.inProgress}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleBulkOutreach} 
+              disabled={bulkSendingProgress.inProgress || eligibleForOutreach.length === 0}
+            >
+              {bulkSendingProgress.inProgress ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4 mr-2" />
+                  Send to {eligibleForOutreach.length} Prospects
+                </>
+              )}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

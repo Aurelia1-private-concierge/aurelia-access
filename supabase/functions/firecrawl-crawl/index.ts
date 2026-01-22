@@ -86,11 +86,31 @@ Deno.serve(async (req) => {
 
     // Handle scrape options for each page
     if (options?.scrapeOptions) {
+      // Filter out object formats (like JSON extraction schemas) - crawl API only accepts string formats
+      const stringFormats = (options.scrapeOptions.formats || ['markdown', 'html']).filter(
+        (f: unknown) => typeof f === 'string'
+      );
+      
+      // Check if there's a JSON extraction schema
+      const jsonFormat = (options.scrapeOptions.formats || []).find(
+        (f: unknown) => typeof f === 'object' && f !== null && (f as Record<string, unknown>).type === 'json'
+      );
+      
       crawlRequest.scrapeOptions = {
-        formats: options.scrapeOptions.formats || ['markdown', 'html'],
+        formats: stringFormats.length > 0 ? stringFormats : ['markdown', 'html'],
         onlyMainContent: options.scrapeOptions.onlyMainContent ?? true,
         waitFor: options.scrapeOptions.waitFor || 0,
       };
+      
+      // If JSON extraction was requested, add extract format and extractOptions
+      if (jsonFormat) {
+        const jsonObj = jsonFormat as { schema?: object; prompt?: string };
+        (crawlRequest.scrapeOptions as Record<string, unknown>).formats = [...stringFormats, 'extract'];
+        crawlRequest.extractOptions = {
+          schema: jsonObj.schema,
+          prompt: jsonObj.prompt,
+        };
+      }
     } else {
       crawlRequest.scrapeOptions = {
         formats: ['markdown', 'html'],

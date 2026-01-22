@@ -7,6 +7,7 @@ import { useState, useCallback, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import type { Json } from "@/integrations/supabase/types";
 import {
   PricingRule,
   PricingContext,
@@ -21,8 +22,8 @@ interface PricingHistoryEntry {
   pricing_rule_id: string | null;
   changed_by: string | null;
   change_type: "create" | "update" | "delete";
-  previous_values: Record<string, unknown> | null;
-  new_values: Record<string, unknown> | null;
+  previous_values: Json | null;
+  new_values: Json | null;
   created_at: string;
 }
 
@@ -97,8 +98,8 @@ export const usePricingRules = (): UsePricingRulesReturn => {
           .update({
             base_credits: updates.base_credits,
             is_active: updates.is_active,
-            priority_multipliers: updates.priority_multipliers as unknown as Record<string, unknown>,
-            time_multipliers: updates.time_multipliers as unknown as Record<string, unknown>,
+            priority_multipliers: updates.priority_multipliers as Json,
+            time_multipliers: updates.time_multipliers as Json,
             updated_at: new Date().toISOString(),
           })
           .eq("id", ruleId);
@@ -110,8 +111,8 @@ export const usePricingRules = (): UsePricingRulesReturn => {
           pricing_rule_id: ruleId,
           changed_by: user.id,
           change_type: "update" as const,
-          previous_values: currentRule as unknown as Record<string, unknown>,
-          new_values: updates as unknown as Record<string, unknown>,
+          previous_values: currentRule as unknown as Json,
+          new_values: updates as unknown as Json,
         }]);
 
         invalidatePricingCache();
@@ -156,7 +157,7 @@ export const usePricingRules = (): UsePricingRulesReturn => {
           changed_by: user.id,
           change_type: "create" as const,
           previous_values: null,
-          new_values: rule as unknown as Record<string, unknown>,
+          new_values: rule as unknown as Json,
         }]);
 
         invalidatePricingCache();
@@ -195,7 +196,7 @@ export const usePricingRules = (): UsePricingRulesReturn => {
           pricing_rule_id: null,
           changed_by: user.id,
           change_type: "delete" as const,
-          previous_values: currentRule as unknown as Record<string, unknown>,
+          previous_values: currentRule as unknown as Json,
           new_values: null,
         }]);
 

@@ -84,9 +84,17 @@ const Auth = () => {
 
   const RESET_COOLDOWN_MS = 60000; // 60 seconds
 
-  // Check for MFA verification needed and redirect if already logged in
+  // Check for MFA verification needed - only redirect authenticated users when NOT intentionally on /auth
   useEffect(() => {
     if (user && !authLoading) {
+      // Check if user explicitly wants to access auth page (e.g., to switch accounts)
+      const intentionalAuthAccess = sessionStorage.getItem("aurelia_intentional_auth_access");
+      if (intentionalAuthAccess === "true") {
+        // Clear the flag and allow access
+        sessionStorage.removeItem("aurelia_intentional_auth_access");
+        return;
+      }
+      
       // Check MFA status
       checkMFAStatus();
       if (needsVerification) {
@@ -116,11 +124,43 @@ const Auth = () => {
     );
   }
 
-  // Don't render the form if user is already logged in (redirect will happen via useEffect)
+  // If user is logged in, show option to sign out or continue
   if (user) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center max-w-md"
+        >
+          <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6">
+            <Shield className="w-8 h-8 text-primary" />
+          </div>
+          <h2 className="font-serif text-2xl text-foreground mb-2">Already Signed In</h2>
+          <p className="text-muted-foreground text-sm mb-6">
+            You're currently signed in as <strong className="text-foreground">{user.email}</strong>
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
+            >
+              Go to Dashboard
+            </button>
+            <button
+              onClick={async () => {
+                await supabase.auth.signOut();
+                toast({
+                  title: "Signed Out",
+                  description: "You can now sign in with a different account.",
+                });
+              }}
+              className="px-6 py-3 bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors font-medium"
+            >
+              Sign Out
+            </button>
+          </div>
+        </motion.div>
       </div>
     );
   }

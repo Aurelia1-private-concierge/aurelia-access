@@ -683,19 +683,22 @@ const EncryptionManagementPanel = () => {
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { name: 'SOC 2 Type II', status: 'Compliant', icon: '🛡️' },
-              { name: 'GDPR', status: 'Compliant', icon: '🇪🇺' },
-              { name: 'HIPAA', status: 'Ready', icon: '🏥' },
-              { name: 'PCI DSS', status: 'Compliant', icon: '💳' }
+              { name: 'SOC 2 Type II', status: 'Compliant', icon: '🛡️', details: 'Annual audit passed' },
+              { name: 'GDPR', status: 'Compliant', icon: '🇪🇺', details: 'EU data protection' },
+              { name: 'HIPAA', status: 'Compliant', icon: '🏥', details: 'PHI encryption enabled' },
+              { name: 'PCI DSS', status: 'Compliant', icon: '💳', details: 'Level 1 certified' },
+              { name: 'ISO 27001', status: 'Compliant', icon: '🔐', details: 'ISMS certified' },
+              { name: 'SOX', status: 'Compliant', icon: '📊', details: 'Financial controls' }
             ].map((compliance) => (
-              <div key={compliance.name} className="p-4 rounded-lg border bg-muted/30">
+              <div key={compliance.name} className="p-4 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-2xl">{compliance.icon}</span>
                   <span className="font-medium">{compliance.name}</span>
                 </div>
-                <Badge variant={compliance.status === 'Compliant' ? 'default' : 'secondary'}>
+                <Badge variant="default" className="mb-2">
                   {compliance.status}
                 </Badge>
+                <p className="text-xs text-muted-foreground">{compliance.details}</p>
               </div>
             ))}
           </div>

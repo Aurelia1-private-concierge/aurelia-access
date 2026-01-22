@@ -109,7 +109,7 @@ const OrlaFAB = forwardRef<HTMLAnchorElement, OrlaFABProps>((_, ref) => {
   if (!isReady) return null;
   
   return (
-    <Link to="/orla" ref={ref}>
+    <Link to="/orla" ref={ref} data-tour="orla-fab">
       <motion.div
         initial={{ scale: 0 }}
         animate={controls}

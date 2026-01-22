@@ -8,6 +8,7 @@ const OrlaFAB = lazy(() => import("./OrlaFAB"));
 const SystemHealthIndicator = lazy(() => import("./SystemHealthIndicator"));
 const OfflineBanner = lazy(() => import("./OfflineBanner"));
 const NotificationPermissionPrompt = lazy(() => import("./NotificationPermissionPrompt"));
+const HelpFAB = lazy(() => import("./help/HelpFAB"));
 
 // Lazy load heavy components
 const AmbientParticles = lazy(() => import("./AmbientParticles"));
@@ -83,6 +84,7 @@ const GlobalElements = ({
       <Suspense fallback={null}>
         {showWhatsApp && <FloatingWhatsApp />}
         {showOrla && <OrlaFAB />}
+        <HelpFAB />
       </Suspense>
     </>
   );

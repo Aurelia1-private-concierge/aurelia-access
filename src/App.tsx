@@ -75,6 +75,7 @@ const PartnerInventory = lazy(() => import("./pages/PartnerInventory"));
 const Auctions = lazy(() => import("./pages/Auctions"));
 const Atelier = lazy(() => import("./pages/Atelier"));
 const SiteBuilder = lazy(() => import("./components/atelier/SiteBuilder"));
+const UserGuide = lazy(() => import("./pages/UserGuide"));
 
 // Production debugging
 const log = (msg: string) => console.log(`[App ${Date.now()}] ${msg}`);
@@ -176,6 +177,14 @@ const AnimatedRoutes = forwardRef<HTMLDivElement>((props, ref) => {
             element={
               <PageTransition>
                 <Privacy />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/guide"
+            element={
+              <PageTransition>
+                <UserGuide />
               </PageTransition>
             }
           />

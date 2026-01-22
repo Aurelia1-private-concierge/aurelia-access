@@ -86,6 +86,7 @@ const HeroSection = ({
     <header 
       ref={ref} 
       className="relative w-full min-h-[100dvh] overflow-hidden flex items-center justify-center"
+      data-tour="hero-section"
       style={{
         // PERMANENT fallback background - ensures never blank/black
         background: 'linear-gradient(135deg, #252525 0%, #2c2f34 60%, #141418 100%)',

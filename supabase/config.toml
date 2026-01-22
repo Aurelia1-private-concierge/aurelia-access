@@ -176,3 +176,6 @@ verify_jwt = false
 
 [functions.scheduled-tasks]
 verify_jwt = false
+
+[functions.ai-partner-vetting]
+verify_jwt = false

@@ -14,8 +14,9 @@ const CookieConsent = () => {
   useEffect(() => {
     const consent = localStorage.getItem(CONSENT_KEY) as ConsentStatus;
     if (!consent) {
-      // Small delay so it doesn't appear immediately on page load
-      const timer = setTimeout(() => setShowBanner(true), 1500);
+      // Delay cookie consent to avoid blocking LCP (Largest Contentful Paint)
+      // LCP typically completes within 2.5s, so we defer to 4s
+      const timer = setTimeout(() => setShowBanner(true), 4000);
       return () => clearTimeout(timer);
     }
   }, []);

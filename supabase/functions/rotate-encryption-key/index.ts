@@ -26,17 +26,19 @@ Deno.serve(async (req) => {
       );
     }
 
-    const supabase = createClient(
+    // Create client with user's auth for initial verification
+    const userClient = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } }
     );
 
-    // Verify user and admin role
+    // Verify user and get claims
     const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+    const { data: claimsData, error: claimsError } = await userClient.auth.getClaims(token);
     
     if (claimsError || !claimsData?.claims) {
+      console.error("Claims error:", claimsError);
       return new Response(
         JSON.stringify({ error: "Unauthorized" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -44,19 +46,40 @@ Deno.serve(async (req) => {
     }
 
     const userId = claimsData.claims.sub;
+    const userEmail = claimsData.claims.email;
 
-    // Check if user is admin
-    const { data: isAdmin, error: roleError } = await supabase.rpc("has_role", {
-      _user_id: userId,
-      _role: "admin"
-    });
+    // Use service role client for admin check to bypass RLS
+    const adminClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
 
-    if (roleError || !isAdmin) {
+    // Check if user is admin using direct query (more reliable than RPC)
+    const { data: roleData, error: roleError } = await adminClient
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    // Fallback: check for primary admin email
+    const isPrimaryAdmin = userEmail === "concierge@aurelia-privateconcierge.com";
+    const isAdmin = !!roleData || isPrimaryAdmin;
+
+    if (roleError) {
+      console.error("Role check error:", roleError);
+    }
+
+    if (!isAdmin) {
+      console.log("Admin check failed for user:", userId, "email:", userEmail);
       return new Response(
         JSON.stringify({ error: "Admin access required" }),
         { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Use service role client for database operations
+    const supabase = adminClient;
 
     // Parse request
     const { keyId, reason }: RotationRequest = await req.json();

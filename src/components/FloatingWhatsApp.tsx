@@ -95,7 +95,7 @@ const FloatingWhatsApp = () => {
   const whatsappUrl = "https://wa.me/447309935106?text=Hello%20Aurelia%20Concierge";
 
   return (
-    <div className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-40 flex flex-col items-end gap-3">
+    <div className="fixed bottom-6 right-4 sm:bottom-8 sm:right-6 z-40 flex flex-col items-end gap-3">
       {/* Tooltip */}
       <AnimatePresence mode="wait">
         {isTooltipVisible && !isDismissed && (
@@ -122,7 +122,7 @@ const FloatingWhatsApp = () => {
         <span className="absolute inset-0 rounded-full bg-green-500/30 animate-ping" aria-hidden="true" />
         
         {/* Button */}
-        <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-lg shadow-green-500/30 group-hover:shadow-green-500/50 transition-shadow duration-300">
+        <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-lg shadow-green-500/30 group-hover:shadow-green-500/50 transition-shadow duration-300">
           <MessageCircle className="w-6 h-6 text-white" fill="white" aria-hidden="true" />
         </div>
 

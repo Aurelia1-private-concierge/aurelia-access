@@ -128,27 +128,27 @@ const PortfolioOverview = () => {
       />
 
       {/* Subscription + Credits + Perks Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <div data-tour="subscription-card">
           <SubscriptionCard />
         </div>
         <div data-tour="credits-card">
           <CreditsCard />
         </div>
-        <div data-tour="exclusive-perks">
+        <div data-tour="exclusive-perks" className="sm:col-span-2 lg:col-span-1">
           <ExclusivePerks />
         </div>
       </div>
 
       {/* Travel DNA + Orla + Surprise Me Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <div data-tour="travel-dna">
           <TravelDNACard onEditClick={() => setShowOnboarding(true)} />
         </div>
         <div data-tour="orla-companion">
           <OrlaCompanion />
         </div>
-        <div data-tour="surprise-me">
+        <div data-tour="surprise-me" className="sm:col-span-2 lg:col-span-1">
           <SurpriseMeCard />
         </div>
       </div>
@@ -162,14 +162,14 @@ const PortfolioOverview = () => {
       <ReferralProgram />
       
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {portfolioStats.map((stat, index) => (
           <motion.div
             key={stat.label}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="p-6 bg-card/50 border border-border/30 backdrop-blur-sm rounded-lg"
+            className="p-4 sm:p-6 bg-card/50 border border-border/30 backdrop-blur-sm rounded-lg"
           >
             <div className="flex items-start justify-between mb-3">
               <span className="text-xs uppercase tracking-widest text-muted-foreground">
@@ -181,7 +181,7 @@ const PortfolioOverview = () => {
                 <TrendingDown className="w-4 h-4 text-rose-500" />
               )}
             </div>
-            <p className="font-serif text-3xl text-foreground tracking-tight">{stat.value}</p>
+            <p className="font-serif text-xl sm:text-3xl text-foreground tracking-tight">{stat.value}</p>
             <p className={`text-sm mt-1 ${stat.trending === "up" ? "text-emerald-500" : "text-rose-500"}`}>
               {stat.change}
             </p>
@@ -265,16 +265,16 @@ const PortfolioOverview = () => {
         transition={{ delay: 0.6 }}
         className="p-6 bg-card/50 border border-border/30 backdrop-blur-sm rounded-lg"
       >
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
           <div className="flex items-center gap-3">
             <BarChart3 className="w-5 h-5 text-primary" />
             <h3 className="font-serif text-lg text-foreground">Portfolio Performance</h3>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-1 sm:gap-2 overflow-x-auto pb-1">
             {["1M", "3M", "6M", "1Y", "ALL"].map((period) => (
               <button
                 key={period}
-                className={`px-3 py-1 text-xs rounded ${
+                className={`px-2 sm:px-3 py-1 text-xs rounded whitespace-nowrap ${
                   period === "1Y" 
                     ? "bg-primary/20 text-primary border border-primary/30" 
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -287,7 +287,7 @@ const PortfolioOverview = () => {
         </div>
 
         {/* Chart visualization placeholder */}
-        <div className="h-64 flex items-end justify-between gap-2 px-4">
+        <div className="h-48 sm:h-64 flex items-end justify-between gap-1 sm:gap-2 px-2 sm:px-4">
           {[40, 55, 45, 60, 75, 65, 80, 70, 85, 90, 78, 95].map((height, i) => (
             <motion.div
               key={i}
@@ -298,9 +298,9 @@ const PortfolioOverview = () => {
             />
           ))}
         </div>
-        <div className="flex justify-between mt-4 px-4 text-xs text-muted-foreground">
+        <div className="flex justify-between mt-4 px-2 sm:px-4 text-[10px] sm:text-xs text-muted-foreground overflow-x-auto">
           {["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].map((month) => (
-            <span key={month}>{month}</span>
+            <span key={month} className="flex-shrink-0">{month}</span>
           ))}
         </div>
       </motion.div>

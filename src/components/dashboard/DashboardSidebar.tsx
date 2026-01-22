@@ -71,7 +71,7 @@ const DashboardSidebar = ({ activeView, setActiveView }: DashboardSidebarProps) 
       initial={{ x: -20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.4 }}
-      className="w-64 border-r border-border/30 bg-card/50 backdrop-blur-xl flex flex-col"
+      className="hidden lg:flex w-64 border-r border-border/30 bg-card/50 backdrop-blur-xl flex-col"
     >
       {/* Logo */}
       <Link to="/" className="h-20 flex items-center gap-3 px-6 border-b border-border/30 hover:bg-muted/30 transition-colors">

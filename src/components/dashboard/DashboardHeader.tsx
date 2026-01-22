@@ -39,11 +39,11 @@ const DashboardHeader = ({ activeView }: DashboardHeaderProps) => {
       initial={{ y: -10, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="h-20 border-b border-border/30 bg-card/30 backdrop-blur-md px-6 lg:px-8 flex items-center justify-between"
+      className="hidden lg:flex h-20 border-b border-border/30 bg-card/30 backdrop-blur-md px-4 sm:px-6 lg:px-8 items-center justify-between"
     >
       <div>
-        <div className="flex items-center gap-3">
-          <h1 className="font-serif text-2xl text-foreground tracking-tight">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1 className="font-serif text-xl sm:text-2xl text-foreground tracking-tight">
             {viewTitles[activeView]}
           </h1>
           {/* Tier Badge */}
@@ -66,13 +66,13 @@ const DashboardHeader = ({ activeView }: DashboardHeaderProps) => {
         </div>
         <div className="flex items-center gap-2 mt-1">
           <Shield className="w-3 h-3 text-emerald-500" />
-          <span className="text-xs text-emerald-500 tracking-wider uppercase font-medium">
+          <span className="text-[10px] sm:text-xs text-emerald-500 tracking-wider uppercase font-medium">
             Encrypted Session Active
           </span>
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         {/* Search */}
         <div className={cn(
           "hidden md:flex items-center gap-2 px-4 py-2 bg-muted/30 border rounded-lg",

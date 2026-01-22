@@ -87,110 +87,137 @@ const TrafficAttributionAnalytics = () => {
         .select("*")
         .order("created_at", { ascending: false });
 
-      // Process source/medium data
+      // Process source/medium data from real events
       const sourceCounts: { [key: string]: { visitors: number; conversions: number } } = {};
       
       funnelEvents?.forEach(e => {
         const source = e.source || "direct";
-        if (!sourceCounts[source]) {
-          sourceCounts[source] = { visitors: 0, conversions: 0 };
+        const medium = e.medium || "none";
+        const key = `${source}|${medium}`;
+        if (!sourceCounts[key]) {
+          sourceCounts[key] = { visitors: 0, conversions: 0 };
         }
-        sourceCounts[source].visitors++;
-        if (e.stage === "signup" || e.stage === "trial" || e.stage === "member") {
-          sourceCounts[source].conversions++;
+        sourceCounts[key].visitors++;
+        if (e.stage === "signup_completed" || e.stage === "converted" || e.stage === "trial_started") {
+          sourceCounts[key].conversions++;
         }
       });
 
-      // Build source data with defaults
-      const sources: SourceData[] = [
-        {
-          source: "Direct",
-          medium: "none",
-          visitors: sourceCounts.direct?.visitors || 2840,
-          conversions: sourceCounts.direct?.conversions || 142,
-          revenue: 284000,
-          conversionRate: 5.0,
-          icon: Globe,
-        },
-        {
-          source: "Organic Search",
-          medium: "organic",
-          visitors: sourceCounts.google?.visitors || 2120,
-          conversions: sourceCounts.google?.conversions || 191,
-          revenue: 382000,
-          conversionRate: 9.0,
-          icon: Search,
-        },
-        {
-          source: "Social Media",
-          medium: "social",
-          visitors: (sourceCounts.instagram?.visitors || 0) + (sourceCounts.linkedin?.visitors || 0) + 1560,
-          conversions: 109,
-          revenue: 163500,
-          conversionRate: 7.0,
-          icon: Share2,
-        },
-        {
-          source: "Referral",
-          medium: "referral",
-          visitors: sourceCounts.referral?.visitors || 890,
-          conversions: 98,
-          revenue: 245000,
-          conversionRate: 11.0,
-          icon: Link2,
-        },
-        {
-          source: "Paid Campaigns",
-          medium: "cpc",
-          visitors: sourceCounts.google_ads?.visitors || 650,
-          conversions: 52,
-          revenue: 130000,
-          conversionRate: 8.0,
-          icon: Megaphone,
-        },
-        {
-          source: "Email",
-          medium: "email",
-          visitors: sourceCounts.email?.visitors || 420,
-          conversions: 59,
-          revenue: 147500,
-          conversionRate: 14.0,
-          icon: Mail,
-        },
-      ];
+      // Build source data from actual data
+      const sourceMap: { [key: string]: { label: string; icon: any } } = {
+        "direct|none": { label: "Direct", icon: Globe },
+        "google|organic": { label: "Organic Search", icon: Search },
+        "google|cpc": { label: "Google Ads", icon: Megaphone },
+        "instagram|social": { label: "Instagram", icon: Share2 },
+        "linkedin|social": { label: "LinkedIn", icon: Share2 },
+        "referral|referral": { label: "Referral", icon: Link2 },
+        "email|email": { label: "Email", icon: Mail },
+      };
 
-      setSourceData(sources);
+      const sources: SourceData[] = Object.entries(sourceCounts)
+        .sort((a, b) => b[1].visitors - a[1].visitors)
+        .slice(0, 6)
+        .map(([key, data], index) => {
+          const [source, medium] = key.split("|");
+          const mapping = sourceMap[key] || { label: source.charAt(0).toUpperCase() + source.slice(1), icon: Globe };
+          const conversionRate = data.visitors > 0 ? (data.conversions / data.visitors) * 100 : 0;
+          return {
+            source: mapping.label,
+            medium,
+            visitors: data.visitors,
+            conversions: data.conversions,
+            revenue: data.conversions * 2500, // Estimated £2,500 per conversion
+            conversionRate: Math.round(conversionRate * 10) / 10,
+            icon: mapping.icon,
+          };
+        });
 
-      // Campaign data
-      const campaigns: CampaignData[] = [
-        { name: "Summer Luxury Campaign", source: "Google Ads", clicks: 2450, conversions: 98, revenue: 245000, roi: 340 },
-        { name: "Black Card Launch", source: "LinkedIn", clicks: 1820, conversions: 73, revenue: 365000, roi: 520 },
-        { name: "Partner Referral Program", source: "Email", clicks: 1240, conversions: 87, revenue: 217500, roi: 890 },
-        { name: "Influencer Collab", source: "Instagram", clicks: 3200, conversions: 64, revenue: 160000, roi: 180 },
-        { name: "Retargeting", source: "Meta", clicks: 890, conversions: 45, revenue: 112500, roi: 420 },
-      ];
+      setSourceData(sources.length > 0 ? sources : [
+        { source: "Direct", medium: "none", visitors: 0, conversions: 0, revenue: 0, conversionRate: 0, icon: Globe },
+      ]);
+
+      // Campaign data from funnel events with campaign field
+      const campaignCounts: { [key: string]: { source: string; clicks: number; conversions: number } } = {};
+      funnelEvents?.forEach(e => {
+        if (e.campaign) {
+          if (!campaignCounts[e.campaign]) {
+            campaignCounts[e.campaign] = { source: e.source || "direct", clicks: 0, conversions: 0 };
+          }
+          campaignCounts[e.campaign].clicks++;
+          if (e.stage === "signup_completed" || e.stage === "converted") {
+            campaignCounts[e.campaign].conversions++;
+          }
+        }
+      });
+
+      const campaigns: CampaignData[] = Object.entries(campaignCounts)
+        .sort((a, b) => b[1].clicks - a[1].clicks)
+        .slice(0, 5)
+        .map(([name, data]) => ({
+          name: name.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()),
+          source: data.source.charAt(0).toUpperCase() + data.source.slice(1),
+          clicks: data.clicks,
+          conversions: data.conversions,
+          revenue: data.conversions * 2500,
+          roi: data.clicks > 0 ? Math.round((data.conversions / data.clicks) * 1000) : 0,
+        }));
+
       setCampaignData(campaigns);
 
-      // Referrer data
-      const referrers: ReferrerData[] = [
-        { domain: "forbes.com", visits: 342, percentage: 18 },
-        { domain: "bloomberg.com", visits: 289, percentage: 15 },
-        { domain: "robb-report.com", visits: 256, percentage: 13 },
-        { domain: "luxury-tribune.com", visits: 198, percentage: 10 },
-        { domain: "tatler.com", visits: 167, percentage: 9 },
-        { domain: "other", visits: 678, percentage: 35 },
-      ];
+      // Referrer data from funnel events
+      const referrerCounts: { [key: string]: number } = {};
+      funnelEvents?.forEach(e => {
+        if (e.referrer) {
+          try {
+            const domain = new URL(e.referrer).hostname.replace("www.", "");
+            referrerCounts[domain] = (referrerCounts[domain] || 0) + 1;
+          } catch {
+            referrerCounts[e.referrer] = (referrerCounts[e.referrer] || 0) + 1;
+          }
+        }
+      });
+
+      const totalReferrals = Object.values(referrerCounts).reduce((a, b) => a + b, 0) || 1;
+      const referrers: ReferrerData[] = Object.entries(referrerCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 6)
+        .map(([domain, visits]) => ({
+          domain,
+          visits,
+          percentage: Math.round((visits / totalReferrals) * 100),
+        }));
+
       setReferrerData(referrers);
 
-      // Trend data
-      const trends = ["Week 1", "Week 2", "Week 3", "Week 4"].map(week => ({
-        name: week,
-        direct: Math.floor(Math.random() * 500 + 600),
-        organic: Math.floor(Math.random() * 400 + 450),
-        social: Math.floor(Math.random() * 300 + 350),
-        referral: Math.floor(Math.random() * 200 + 180),
-        paid: Math.floor(Math.random() * 150 + 120),
-      }));
+      // Trend data from actual weekly counts
+      const now = new Date();
+      const trends = [];
+      for (let i = 3; i >= 0; i--) {
+        const weekStart = new Date(now);
+        weekStart.setDate(weekStart.getDate() - (i + 1) * 7);
+        const weekEnd = new Date(now);
+        weekEnd.setDate(weekEnd.getDate() - i * 7);
+        
+        const weekEvents = funnelEvents?.filter(e => {
+          const eventDate = new Date(e.created_at);
+          return eventDate >= weekStart && eventDate < weekEnd;
+        }) || [];
+
+        const weekSources: { [key: string]: number } = {};
+        weekEvents.forEach(e => {
+          const source = e.source || "direct";
+          weekSources[source] = (weekSources[source] || 0) + 1;
+        });
+
+        trends.push({
+          name: `Week ${4 - i}`,
+          direct: weekSources.direct || 0,
+          organic: weekSources.google || weekSources.organic || 0,
+          social: (weekSources.instagram || 0) + (weekSources.linkedin || 0) + (weekSources.social || 0),
+          referral: weekSources.referral || 0,
+          paid: weekSources.google_ads || weekSources.cpc || 0,
+        });
+      }
       setTrendData(trends);
 
     } catch (error) {

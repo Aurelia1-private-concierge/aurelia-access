@@ -69,6 +69,7 @@ import ContactAutomationPanel from "@/components/admin/ContactAutomationPanel";
 import PublicationFixWizard from "@/components/admin/PublicationFixWizard";
 import UnifiedStatusDashboard from "@/components/admin/UnifiedStatusDashboard";
 import AuctionManagementPanel from "@/components/admin/AuctionManagementPanel";
+import PartnerWaitlistPanel from "@/components/admin/PartnerWaitlistPanel";
 
 // Lazy load recharts-heavy components to prevent circular initialization errors
 const AnalyticsDashboard = lazy(() => import("@/components/admin/AnalyticsDashboard"));
@@ -363,6 +364,7 @@ const Admin = () => {
             <TabsTrigger value="crm">CRM</TabsTrigger>
             <TabsTrigger value="commissions">Commissions</TabsTrigger>
             <TabsTrigger value="partners">Partners</TabsTrigger>
+            <TabsTrigger value="waitlist">Waitlist</TabsTrigger>
             <TabsTrigger value="discovery">Discovery</TabsTrigger>
             <TabsTrigger value="autodiscovery">Auto Discovery</TabsTrigger>
             <TabsTrigger value="outreach">Cold Outreach</TabsTrigger>
@@ -387,6 +389,14 @@ const Admin = () => {
               <h1 className="font-serif text-3xl text-foreground mb-2">Site Settings</h1>
               <p className="text-muted-foreground">Control site-wide settings</p>
             </motion.div>
+          </TabsContent>
+
+          <TabsContent value="waitlist" className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-serif text-3xl text-foreground mb-2">Partner Waitlist</h1>
+              <p className="text-muted-foreground">Manage partner applications and member signups from the Coming Soon pages</p>
+            </motion.div>
+            <PartnerWaitlistPanel />
           </TabsContent>
 
           <TabsContent value="discovery" className="space-y-6">

@@ -53,13 +53,15 @@ const PartnerWaitlistModal = ({ isOpen, onClose, preselectedCategory }: PartnerW
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from("partner_waitlist").insert({
+      const entryData = {
         email,
         company_name: companyName || null,
         interest_type: interestType,
         category_preferences: selectedCategories.length > 0 ? selectedCategories : null,
         message: message || null
-      });
+      };
+
+      const { data, error } = await supabase.from("partner_waitlist").insert(entryData).select().single();
 
       if (error) {
         if (error.code === "23505") {
@@ -70,6 +72,11 @@ const PartnerWaitlistModal = ({ isOpen, onClose, preselectedCategory }: PartnerW
       } else {
         setIsSubmitted(true);
         toast.success("You're on the list! We'll be in touch soon.");
+        
+        // Notify admin via edge function (fire and forget)
+        supabase.functions.invoke("partner-waitlist-notify", {
+          body: data
+        }).catch(err => console.error("Failed to send admin notification:", err));
       }
     } catch (error) {
       console.error("Waitlist error:", error);

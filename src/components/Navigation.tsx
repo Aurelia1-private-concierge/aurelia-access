@@ -17,6 +17,7 @@ const pageLinks = [
   { href: "/services", label: "Services" },
   { href: "/services/marketplace", label: "Marketplace" },
   { href: "/auctions", label: "Auctions" },
+  { href: "/gallery", label: "Gallery" },
   { href: "/blog", label: "Journal" },
   { href: "/orla", label: "Meet Orla" },
   { href: "/partners/join", label: "Partners" },

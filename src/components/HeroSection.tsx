@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useRef, useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useCampaignPersonalization } from "@/hooks/useCampaignPersonalization";
+import { useVideoPreloader } from "@/hooks/useVideoPreloader";
 
 interface HeroSectionProps {
   videoSrc?: string;
@@ -27,6 +28,17 @@ const HeroSection = ({
   const videos = videoSources.length > 0 ? videoSources : (videoSrc ? [videoSrc] : []);
   const currentVideo = videos[currentVideoIndex];
   const hasMultipleVideos = videos.length > 1;
+  
+  // Intelligent video preloading for seamless transitions
+  const { getPreloadedUrl } = useVideoPreloader({
+    videos,
+    currentIndex: currentVideoIndex,
+    preloadAheadMs: 5000,
+    rotationInterval,
+  });
+  
+  // Use preloaded URL if available, otherwise use original source
+  const videoSource = getPreloadedUrl(currentVideoIndex) || currentVideo;
   
   // CRITICAL: Always show content after 2s, even if video hasn't loaded
   // This prevents blank screen issues in production
@@ -121,9 +133,9 @@ const HeroSection = ({
         
         {/* Video background - using sync mode for smooth crossfade without gaps */}
         <AnimatePresence mode="sync">
-          {currentVideo && !videoError && (
+          {videoSource && !videoError && (
             <motion.video
-              key={currentVideo}
+              key={videoSource}
               initial={{ opacity: 0 }}
               animate={{ opacity: videoLoaded ? 1 : 0 }}
               exit={{ opacity: 0 }}
@@ -144,7 +156,7 @@ const HeroSection = ({
               }}
               aria-label="Luxury lifestyle background video"
             >
-              <source src={currentVideo} type="video/mp4" />
+              <source src={videoSource} type="video/mp4" />
               Your browser does not support the video tag.
             </motion.video>
           )}

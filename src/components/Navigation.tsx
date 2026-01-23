@@ -1,10 +1,16 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Lock, Menu, X } from "lucide-react";
+import { Lock, Menu, X, ChevronDown } from "lucide-react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Logo } from "@/components/brand";
 import LanguageSwitcher from "./LanguageSwitcher";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navLinks = [
   { href: "#services", labelKey: "nav.services", id: "services" },
@@ -13,6 +19,22 @@ const navLinks = [
   { href: "#membership", labelKey: "nav.membership", id: "membership" },
 ];
 
+// Primary navigation links
+const primaryLinks = [
+  { href: "/services", label: "Services" },
+  { href: "/orla", label: "Meet Orla" },
+  { href: "/blog", label: "Journal" },
+  { href: "/partners/join", label: "Partners" },
+];
+
+// Discover dropdown links
+const discoverLinks = [
+  { href: "/services/marketplace", label: "Marketplace" },
+  { href: "/auctions", label: "Auction House" },
+  { href: "/gallery", label: "Gallery" },
+];
+
+// All page links for mobile menu
 const pageLinks = [
   { href: "/services", label: "Services" },
   { href: "/services/marketplace", label: "Marketplace" },
@@ -131,7 +153,7 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-10 text-xs font-light tracking-[0.1em]">
-            {pageLinks.map((link) => (
+            {primaryLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
@@ -151,6 +173,45 @@ const Navigation = () => {
                 )}
               </Link>
             ))}
+            
+            {/* Discover Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className={`relative py-2 transition-colors duration-300 flex items-center gap-1 outline-none ${
+                discoverLinks.some(link => location.pathname === link.href)
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}>
+                Discover
+                <ChevronDown className="w-3 h-3" />
+                {discoverLinks.some(link => location.pathname === link.href) && (
+                  <motion.span
+                    layoutId="activeDiscover"
+                    className="absolute -bottom-0.5 left-0 right-0 h-px bg-primary"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                align="center" 
+                sideOffset={12}
+                className="min-w-[160px] bg-background/95 backdrop-blur-md border-border/30"
+              >
+                {discoverLinks.map((link) => (
+                  <DropdownMenuItem key={link.href} asChild>
+                    <Link
+                      to={link.href}
+                      className={`w-full cursor-pointer text-xs tracking-[0.1em] font-light ${
+                        location.pathname === link.href
+                          ? "text-foreground"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
             
             {location.pathname === "/" && (
               <>

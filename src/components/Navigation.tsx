@@ -184,9 +184,10 @@ const Navigation = () => {
             <Link 
               to="/auth" 
               className="hidden lg:flex items-center gap-2 text-[10px] font-medium tracking-[0.2em] uppercase text-muted-foreground hover:text-foreground transition-colors group"
+              aria-label="Sign in to your client account"
             >
-              <span className="w-8 h-8 rounded-full border border-border/30 flex items-center justify-center group-hover:border-primary/40 transition-all duration-300">
-                <Lock className="w-3 h-3" />
+              <span className="w-8 h-8 rounded-full border border-border/30 flex items-center justify-center group-hover:border-primary/40 transition-all duration-300" aria-hidden="true">
+                <Lock className="w-3 h-3" aria-hidden="true" />
               </span>
               <span>{t("nav.clientLogin")}</span>
             </Link>
@@ -195,9 +196,11 @@ const Navigation = () => {
             <button 
               onClick={() => setIsOpen(!isOpen)}
               className="lg:hidden w-10 h-10 flex items-center justify-center text-foreground"
-              aria-label="Toggle menu"
+              aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={isOpen}
+              aria-controls="mobile-menu"
             >
-              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {isOpen ? <X className="w-5 h-5" aria-hidden="true" /> : <Menu className="w-5 h-5" aria-hidden="true" />}
             </button>
           </div>
         </div>

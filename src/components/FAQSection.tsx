@@ -16,7 +16,7 @@ const FAQSection = () => {
   ];
 
   return (
-    <section className="py-24 md:py-32 bg-card/20 relative">
+    <section className="py-24 md:py-32 bg-card/20 relative" aria-labelledby="faq-heading">
       <div className="max-w-3xl mx-auto px-6">
         {/* Header */}
         <motion.div 
@@ -29,6 +29,7 @@ const FAQSection = () => {
             {t("faq.label")}
           </span>
           <h2 
+            id="faq-heading"
             className="text-4xl md:text-5xl text-foreground tracking-[-0.02em]"
             style={{ fontFamily: "'Cormorant Garamond', serif" }}
           >

@@ -5,10 +5,10 @@ import { Link } from "react-router-dom";
 import OptimizedImage from "./OptimizedImage";
 
 const images = [
-  { src: "https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?w=600", alt: "Luxury Yacht", offset: false },
-  { src: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=600", alt: "Luxury Watch", offset: true },
-  { src: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600", alt: "Luxury Interiors", offset: false },
-  { src: "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=600", alt: "Private Jet", offset: true },
+  { src: "https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?w=600", alt: "Luxury superyacht cruising on crystal blue Mediterranean waters" },
+  { src: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=600", alt: "Rare Patek Philippe luxury watch with intricate gold details" },
+  { src: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600", alt: "Elegant luxury penthouse interior with panoramic city views" },
+  { src: "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=600", alt: "Private jet interior with premium leather seating" },
 ];
 
 const ExperiencesSection = () => {
@@ -21,7 +21,7 @@ const ExperiencesSection = () => {
   ];
 
   return (
-    <section id="experiences" className="py-24 md:py-32 bg-card/20 relative">
+    <section id="experiences" className="py-24 md:py-32 bg-card/20 relative" aria-labelledby="experiences-heading">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Content */}
@@ -35,6 +35,7 @@ const ExperiencesSection = () => {
               {t("experiences.label")}
             </span>
             <h2 
+              id="experiences-heading"
               className="text-4xl md:text-5xl text-foreground tracking-[-0.02em] mb-6"
               style={{ fontFamily: "'Cormorant Garamond', serif" }}
             >
@@ -54,7 +55,7 @@ const ExperiencesSection = () => {
                   transition={{ delay: index * 0.1 }}
                   className="flex items-start gap-3"
                 >
-                  <Check className="w-4 h-4 text-primary/70 mt-0.5 flex-shrink-0" />
+                  <Check className="w-4 h-4 text-primary/70 mt-0.5 flex-shrink-0" aria-hidden="true" />
                   <span className="text-sm text-muted-foreground">{benefit}</span>
                 </motion.li>
               ))}
@@ -63,9 +64,10 @@ const ExperiencesSection = () => {
             <Link 
               to="/services" 
               className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground text-xs font-medium tracking-[0.2em] uppercase hover:bg-primary/90 transition-all duration-300 group"
+              aria-label="View all luxury acquisitions and experiences"
             >
               {t("experiences.viewAcquisitions")}
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Link>
           </motion.div>
 
@@ -76,7 +78,7 @@ const ExperiencesSection = () => {
             viewport={{ once: true }}
             className="order-1 lg:order-2"
           >
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3" role="list" aria-label="Luxury experience gallery">
               {images.map((image, index) => (
                 <motion.div 
                   key={index}
@@ -84,7 +86,8 @@ const ExperiencesSection = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className={`overflow-hidden group ${image.offset ? 'translate-y-6' : ''}`}
+                  className={`overflow-hidden group ${index % 2 === 1 ? 'translate-y-6' : ''}`}
+                  role="listitem"
                 >
                   <OptimizedImage 
                     src={image.src} 

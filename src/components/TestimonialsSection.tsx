@@ -36,7 +36,7 @@ const TestimonialsSection = () => {
   const activeTestimonial = testimonials[activeIndex];
 
   return (
-    <section className="py-24 md:py-32 bg-background relative">
+    <section className="py-24 md:py-32 bg-background relative" aria-labelledby="testimonials-heading">
       <div className="max-w-4xl mx-auto px-6">
         {/* Header */}
         <motion.div 
@@ -49,6 +49,7 @@ const TestimonialsSection = () => {
             {t("testimonials.label")}
           </span>
           <h2 
+            id="testimonials-heading"
             className="text-4xl md:text-5xl text-foreground tracking-[-0.02em]"
             style={{ fontFamily: "'Cormorant Garamond', serif" }}
           >
@@ -64,7 +65,7 @@ const TestimonialsSection = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <Quote className="w-8 h-8 text-primary/20 mx-auto mb-8" />
+          <Quote className="w-8 h-8 text-primary/20 mx-auto mb-8" aria-hidden="true" />
           
           <blockquote 
             className="text-2xl md:text-3xl lg:text-4xl text-foreground font-light leading-relaxed mb-10 max-w-3xl mx-auto"
@@ -76,8 +77,9 @@ const TestimonialsSection = () => {
           <div className="flex flex-col items-center gap-4">
             <img
               src={activeTestimonial.image}
-              alt={activeTestimonial.author}
+              alt={`Portrait of ${activeTestimonial.author}, ${activeTestimonial.title} from ${activeTestimonial.location}`}
               className="w-14 h-14 rounded-full object-cover grayscale"
+              loading="lazy"
             />
             <div>
               <p className="text-sm text-foreground">{activeTestimonial.author}</p>
@@ -89,8 +91,8 @@ const TestimonialsSection = () => {
         </motion.div>
 
         {/* Navigation */}
-        <div className="flex items-center justify-center gap-3">
-          {testimonials.map((_, index) => (
+        <div className="flex items-center justify-center gap-3" role="tablist" aria-label="Testimonial navigation">
+          {testimonials.map((testimonial, index) => (
             <button
               key={index}
               onClick={() => setActiveIndex(index)}
@@ -99,7 +101,9 @@ const TestimonialsSection = () => {
                   ? 'bg-primary w-8' 
                   : 'bg-muted-foreground/20 w-2 hover:bg-muted-foreground/40'
               }`}
-              aria-label={`View testimonial ${index + 1}`}
+              aria-label={`View testimonial from ${testimonial.author}`}
+              aria-selected={index === activeIndex}
+              role="tab"
             />
           ))}
         </div>

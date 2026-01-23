@@ -52,7 +52,7 @@ const FeaturesSection = () => {
   ];
 
   return (
-    <section id="services" className="py-24 md:py-32 bg-background relative">
+    <section id="services" className="py-24 md:py-32 bg-background relative" aria-labelledby="services-heading">
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
         <motion.div
@@ -65,6 +65,7 @@ const FeaturesSection = () => {
             {t("features.label")}
           </span>
           <h2 
+            id="services-heading"
             className="text-4xl md:text-5xl text-foreground tracking-[-0.02em] mb-4"
             style={{ fontFamily: "'Cormorant Garamond', serif" }}
           >
@@ -76,7 +77,7 @@ const FeaturesSection = () => {
         </motion.div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="list" aria-label="Service features">
           {features.map((feature, index) => (
             <motion.div
               key={feature.titleKey || feature.title}
@@ -85,10 +86,11 @@ const FeaturesSection = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.08 }}
               className="group p-8 bg-card/30 border border-border/10 hover:border-primary/20 transition-all duration-500"
+              role="listitem"
             >
               <div className="flex items-start justify-between mb-6">
-                <div className="w-12 h-12 rounded-full border border-border/20 flex items-center justify-center group-hover:border-primary/30 transition-colors duration-500">
-                  <feature.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors duration-500" strokeWidth={1.5} />
+                <div className="w-12 h-12 rounded-full border border-border/20 flex items-center justify-center group-hover:border-primary/30 transition-colors duration-500" aria-hidden="true">
+                  <feature.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors duration-500" strokeWidth={1.5} aria-hidden="true" />
                 </div>
                 <div className="text-right">
                   <span 
@@ -127,9 +129,10 @@ const FeaturesSection = () => {
           <Link
             to="/services"
             className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground text-xs font-medium tracking-[0.2em] uppercase hover:bg-primary/90 transition-all duration-300 group"
+            aria-label="View all concierge services"
           >
             Explore All Services
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
           </Link>
         </motion.div>
       </div>

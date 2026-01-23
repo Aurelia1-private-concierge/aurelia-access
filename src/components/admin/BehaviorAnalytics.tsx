@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef } from "react";
 import { motion } from "framer-motion";
 import { 
   Eye, 
@@ -41,7 +41,7 @@ interface SessionData {
   referrer: string;
 }
 
-const BehaviorAnalytics = () => {
+const BehaviorAnalytics = forwardRef<HTMLDivElement>((props, ref) => {
   const [pageStats, setPageStats] = useState<PageStats[]>([]);
   const [heatmapData, setHeatmapData] = useState<HeatmapData[]>([]);
   const [recentSessions, setRecentSessions] = useState<SessionData[]>([]);
@@ -195,7 +195,7 @@ const BehaviorAnalytics = () => {
     : 0;
 
   return (
-    <div className="space-y-6">
+    <div ref={ref} className="space-y-6">
       {/* Live Stats */}
       <div className="grid gap-4 md:grid-cols-4">
         {[
@@ -429,6 +429,8 @@ const BehaviorAnalytics = () => {
       </Tabs>
     </div>
   );
-};
+});
+
+BehaviorAnalytics.displayName = "BehaviorAnalytics";
 
 export default BehaviorAnalytics;

@@ -105,17 +105,44 @@ export const useLandingTour = (options: UseLandingTourOptions = {}) => {
     setHasSeenTour(false);
   }, []);
 
-  // Auto-start for first-time visitors
+  // Auto-start for first-time visitors - deferred to avoid forced reflows
   useEffect(() => {
     if (!hasSeenTour || forceShow) {
-      const timer = setTimeout(() => {
-        // Check if key elements exist before starting
-        const heroExists = document.querySelector('[data-tour="hero-section"]');
-        if (heroExists) {
-          startTour();
+      let cancelled = false;
+      
+      // Use requestIdleCallback to defer tour until browser is idle
+      const scheduleStart = (): number => {
+        if ('requestIdleCallback' in window) {
+          (window as unknown as { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback(() => {
+            if (cancelled) return;
+            const heroExists = document.querySelector('[data-tour="hero-section"]');
+            if (heroExists) {
+              // Additional frame delay to ensure layout is stable
+              requestAnimationFrame(() => {
+                if (!cancelled) startTour();
+              });
+            }
+          }, { timeout: 4000 });
+          return 0;
+        } else {
+          // Fallback for Safari
+          return setTimeout(() => {
+            if (cancelled) return;
+            const heroExists = document.querySelector('[data-tour="hero-section"]');
+            if (heroExists) startTour();
+          }, 3000) as unknown as number;
         }
-      }, 2000);
-      return () => clearTimeout(timer);
+      };
+      
+      // Initial delay before scheduling
+      const timer = setTimeout(() => {
+        scheduleStart();
+      }, 2500);
+      
+      return () => {
+        cancelled = true;
+        clearTimeout(timer);
+      };
     }
   }, [hasSeenTour, forceShow, startTour]);
 

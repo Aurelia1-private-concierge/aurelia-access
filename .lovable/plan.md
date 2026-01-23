@@ -1,193 +1,91 @@
 
-# Video Enhancement Suite for Aurelia
+# Fix Gallery Videos Not Playing
 
-This plan implements all three requested video enhancements to elevate the hero showcase, provide a dedicated gallery experience, and optimize video performance.
+## Problem Identified
+
+The gallery videos are not playing because the `video-gallery-data.ts` file references video URLs as static paths (`/assets/hero-yacht.mp4`), but the actual video files are located in `src/assets/`, not `public/assets/`.
+
+In Vite's bundling system:
+- Files in `public/` folder are served at the root URL and can use paths like `/assets/video.mp4`
+- Files in `src/assets/` are bundled and hashed, requiring ES module imports to resolve the correct URL
+
+The HeroSection works correctly because it imports videos properly:
+```typescript
+import heroYacht from "@/assets/hero-yacht.mp4";
+```
+
+But the Gallery uses static paths that don't resolve:
+```typescript
+videoUrl: '/assets/hero-yacht.mp4'  // This path doesn't exist
+```
 
 ---
 
-## Overview
+## Solution
 
-| Feature | Description |
-|---------|-------------|
-| **Private Island Hero Video** | New hero-island.mp4 added to rotating showcase |
-| **Video Gallery Page** | Dedicated /gallery route with category filters |
-| **Intelligent Preloading** | Custom hook for seamless video transitions |
+Update `video-gallery-data.ts` to import the video files as ES modules and use the resolved URLs in the data array.
 
----
+### Files Modified
 
-## 1. Private Island Hero Video
-
-### What It Delivers
-Expand the rotating hero showcase from 4 to 5 luxury lifestyle videos, featuring exclusive private island properties.
+| File | Change |
+|------|--------|
+| `src/lib/video-gallery-data.ts` | Import videos from `@/assets/` and use imported URLs |
 
 ### Implementation
-- **Asset Requirement**: You will need to provide a `hero-island.mp4` video file (real footage of private island properties, matching the existing aesthetic)
-- **Integration**: Add to `heroVideos` array in `Index.tsx`
-- **SEO**: Add corresponding entry to `VIDEO_LIBRARY` in `video-seo-schema.ts`
 
-### Files Modified
-| File | Change |
-|------|--------|
-| `src/pages/Index.tsx` | Import and add `hero-island.mp4` to `heroVideos` array |
-| `src/lib/video-seo-schema.ts` | Add private island video metadata |
-
----
-
-## 2. Video Gallery Page
-
-### What It Delivers
-A premium, dedicated video showcase page at `/gallery` featuring:
-- Category filters (Brand, Technology, Lifestyle, Assets)
-- Lightbox video player with cinematic controls
-- Thumbnail grid with hover previews
-- SEO-optimized with VideoObject structured data
-
-### Page Structure
 ```text
-┌─────────────────────────────────────────────────┐
-│  Navigation                                      │
-├─────────────────────────────────────────────────┤
-│  AURELIA VIDEO GALLERY                          │
-│  Category Filters: [All] [Brand] [Lifestyle]... │
-├─────────────────────────────────────────────────┤
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐            │
-│  │ Video 1 │ │ Video 2 │ │ Video 3 │            │
-│  │ ▶ Play  │ │ ▶ Play  │ │ ▶ Play  │            │
-│  │ Title   │ │ Title   │ │ Title   │            │
-│  └─────────┘ └─────────┘ └─────────┘            │
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐            │
-│  │ Video 4 │ │ Video 5 │ │ Video 6 │            │
-│  └─────────┘ └─────────┘ └─────────┘            │
-├─────────────────────────────────────────────────┤
-│  Footer                                          │
-└─────────────────────────────────────────────────┘
+Before (broken):
+┌─────────────────────────────────────────┐
+│  videoUrl: '/assets/hero-yacht.mp4'     │ ──▶ 404 Not Found
+└─────────────────────────────────────────┘
+
+After (fixed):
+┌─────────────────────────────────────────┐
+│  import heroYacht from '@/assets/...'   │
+│  videoUrl: heroYacht                    │ ──▶ /assets/hero-yacht-ABC123.mp4 ✓
+└─────────────────────────────────────────┘
 ```
 
-### Video Categories
-| Category | Content |
-|----------|---------|
-| **Brand** | Aurelia demos, corporate videos |
-| **Technology** | Orla AI, Vision Pro, Apple Watch |
-| **Lifestyle** | Travel, holidays, experiences |
-| **Assets** | Yachts, jets, penthouses, cars |
+### Code Changes
 
-### New Files
-| File | Purpose |
-|------|---------|
-| `src/pages/Gallery.tsx` | Main gallery page with filters and grid |
-| `src/components/gallery/VideoCard.tsx` | Thumbnail card with hover preview |
-| `src/components/gallery/VideoLightbox.tsx` | Fullscreen cinematic player |
-| `src/lib/video-gallery-data.ts` | Extended video metadata for all assets |
+1. Add imports at the top of `video-gallery-data.ts`:
+   - `import aureliaDemo from '@/assets/aurelia-demo.mp4'`
+   - `import orlaDemo from '@/assets/orla-demo.mp4'`
+   - `import demoVision from '@/assets/demo-vision.mp4'`
+   - `import demoWatch from '@/assets/demo-watch.mp4'`
+   - `import heroHoliday from '@/assets/hero-luxury-holiday.mp4'`
+   - `import heroYacht from '@/assets/hero-yacht.mp4'`
+   - `import heroJet from '@/assets/hero-jet.mp4'`
+   - `import heroPenthouse from '@/assets/hero-penthouse.mp4'`
 
-### Files Modified
-| File | Change |
-|------|--------|
-| `src/App.tsx` | Add `/gallery` route |
-| `src/components/Navigation.tsx` | Add Gallery link |
+2. Update each `GALLERY_VIDEOS` entry to use imported references:
+   - `videoUrl: '/assets/aurelia-demo.mp4'` becomes `videoUrl: aureliaDemo`
+   - `videoUrl: '/assets/orla-demo.mp4'` becomes `videoUrl: orlaDemo`
+   - And so on for all 8 videos
 
----
-
-## 3. Intelligent Video Preloading
-
-### What It Delivers
-A custom hook that preloads the next video in the rotation sequence, ensuring seamless crossfade transitions without buffering delays.
-
-### How It Works
-```text
-Current Video Playing    Next Video Preloading
-     ┌──────┐                 ┌──────┐
-     │ ▶ 1  │ ─── preload ──► │  2   │
-     └──────┘                 └──────┘
-           │
-           ▼ (transition)
-     ┌──────┐                 ┌──────┐
-     │ ▶ 2  │ ─── preload ──► │  3   │
-     └──────┘                 └──────┘
-```
-
-### Features
-- **Preload Buffer**: Starts loading next video 5 seconds before transition
-- **Memory Management**: Revokes blob URLs after use to prevent leaks
-- **Network Awareness**: Respects `connection.saveData` preference
-- **Fallback Handling**: Graceful degradation if preload fails
-
-### New Files
-| File | Purpose |
-|------|---------|
-| `src/hooks/useVideoPreloader.ts` | Preloading logic with cache management |
-
-### Files Modified
-| File | Change |
-|------|--------|
-| `src/components/HeroSection.tsx` | Integrate `useVideoPreloader` hook |
+3. Update `thumbnailUrl` references to use the correct public path (`/og-image-new.png` is correct as it's in `public/`)
 
 ---
 
 ## Technical Details
 
-### useVideoPreloader Hook API
-```typescript
-const { preloadedUrl, isPreloading, error } = useVideoPreloader({
-  videos: string[],
-  currentIndex: number,
-  preloadAheadMs: 5000 // Start preload 5s before transition
-});
-```
+### Why This Happens
 
-### Video Gallery Data Structure
-```typescript
-interface GalleryVideo {
-  id: string;
-  title: string;
-  description: string;
-  thumbnailUrl: string;
-  videoUrl: string;
-  duration: string;
-  category: "brand" | "technology" | "lifestyle" | "assets";
-  featured?: boolean;
-}
-```
+Vite treats `src/` assets differently from `public/` assets:
 
-### VideoLightbox Features
-- Play/Pause, Mute/Unmute controls
-- Progress bar with seek functionality
-- Picture-in-Picture support
-- Keyboard navigation (Space, Escape, Arrow keys)
-- Auto-play next video option
+| Location | Access Method | URL Example |
+|----------|--------------|-------------|
+| `public/video.mp4` | Static path | `/video.mp4` |
+| `src/assets/video.mp4` | ES import | `/assets/video-Bx7kL9.mp4` (hashed) |
 
----
+The hash in bundled URLs enables cache-busting and ensures browsers always load the latest version.
 
-## Implementation Order
+### Verification
 
-| Phase | Task | Estimated Effort |
-|-------|------|------------------|
-| 1 | Create `useVideoPreloader` hook | Low |
-| 2 | Integrate preloader into `HeroSection` | Low |
-| 3 | Create video gallery data file | Low |
-| 4 | Build `VideoCard` component | Medium |
-| 5 | Build `VideoLightbox` component | Medium |
-| 6 | Create `Gallery.tsx` page | Medium |
-| 7 | Add routing and navigation | Low |
-| 8 | Update SEO schema for new videos | Low |
-| 9 | Add private island video (pending asset) | Low |
-
----
-
-## Asset Requirements
-
-Before implementing the private island video:
-- **File**: `hero-island.mp4`
-- **Requirements**: Real footage (no AI-generated), 1080p minimum, 15-30 seconds duration
-- **Content**: Private island properties, beaches, exclusive villas
-
-The gallery and preloader can be implemented immediately using existing video assets.
+After the fix, the console should show successful video loading without 404 errors, and the VideoLightbox should play videos when opened.
 
 ---
 
 ## Summary
 
-This enhancement suite transforms Aurelia's video experience with:
-- ✓ Expanded hero showcase (5 rotating luxury videos)
-- ✓ Dedicated video gallery with premium filtering
-- ✓ Seamless transitions via intelligent preloading
-- ✓ Full SEO optimization with structured data
+A single file update to `src/lib/video-gallery-data.ts` will resolve the gallery video playback issue by correctly importing videos from the `src/assets/` directory using ES module syntax.

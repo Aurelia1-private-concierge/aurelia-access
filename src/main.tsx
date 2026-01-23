@@ -7,9 +7,19 @@ const log = (msg: string) => DEBUG && console.log(`[Aurelia ${Date.now()}] ${msg
 
 log("main.tsx: Script starting");
 
-// Import styles first
+// Import critical styles first
 import "./index.css";
 log("main.tsx: CSS loaded");
+
+// Load non-critical CSS asynchronously (Driver.js, transitions)
+const loadNonCriticalCSS = () => {
+  import("./styles/non-critical.css").catch(() => {});
+};
+if (typeof requestIdleCallback !== 'undefined') {
+  requestIdleCallback(loadNonCriticalCSS);
+} else {
+  setTimeout(loadNonCriticalCSS, 100);
+}
 
 // Initialize i18n with error handling
 try {

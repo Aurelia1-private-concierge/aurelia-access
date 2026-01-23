@@ -16,12 +16,16 @@ interface PartnerWaitlistModalProps {
 const categories = [
   "Private Aviation",
   "Yacht Charter",
-  "Security & Chauffeur",
-  "Fine Dining",
-  "Real Estate",
+  "Luxury Hotels",
+  "Private Dining",
+  "Exclusive Events",
+  "Security Services",
   "Wellness & Spa",
-  "Events & Entertainment",
-  "Art & Collectibles"
+  "Luxury Automotive",
+  "Real Estate",
+  "Personal Shopping",
+  "Art & Collectibles",
+  "Technology"
 ];
 
 const PartnerWaitlistModal = ({ isOpen, onClose, preselectedCategory }: PartnerWaitlistModalProps) => {

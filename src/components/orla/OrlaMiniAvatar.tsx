@@ -1,6 +1,6 @@
 import { memo, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import orlaAvatarFab from "@/assets/orla-avatar-fab.webp";
+import orlaAvatarFabOptimized from "@/assets/orla-avatar-fab-optimized.webp";
 import orlaAvatarSmall from "@/assets/orla-avatar-small.webp";
 
 interface OrlaMiniAvatarProps {
@@ -129,8 +129,10 @@ const OrlaMiniAvatar = memo(({
 
       {/* Static avatar image - using size-appropriate optimized version */}
       <motion.img
-        src={size <= 80 ? orlaAvatarFab : orlaAvatarSmall}
+        src={size <= 80 ? orlaAvatarFabOptimized : orlaAvatarSmall}
         alt="Orla"
+        width={size}
+        height={size}
         className="rounded-full object-cover"
         style={{ width: size, height: size }}
         animate={isSpeaking ? {

@@ -20,6 +20,7 @@ import SkipLink from "./components/a11y/SkipLink";
 import { ReducedMotionProvider } from "./components/a11y/ReducedMotionProvider";
 import VisitorTracker from "./components/VisitorTracker";
 import GlobalQuantumWrapper from "./components/GlobalQuantumWrapper";
+import ApolloTracker from "./components/ApolloTracker";
 import "@/i18n";
 
 // Eagerly load the landing page for best LCP
@@ -599,6 +600,7 @@ const App = () => {
                     <AuthProvider>
                       <SessionTimeoutProvider timeoutMinutes={30} warningMinutes={5}>
                         <VisitorTracker />
+                        <ApolloTracker />
                         <SkipLink />
                         <main id="main-content">
                           <AnimatedRoutes />

@@ -6,7 +6,7 @@ export { QuantumCircuit } from "./QuantumCircuit";
 export { QuantumButton } from "./core/QuantumButton";
 
 // Provider & Hooks
-export { QuantumProvider, useQuantum } from "./QuantumProvider";
+export { QuantumProvider, useQuantumConfig } from "./QuantumProvider";
 export { useQuantumAnimation } from "./hooks/useQuantumAnimation";
 export { useQuantumTheme } from "./hooks/useQuantumTheme";
 export { useQuantumSound } from "./hooks/useQuantumSound";
@@ -19,7 +19,7 @@ export { QuantumKeyboard } from "./inputs/QuantumKeyboard";
 // Feedback components
 export { QuantumLoader } from "./feedback/QuantumLoader";
 export { QuantumModal } from "./feedback/QuantumModal";
-export { QuantumToast, useQuantumToast } from "./feedback/QuantumToast";
+export { QuantumToastProvider, useQuantumToast, toast } from "./feedback/QuantumToast";
 
 // Navigation components
 export { QuantumTabs } from "./navigation/QuantumTabs";

@@ -34,6 +34,7 @@ import {
 } from '@/hooks/useServiceAvailability';
 import { useAuth } from '@/contexts/AuthContext';
 import { format, addDays } from 'date-fns';
+import MarketplaceComingSoon from './MarketplaceComingSoon';
 
 const categoryIcons: Record<ServiceCategory, React.ReactNode> = {
   aviation: <Plane className="h-5 w-5" />,
@@ -238,6 +239,7 @@ export const ServiceMarketplace: React.FC = () => {
   const [guests, setGuests] = useState(2);
   const [showFilters, setShowFilters] = useState(false);
   const [bookingService, setBookingService] = useState<string | null>(null);
+  const [hasCheckedData, setHasCheckedData] = useState(false);
   
   // Hospitality-specific filters
   const [starRating, setStarRating] = useState<string>('');
@@ -259,9 +261,22 @@ export const ServiceMarketplace: React.FC = () => {
   ];
 
   useEffect(() => {
-    fetchCategories();
-    fetchFeatured();
+    const loadInitialData = async () => {
+      await fetchCategories();
+      await fetchFeatured();
+      setHasCheckedData(true);
+    };
+    loadInitialData();
   }, [fetchCategories, fetchFeatured]);
+
+  // Show coming soon if no services are available
+  const hasNoServices = hasCheckedData && !isLoading && 
+    inventory.length === 0 && featuredServices.length === 0 &&
+    categories.every(c => c.count === 0);
+
+  if (hasNoServices) {
+    return <MarketplaceComingSoon />;
+  }
 
   const toggleAmenity = (amenityId: string) => {
     setSelectedAmenities(prev => 

@@ -20,7 +20,7 @@ const SecuritySection = () => {
   ];
 
   return (
-    <section id="security" className="py-24 md:py-32 bg-card/20 relative">
+    <section id="security" className="py-24 md:py-32 bg-card/20 relative" aria-labelledby="security-heading">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
           {/* Left: Content */}
@@ -33,6 +33,7 @@ const SecuritySection = () => {
               {t("security.label")}
             </span>
             <h2 
+              id="security-heading"
               className="text-4xl md:text-5xl text-foreground tracking-[-0.02em] mb-6"
               style={{ fontFamily: "'Cormorant Garamond', serif" }}
             >
@@ -45,8 +46,8 @@ const SecuritySection = () => {
             {/* Stats */}
             <div className="flex items-center gap-8 mb-8">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full border border-border/20 flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-primary/70" strokeWidth={1.5} />
+                <div className="w-12 h-12 rounded-full border border-border/20 flex items-center justify-center" aria-hidden="true">
+                  <Shield className="w-5 h-5 text-primary/70" strokeWidth={1.5} aria-hidden="true" />
                 </div>
                 <div>
                   <p className="text-2xl text-foreground" style={{ fontFamily: "'Cormorant Garamond', serif" }}>99.99%</p>
@@ -55,8 +56,8 @@ const SecuritySection = () => {
               </div>
               <div className="w-px h-10 bg-border/20" />
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full border border-border/20 flex items-center justify-center">
-                  <Lock className="w-5 h-5 text-primary/70" strokeWidth={1.5} />
+                <div className="w-12 h-12 rounded-full border border-border/20 flex items-center justify-center" aria-hidden="true">
+                  <Lock className="w-5 h-5 text-primary/70" strokeWidth={1.5} aria-hidden="true" />
                 </div>
                 <div>
                   <p className="text-2xl text-foreground" style={{ fontFamily: "'Cormorant Garamond', serif" }}>{t("security.zero")}</p>
@@ -66,13 +67,14 @@ const SecuritySection = () => {
             </div>
 
             {/* Certifications */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2" role="list" aria-label="Security certifications">
               {certifications.map((cert) => (
                 <span 
                   key={cert} 
                   className="inline-flex items-center gap-2 px-3 py-1.5 bg-background border border-border/20 text-[10px] text-muted-foreground uppercase tracking-wide"
+                  role="listitem"
                 >
-                  <CheckCircle className="w-3 h-3 text-primary/60" />
+                  <CheckCircle className="w-3 h-3 text-primary/60" aria-hidden="true" />
                   {cert}
                 </span>
               ))}
@@ -80,7 +82,7 @@ const SecuritySection = () => {
           </motion.div>
 
           {/* Right: Features Grid */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4" role="list" aria-label="Security features">
             {securityFeatures.map((feature, index) => (
               <motion.div 
                 key={feature.titleKey} 
@@ -89,8 +91,9 @@ const SecuritySection = () => {
                 viewport={{ once: true }} 
                 transition={{ duration: 0.5, delay: index * 0.1 }} 
                 className="group p-6 bg-background border border-border/10 hover:border-primary/20 transition-all duration-500"
+                role="listitem"
               >
-                <feature.icon className="w-5 h-5 text-muted-foreground mb-4 group-hover:text-primary transition-colors duration-500" strokeWidth={1.5} />
+                <feature.icon className="w-5 h-5 text-muted-foreground mb-4 group-hover:text-primary transition-colors duration-500" strokeWidth={1.5} aria-hidden="true" />
                 <h3 className="text-sm text-foreground mb-2">
                   {t(feature.titleKey)}
                 </h3>

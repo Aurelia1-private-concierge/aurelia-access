@@ -70,7 +70,7 @@ const MembershipTiersPreview = () => {
   ];
 
   return (
-    <section id="membership" className="py-24 md:py-32 bg-background relative">
+    <section id="membership" className="py-24 md:py-32 bg-background relative" aria-labelledby="membership-heading">
       <div className="max-w-6xl mx-auto px-6">
         {/* Header */}
         <motion.div
@@ -83,6 +83,7 @@ const MembershipTiersPreview = () => {
             {t("membership.tiers") || "Membership"}
           </span>
           <h2 
+            id="membership-heading"
             className="text-4xl md:text-5xl text-foreground tracking-[-0.02em] mb-4"
             style={{ fontFamily: "'Cormorant Garamond', serif" }}
           >
@@ -94,7 +95,7 @@ const MembershipTiersPreview = () => {
         </motion.div>
 
         {/* Tiers Grid */}
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-6" role="list" aria-label="Membership tiers">
           {tiers.map((tier, index) => (
             <motion.div
               key={tier.name}
@@ -107,6 +108,8 @@ const MembershipTiersPreview = () => {
                   ? 'bg-card border border-primary/30'
                   : 'bg-card/30 border border-border/10 hover:border-border/30'
               }`}
+              role="listitem"
+              aria-label={`${tier.name} membership tier`}
             >
               {tier.highlighted && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
@@ -120,8 +123,8 @@ const MembershipTiersPreview = () => {
                 tier.highlighted 
                   ? 'border border-primary/30' 
                   : 'border border-border/20'
-              }`}>
-                <tier.icon className={`w-5 h-5 ${tier.highlighted ? 'text-primary' : 'text-muted-foreground'}`} strokeWidth={1.5} />
+              }`} aria-hidden="true">
+                <tier.icon className={`w-5 h-5 ${tier.highlighted ? 'text-primary' : 'text-muted-foreground'}`} strokeWidth={1.5} aria-hidden="true" />
               </div>
 
               <h3 
@@ -150,7 +153,7 @@ const MembershipTiersPreview = () => {
                   <li key={feature} className="flex items-start gap-2 text-xs text-muted-foreground">
                     <Check className={`w-3.5 h-3.5 mt-0.5 flex-shrink-0 ${
                       tier.highlighted ? 'text-primary' : 'text-muted-foreground/50'
-                    }`} />
+                    }`} aria-hidden="true" />
                     {feature}
                   </li>
                 ))}
@@ -163,6 +166,7 @@ const MembershipTiersPreview = () => {
                     ? 'bg-primary text-primary-foreground hover:bg-primary/90'
                     : 'bg-transparent border border-primary/30 text-foreground hover:bg-primary/5'
                 }`}
+                aria-label={tier.basePrice === 0 ? `Request access to ${tier.name} membership` : `Apply for ${tier.name} membership`}
               >
                 {tier.basePrice === 0 ? "Request Access" : "Apply Now"}
               </Link>

@@ -142,8 +142,10 @@ const HeroSection = ({
                 minWidth: '100%',
                 minHeight: '100%',
               }}
+              aria-label="Luxury lifestyle background video"
             >
               <source src={currentVideo} type="video/mp4" />
+              Your browser does not support the video tag.
             </motion.video>
           )}
         </AnimatePresence>

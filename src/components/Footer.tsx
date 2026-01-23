@@ -45,15 +45,16 @@ const Footer = () => {
             </p>
             
             {/* Social Links */}
-            <div className="flex items-center gap-3 mt-8">
+            <div className="flex items-center gap-3 mt-8" role="list" aria-label="Social media links">
               {socialLinks.map(({ icon: Icon, href, label, isInternal }) => (
                 isInternal ? (
-                  <Link key={label} to={href}>
+                  <Link key={label} to={href} aria-label={`Follow us on ${label}`} role="listitem">
                     <motion.div
                       whileHover={{ scale: 1.05 }}
                       className="w-10 h-10 rounded-full border border-border/20 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all duration-300"
                     >
-                      <Icon className="w-4 h-4" />
+                      <Icon className="w-4 h-4" aria-hidden="true" />
+                      <span className="sr-only">{label}</span>
                     </motion.div>
                   </Link>
                 ) : (
@@ -64,8 +65,11 @@ const Footer = () => {
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.05 }}
                     className="w-10 h-10 rounded-full border border-border/20 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all duration-300"
+                    aria-label={`Follow us on ${label}`}
+                    role="listitem"
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className="w-4 h-4" aria-hidden="true" />
+                    <span className="sr-only">{label}</span>
                   </motion.a>
                 )
               ))}

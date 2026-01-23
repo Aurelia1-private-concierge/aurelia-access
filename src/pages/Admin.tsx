@@ -70,6 +70,7 @@ import PublicationFixWizard from "@/components/admin/PublicationFixWizard";
 import UnifiedStatusDashboard from "@/components/admin/UnifiedStatusDashboard";
 import AuctionManagementPanel from "@/components/admin/AuctionManagementPanel";
 import PartnerWaitlistPanel from "@/components/admin/PartnerWaitlistPanel";
+import N8NAutomationHub from "@/components/admin/N8NAutomationHub";
 
 // Lazy load recharts-heavy components to prevent circular initialization errors
 const AnalyticsDashboard = lazy(() => import("@/components/admin/AnalyticsDashboard"));
@@ -845,10 +846,21 @@ const Admin = () => {
 
           <TabsContent value="automation" className="space-y-6">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <h1 className="font-serif text-3xl text-foreground mb-2">Contact Automation</h1>
-              <p className="text-muted-foreground">Manage webhooks, n8n integrations, and automated workflows</p>
+              <h1 className="font-serif text-3xl text-foreground mb-2">Automation Hub</h1>
+              <p className="text-muted-foreground">Manage webhooks, n8n workflows, and automated pipelines</p>
             </motion.div>
-            <ContactAutomationPanel />
+            <Tabs defaultValue="n8n" className="space-y-4">
+              <TabsList>
+                <TabsTrigger value="n8n">N8N Workflows</TabsTrigger>
+                <TabsTrigger value="contact">Contact Automation</TabsTrigger>
+              </TabsList>
+              <TabsContent value="n8n">
+                <N8NAutomationHub />
+              </TabsContent>
+              <TabsContent value="contact">
+                <ContactAutomationPanel />
+              </TabsContent>
+            </Tabs>
           </TabsContent>
 
           <TabsContent value="requests" className="space-y-6">

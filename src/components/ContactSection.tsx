@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { checkRateLimit, generateFingerprint } from "@/lib/rate-limit";
+import { n8nTriggers } from "@/lib/n8n-client";
 
 const ContactSection = () => {
   const { t } = useTranslation();
@@ -58,6 +59,16 @@ const ContactSection = () => {
       } catch (emailError) {
         console.error("Email notification failed:", emailError);
       }
+
+      // Trigger n8n workflow for new contact (non-blocking)
+      n8nTriggers.newContactSubmission({
+        id: crypto.randomUUID(),
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || undefined,
+        message: formData.message,
+        source: "website",
+      }).catch((err) => console.error("N8N trigger failed:", err));
       
       setIsSubmitted(true);
       toast.success(t("contact.success"));

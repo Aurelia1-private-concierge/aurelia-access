@@ -1,302 +1,193 @@
 
+# Video Enhancement Suite for Aurelia
 
-# Quantum Component Library Expansion Plan
+This plan implements all three requested video enhancements to elevate the hero showcase, provide a dedicated gallery experience, and optimize video performance.
+
+---
 
 ## Overview
-Expand the existing quantum component library with advanced features including interactive 3D elements, real-time data visualization, AI-powered components, and immersive effects that create a futuristic, high-tech experience.
+
+| Feature | Description |
+|---------|-------------|
+| **Private Island Hero Video** | New hero-island.mp4 added to rotating showcase |
+| **Video Gallery Page** | Dedicated /gallery route with category filters |
+| **Intelligent Preloading** | Custom hook for seamless video transitions |
 
 ---
 
-## New Components to Create
+## 1. Private Island Hero Video
 
-### 1. QuantumInput
-**Interactive form input with sci-fi styling**
-- Scanning line animation on focus
-- Holographic placeholder text that dissolves when typing
-- Real-time validation with quantum-styled error states
-- Voice input integration support
-- Auto-complete suggestions with futuristic dropdown
+### What It Delivers
+Expand the rotating hero showcase from 4 to 5 luxury lifestyle videos, featuring exclusive private island properties.
 
-### 2. QuantumTerminal
-**Interactive command terminal component**
-- Typewriter effect for output text
-- Command history with keyboard navigation
-- Syntax highlighting for code/data
-- Loading states with scanning animations
-- Copy-to-clipboard with visual feedback
-- Multiple themes (cyan, amber, emerald)
+### Implementation
+- **Asset Requirement**: You will need to provide a `hero-island.mp4` video file (real footage of private island properties, matching the existing aesthetic)
+- **Integration**: Add to `heroVideos` array in `Index.tsx`
+- **SEO**: Add corresponding entry to `VIDEO_LIBRARY` in `video-seo-schema.ts`
 
-### 3. QuantumLoader
-**Advanced loading indicator variants**
-- Orbiting particles loader
-- DNA helix spinner
-- Circuit board filling animation
-- Holographic cube rotation
-- Progress ring with data segments
-- Quantum superposition effect (multiple states)
-
-### 4. QuantumChart
-**Data visualization with sci-fi aesthetic**
-- Real-time animated line charts
-- Holographic bar charts with 3D perspective
-- Radar/spider charts with glowing nodes
-- Particle-based scatter plots
-- Grid-line backgrounds with scan effects
-- Interactive tooltips with quantum styling
-
-### 5. QuantumModal / QuantumDialog
-**Futuristic modal component**
-- Hexagonal border frame
-- Boot-up sequence animation on open
-- Glitch effect transitions
-- Particle dispersal on close
-- Backdrop with grid pattern
-- Multiple sizes and positions
-
-### 6. QuantumTimeline
-**Event timeline with sci-fi styling**
-- Vertical/horizontal orientation
-- Pulsing connection nodes
-- Animated data flow between events
-- Collapsible event details
-- Time-travel navigation effect
-- Real-time event streaming support
-
-### 7. QuantumToast / QuantumNotification
-**Notification system with quantum effects**
-- Holographic entrance animation
-- Priority-based visual styling
-- Sound wave visual feedback
-- Auto-dismiss with progress indicator
-- Stack management with smooth transitions
-- Action buttons with quantum styling
-
-### 8. QuantumAvatar
-**User avatar with tech enhancements**
-- Holographic frame animation
-- Status ring with pulse effects
-- AR-style overlay information
-- Connection quality indicator
-- Multiple sizes and shapes (circle, hex, square)
-- Group avatar stacking
-
-### 9. Quantum3DViewer
-**Three.js-based 3D model viewer**
-- Holographic grid base
-- Rotation controls with momentum
-- Wireframe toggle mode
-- Particle outline effect
-- Loading states with assembly animation
-- AR preview capability indicator
-
-### 10. QuantumSlider
-**Range input with advanced features**
-- Glowing track with gradient
-- Particle trail on drag
-- Multi-thumb support
-- Value tooltip with quantum styling
-- Tick marks with labels
-- Range selection mode
-
-### 11. QuantumTabs
-**Tab navigation with transitions**
-- Animated indicator with glow
-- Content transition effects (fade, slide, scale)
-- Vertical orientation support
-- Icon support with animations
-- Disabled state styling
-- Badge integration
-
-### 12. QuantumAccordion
-**Expandable content sections**
-- Scanning reveal animation
-- Staggered content appearance
-- Nested accordion support
-- Icon rotation on expand
-- Multiple open sections mode
-- Search/filter integration
-
-### 13. QuantumTable
-**Data table with advanced features**
-- Scanning row highlight on hover
-- Sortable columns with animation
-- Virtual scrolling for large datasets
-- Row selection with quantum checkbox
-- Expandable rows
-- Column resizing with visual feedback
-
-### 14. QuantumKeyboard
-**Virtual keyboard component**
-- Holographic key styling
-- Key press ripple effects
-- Layout switching (QWERTY, numeric)
-- Sound feedback option
-- Custom key mappings
-- Accessibility support
-
-### 15. QuantumBiometric
-**Biometric visualization component**
-- Fingerprint scan animation
-- Face scan overlay effect
-- Iris recognition visual
-- Voice waveform display
-- Authentication progress states
-- Success/failure animations
+### Files Modified
+| File | Change |
+|------|--------|
+| `src/pages/Index.tsx` | Import and add `hero-island.mp4` to `heroVideos` array |
+| `src/lib/video-seo-schema.ts` | Add private island video metadata |
 
 ---
 
-## Enhanced Existing Components
+## 2. Video Gallery Page
 
-### QuantumCard Enhancements
-- 3D tilt effect on hover (using mouse position)
-- Holographic shimmer overlay
-- Corner accent animations
-- Magnetic attraction to cursor
-- Depth layers for parallax effect
+### What It Delivers
+A premium, dedicated video showcase page at `/gallery` featuring:
+- Category filters (Brand, Technology, Lifestyle, Assets)
+- Lightbox video player with cinematic controls
+- Thumbnail grid with hover previews
+- SEO-optimized with VideoObject structured data
 
-### QuantumButton Enhancements
-- Particle burst on click
-- Energy charging animation
-- Sound effect integration
-- Haptic feedback support
-- Long-press actions
-
-### QuantumProgress Enhancements
-- Segmented mode with labels
-- Circular variant
-- Multi-track parallel progress
-- Indeterminate quantum state
-- Value labels with animations
-
-### QuantumDataPanel Enhancements
-- Live data streaming support
-- Sparkline mini-charts per item
-- Drag-to-reorder items
-- Collapse/expand sections
-- Export data functionality
-
-### QuantumCircuit Enhancements
-- Interactive gate placement
-- Quantum state visualization
-- Animation playback controls
-- Export circuit diagram
-- Educational tooltips
-
----
-
-## Shared Utilities & Hooks
-
-### useQuantumAnimation
-- Standardized animation presets
-- Reduced motion detection
-- Performance optimization
-- Stagger delay calculations
-
-### useQuantumSound
-- UI sound effects library
-- Volume control
-- Mute preference sync
-- Spatial audio positioning
-
-### useQuantumTheme
-- Color scheme variants (cyan, gold, emerald, purple)
-- Dark/light mode support
-- Custom accent color configuration
-- CSS variable management
-
-### QuantumProvider Context
-- Global configuration
-- Animation preferences
-- Sound settings
-- Theme management
-- Accessibility options
-
----
-
-## File Structure
-
+### Page Structure
 ```text
-src/components/quantum/
-├── index.ts                    # Updated exports
-├── QuantumProvider.tsx         # Context provider
-├── hooks/
-│   ├── useQuantumAnimation.ts
-│   ├── useQuantumSound.ts
-│   └── useQuantumTheme.ts
-├── core/
-│   ├── QuantumCard.tsx         # Enhanced
-│   ├── QuantumButton.tsx       # Enhanced
-│   ├── QuantumBadge.tsx        # Enhanced
-│   └── QuantumProgress.tsx     # Enhanced
-├── inputs/
-│   ├── QuantumInput.tsx
-│   ├── QuantumSlider.tsx
-│   ├── QuantumSelect.tsx
-│   └── QuantumKeyboard.tsx
-├── data/
-│   ├── QuantumDataPanel.tsx    # Enhanced
-│   ├── QuantumChart.tsx
-│   ├── QuantumTable.tsx
-│   └── QuantumTimeline.tsx
-├── feedback/
-│   ├── QuantumLoader.tsx
-│   ├── QuantumToast.tsx
-│   └── QuantumModal.tsx
-├── navigation/
-│   ├── QuantumTabs.tsx
-│   └── QuantumAccordion.tsx
-├── visualization/
-│   ├── QuantumCircuit.tsx      # Enhanced
-│   ├── Quantum3DViewer.tsx
-│   └── QuantumBiometric.tsx
-└── layout/
-    ├── QuantumTerminal.tsx
-    └── QuantumAvatar.tsx
+┌─────────────────────────────────────────────────┐
+│  Navigation                                      │
+├─────────────────────────────────────────────────┤
+│  AURELIA VIDEO GALLERY                          │
+│  Category Filters: [All] [Brand] [Lifestyle]... │
+├─────────────────────────────────────────────────┤
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐            │
+│  │ Video 1 │ │ Video 2 │ │ Video 3 │            │
+│  │ ▶ Play  │ │ ▶ Play  │ │ ▶ Play  │            │
+│  │ Title   │ │ Title   │ │ Title   │            │
+│  └─────────┘ └─────────┘ └─────────┘            │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐            │
+│  │ Video 4 │ │ Video 5 │ │ Video 6 │            │
+│  └─────────┘ └─────────┘ └─────────┘            │
+├─────────────────────────────────────────────────┤
+│  Footer                                          │
+└─────────────────────────────────────────────────┘
 ```
 
+### Video Categories
+| Category | Content |
+|----------|---------|
+| **Brand** | Aurelia demos, corporate videos |
+| **Technology** | Orla AI, Vision Pro, Apple Watch |
+| **Lifestyle** | Travel, holidays, experiences |
+| **Assets** | Yachts, jets, penthouses, cars |
+
+### New Files
+| File | Purpose |
+|------|---------|
+| `src/pages/Gallery.tsx` | Main gallery page with filters and grid |
+| `src/components/gallery/VideoCard.tsx` | Thumbnail card with hover preview |
+| `src/components/gallery/VideoLightbox.tsx` | Fullscreen cinematic player |
+| `src/lib/video-gallery-data.ts` | Extended video metadata for all assets |
+
+### Files Modified
+| File | Change |
+|------|--------|
+| `src/App.tsx` | Add `/gallery` route |
+| `src/components/Navigation.tsx` | Add Gallery link |
+
 ---
 
-## Implementation Priority
+## 3. Intelligent Video Preloading
 
-| Priority | Component | Impact | Complexity |
-|----------|-----------|--------|------------|
-| 1 | QuantumInput | High | Low |
-| 2 | QuantumLoader | High | Low |
-| 3 | QuantumModal | High | Medium |
-| 4 | QuantumToast | High | Medium |
-| 5 | QuantumTerminal | Very High | Medium |
-| 6 | QuantumChart | Very High | High |
-| 7 | Quantum3DViewer | High | High |
-| 8 | QuantumTabs | Medium | Low |
-| 9 | QuantumTable | High | High |
-| 10 | QuantumBiometric | Very High | Medium |
-| 11 | QuantumSlider | Medium | Low |
-| 12 | QuantumTimeline | Medium | Medium |
-| 13 | QuantumAccordion | Medium | Low |
-| 14 | QuantumAvatar | Medium | Low |
-| 15 | QuantumKeyboard | Low | Medium |
+### What It Delivers
+A custom hook that preloads the next video in the rotation sequence, ensuring seamless crossfade transitions without buffering delays.
+
+### How It Works
+```text
+Current Video Playing    Next Video Preloading
+     ┌──────┐                 ┌──────┐
+     │ ▶ 1  │ ─── preload ──► │  2   │
+     └──────┘                 └──────┘
+           │
+           ▼ (transition)
+     ┌──────┐                 ┌──────┐
+     │ ▶ 2  │ ─── preload ──► │  3   │
+     └──────┘                 └──────┘
+```
+
+### Features
+- **Preload Buffer**: Starts loading next video 5 seconds before transition
+- **Memory Management**: Revokes blob URLs after use to prevent leaks
+- **Network Awareness**: Respects `connection.saveData` preference
+- **Fallback Handling**: Graceful degradation if preload fails
+
+### New Files
+| File | Purpose |
+|------|---------|
+| `src/hooks/useVideoPreloader.ts` | Preloading logic with cache management |
+
+### Files Modified
+| File | Change |
+|------|--------|
+| `src/components/HeroSection.tsx` | Integrate `useVideoPreloader` hook |
 
 ---
 
-## Technical Notes
+## Technical Details
 
-### Performance Optimizations
-- Use `requestAnimationFrame` for smooth animations
-- Implement `IntersectionObserver` for viewport-based animations
-- Lazy load Three.js components
-- Memoize expensive calculations
-- Use CSS transforms over layout properties
+### useVideoPreloader Hook API
+```typescript
+const { preloadedUrl, isPreloading, error } = useVideoPreloader({
+  videos: string[],
+  currentIndex: number,
+  preloadAheadMs: 5000 // Start preload 5s before transition
+});
+```
 
-### Accessibility
-- All components support `prefers-reduced-motion`
-- Proper ARIA labels and roles
-- Keyboard navigation support
-- Focus indicators with quantum styling
-- Screen reader announcements
+### Video Gallery Data Structure
+```typescript
+interface GalleryVideo {
+  id: string;
+  title: string;
+  description: string;
+  thumbnailUrl: string;
+  videoUrl: string;
+  duration: string;
+  category: "brand" | "technology" | "lifestyle" | "assets";
+  featured?: boolean;
+}
+```
 
-### Dependencies
-- Framer Motion (already installed)
-- @react-three/fiber (already installed for 3D components)
-- Recharts (already installed for charts)
-- No additional dependencies required
+### VideoLightbox Features
+- Play/Pause, Mute/Unmute controls
+- Progress bar with seek functionality
+- Picture-in-Picture support
+- Keyboard navigation (Space, Escape, Arrow keys)
+- Auto-play next video option
 
+---
+
+## Implementation Order
+
+| Phase | Task | Estimated Effort |
+|-------|------|------------------|
+| 1 | Create `useVideoPreloader` hook | Low |
+| 2 | Integrate preloader into `HeroSection` | Low |
+| 3 | Create video gallery data file | Low |
+| 4 | Build `VideoCard` component | Medium |
+| 5 | Build `VideoLightbox` component | Medium |
+| 6 | Create `Gallery.tsx` page | Medium |
+| 7 | Add routing and navigation | Low |
+| 8 | Update SEO schema for new videos | Low |
+| 9 | Add private island video (pending asset) | Low |
+
+---
+
+## Asset Requirements
+
+Before implementing the private island video:
+- **File**: `hero-island.mp4`
+- **Requirements**: Real footage (no AI-generated), 1080p minimum, 15-30 seconds duration
+- **Content**: Private island properties, beaches, exclusive villas
+
+The gallery and preloader can be implemented immediately using existing video assets.
+
+---
+
+## Summary
+
+This enhancement suite transforms Aurelia's video experience with:
+- ✓ Expanded hero showcase (5 rotating luxury videos)
+- ✓ Dedicated video gallery with premium filtering
+- ✓ Seamless transitions via intelligent preloading
+- ✓ Full SEO optimization with structured data

@@ -1,282 +1,302 @@
 
-# Wow Factor Enhancement Plan for Aurelia
 
-## Executive Summary
-Transform Aurelia from an impressive luxury concierge platform into an unforgettable digital experience that leaves visitors in awe. This plan focuses on high-impact visual effects, interactive micro-interactions, and cutting-edge features that will distinguish Aurelia as a truly elite digital experience.
+# Quantum Component Library Expansion Plan
 
----
-
-## Phase 1: Cinematic First Impressions
-
-### 1.1 Hero Section Revolution
-**Current State:** Rotating video backgrounds with standard fade transitions
-**Enhancement:** Create a cinematic "reveal" experience
-
-**Implementation:**
-- Add a 3-second premium intro sequence with the Aurelia logo morphing from golden particles
-- Implement a "split-screen wipe" transition between videos (like a film premiere)
-- Add subtle Ken Burns effect (slow zoom + pan) on videos for cinema-quality feel
-- Include ambient audio option with subtle luxury soundscapes (soft piano, ocean waves)
-- Add a "Play Reel" button that launches a 30-second showreel modal
-
-**Files to modify:**
-- `src/components/HeroSection.tsx` - Add intro sequence, enhanced transitions
-- Create `src/components/CinematicIntro.tsx` - Particle-based logo reveal
-- Create `src/components/ShowreelModal.tsx` - Full-screen video experience
-
-### 1.2 Scroll-Triggered Narrative
-**Enhancement:** Transform scrolling into storytelling
-
-**Implementation:**
-- Add scroll-driven animations that reveal content cinematically
-- Implement parallax depth layers (foreground text, mid-ground images, background effects)
-- Add "chapter markers" that subtly indicate progress through the experience
-- Include scroll-triggered sound effects (subtle whooshes, transitions)
-
-**Files to create/modify:**
-- Create `src/components/ScrollNarrative.tsx` - Chapter-based scroll experience
-- Modify `src/pages/Index.tsx` - Integrate narrative flow
+## Overview
+Expand the existing quantum component library with advanced features including interactive 3D elements, real-time data visualization, AI-powered components, and immersive effects that create a futuristic, high-tech experience.
 
 ---
 
-## Phase 2: Interactive Luxury Elements
+## New Components to Create
 
-### 2.1 3D Interactive Globe
-**Current State:** Static location list in GlobalPresenceSection
-**Enhancement:** Stunning 3D rotating globe
+### 1. QuantumInput
+**Interactive form input with sci-fi styling**
+- Scanning line animation on focus
+- Holographic placeholder text that dissolves when typing
+- Real-time validation with quantum-styled error states
+- Voice input integration support
+- Auto-complete suggestions with futuristic dropdown
 
-**Implementation:**
-- Replace static grid with interactive Three.js globe
-- Gold connection lines between Aurelia office locations
-- Pulsing markers on each city with hover tooltips
-- Real-time local time display for each office
-- Smooth camera transitions when clicking locations
-- Particle trails following the rotation
+### 2. QuantumTerminal
+**Interactive command terminal component**
+- Typewriter effect for output text
+- Command history with keyboard navigation
+- Syntax highlighting for code/data
+- Loading states with scanning animations
+- Copy-to-clipboard with visual feedback
+- Multiple themes (cyan, amber, emerald)
 
-**Files to create/modify:**
-- Create `src/components/Globe3D.tsx` - Interactive WebGL globe
-- Modify `src/components/GlobalPresenceSection.tsx` - Integrate globe
+### 3. QuantumLoader
+**Advanced loading indicator variants**
+- Orbiting particles loader
+- DNA helix spinner
+- Circuit board filling animation
+- Holographic cube rotation
+- Progress ring with data segments
+- Quantum superposition effect (multiple states)
 
-### 2.2 Magnetic & Fluid Interactions
-**Enhancement:** Every interaction feels premium
+### 4. QuantumChart
+**Data visualization with sci-fi aesthetic**
+- Real-time animated line charts
+- Holographic bar charts with 3D perspective
+- Radar/spider charts with glowing nodes
+- Particle-based scatter plots
+- Grid-line backgrounds with scan effects
+- Interactive tooltips with quantum styling
 
-**Implementation:**
-- Enhance MagneticButton to include ripple effects and particle bursts
-- Add "liquid" hover effects on cards (fluid distortion shader)
-- Implement "glow trail" following cursor on hover over premium elements
-- Add subtle haptic feedback patterns (for supported devices)
-- Create "reveal on hover" effects showing hidden gold accents
+### 5. QuantumModal / QuantumDialog
+**Futuristic modal component**
+- Hexagonal border frame
+- Boot-up sequence animation on open
+- Glitch effect transitions
+- Particle dispersal on close
+- Backdrop with grid pattern
+- Multiple sizes and positions
 
-**Files to modify:**
-- `src/components/MagneticButton.tsx` - Enhanced effects
-- Create `src/components/FluidCard.tsx` - Liquid distortion effect
-- Create `src/components/GlowTrail.tsx` - Cursor following glow
+### 6. QuantumTimeline
+**Event timeline with sci-fi styling**
+- Vertical/horizontal orientation
+- Pulsing connection nodes
+- Animated data flow between events
+- Collapsible event details
+- Time-travel navigation effect
+- Real-time event streaming support
 
-### 2.3 Dynamic Service Cards
-**Enhancement:** Service categories that respond to interaction
+### 7. QuantumToast / QuantumNotification
+**Notification system with quantum effects**
+- Holographic entrance animation
+- Priority-based visual styling
+- Sound wave visual feedback
+- Auto-dismiss with progress indicator
+- Stack management with smooth transitions
+- Action buttons with quantum styling
 
-**Implementation:**
-- Cards that "lift" with realistic 3D perspective on hover
-- Subtle animated icons (jet rotates, yacht rocks, etc.)
-- Quick preview videos that play on hover
-- Smooth card shuffling/filtering animations
-- Category-specific ambient sounds on focus
+### 8. QuantumAvatar
+**User avatar with tech enhancements**
+- Holographic frame animation
+- Status ring with pulse effects
+- AR-style overlay information
+- Connection quality indicator
+- Multiple sizes and shapes (circle, hex, square)
+- Group avatar stacking
 
-**Files to modify:**
-- `src/components/ServiceCategoriesSection.tsx` - 3D transforms
-- Create `src/components/AnimatedServiceIcon.tsx` - Motion icons
+### 9. Quantum3DViewer
+**Three.js-based 3D model viewer**
+- Holographic grid base
+- Rotation controls with momentum
+- Wireframe toggle mode
+- Particle outline effect
+- Loading states with assembly animation
+- AR preview capability indicator
 
----
+### 10. QuantumSlider
+**Range input with advanced features**
+- Glowing track with gradient
+- Particle trail on drag
+- Multi-thumb support
+- Value tooltip with quantum styling
+- Tick marks with labels
+- Range selection mode
 
-## Phase 3: AI-Powered Wow Moments
+### 11. QuantumTabs
+**Tab navigation with transitions**
+- Animated indicator with glow
+- Content transition effects (fade, slide, scale)
+- Vertical orientation support
+- Icon support with animations
+- Disabled state styling
+- Badge integration
 
-### 3.1 Orla "Presence" Indicator
-**Current State:** Static FAB button
-**Enhancement:** Orla appears to be "alive" and aware
+### 12. QuantumAccordion
+**Expandable content sections**
+- Scanning reveal animation
+- Staggered content appearance
+- Nested accordion support
+- Icon rotation on expand
+- Multiple open sections mode
+- Search/filter integration
 
-**Implementation:**
-- Orla avatar subtly "notices" when you scroll near and turns toward you
-- Breathing animation and occasional blink
-- Contextual micro-expressions based on page section
-- "Greeting" animation when first visible
-- Typing indicator that shows Orla is "thinking" before responding
+### 13. QuantumTable
+**Data table with advanced features**
+- Scanning row highlight on hover
+- Sortable columns with animation
+- Virtual scrolling for large datasets
+- Row selection with quantum checkbox
+- Expandable rows
+- Column resizing with visual feedback
 
-**Files to modify:**
-- `src/components/OrlaFAB.tsx` - Add awareness animations
-- `src/components/orla/OrlaAnimatedAvatar.tsx` - Enhanced expressions
+### 14. QuantumKeyboard
+**Virtual keyboard component**
+- Holographic key styling
+- Key press ripple effects
+- Layout switching (QWERTY, numeric)
+- Sound feedback option
+- Custom key mappings
+- Accessibility support
 
-### 3.2 Predictive Experience Suggestions
-**Enhancement:** AI that anticipates needs
-
-**Implementation:**
-- After 30 seconds on a section, Orla offers relevant suggestions
-- "I noticed you're interested in yachts. Shall I show you our Mediterranean charter portfolio?"
-- Context-aware notifications (e.g., viewing aviation → suggest jet card)
-- Session memory: "Welcome back. Last time you were exploring Geneva properties."
-
-**Files to create:**
-- Create `src/hooks/useContextualAI.tsx` - Section tracking + AI suggestions
-- Create `src/components/SmartSuggestionToast.tsx` - Elegant suggestion UI
-
----
-
-## Phase 4: Premium Visual Effects
-
-### 4.1 Luxury Particle Systems
-**Current State:** Basic gold particles
-**Enhancement:** Sophisticated, context-aware particle effects
-
-**Implementation:**
-- Particles that react to music/soundscapes
-- Section-specific themes (ocean mist for yachts, cloud wisps for aviation)
-- "Confetti burst" on membership signup
-- Gentle ember/firefly effect in dark sections
-- Particles that avoid the cursor (sophisticated physics)
-
-**Files to modify:**
-- `src/components/AmbientParticles.tsx` - Multiple particle modes
-- Create `src/components/ThematicParticles.tsx` - Section-aware effects
-
-### 4.2 Dynamic Lighting & Shadows
-**Enhancement:** Real-time lighting that follows user focus
-
-**Implementation:**
-- Soft spotlight effect following cursor
-- Cards cast dynamic shadows based on "light source"
-- Time-of-day adaptive color temperature
-- Accent lighting that pulses subtly
-- Glassmorphism with realistic light refraction
-
-**Files to create:**
-- Create `src/components/DynamicLighting.tsx` - Cursor-following light
-- Modify `src/index.css` - Enhanced glass effects
-
-### 4.3 Premium Loading States
-**Enhancement:** Even loading feels luxurious
-
-**Implementation:**
-- Golden liquid filling effect for progress bars
-- Skeleton screens with shimmering gold highlights
-- Page transition with morphing logo
-- Section loading with elegant "reveal" curtain effect
-
-**Files to create:**
-- Create `src/components/LuxuryLoader.tsx` - Premium loading states
-- Create `src/components/GoldenProgress.tsx` - Liquid fill progress
-
----
-
-## Phase 5: Memorable Micro-interactions
-
-### 5.1 Number Counter Animations
-**Enhancement:** Stats come alive dramatically
-
-**Implementation:**
-- Numbers "roll" like a slot machine when scrolling into view
-- Decimal precision for currency values
-- Subtle glow pulse when reaching final number
-- Sound effect option (subtle tick)
-
-**Files to create:**
-- Create `src/components/AnimatedCounter.tsx` - Slot-machine counter
-
-### 5.2 Testimonial Theatre
-**Current State:** Simple carousel
-**Enhancement:** Cinematic testimonial experience
-
-**Implementation:**
-- Quotes appear letter-by-letter with typewriter effect
-- Author photo transitions with elegant zoom/fade
-- Background ambiance shifts per testimonial
-- "Turn the page" gesture for mobile
-- Auto-play with pause on interaction
-
-**Files to modify:**
-- `src/components/TestimonialsSection.tsx` - Theatre experience
-
-### 5.3 Membership Tier Reveal
-**Enhancement:** Tier selection feels like unboxing
-
-**Implementation:**
-- Cards flip with 3D physics when selected
-- Gold particle explosion when choosing Black Card
-- Exclusive "vault opening" animation for top tier
-- Tier benefits appear with elegant stagger animation
-
-**Files to modify:**
-- `src/components/MembershipTiersPreview.tsx` - 3D flip + effects
+### 15. QuantumBiometric
+**Biometric visualization component**
+- Fingerprint scan animation
+- Face scan overlay effect
+- Iris recognition visual
+- Voice waveform display
+- Authentication progress states
+- Success/failure animations
 
 ---
 
-## Phase 6: Exclusive Technology Showcase
+## Enhanced Existing Components
 
-### 6.1 Voice-Activated Navigation (Enhancement)
-**Current State:** Basic voice commands
-**Enhancement:** Natural language understanding
+### QuantumCard Enhancements
+- 3D tilt effect on hover (using mouse position)
+- Holographic shimmer overlay
+- Corner accent animations
+- Magnetic attraction to cursor
+- Depth layers for parallax effect
 
-**Implementation:**
-- "Show me yachts in the Mediterranean" → navigates + filters
-- "What does Black Card membership include?" → Orla explains
-- Wake word: "Hey Aurelia" or "Hello Orla"
-- Visual feedback with elegant waveform
-- Multi-language support matching the site
+### QuantumButton Enhancements
+- Particle burst on click
+- Energy charging animation
+- Sound effect integration
+- Haptic feedback support
+- Long-press actions
 
-**Files to modify:**
-- `src/components/VoiceCommands.tsx` - NLU integration
+### QuantumProgress Enhancements
+- Segmented mode with labels
+- Circular variant
+- Multi-track parallel progress
+- Indeterminate quantum state
+- Value labels with animations
 
-### 6.2 Biometric Personalization (Demo)
-**Enhancement:** Future-tech showcase
+### QuantumDataPanel Enhancements
+- Live data streaming support
+- Sparkline mini-charts per item
+- Drag-to-reorder items
+- Collapse/expand sections
+- Export data functionality
 
-**Implementation:**
-- Optional camera-based "mood detection" demo
-- Subtle UI adjustments based on detected preferences
-- Demo mode showing personalization possibilities
-- Privacy-first approach with clear opt-in
-
-**Files to create:**
-- Create `src/components/BiometricDemo.tsx` - Opt-in demo experience
+### QuantumCircuit Enhancements
+- Interactive gate placement
+- Quantum state visualization
+- Animation playback controls
+- Export circuit diagram
+- Educational tooltips
 
 ---
 
-## Technical Specifications
+## Shared Utilities & Hooks
 
-### Performance Considerations
-- Lazy load all WebGL/Three.js components
-- Use `requestIdleCallback` for non-critical animations
-- Implement `prefers-reduced-motion` alternatives
-- Progressive enhancement for lower-end devices
-- Target 60fps on mid-range devices
+### useQuantumAnimation
+- Standardized animation presets
+- Reduced motion detection
+- Performance optimization
+- Stagger delay calculations
 
-### Accessibility
-- All effects have static alternatives
-- Screen reader announcements for dynamic content
-- Keyboard navigation for all interactive elements
-- High contrast mode support
+### useQuantumSound
+- UI sound effects library
+- Volume control
+- Mute preference sync
+- Spatial audio positioning
+
+### useQuantumTheme
+- Color scheme variants (cyan, gold, emerald, purple)
+- Dark/light mode support
+- Custom accent color configuration
+- CSS variable management
+
+### QuantumProvider Context
+- Global configuration
+- Animation preferences
+- Sound settings
+- Theme management
+- Accessibility options
+
+---
+
+## File Structure
+
+```text
+src/components/quantum/
+├── index.ts                    # Updated exports
+├── QuantumProvider.tsx         # Context provider
+├── hooks/
+│   ├── useQuantumAnimation.ts
+│   ├── useQuantumSound.ts
+│   └── useQuantumTheme.ts
+├── core/
+│   ├── QuantumCard.tsx         # Enhanced
+│   ├── QuantumButton.tsx       # Enhanced
+│   ├── QuantumBadge.tsx        # Enhanced
+│   └── QuantumProgress.tsx     # Enhanced
+├── inputs/
+│   ├── QuantumInput.tsx
+│   ├── QuantumSlider.tsx
+│   ├── QuantumSelect.tsx
+│   └── QuantumKeyboard.tsx
+├── data/
+│   ├── QuantumDataPanel.tsx    # Enhanced
+│   ├── QuantumChart.tsx
+│   ├── QuantumTable.tsx
+│   └── QuantumTimeline.tsx
+├── feedback/
+│   ├── QuantumLoader.tsx
+│   ├── QuantumToast.tsx
+│   └── QuantumModal.tsx
+├── navigation/
+│   ├── QuantumTabs.tsx
+│   └── QuantumAccordion.tsx
+├── visualization/
+│   ├── QuantumCircuit.tsx      # Enhanced
+│   ├── Quantum3DViewer.tsx
+│   └── QuantumBiometric.tsx
+└── layout/
+    ├── QuantumTerminal.tsx
+    └── QuantumAvatar.tsx
+```
 
 ---
 
 ## Implementation Priority
 
-| Priority | Feature | Impact | Effort |
-|----------|---------|--------|--------|
-| 1 | 3D Interactive Globe | Very High | Medium |
-| 2 | Cinematic Hero Intro | Very High | Medium |
-| 3 | Enhanced Particle Systems | High | Low |
-| 4 | Magnetic + Fluid Interactions | High | Medium |
-| 5 | Orla Presence Animations | High | Low |
-| 6 | Animated Number Counters | Medium | Low |
-| 7 | Testimonial Theatre | Medium | Medium |
-| 8 | Dynamic Lighting | Medium | Medium |
-| 9 | Membership Tier Reveal | Medium | Medium |
-| 10 | Voice Enhancement | Medium | High |
+| Priority | Component | Impact | Complexity |
+|----------|-----------|--------|------------|
+| 1 | QuantumInput | High | Low |
+| 2 | QuantumLoader | High | Low |
+| 3 | QuantumModal | High | Medium |
+| 4 | QuantumToast | High | Medium |
+| 5 | QuantumTerminal | Very High | Medium |
+| 6 | QuantumChart | Very High | High |
+| 7 | Quantum3DViewer | High | High |
+| 8 | QuantumTabs | Medium | Low |
+| 9 | QuantumTable | High | High |
+| 10 | QuantumBiometric | Very High | Medium |
+| 11 | QuantumSlider | Medium | Low |
+| 12 | QuantumTimeline | Medium | Medium |
+| 13 | QuantumAccordion | Medium | Low |
+| 14 | QuantumAvatar | Medium | Low |
+| 15 | QuantumKeyboard | Low | Medium |
 
 ---
 
-## Expected Outcomes
-- **Visitor Dwell Time:** +40% increase
-- **Scroll Depth:** 85%+ reach bottom of page
-- **Social Shares:** Shareable "wow" moments
-- **Brand Perception:** Ultra-premium positioning
-- **Conversion Rate:** +25% membership inquiries
+## Technical Notes
 
-This plan transforms Aurelia into a destination experience—visitors won't just browse, they'll be captivated.
+### Performance Optimizations
+- Use `requestAnimationFrame` for smooth animations
+- Implement `IntersectionObserver` for viewport-based animations
+- Lazy load Three.js components
+- Memoize expensive calculations
+- Use CSS transforms over layout properties
+
+### Accessibility
+- All components support `prefers-reduced-motion`
+- Proper ARIA labels and roles
+- Keyboard navigation support
+- Focus indicators with quantum styling
+- Screen reader announcements
+
+### Dependencies
+- Framer Motion (already installed)
+- @react-three/fiber (already installed for 3D components)
+- Recharts (already installed for charts)
+- No additional dependencies required
+

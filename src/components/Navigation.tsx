@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Lock, Menu, X, ChevronDown } from "lucide-react";
+import { Lock, Menu, X, ChevronDown, Sparkles } from "lucide-react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -174,15 +174,16 @@ const Navigation = () => {
               </Link>
             ))}
             
-            {/* Discover Dropdown */}
+            {/* AI-Powered Discover Dropdown */}
             <DropdownMenu>
-              <DropdownMenuTrigger className={`relative py-2 transition-colors duration-300 flex items-center gap-1 outline-none ${
+              <DropdownMenuTrigger className={`relative py-2 transition-all duration-300 flex items-center gap-1.5 outline-none group ${
                 discoverLinks.some(link => location.pathname === link.href)
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground"
               }`}>
-                Discover
-                <ChevronDown className="w-3 h-3" />
+                <Sparkles className="w-3 h-3 text-primary/70 group-hover:text-primary transition-colors" />
+                <span>Discover</span>
+                <ChevronDown className="w-3 h-3 transition-transform duration-200 group-data-[state=open]:rotate-180" />
                 {discoverLinks.some(link => location.pathname === link.href) && (
                   <motion.span
                     layoutId="activeDiscover"
@@ -193,23 +194,48 @@ const Navigation = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent 
                 align="center" 
-                sideOffset={12}
-                className="min-w-[160px] bg-background/95 backdrop-blur-md border-border/30"
+                sideOffset={16}
+                className="min-w-[200px] p-2 bg-background/98 backdrop-blur-xl border border-primary/20 shadow-[0_8px_32px_rgba(0,0,0,0.3),0_0_0_1px_rgba(255,255,255,0.05)_inset] rounded-xl overflow-hidden"
               >
-                {discoverLinks.map((link) => (
+                {/* AI Header */}
+                <div className="px-3 py-2 mb-1 border-b border-border/20">
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium">
+                      AI Curated
+                    </span>
+                  </div>
+                </div>
+                
+                {discoverLinks.map((link, index) => (
                   <DropdownMenuItem key={link.href} asChild>
                     <Link
                       to={link.href}
-                      className={`w-full cursor-pointer text-xs tracking-[0.1em] font-light ${
+                      className={`w-full cursor-pointer text-xs tracking-[0.1em] font-light px-3 py-2.5 rounded-lg transition-all duration-200 flex items-center gap-3 group/item ${
                         location.pathname === link.href
-                          ? "text-foreground"
-                          : "text-muted-foreground"
+                          ? "bg-primary/10 text-foreground"
+                          : "text-muted-foreground hover:bg-primary/5 hover:text-foreground"
                       }`}
                     >
-                      {link.label}
+                      <span className={`w-1 h-1 rounded-full transition-all duration-200 ${
+                        location.pathname === link.href 
+                          ? "bg-primary" 
+                          : "bg-muted-foreground/30 group-hover/item:bg-primary/50"
+                      }`} />
+                      <span>{link.label}</span>
+                      {location.pathname === link.href && (
+                        <Sparkles className="w-3 h-3 text-primary ml-auto" />
+                      )}
                     </Link>
                   </DropdownMenuItem>
                 ))}
+                
+                {/* AI Footer */}
+                <div className="mt-2 pt-2 px-3 pb-1 border-t border-border/20">
+                  <span className="text-[9px] text-muted-foreground/60 tracking-wider">
+                    Powered by Orla Intelligence
+                  </span>
+                </div>
               </DropdownMenuContent>
             </DropdownMenu>
             

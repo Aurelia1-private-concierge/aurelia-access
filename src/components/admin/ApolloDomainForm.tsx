@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { validatePrimaryDomains, validateSingleDomain, hasDuplicateDomains } from "@/lib/domain-validation";
 
-const DOMAIN_REGEX = /^https:\/\/[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
 const MAX_DOMAINS = 5;
 
 interface ApolloDomainFormProps {
@@ -20,14 +20,6 @@ const ApolloDomainForm = ({ onSave }: ApolloDomainFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [globalError, setGlobalError] = useState<string | null>(null);
 
-  const validateDomain = (domain: string): string | null => {
-    if (!domain.trim()) return null; // Empty is OK for optional fields
-    if (!DOMAIN_REGEX.test(domain.trim())) {
-      return "Use primary domain only (e.g., https://apollo.io)";
-    }
-    return null;
-  };
-
   const validateAll = (): boolean => {
     const filledDomains = domains.filter(d => d.trim());
     
@@ -36,8 +28,7 @@ const ApolloDomainForm = ({ onSave }: ApolloDomainFormProps) => {
       return false;
     }
 
-    const uniqueDomains = new Set(filledDomains);
-    if (uniqueDomains.size !== filledDomains.length) {
+    if (hasDuplicateDomains(domains)) {
       setGlobalError("Duplicate domains are not allowed.");
       return false;
     }
@@ -46,13 +37,20 @@ const ApolloDomainForm = ({ onSave }: ApolloDomainFormProps) => {
     let hasError = false;
 
     domains.forEach((domain, index) => {
-      const error = validateDomain(domain);
+      const error = validateSingleDomain(domain);
       newErrors[index] = error || "";
       if (error && domain.trim()) hasError = true;
     });
 
     setErrors(newErrors);
     setGlobalError(null);
+    
+    // Final validation using the shared utility
+    if (!hasError && !validatePrimaryDomains(filledDomains)) {
+      setGlobalError("Invalid domain configuration.");
+      return false;
+    }
+    
     return !hasError;
   };
 

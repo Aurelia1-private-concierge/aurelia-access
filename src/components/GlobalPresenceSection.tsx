@@ -1,5 +1,8 @@
 import { motion } from "framer-motion";
 import { MapPin, Clock, Phone, Headphones } from "lucide-react";
+import { lazy, Suspense, useState } from "react";
+
+const Globe3D = lazy(() => import("@/components/Globe3D"));
 
 const locations = [
   { city: "London", country: "UK", timezone: "GMT", flagship: true },
@@ -9,6 +12,12 @@ const locations = [
   { city: "New York", country: "USA", timezone: "EST", flagship: false },
   { city: "Hong Kong", country: "HK", timezone: "HKT", flagship: false },
 ];
+
+const GlobeLoader = () => (
+  <div className="w-full h-[400px] md:h-[500px] flex items-center justify-center">
+    <div className="w-10 h-10 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+  </div>
+);
 
 const GlobalPresenceSection = () => {
   return (
@@ -70,6 +79,19 @@ const GlobalPresenceSection = () => {
               </div>
             </div>
           </div>
+        </motion.div>
+
+        {/* 3D Globe */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="mb-16"
+        >
+          <Suspense fallback={<GlobeLoader />}>
+            <Globe3D />
+          </Suspense>
         </motion.div>
 
         {/* Locations */}

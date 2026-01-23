@@ -64,9 +64,18 @@ export const VIDEO_LIBRARY: VideoMetadata[] = [
     duration: "PT1M00S",
     contentUrl: "/assets/demo-watch.mp4",
     category: "Technology"
+  },
+  {
+    id: "hero-island",
+    title: "Private Island Retreats | Aurelia Private Concierge",
+    description: "Discover the world's most exclusive private islands available through Aurelia. From Caribbean hideaways to Maldivian atolls, experience ultimate seclusion and luxury.",
+    thumbnailUrl: "https://aurelia-privateconcierge.com/og-image-new.png",
+    uploadDate: "2026-01-15",
+    duration: "PT2M00S",
+    contentUrl: "/assets/hero-island.mp4",
+    category: "Assets"
   }
 ];
-
 // Generate VideoObject schema for a single video
 export const generateVideoSchema = (video: VideoMetadata, pageUrl: string) => {
   return {

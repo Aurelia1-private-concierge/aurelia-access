@@ -19,6 +19,7 @@ import SessionTimeoutProvider from "./components/auth/SessionTimeoutProvider";
 import SkipLink from "./components/a11y/SkipLink";
 import { ReducedMotionProvider } from "./components/a11y/ReducedMotionProvider";
 import VisitorTracker from "./components/VisitorTracker";
+import GlobalQuantumWrapper from "./components/GlobalQuantumWrapper";
 import "@/i18n";
 
 // Eagerly load the landing page for best LCP
@@ -581,29 +582,31 @@ const App = () => {
         <QueryClientProvider client={queryClient}>
           <GlobalProvider>
             <ReducedMotionProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner position="top-right" richColors closeButton />
-              <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-                <AuthProvider>
-                  <SessionTimeoutProvider timeoutMinutes={30} warningMinutes={5}>
-                    <VisitorTracker />
-                    <SkipLink />
-                    <main id="main-content">
-                      <AnimatedRoutes />
-                    </main>
-                    <GlobalElements />
-                    <BackToTop />
-                    <CookieConsent />
-                  </SessionTimeoutProvider>
-                </AuthProvider>
-              </BrowserRouter>
-            </TooltipProvider>
-          </ReducedMotionProvider>
-        </GlobalProvider>
-      </QueryClientProvider>
-    </HelmetProvider>
-  </ErrorBoundary>
+              <GlobalQuantumWrapper>
+                <TooltipProvider>
+                  <Toaster />
+                  <Sonner position="top-right" richColors closeButton />
+                  <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                    <AuthProvider>
+                      <SessionTimeoutProvider timeoutMinutes={30} warningMinutes={5}>
+                        <VisitorTracker />
+                        <SkipLink />
+                        <main id="main-content">
+                          <AnimatedRoutes />
+                        </main>
+                        <GlobalElements />
+                        <BackToTop />
+                        <CookieConsent />
+                      </SessionTimeoutProvider>
+                    </AuthProvider>
+                  </BrowserRouter>
+                </TooltipProvider>
+              </GlobalQuantumWrapper>
+            </ReducedMotionProvider>
+          </GlobalProvider>
+        </QueryClientProvider>
+      </HelmetProvider>
+    </ErrorBoundary>
   );
 };
 

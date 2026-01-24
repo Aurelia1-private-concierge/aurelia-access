@@ -182,3 +182,9 @@ verify_jwt = false
 
 [functions.partner-waitlist-notify]
 verify_jwt = false
+
+[functions.generate-seo-content]
+verify_jwt = false
+
+[functions.behavioral-email-trigger]
+verify_jwt = false

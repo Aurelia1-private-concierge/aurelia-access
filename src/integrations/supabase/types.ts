@@ -565,6 +565,45 @@ export type Database = {
         }
         Relationships: []
       }
+      behavioral_triggers: {
+        Row: {
+          created_at: string
+          email: string
+          error_message: string | null
+          id: string
+          scheduled_for: string
+          sent_at: string | null
+          status: string
+          trigger_data: Json | null
+          trigger_type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          error_message?: string | null
+          id?: string
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: string
+          trigger_data?: Json | null
+          trigger_type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          error_message?: string | null
+          id?: string
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: string
+          trigger_data?: Json | null
+          trigger_type?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       bid_revisions: {
         Row: {
           bid_id: string
@@ -614,6 +653,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      blog_posts: {
+        Row: {
+          author_id: string | null
+          content: string
+          created_at: string
+          id: string
+          keywords: string[] | null
+          meta_description: string | null
+          published_at: string | null
+          slug: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          keywords?: string[] | null
+          meta_description?: string | null
+          published_at?: string | null
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          keywords?: string[] | null
+          meta_description?: string | null
+          published_at?: string | null
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       boardroom_participants: {
         Row: {
@@ -1436,6 +1517,39 @@ export type Database = {
         }
         Relationships: []
       }
+      exit_intent_conversions: {
+        Row: {
+          action: string
+          created_at: string
+          email: string | null
+          id: string
+          offer_type: string
+          page_path: string
+          session_id: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          offer_type: string
+          page_path: string
+          session_id: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          offer_type?: string
+          page_path?: string
+          session_id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       funnel_events: {
         Row: {
           campaign: string | null
@@ -1950,6 +2064,42 @@ export type Database = {
           source?: string | null
           updated_at?: string | null
           verified?: boolean | null
+        }
+        Relationships: []
+      }
+      lead_scores: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          last_activity_at: string
+          score: number
+          session_id: string | null
+          signals: Json | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_activity_at?: string
+          score?: number
+          session_id?: string | null
+          signals?: Json | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_activity_at?: string
+          score?: number
+          session_id?: string | null
+          signals?: Json | null
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -3260,6 +3410,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      referral_shares: {
+        Row: {
+          channel: string
+          created_at: string
+          id: string
+          page_path: string | null
+          referral_code: string | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          id?: string
+          page_path?: string | null
+          referral_code?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          id?: string
+          page_path?: string | null
+          referral_code?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       referrals: {
         Row: {

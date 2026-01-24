@@ -169,33 +169,33 @@ function Globe({ hoveredCity, setHoveredCity }: {
 
   return (
     <group>
-      {/* Globe sphere */}
+      {/* Globe sphere - lighter base color for visibility */}
       <Sphere ref={globeRef} args={[1, 64, 64]}>
         <meshStandardMaterial
-          color="#1a1a2e"
-          roughness={0.8}
-          metalness={0.2}
+          color="#2d3748"
+          roughness={0.6}
+          metalness={0.3}
           transparent
-          opacity={0.9}
+          opacity={0.95}
         />
       </Sphere>
       
-      {/* Wireframe overlay */}
+      {/* Wireframe overlay - increased visibility */}
       <Sphere args={[1.002, 32, 32]}>
         <meshBasicMaterial
-          color="#D4AF37"
+          color="#F5E6B8"
           wireframe
           transparent
-          opacity={0.08}
+          opacity={0.25}
         />
       </Sphere>
       
-      {/* Atmosphere glow */}
+      {/* Atmosphere glow - brighter */}
       <Sphere ref={atmosphereRef} args={[1.05, 32, 32]}>
         <meshBasicMaterial
-          color="#D4AF37"
+          color="#F5E6B8"
           transparent
-          opacity={0.03}
+          opacity={0.1}
           side={THREE.BackSide}
         />
       </Sphere>
@@ -279,9 +279,10 @@ const Globe3D = () => {
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: true }}
       >
-        <ambientLight intensity={0.3} />
-        <pointLight position={[10, 10, 10]} intensity={0.5} color="#D4AF37" />
-        <pointLight position={[-10, -10, -10]} intensity={0.3} color="#87CEEB" />
+        <ambientLight intensity={0.6} />
+        <pointLight position={[10, 10, 10]} intensity={1} color="#F5E6B8" />
+        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#87CEEB" />
+        <pointLight position={[0, 10, 0]} intensity={0.4} color="#ffffff" />
         
         <Suspense fallback={null}>
           <Globe hoveredCity={hoveredCity} setHoveredCity={setHoveredCity} />

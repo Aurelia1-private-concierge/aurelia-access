@@ -72,6 +72,7 @@ import AuctionManagementPanel from "@/components/admin/AuctionManagementPanel";
 import PartnerWaitlistPanel from "@/components/admin/PartnerWaitlistPanel";
 import N8NAutomationHub from "@/components/admin/N8NAutomationHub";
 import BacklinkStrategyPanel from "@/components/admin/BacklinkStrategyPanel";
+import PartnerMessagesPanel from "@/components/admin/PartnerMessagesPanel";
 
 // Lazy load recharts-heavy components to prevent circular initialization errors
 const AnalyticsDashboard = lazy(() => import("@/components/admin/AnalyticsDashboard"));
@@ -367,6 +368,7 @@ const Admin = () => {
             <TabsTrigger value="crm">CRM</TabsTrigger>
             <TabsTrigger value="commissions">Commissions</TabsTrigger>
             <TabsTrigger value="partners">Partners</TabsTrigger>
+            <TabsTrigger value="messages">Messages</TabsTrigger>
             <TabsTrigger value="waitlist">Waitlist</TabsTrigger>
             <TabsTrigger value="discovery">Discovery</TabsTrigger>
             <TabsTrigger value="autodiscovery">Auto Discovery</TabsTrigger>
@@ -392,6 +394,10 @@ const Admin = () => {
               <h1 className="font-serif text-3xl text-foreground mb-2">Site Settings</h1>
               <p className="text-muted-foreground">Control site-wide settings</p>
             </motion.div>
+          </TabsContent>
+
+          <TabsContent value="messages" className="space-y-6">
+            <PartnerMessagesPanel />
           </TabsContent>
 
           <TabsContent value="waitlist" className="space-y-6">

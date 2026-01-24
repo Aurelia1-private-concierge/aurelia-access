@@ -25,6 +25,7 @@ import { useCredits } from "@/hooks/useCredits";
 import { toast } from "@/hooks/use-toast";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import VettedPartnersSection from "@/components/VettedPartnersSection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -513,6 +514,13 @@ const Discover = () => {
               })}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Vetted Partners Section */}
+      <section className="pb-24 px-4 bg-muted/20">
+        <div className="max-w-7xl mx-auto">
+          <VettedPartnersSection limit={6} showHeader={true} />
         </div>
       </section>
 

@@ -35,6 +35,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { format, addDays } from 'date-fns';
 import MarketplaceComingSoon from './MarketplaceComingSoon';
+import VettedPartnersSection from './VettedPartnersSection';
 
 const categoryIcons: Record<ServiceCategory, React.ReactNode> = {
   aviation: <Plane className="h-5 w-5" />,
@@ -664,6 +665,11 @@ export const ServiceMarketplace: React.FC = () => {
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+
+      {/* Vetted Partners */}
+      <div className="max-w-7xl mx-auto px-4 mt-16">
+        <VettedPartnersSection limit={6} showHeader={true} compact />
       </div>
     </section>
   );

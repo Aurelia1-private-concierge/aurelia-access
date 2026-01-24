@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef } from "react";
 import { motion } from "framer-motion";
 import {
   Link2,
@@ -203,7 +203,7 @@ const articleIdeas = [
   "London's New Luxury Startups: Challenging the Old Guard",
 ];
 
-const BacklinkStrategyPanel = () => {
+const BacklinkStrategyPanel = forwardRef<HTMLDivElement>((_, ref) => {
   const [opportunities, setOpportunities] = useState<BacklinkOpportunity[]>([]);
   const [groupedOpportunities, setGroupedOpportunities] = useState(backlinkStrategies);
   const [loading, setLoading] = useState(true);
@@ -352,7 +352,7 @@ const BacklinkStrategyPanel = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div ref={ref} className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -588,6 +588,8 @@ const BacklinkStrategyPanel = () => {
       </Tabs>
     </div>
   );
-};
+});
+
+BacklinkStrategyPanel.displayName = "BacklinkStrategyPanel";
 
 export default BacklinkStrategyPanel;

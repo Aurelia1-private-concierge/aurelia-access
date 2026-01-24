@@ -204,6 +204,17 @@ const VettedPartnersSection: React.FC<VettedPartnersSectionProps> = ({
                       Website
                     </Button>
                   )}
+                  {partner.email && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-muted-foreground hover:text-foreground"
+                      onClick={() => window.open(`mailto:${partner.email}`, "_blank")}
+                    >
+                      <Mail className="w-4 h-4 mr-1" />
+                      Email
+                    </Button>
+                  )}
                   {onContactClick && (
                     <Button
                       variant="ghost"

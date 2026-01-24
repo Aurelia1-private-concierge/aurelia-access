@@ -111,12 +111,16 @@ const SiteBuilder = () => {
         // Normalize content blocks to ensure they have required fields
         const rawContent = rawSite.content as unknown;
         const normalizedContent: SiteBlock[] = Array.isArray(rawContent)
-          ? rawContent.map((block: Record<string, unknown>, index: number) => ({
-              id: (block.id as string) || `block-${index}-${Date.now()}`,
-              type: (block.type as SiteBlock["type"]) || "hero",
-              content: block as Record<string, unknown>,
-              order: (block.order as number) ?? index,
-            }))
+          ? rawContent.map((block: Record<string, unknown>, index: number) => {
+              // Extract known metadata fields, rest goes into content
+              const { id, type, order, ...contentFields } = block;
+              return {
+                id: (id as string) || `block-${index}-${Date.now()}`,
+                type: (type as SiteBlock["type"]) || "hero",
+                content: contentFields as Record<string, unknown>,
+                order: (order as number) ?? index,
+              };
+            })
           : [];
 
         // Normalize branding

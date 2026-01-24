@@ -248,17 +248,28 @@ async function autoDiscoverAllLuxuryVendors(): Promise<VendorEnriched[]> {
   const candidates = all.filter(filterToAureliaStandard);
   console.log(`Candidates after filtering: ${candidates.length}`);
 
-  // Enrich and check compliance
+  // Enrich and check compliance with individual error handling
   const enriched = await Promise.all(
     candidates.map(async (v) => {
-      const enrichedObj = await enrichVendorContact(v);
-      const compliance = await checkCompliance(enrichedObj);
-      return {
-        ...enrichedObj,
-        compliant: compliance.passed,
-        complianceNotes: compliance.notes,
-        enrichedAt: new Date().toISOString(),
-      } as VendorEnriched;
+      try {
+        const enrichedObj = await enrichVendorContact(v);
+        const compliance = await checkCompliance(enrichedObj);
+        console.log(`[AUDIT] Vendor "${v.name}" compliance ${compliance.passed ? "PASS" : "FAIL"} - ${compliance.notes}`);
+        return {
+          ...enrichedObj,
+          compliant: compliance.passed,
+          complianceNotes: compliance.notes,
+          enrichedAt: new Date().toISOString(),
+        } as VendorEnriched;
+      } catch (e) {
+        console.error(`[ENRICH ERROR] Vendor: ${v.name}`, e);
+        return {
+          ...v,
+          compliant: false,
+          complianceNotes: "Enrichment failed",
+          enrichedAt: new Date().toISOString(),
+        } as VendorEnriched;
+      }
     })
   );
 

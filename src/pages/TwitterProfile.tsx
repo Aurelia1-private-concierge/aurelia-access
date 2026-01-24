@@ -352,7 +352,7 @@ const TwitterProfile = () => {
                   transition={{ delay: i * 0.05 }}
                   className="aspect-square cursor-pointer overflow-hidden"
                 >
-                  <img src={img} alt="" className="w-full h-full object-cover hover:opacity-80 transition-opacity" />
+                  <img src={img} alt={`Aurelia luxury experience ${i + 1}`} className="w-full h-full object-cover hover:opacity-80 transition-opacity" />
                 </motion.div>
               ))}
             </div>

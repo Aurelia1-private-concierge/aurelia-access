@@ -29,6 +29,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface BacklinkOpportunity {
   id: string;
@@ -208,7 +225,79 @@ const BacklinkStrategyPanel = forwardRef<HTMLDivElement>((_, ref) => {
   const [groupedOpportunities, setGroupedOpportunities] = useState(backlinkStrategies);
   const [loading, setLoading] = useState(true);
   const [copiedItem, setCopiedItem] = useState<string | null>(null);
-  const [newOpportunity, setNewOpportunity] = useState({ name: "", url: "", type: "", category: "" });
+  const [newOpportunity, setNewOpportunity] = useState({ 
+    name: "", 
+    url: "", 
+    type: "", 
+    category: "",
+    domain_authority: 50,
+    priority: "medium"
+  });
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const categoryOptions = [
+    "Luxury Publications",
+    "Business & Finance",
+    "Travel & Lifestyle",
+    "Tech & AI",
+    "Directories & Listings",
+    "HARO & PR"
+  ];
+
+  const typeOptions = [
+    "Guest Post",
+    "Press Release",
+    "Feature Article",
+    "Interview",
+    "Editorial",
+    "Profile",
+    "Contributor",
+    "Company Profile",
+    "Software Listing",
+    "Expert Source"
+  ];
+
+  const handleAddOpportunity = async () => {
+    if (!newOpportunity.name || !newOpportunity.category) {
+      toast.error("Please fill in required fields");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase
+        .from("backlink_opportunities")
+        .insert({
+          name: newOpportunity.name,
+          url: newOpportunity.url || null,
+          type: newOpportunity.type || null,
+          category: newOpportunity.category,
+          domain_authority: newOpportunity.domain_authority,
+          priority: newOpportunity.priority,
+          status: "pending"
+        });
+
+      if (error) throw error;
+
+      toast.success("Opportunity added successfully");
+      setNewOpportunity({ 
+        name: "", 
+        url: "", 
+        type: "", 
+        category: "",
+        domain_authority: 50,
+        priority: "medium"
+      });
+      setIsAddDialogOpen(false);
+      fetchOpportunities();
+    } catch (error) {
+      console.error("Error adding opportunity:", error);
+      toast.error("Failed to add opportunity");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Fetch opportunities from database
   const fetchOpportunities = async () => {
@@ -359,10 +448,113 @@ const BacklinkStrategyPanel = forwardRef<HTMLDivElement>((_, ref) => {
           <h2 className="text-2xl font-light text-foreground">Backlink Strategy</h2>
           <p className="text-muted-foreground">Track and manage link-building opportunities</p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90">
-          <Plus className="w-4 h-4 mr-2" />
-          Add Opportunity
-        </Button>
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="bg-primary hover:bg-primary/90">
+              <Plus className="w-4 h-4 mr-2" />
+              Add Opportunity
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Add Backlink Opportunity</DialogTitle>
+              <DialogDescription>
+                Add a new publication or website for link-building outreach.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="name">Publication Name *</Label>
+                <Input
+                  id="name"
+                  placeholder="e.g., Forbes, TechCrunch"
+                  value={newOpportunity.name}
+                  onChange={(e) => setNewOpportunity({ ...newOpportunity, name: e.target.value })}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="url">Website URL</Label>
+                <Input
+                  id="url"
+                  placeholder="e.g., forbes.com"
+                  value={newOpportunity.url}
+                  onChange={(e) => setNewOpportunity({ ...newOpportunity, url: e.target.value })}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="category">Category *</Label>
+                  <Select
+                    value={newOpportunity.category}
+                    onValueChange={(value) => setNewOpportunity({ ...newOpportunity, category: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categoryOptions.map((cat) => (
+                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="type">Link Type</Label>
+                  <Select
+                    value={newOpportunity.type}
+                    onValueChange={(value) => setNewOpportunity({ ...newOpportunity, type: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {typeOptions.map((type) => (
+                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="da">Domain Authority (1-100)</Label>
+                  <Input
+                    id="da"
+                    type="number"
+                    min={1}
+                    max={100}
+                    value={newOpportunity.domain_authority}
+                    onChange={(e) => setNewOpportunity({ ...newOpportunity, domain_authority: parseInt(e.target.value) || 50 })}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="priority">Priority</Label>
+                  <Select
+                    value={newOpportunity.priority}
+                    onValueChange={(value) => setNewOpportunity({ ...newOpportunity, priority: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select priority" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="high">High</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="low">Low</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleAddOpportunity} disabled={isSubmitting}>
+                {isSubmitting ? "Adding..." : "Add Opportunity"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Stats Overview */}

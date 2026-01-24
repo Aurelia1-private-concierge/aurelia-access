@@ -71,6 +71,7 @@ import UnifiedStatusDashboard from "@/components/admin/UnifiedStatusDashboard";
 import AuctionManagementPanel from "@/components/admin/AuctionManagementPanel";
 import PartnerWaitlistPanel from "@/components/admin/PartnerWaitlistPanel";
 import N8NAutomationHub from "@/components/admin/N8NAutomationHub";
+import BacklinkStrategyPanel from "@/components/admin/BacklinkStrategyPanel";
 
 // Lazy load recharts-heavy components to prevent circular initialization errors
 const AnalyticsDashboard = lazy(() => import("@/components/admin/AnalyticsDashboard"));
@@ -359,6 +360,7 @@ const Admin = () => {
             <TabsTrigger value="urlbuilder">URL Builder</TabsTrigger>
             <TabsTrigger value="abtesting">A/B Tests</TabsTrigger>
             <TabsTrigger value="seo">SEO</TabsTrigger>
+            <TabsTrigger value="backlinks">Backlinks</TabsTrigger>
             <TabsTrigger value="marketing">Marketing</TabsTrigger>
             <TabsTrigger value="trials">Trials</TabsTrigger>
             <TabsTrigger value="concierge">Concierge</TabsTrigger>
@@ -438,6 +440,10 @@ const Admin = () => {
 
           <TabsContent value="auctions" className="space-y-6">
             <AuctionManagementPanel />
+          </TabsContent>
+
+          <TabsContent value="backlinks" className="space-y-6">
+            <BacklinkStrategyPanel />
           </TabsContent>
 
           <TabsContent value="scheduler" className="space-y-6">

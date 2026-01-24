@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 60">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D4AF37"/>
+      <stop offset="50%" style="stop-color:#E5C158"/>
+      <stop offset="100%" style="stop-color:#B8962E"/>
+    </linearGradient>
+  </defs>
+  <rect width="180" height="60" rx="8" fill="#0A0A0A" stroke="url(#goldGrad)" stroke-width="2"/>
+  <text x="90" y="22" font-family="Inter, Arial, sans-serif" font-size="8" fill="#D4AF37" text-anchor="middle" letter-spacing="2">FEATURED ON</text>
+  <text x="90" y="42" font-family="Playfair Display, Georgia, serif" font-size="18" fill="#F5F5F0" text-anchor="middle" font-weight="600">AURELIA</text>
+</svg>

@@ -25,7 +25,10 @@ import {
   FileImage,
   BookOpen,
   Users,
-  Play
+  Play,
+  Link2,
+  ExternalLink,
+  Code
 } from "lucide-react";
 import { useState } from "react";
 import JSZip from "jszip";
@@ -393,6 +396,7 @@ For more information, visit aurelia-privateconcierge.com`;
                 { value: "favicons", label: "Favicons", icon: FileImage },
                 { value: "guidelines", label: "Brand Book", icon: BookOpen },
                 { value: "partners", label: "Co-brand", icon: Users },
+                { value: "backlinks", label: "Backlinks", icon: Link2 },
                 { value: "press", label: "Press", icon: FileText },
               ].map((tab) => (
                 <TabsTrigger
@@ -1318,6 +1322,250 @@ For more information, visit aurelia-privateconcierge.com`;
                       </a>{" "}
                       for editable co-branding files and approval process.
                     </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Backlinks Tab - For partners and journalists to easily link back */}
+            <TabsContent value="backlinks" className="space-y-8">
+              {/* Embeddable Badges */}
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Link2 className="w-5 h-5 text-primary" />
+                    Embeddable Partner Badges
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Add these badges to your website to show your partnership with Aurelia
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Partner Badge */}
+                  <div className="p-6 rounded-lg bg-muted/20 border border-border/20">
+                    <div className="flex flex-col md:flex-row items-center gap-6">
+                      <div className="flex-shrink-0">
+                        <img 
+                          src="/badges/partner-badge.svg" 
+                          alt="Aurelia Partner Badge" 
+                          className="h-12"
+                        />
+                      </div>
+                      <div className="flex-1 space-y-3">
+                        <h4 className="font-medium text-foreground">Certified Partner Badge</h4>
+                        <div className="relative">
+                          <pre className="text-xs bg-background/50 p-3 rounded-lg overflow-x-auto border border-border/30">
+{`<a href="https://aurelia-privateconcierge.com/partners" target="_blank" rel="noopener">
+  <img src="https://aurelia-privateconcierge.com/badges/partner-badge.svg" 
+       alt="Aurelia Certified Partner" width="200" />
+</a>`}
+                          </pre>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="absolute top-2 right-2"
+                            onClick={() => handleCopy(
+                              `<a href="https://aurelia-privateconcierge.com/partners" target="_blank" rel="noopener"><img src="https://aurelia-privateconcierge.com/badges/partner-badge.svg" alt="Aurelia Certified Partner" width="200" /></a>`,
+                              "Partner badge"
+                            )}
+                          >
+                            {copiedItem === "Partner badge" ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Featured Badge */}
+                  <div className="p-6 rounded-lg bg-muted/20 border border-border/20">
+                    <div className="flex flex-col md:flex-row items-center gap-6">
+                      <div className="flex-shrink-0">
+                        <img 
+                          src="/badges/featured-badge.svg" 
+                          alt="Featured on Aurelia Badge" 
+                          className="h-14"
+                        />
+                      </div>
+                      <div className="flex-1 space-y-3">
+                        <h4 className="font-medium text-foreground">Featured On Badge</h4>
+                        <div className="relative">
+                          <pre className="text-xs bg-background/50 p-3 rounded-lg overflow-x-auto border border-border/30">
+{`<a href="https://aurelia-privateconcierge.com" target="_blank" rel="noopener">
+  <img src="https://aurelia-privateconcierge.com/badges/featured-badge.svg" 
+       alt="Featured on Aurelia" width="180" />
+</a>`}
+                          </pre>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="absolute top-2 right-2"
+                            onClick={() => handleCopy(
+                              `<a href="https://aurelia-privateconcierge.com" target="_blank" rel="noopener"><img src="https://aurelia-privateconcierge.com/badges/featured-badge.svg" alt="Featured on Aurelia" width="180" /></a>`,
+                              "Featured badge"
+                            )}
+                          >
+                            {copiedItem === "Featured badge" ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Trusted Badge */}
+                  <div className="p-6 rounded-lg bg-muted/20 border border-border/20">
+                    <div className="flex flex-col md:flex-row items-center gap-6">
+                      <div className="flex-shrink-0">
+                        <img 
+                          src="/badges/trusted-badge.svg" 
+                          alt="Trusted by Aurelia Badge" 
+                          className="h-11"
+                        />
+                      </div>
+                      <div className="flex-1 space-y-3">
+                        <h4 className="font-medium text-foreground">Trusted By Badge</h4>
+                        <div className="relative">
+                          <pre className="text-xs bg-background/50 p-3 rounded-lg overflow-x-auto border border-border/30">
+{`<a href="https://aurelia-privateconcierge.com" target="_blank" rel="noopener">
+  <img src="https://aurelia-privateconcierge.com/badges/trusted-badge.svg" 
+       alt="Trusted by Aurelia Concierge" width="160" />
+</a>`}
+                          </pre>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="absolute top-2 right-2"
+                            onClick={() => handleCopy(
+                              `<a href="https://aurelia-privateconcierge.com" target="_blank" rel="noopener"><img src="https://aurelia-privateconcierge.com/badges/trusted-badge.svg" alt="Trusted by Aurelia Concierge" width="160" /></a>`,
+                              "Trusted badge"
+                            )}
+                          >
+                            {copiedItem === "Trusted badge" ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Text Links */}
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle>Text Link Options</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Simple text links to include in articles, blog posts, or directories
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {[
+                    { label: "General Link", text: "Aurelia Private Concierge", url: "https://aurelia-privateconcierge.com" },
+                    { label: "Services Link", text: "Aurelia Luxury Concierge Services", url: "https://aurelia-privateconcierge.com/services" },
+                    { label: "AI Concierge Link", text: "Orla AI Concierge by Aurelia", url: "https://aurelia-privateconcierge.com/orla" },
+                    { label: "Membership Link", text: "Aurelia Membership", url: "https://aurelia-privateconcierge.com/membership" },
+                  ].map((link) => (
+                    <div key={link.label} className="flex items-center justify-between p-4 rounded-lg bg-muted/20 border border-border/20">
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{link.label}</p>
+                        <code className="text-xs text-muted-foreground">{link.url}</code>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleCopy(`<a href="${link.url}" target="_blank" rel="noopener">${link.text}</a>`, link.label)}
+                        >
+                          {copiedItem === link.label ? <Check className="w-4 h-4 mr-1" /> : <Code className="w-4 h-4 mr-1" />}
+                          HTML
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleCopy(`[${link.text}](${link.url})`, `${link.label} MD`)}
+                        >
+                          {copiedItem === `${link.label} MD` ? <Check className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
+                          Markdown
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {/* Article Ideas */}
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle>Story Ideas for Journalists</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Suggested angles for articles, blogs, or press coverage
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {[
+                      "The Rise of AI Concierge Services: How Technology is Redefining Luxury",
+                      "What Do Billionaires Actually Want? Inside Ultra-Premium Service",
+                      "From Private Jets to Private Islands: The New Luxury Concierge Landscape",
+                      "Voice Assistants for the 1%: The Next Wave of Personal AI",
+                      "The $25 Billion Question: Can AI Replace Human Concierges?",
+                      "Invisible Luxury: Why UHNW Clients Demand Discretion Over Display",
+                      "The Psychology of White-Glove Service in the Digital Age",
+                      "London's New Luxury Startups: Challenging the Old Guard",
+                    ].map((idea, index) => (
+                      <div 
+                        key={index}
+                        className="flex items-start gap-3 p-4 rounded-lg bg-muted/20 border border-border/20 hover:border-primary/30 transition-colors"
+                      >
+                        <FileText className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-foreground">{idea}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
+                    <p className="text-sm text-muted-foreground">
+                      <strong className="text-foreground">Interview Requests:</strong> Our founders and executives are available for interviews. Contact{" "}
+                      <a href="mailto:press@aurelia-privateconcierge.com" className="text-primary hover:underline">
+                        press@aurelia-privateconcierge.com
+                      </a>
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* SEO Keywords */}
+              <Card className="bg-card/50 border-border/30">
+                <CardHeader>
+                  <CardTitle>Recommended Anchor Text</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Use these keyword-rich phrases when linking to Aurelia
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      "luxury concierge service",
+                      "private concierge for billionaires",
+                      "UHNW lifestyle management",
+                      "AI concierge service",
+                      "white glove concierge",
+                      "billionaire concierge services",
+                      "exclusive lifestyle management",
+                      "VIP concierge service",
+                      "private jet concierge",
+                      "superyacht charter concierge",
+                      "luxury travel planning",
+                      "24/7 private concierge",
+                    ].map((keyword) => (
+                      <Button
+                        key={keyword}
+                        size="sm"
+                        variant="outline"
+                        className="text-xs"
+                        onClick={() => handleCopy(keyword, keyword)}
+                      >
+                        {copiedItem === keyword ? <Check className="w-3 h-3 mr-1" /> : null}
+                        {keyword}
+                      </Button>
+                    ))}
                   </div>
                 </CardContent>
               </Card>

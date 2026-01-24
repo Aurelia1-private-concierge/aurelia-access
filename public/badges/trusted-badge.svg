@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 45">
+  <defs>
+    <linearGradient id="trustGold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#D4AF37"/>
+      <stop offset="100%" style="stop-color:#C4A030"/>
+    </linearGradient>
+  </defs>
+  <rect width="160" height="45" rx="5" fill="#0A0A0A" stroke="#D4AF37" stroke-width="1"/>
+  <path d="M20,22 L24,15 L28,22 L22,27 L20,22 Z M24,18 L24,24" fill="none" stroke="#D4AF37" stroke-width="1.5"/>
+  <text x="40" y="20" font-family="Inter, Arial, sans-serif" font-size="8" fill="#888" letter-spacing="0.8">TRUSTED BY</text>
+  <text x="40" y="33" font-family="Playfair Display, Georgia, serif" font-size="12" fill="#F5F5F0">Aurelia Concierge</text>
+</svg>

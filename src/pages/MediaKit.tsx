@@ -1043,9 +1043,9 @@ For more information, visit aurelia-privateconcierge.com`;
                             <p style={{ margin: 0, fontSize: 16, fontWeight: 600, color: "#0A0A0A" }}>[Your Name]</p>
                             <p style={{ margin: "4px 0", fontSize: 13, color: "#666" }}>[Your Title] | Aurelia Private Concierge</p>
                             <p style={{ margin: "8px 0 0", fontSize: 12 }}>
-                              <a href="#" style={{ color: "#D4AF37", textDecoration: "none" }}>name@aurelia-privateconcierge.com</a>
+                              <a href="mailto:name@aurelia-privateconcierge.com" style={{ color: "#D4AF37", textDecoration: "none" }}>name@aurelia-privateconcierge.com</a>
                               <span style={{ color: "#ccc", margin: "0 8px" }}>|</span>
-                              <a href="#" style={{ color: "#666", textDecoration: "none" }}>aurelia-privateconcierge.com</a>
+                              <a href="https://aurelia-privateconcierge.com" style={{ color: "#666", textDecoration: "none" }}>aurelia-privateconcierge.com</a>
                             </p>
                           </td>
                         </tr>

@@ -2419,13 +2419,17 @@ export type Database = {
       }
       partner_applications: {
         Row: {
+          categories: string[] | null
           category: string
           company_name: string
           contact_name: string
+          coverage_regions: string[] | null
           created_at: string
           description: string | null
           email: string
+          experience_years: number | null
           id: string
+          notable_clients: string | null
           notes: string | null
           phone: string | null
           regions: string[] | null
@@ -2436,13 +2440,17 @@ export type Database = {
           website: string | null
         }
         Insert: {
+          categories?: string[] | null
           category: string
           company_name: string
           contact_name: string
+          coverage_regions?: string[] | null
           created_at?: string
           description?: string | null
           email: string
+          experience_years?: number | null
           id?: string
+          notable_clients?: string | null
           notes?: string | null
           phone?: string | null
           regions?: string[] | null
@@ -2453,13 +2461,17 @@ export type Database = {
           website?: string | null
         }
         Update: {
+          categories?: string[] | null
           category?: string
           company_name?: string
           contact_name?: string
+          coverage_regions?: string[] | null
           created_at?: string
           description?: string | null
           email?: string
+          experience_years?: number | null
           id?: string
+          notable_clients?: string | null
           notes?: string | null
           phone?: string | null
           regions?: string[] | null

@@ -474,7 +474,7 @@ const AuctionManagementPanel = () => {
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center overflow-hidden">
                             {auction.images?.[0] ? (
-                              <img src={auction.images[0]} alt="" className="w-full h-full object-cover" />
+                              <img src={auction.images[0]} alt={`${auction.title} thumbnail`} className="w-full h-full object-cover" />
                             ) : (
                               <ImageIcon className="w-5 h-5 text-muted-foreground" />
                             )}
@@ -579,7 +579,7 @@ const AuctionManagementPanel = () => {
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
                             {consignment.images?.[0] ? (
-                              <img src={consignment.images[0]} alt="" className="w-full h-full object-cover rounded-lg" />
+                              <img src={consignment.images[0]} alt={`${consignment.title} thumbnail`} className="w-full h-full object-cover rounded-lg" />
                             ) : (
                               <ImageIcon className="w-4 h-4 text-muted-foreground" />
                             )}

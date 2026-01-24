@@ -86,6 +86,7 @@ const BehaviorAnalytics = lazy(() => import("@/components/admin/BehaviorAnalytic
 const ConversionFunnelDashboard = lazy(() => import("@/components/admin/ConversionFunnelDashboard"));
 const AttributionAnalytics = lazy(() => import("@/components/admin/AttributionAnalytics"));
 const FunnelDropoffAnalytics = lazy(() => import("@/components/admin/FunnelDropoffAnalytics"));
+const VIPLeadsPanel = lazy(() => import("@/components/admin/VIPLeadsPanel"));
 
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -375,6 +376,7 @@ const Admin = () => {
             <TabsTrigger value="abtesting">A/B Tests</TabsTrigger>
             <TabsTrigger value="seo">SEO</TabsTrigger>
             <TabsTrigger value="backlinks">Backlinks</TabsTrigger>
+            <TabsTrigger value="vipleads">VIP Leads</TabsTrigger>
             <TabsTrigger value="marketing">Marketing</TabsTrigger>
             <TabsTrigger value="trials">Trials</TabsTrigger>
             <TabsTrigger value="concierge">Concierge</TabsTrigger>
@@ -463,6 +465,16 @@ const Admin = () => {
 
           <TabsContent value="backlinks" className="space-y-6">
             <BacklinkStrategyPanel />
+          </TabsContent>
+
+          <TabsContent value="vipleads" className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-serif text-3xl text-foreground mb-2">VIP Lead Detection</h1>
+              <p className="text-muted-foreground">High-value prospects automatically detected by behavioral scoring</p>
+            </motion.div>
+            <Suspense fallback={<ChartLoading />}>
+              <VIPLeadsPanel />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="scheduler" className="space-y-6">

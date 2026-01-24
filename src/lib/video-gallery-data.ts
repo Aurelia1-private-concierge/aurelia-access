@@ -1,6 +1,8 @@
 // Video Gallery Data for Aurelia
 // Centralized video metadata for the gallery page
 
+import { VIDEO_ASSETS } from './video-assets';
+
 export type VideoCategory = 'brand' | 'technology' | 'lifestyle' | 'assets';
 
 export interface GalleryVideo {
@@ -23,7 +25,7 @@ export const GALLERY_VIDEOS: GalleryVideo[] = [
     title: 'Aurelia Private Concierge',
     description: 'The world\'s most exclusive private concierge service for ultra-high-net-worth families.',
     thumbnailUrl: '/og-image-new.png',
-    videoUrl: '/assets/aurelia-demo.mp4',
+    videoUrl: VIDEO_ASSETS.aureliaDemoVideo,
     duration: 'PT2M15S',
     category: 'brand',
     featured: true,
@@ -34,7 +36,7 @@ export const GALLERY_VIDEOS: GalleryVideo[] = [
     title: 'Meet Orla - AI Concierge',
     description: 'Your personal AI concierge, available 24/7 via voice and chat for seamless luxury lifestyle management.',
     thumbnailUrl: '/og-image-new.png',
-    videoUrl: '/assets/orla-demo.mp4',
+    videoUrl: VIDEO_ASSETS.orlaDemoVideo,
     duration: 'PT1M45S',
     category: 'brand',
     featured: true,
@@ -47,7 +49,7 @@ export const GALLERY_VIDEOS: GalleryVideo[] = [
     title: 'Vision Pro Experience',
     description: 'Immersive property tours and yacht previews in stunning spatial computing.',
     thumbnailUrl: '/og-image-new.png',
-    videoUrl: '/assets/demo-vision.mp4',
+    videoUrl: VIDEO_ASSETS.demoVisionVideo,
     duration: 'PT1M30S',
     category: 'technology',
     uploadDate: '2026-01-10',
@@ -57,7 +59,7 @@ export const GALLERY_VIDEOS: GalleryVideo[] = [
     title: 'Watch Companion App',
     description: 'Concierge at your wrist—flight updates, quick requests, and lifestyle notifications.',
     thumbnailUrl: '/og-image-new.png',
-    videoUrl: '/assets/demo-watch.mp4',
+    videoUrl: VIDEO_ASSETS.demoWatchVideo,
     duration: 'PT1M00S',
     category: 'technology',
     uploadDate: '2026-01-10',
@@ -69,7 +71,7 @@ export const GALLERY_VIDEOS: GalleryVideo[] = [
     title: 'Luxury Escapes',
     description: 'Curated travel experiences to the world\'s most exclusive destinations.',
     thumbnailUrl: '/og-image-new.png',
-    videoUrl: '/assets/hero-luxury-holiday.mp4',
+    videoUrl: VIDEO_ASSETS.heroLuxuryHolidayVideo,
     duration: 'PT3M00S',
     category: 'lifestyle',
     featured: true,
@@ -82,7 +84,7 @@ export const GALLERY_VIDEOS: GalleryVideo[] = [
     title: 'Superyacht Charters',
     description: 'Access to the world\'s finest superyachts for unforgettable ocean voyages.',
     thumbnailUrl: '/og-image-new.png',
-    videoUrl: '/assets/hero-yacht.mp4',
+    videoUrl: VIDEO_ASSETS.heroYachtVideo,
     duration: 'PT2M30S',
     category: 'assets',
     featured: true,
@@ -93,7 +95,7 @@ export const GALLERY_VIDEOS: GalleryVideo[] = [
     title: 'Private Aviation',
     description: 'Global fleet access—from Gulfstream to Boeing BBJ, on demand.',
     thumbnailUrl: '/og-image-new.png',
-    videoUrl: '/assets/hero-jet.mp4',
+    videoUrl: VIDEO_ASSETS.heroJetVideo,
     duration: 'PT2M00S',
     category: 'assets',
     uploadDate: '2026-01-12',
@@ -103,7 +105,7 @@ export const GALLERY_VIDEOS: GalleryVideo[] = [
     title: 'Ultra-Luxury Real Estate',
     description: 'Off-market properties, private islands, and architectural masterpieces.',
     thumbnailUrl: '/og-image-new.png',
-    videoUrl: '/assets/hero-penthouse.mp4',
+    videoUrl: VIDEO_ASSETS.heroPenthouseVideo,
     duration: 'PT2M45S',
     category: 'assets',
     uploadDate: '2026-01-12',

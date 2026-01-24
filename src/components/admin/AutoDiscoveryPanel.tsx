@@ -77,6 +77,7 @@ const CATEGORIES = [
 
 const AutoDiscoveryPanel: React.FC = () => {
   const [isDiscovering, setIsDiscovering] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [partners, setPartners] = useState<PotentialPartner[]>([]);
   const [users, setUsers] = useState<PotentialUser[]>([]);
   const [logs, setLogs] = useState<DiscoveryLog[]>([]);
@@ -342,9 +343,20 @@ const AutoDiscoveryPanel: React.FC = () => {
               <Label htmlFor="dry-run">Dry Run (Preview Only)</Label>
             </div>
 
-            <Button variant="outline" size="sm" onClick={fetchData} className="gap-2">
-              <RefreshCw className="w-4 h-4" />
-              Refresh
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={async () => {
+                setIsRefreshing(true);
+                await fetchData();
+                setIsRefreshing(false);
+                toast.success("Data refreshed");
+              }} 
+              disabled={isRefreshing}
+              className="gap-2"
+            >
+              <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
+              {isRefreshing ? "Refreshing..." : "Refresh"}
             </Button>
           </div>
         </CardContent>

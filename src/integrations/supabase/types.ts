@@ -2174,37 +2174,52 @@ export type Database = {
       }
       lead_scores: {
         Row: {
+          admin_notified: boolean | null
           created_at: string
           email: string | null
           id: string
+          is_vip: boolean | null
           last_activity_at: string
+          orla_engaged: boolean | null
           score: number
           session_id: string | null
           signals: Json | null
+          tier: string
           updated_at: string
           user_id: string | null
+          vip_detected_at: string | null
         }
         Insert: {
+          admin_notified?: boolean | null
           created_at?: string
           email?: string | null
           id?: string
+          is_vip?: boolean | null
           last_activity_at?: string
+          orla_engaged?: boolean | null
           score?: number
           session_id?: string | null
           signals?: Json | null
+          tier?: string
           updated_at?: string
           user_id?: string | null
+          vip_detected_at?: string | null
         }
         Update: {
+          admin_notified?: boolean | null
           created_at?: string
           email?: string | null
           id?: string
+          is_vip?: boolean | null
           last_activity_at?: string
+          orla_engaged?: boolean | null
           score?: number
           session_id?: string | null
           signals?: Json | null
+          tier?: string
           updated_at?: string
           user_id?: string | null
+          vip_detected_at?: string | null
         }
         Relationships: []
       }
@@ -5063,6 +5078,62 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      vip_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string
+          email: string | null
+          id: string
+          lead_score_id: string | null
+          notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          score: number
+          session_id: string
+          signals: Json | null
+          status: string
+          tier: string
+        }
+        Insert: {
+          alert_type?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          lead_score_id?: string | null
+          notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          score: number
+          session_id: string
+          signals?: Json | null
+          status?: string
+          tier: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          lead_score_id?: string | null
+          notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          score?: number
+          session_id?: string
+          signals?: Json | null
+          status?: string
+          tier?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vip_alerts_lead_score_id_fkey"
+            columns: ["lead_score_id"]
+            isOneToOne: false
+            referencedRelation: "lead_scores"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       visitor_logs: {
         Row: {

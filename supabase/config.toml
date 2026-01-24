@@ -194,3 +194,6 @@ verify_jwt = false
 
 [functions.send-sms]
 verify_jwt = false
+
+[functions.vip-alert-notify]
+verify_jwt = false

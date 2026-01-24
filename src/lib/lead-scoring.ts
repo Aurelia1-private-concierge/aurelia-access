@@ -190,29 +190,28 @@ export const syncLeadScore = async (email?: string): Promise<void> => {
     // Check if record exists
     const { data: existing } = await supabase
       .from("lead_scores")
-      .select("id")
+      .select("id, is_vip, admin_notified")
       .eq("session_id", sessionId)
-      .single();
+      .maybeSingle();
+    
+    const leadData = {
+      session_id: sessionId,
+      score: score.total,
+      tier: score.tier,
+      signals: JSON.parse(JSON.stringify(signals)),
+      email: email || null,
+      last_activity_at: new Date().toISOString()
+    };
     
     if (existing) {
       await supabase
         .from("lead_scores")
-        .update({
-          score: score.total,
-          signals: JSON.parse(JSON.stringify(signals)),
-          email: email || null,
-          last_activity_at: new Date().toISOString()
-        })
+        .update(leadData)
         .eq("session_id", sessionId);
     } else {
       await supabase
         .from("lead_scores")
-        .insert([{
-          session_id: sessionId,
-          score: score.total,
-          signals: JSON.parse(JSON.stringify(signals)),
-          email: email || null
-        }]);
+        .insert([leadData]);
     }
     
     // Trigger N8N if score is high

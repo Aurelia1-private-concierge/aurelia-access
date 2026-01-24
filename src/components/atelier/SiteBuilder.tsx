@@ -107,10 +107,37 @@ const SiteBuilder = () => {
         }
 
         const rawSite = data[0];
+        
+        // Normalize content blocks to ensure they have required fields
+        const rawContent = rawSite.content as unknown;
+        const normalizedContent: SiteBlock[] = Array.isArray(rawContent)
+          ? rawContent.map((block: Record<string, unknown>, index: number) => ({
+              id: (block.id as string) || `block-${index}-${Date.now()}`,
+              type: (block.type as SiteBlock["type"]) || "hero",
+              content: block as Record<string, unknown>,
+              order: (block.order as number) ?? index,
+            }))
+          : [];
+
+        // Normalize branding
+        const rawBranding = rawSite.branding as unknown as Record<string, unknown> | null;
+        const normalizedBranding: SiteBranding = {
+          ...DEFAULT_BRANDING,
+          ...(rawBranding && {
+            primaryColor: (rawBranding.primaryColor as string) || DEFAULT_BRANDING.primaryColor,
+            secondaryColor: (rawBranding.secondaryColor as string) || DEFAULT_BRANDING.secondaryColor,
+            accentColor: (rawBranding.accentColor as string) || DEFAULT_BRANDING.accentColor,
+            fontHeading: (rawBranding.fontHeading as string) || DEFAULT_BRANDING.fontHeading,
+            fontBody: (rawBranding.fontBody as string) || DEFAULT_BRANDING.fontBody,
+            logoUrl: rawBranding.logoUrl as string | undefined,
+            faviconUrl: rawBranding.faviconUrl as string | undefined,
+          }),
+        };
+
         setSite({
           ...rawSite,
-          content: (rawSite.content as unknown as SiteBlock[]) || [],
-          branding: (rawSite.branding as unknown as SiteBranding) || DEFAULT_BRANDING,
+          content: normalizedContent,
+          branding: normalizedBranding,
           status: rawSite.status as "draft" | "published" | "archived",
         });
       } catch (err) {

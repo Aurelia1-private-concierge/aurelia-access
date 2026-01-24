@@ -188,3 +188,9 @@ verify_jwt = false
 
 [functions.behavioral-email-trigger]
 verify_jwt = false
+
+[functions.twilio-webhook]
+verify_jwt = false
+
+[functions.send-sms]
+verify_jwt = false

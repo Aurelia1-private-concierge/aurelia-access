@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { forwardRef, ReactNode } from "react";
 import { QuantumProvider, QuantumToastProvider } from "@/components/quantum";
 
 interface GlobalQuantumWrapperProps {
@@ -13,22 +13,27 @@ interface GlobalQuantumWrapperProps {
  * - Sound effects (optional)
  * - Toast notifications
  */
-export const GlobalQuantumWrapper = ({ children }: GlobalQuantumWrapperProps) => {
-  return (
-    <QuantumProvider
-      config={{
-        colorScheme: "gold", // Matches Aurelia's ultra-premium gold theme
-        animationsEnabled: true,
-        soundEnabled: false, // Disabled by default for luxury experience
-        isDarkMode: true,
-        highContrast: false,
-      }}
-    >
-      <QuantumToastProvider position="top-right" maxToasts={3}>
-        {children}
-      </QuantumToastProvider>
-    </QuantumProvider>
-  );
-};
+export const GlobalQuantumWrapper = forwardRef<HTMLDivElement, GlobalQuantumWrapperProps>(
+  ({ children }, ref) => {
+    return (
+      <QuantumProvider
+        ref={ref}
+        config={{
+          colorScheme: "gold", // Matches Aurelia's ultra-premium gold theme
+          animationsEnabled: true,
+          soundEnabled: false, // Disabled by default for luxury experience
+          isDarkMode: true,
+          highContrast: false,
+        }}
+      >
+        <QuantumToastProvider position="top-right" maxToasts={3}>
+          {children}
+        </QuantumToastProvider>
+      </QuantumProvider>
+    );
+  }
+);
+
+GlobalQuantumWrapper.displayName = "GlobalQuantumWrapper";
 
 export default GlobalQuantumWrapper;

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, forwardRef } from "react";
 
 declare global {
   interface Window {
@@ -12,7 +12,7 @@ declare global {
  * Apollo.io visitor tracking component.
  * Loads the Apollo tracking script for lead enrichment and analytics.
  */
-const ApolloTracker = () => {
+const ApolloTracker = forwardRef<HTMLDivElement>((_, ref) => {
   useEffect(() => {
     // Avoid duplicate initialization
     if (document.querySelector('script[src*="apollo.io"]')) {
@@ -44,7 +44,10 @@ const ApolloTracker = () => {
     }
   }, []);
 
-  return null;
-};
+  // Return an empty span that can receive the ref
+  return <span ref={ref} style={{ display: 'none' }} />;
+});
+
+ApolloTracker.displayName = "ApolloTracker";
 
 export default ApolloTracker;

@@ -136,6 +136,66 @@ export const REENGAGEMENT_SEQUENCE: EmailTemplate[] = [
   }
 ];
 
+// Behavioral trigger email templates
+export const BEHAVIORAL_TEMPLATES: EmailTemplate[] = [
+  {
+    id: "abandoned_trial",
+    name: "Abandoned Trial Application",
+    subject: "Complete Your Aurelia Application – Priority Access Awaits",
+    previewText: "Your application is waiting.",
+    delayDays: 0,
+    category: "conversion",
+    content: {
+      headline: "Your Application is Waiting",
+      body: "We noticed you started your Aurelia trial application but didn't complete it. Your priority access spot is still reserved. Complete your application today and unlock 7-day complimentary trial, personal concierge consultation, and founding member pricing.",
+      cta: "Complete Application",
+      ctaUrl: "/apply"
+    }
+  },
+  {
+    id: "pricing_reminder",
+    name: "Pricing Page Reminder",
+    subject: "Questions About Aurelia Membership? Let's Talk",
+    previewText: "Considering Aurelia?",
+    delayDays: 0,
+    category: "conversion",
+    content: {
+      headline: "Considering Aurelia?",
+      body: "We noticed you've been exploring our membership options. If you have any questions about which tier would best suit your lifestyle, we'd love to help. Schedule a complimentary consultation with our membership team.",
+      cta: "Schedule Consultation",
+      ctaUrl: "/contact"
+    }
+  },
+  {
+    id: "media_kit_followup",
+    name: "Media Kit Follow-up",
+    subject: "Following Up on Your Aurelia Media Kit Download",
+    previewText: "Thank you for your interest.",
+    delayDays: 0,
+    category: "education",
+    content: {
+      headline: "Thank You for Your Interest",
+      body: "We hope you found our media kit informative. As a luxury brand, we're always interested in meaningful partnerships and collaborations. If you'd like to discuss partnership opportunities, press inquiries, or have any questions, our team would be delighted to connect.",
+      cta: "Explore Partnership",
+      ctaUrl: "/partners"
+    }
+  },
+  {
+    id: "reactivation_14d",
+    name: "14-Day Reactivation",
+    subject: "We Miss You at Aurelia – Here's What's New",
+    previewText: "Your extraordinary life awaits.",
+    delayDays: 14,
+    category: "reengagement",
+    content: {
+      headline: "Your Extraordinary Life Awaits",
+      body: "It's been a while since we've seen you. At Aurelia, we've been busy curating new experiences and expanding our exclusive partnerships. New superyacht charter partnerships in the Mediterranean, exclusive access to private art collections, and enhanced AI concierge capabilities await.",
+      cta: "Discover New Experiences",
+      ctaUrl: "/discover"
+    }
+  }
+];
+
 // Get email template by ID
 export const getEmailTemplate = (id: string): EmailTemplate | undefined => {
   return [...WAITLIST_NURTURE_SEQUENCE, ...REENGAGEMENT_SEQUENCE].find(t => t.id === id);

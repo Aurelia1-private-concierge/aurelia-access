@@ -118,15 +118,6 @@ const categoryOptions = [
   { value: "collectibles", label: "Collectibles & Art" },
 ];
 
-const leadSources: ProspectSource[] = [
-  { id: "1", name: "Private Jet Card Comparison", type: "directory", category: "private_aviation", url: "https://privatejetcardcomparison.com", leads_found: 156, last_scraped: "2025-01-10", is_active: true },
-  { id: "2", name: "Yachting Pages Directory", type: "directory", category: "yacht_charter", url: "https://yachtingpages.com", leads_found: 89, last_scraped: "2025-01-08", is_active: true },
-  { id: "3", name: "Luxury Real Estate Brokers", type: "linkedin", category: "real_estate", url: null, leads_found: 234, last_scraped: "2025-01-12", is_active: true },
-  { id: "4", name: "UHNW Family Office Network", type: "referral", category: "concierge", url: null, leads_found: 45, last_scraped: null, is_active: true },
-  { id: "5", name: "Forbes Luxury Council", type: "directory", category: "events", url: "https://councils.forbes.com/luxury", leads_found: 67, last_scraped: "2025-01-05", is_active: false },
-  { id: "6", name: "Google Maps - Private Security", type: "google", category: "security", url: null, leads_found: 112, last_scraped: "2025-01-11", is_active: true },
-];
-
 const defaultSequence: OutreachSequence[] = [
   {
     step: 1,
@@ -187,7 +178,7 @@ The Aurelia Team`,
 
 const ColdOutreachPanel = () => {
   const [campaigns, setCampaigns] = useState<OutreachCampaign[]>([]);
-  const [sources, setSources] = useState<ProspectSource[]>(leadSources);
+  const [sources, setSources] = useState<ProspectSource[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("campaigns");
@@ -232,8 +223,35 @@ const ColdOutreachPanel = () => {
     }
   };
 
+  // Fetch lead sources from database
+  const fetchSources = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("lead_sources")
+        .select("*")
+        .order("leads_found", { ascending: false });
+
+      if (error) throw error;
+      if (data) {
+        setSources(data.map((s: any) => ({
+          id: s.id,
+          name: s.name,
+          type: s.source_type,
+          category: s.category,
+          url: s.url,
+          leads_found: s.leads_found || 0,
+          last_scraped: s.last_scraped_at,
+          is_active: s.is_active,
+        })));
+      }
+    } catch (error) {
+      console.error("Error fetching sources:", error);
+    }
+  };
+
   useEffect(() => {
     fetchCampaigns();
+    fetchSources();
   }, []);
 
   const stats = {

@@ -362,7 +362,7 @@ const UserGuidePage = () => {
                 <Link to="/contact">Contact Us</Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link to="/faq">View FAQ</Link>
+                <Link to="/#faq">View FAQ</Link>
               </Button>
             </div>
           </div>

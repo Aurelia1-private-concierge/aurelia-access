@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { ReactNode, createContext, useContext, useState, useCallback, useMemo } from "react";
+import { ReactNode, createContext, useContext, useState, useCallback, useMemo, forwardRef } from "react";
 import { Check, X, AlertTriangle, Info, Bell } from "lucide-react";
 
 type ToastType = "success" | "error" | "warning" | "info" | "notification";
@@ -41,77 +41,79 @@ interface QuantumToastProviderProps {
   maxToasts?: number;
 }
 
-export const QuantumToastProvider = ({
-  children,
-  position = "top-right",
-  maxToasts = 5,
-}: QuantumToastProviderProps) => {
-  const [toasts, setToasts] = useState<Toast[]>([]);
+export const QuantumToastProvider = forwardRef<HTMLDivElement, QuantumToastProviderProps>(
+  ({ children, position = "top-right", maxToasts = 5 }, ref) => {
+    const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const addToast = useCallback((toast: Omit<Toast, "id">) => {
-    const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    const newToast: Toast = { ...toast, id };
+    const addToast = useCallback((toast: Omit<Toast, "id">) => {
+      const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const newToast: Toast = { ...toast, id };
 
-    setToasts((prev) => {
-      const updated = [newToast, ...prev];
-      return updated.slice(0, maxToasts);
-    });
+      setToasts((prev) => {
+        const updated = [newToast, ...prev];
+        return updated.slice(0, maxToasts);
+      });
 
-    // Auto-remove after duration
-    if (toast.duration !== 0) {
-      const duration = toast.duration ?? 5000;
-      setTimeout(() => {
-        removeToast(id);
-      }, duration);
-    }
+      // Auto-remove after duration
+      if (toast.duration !== 0) {
+        const duration = toast.duration ?? 5000;
+        setTimeout(() => {
+          removeToast(id);
+        }, duration);
+      }
 
-    return id;
-  }, [maxToasts]);
+      return id;
+    }, [maxToasts]);
 
-  const removeToast = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
-  }, []);
+    const removeToast = useCallback((id: string) => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, []);
 
-  const clearToasts = useCallback(() => {
-    setToasts([]);
-  }, []);
+    const clearToasts = useCallback(() => {
+      setToasts([]);
+    }, []);
 
-  const value = useMemo(() => ({
-    toasts,
-    addToast,
-    removeToast,
-    clearToasts,
-  }), [toasts, addToast, removeToast, clearToasts]);
+    const value = useMemo(() => ({
+      toasts,
+      addToast,
+      removeToast,
+      clearToasts,
+    }), [toasts, addToast, removeToast, clearToasts]);
 
-  const positionStyles: Record<ToastPosition, string> = {
-    "top-right": "top-4 right-4",
-    "top-left": "top-4 left-4",
-    "bottom-right": "bottom-4 right-4",
-    "bottom-left": "bottom-4 left-4",
-    "top-center": "top-4 left-1/2 -translate-x-1/2",
-    "bottom-center": "bottom-4 left-1/2 -translate-x-1/2",
-  };
+    const positionStyles: Record<ToastPosition, string> = {
+      "top-right": "top-4 right-4",
+      "top-left": "top-4 left-4",
+      "bottom-right": "bottom-4 right-4",
+      "bottom-left": "bottom-4 left-4",
+      "top-center": "top-4 left-1/2 -translate-x-1/2",
+      "bottom-center": "bottom-4 left-1/2 -translate-x-1/2",
+    };
 
-  return (
-    <ToastContext.Provider value={value}>
-      {children}
-      
-      {/* Toast container */}
-      <div className={cn("fixed z-[100] flex flex-col gap-2 pointer-events-none", positionStyles[position])}>
-        <AnimatePresence mode="popLayout">
-          {toasts.map((toast) => (
-            <QuantumToastItem
-              key={toast.id}
-              toast={toast}
-              onDismiss={() => removeToast(toast.id)}
-              position={position}
-            />
-          ))}
-        </AnimatePresence>
-      </div>
-    </ToastContext.Provider>
-  );
-};
+    return (
+      <ToastContext.Provider value={value}>
+        <div ref={ref}>
+          {children}
+        </div>
+        
+        {/* Toast container */}
+        <div className={cn("fixed z-[100] flex flex-col gap-2 pointer-events-none", positionStyles[position])}>
+          <AnimatePresence mode="popLayout">
+            {toasts.map((toast) => (
+              <QuantumToastItem
+                key={toast.id}
+                toast={toast}
+                onDismiss={() => removeToast(toast.id)}
+                position={position}
+              />
+            ))}
+          </AnimatePresence>
+        </div>
+      </ToastContext.Provider>
+    );
+  }
+);
+
+QuantumToastProvider.displayName = "QuantumToastProvider";
 
 interface QuantumToastItemProps {
   toast: Toast;

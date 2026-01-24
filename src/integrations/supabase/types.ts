@@ -2417,6 +2417,60 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_applications: {
+        Row: {
+          category: string
+          company_name: string
+          contact_name: string
+          created_at: string
+          description: string | null
+          email: string
+          id: string
+          notes: string | null
+          phone: string | null
+          regions: string[] | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          category: string
+          company_name: string
+          contact_name: string
+          created_at?: string
+          description?: string | null
+          email: string
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          regions?: string[] | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          category?: string
+          company_name?: string
+          contact_name?: string
+          created_at?: string
+          description?: string | null
+          email?: string
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          regions?: string[] | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       partner_commissions: {
         Row: {
           booking_amount: number

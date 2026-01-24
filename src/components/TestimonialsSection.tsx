@@ -1,39 +1,73 @@
 import { motion } from "framer-motion";
 import { Quote } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { supabase } from "@/integrations/supabase/client";
 
-const testimonials = [
+interface Testimonial {
+  id: string;
+  quote: string;
+  author: string;
+  title: string | null;
+  location: string | null;
+  member_since: string | null;
+  image_url: string | null;
+}
+
+const fallbackTestimonials: Testimonial[] = [
   { 
+    id: "1",
     quote: "Aurelia secured a private viewing of a Basquiat before it went to auction. No other service could have made that happen.", 
     author: "Alexandra M.", 
     title: "Art Collector", 
     location: "Geneva",
-    memberSince: "2021",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face",
+    member_since: "2021",
+    image_url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face",
   },
   { 
+    id: "2",
     quote: "When my flight was cancelled in Tokyo, they had a private jet ready within 90 minutes. That level of response is unprecedented.", 
     author: "James K.", 
     title: "Tech Executive", 
     location: "Singapore",
-    memberSince: "2020",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
+    member_since: "2020",
+    image_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
   },
   { 
+    id: "3",
     quote: "The discretion is absolute. In my position, that is not a luxury—it is a necessity. Aurelia understands this implicitly.", 
     author: "Victoria S.", 
     title: "Family Office Principal", 
     location: "London",
-    memberSince: "2019",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face",
+    member_since: "2019",
+    image_url: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face",
   },
 ];
 
 const TestimonialsSection = () => {
   const { t } = useTranslation();
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(fallbackTestimonials);
   const [activeIndex, setActiveIndex] = useState(0);
-  const activeTestimonial = testimonials[activeIndex];
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      const { data, error } = await supabase
+        .from("testimonials")
+        .select("*")
+        .eq("status", "active")
+        .eq("is_featured", true)
+        .order("display_order", { ascending: true })
+        .limit(5);
+
+      if (!error && data && data.length > 0) {
+        setTestimonials(data);
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
+
+  const activeTestimonial = testimonials[activeIndex] || fallbackTestimonials[0];
 
   return (
     <section className="py-24 md:py-32 bg-background relative" aria-labelledby="testimonials-heading">
@@ -75,12 +109,14 @@ const TestimonialsSection = () => {
           </blockquote>
 
           <div className="flex flex-col items-center gap-4">
-            <img
-              src={activeTestimonial.image}
-              alt={`Portrait of ${activeTestimonial.author}, ${activeTestimonial.title} from ${activeTestimonial.location}`}
-              className="w-14 h-14 rounded-full object-cover grayscale"
-              loading="lazy"
-            />
+            {activeTestimonial.image_url && (
+              <img
+                src={activeTestimonial.image_url}
+                alt={`Portrait of ${activeTestimonial.author}, ${activeTestimonial.title} from ${activeTestimonial.location}`}
+                className="w-14 h-14 rounded-full object-cover grayscale"
+                loading="lazy"
+              />
+            )}
             <div>
               <p className="text-sm text-foreground">{activeTestimonial.author}</p>
               <p className="text-xs text-muted-foreground">
@@ -94,7 +130,7 @@ const TestimonialsSection = () => {
         <div className="flex items-center justify-center gap-3" role="tablist" aria-label="Testimonial navigation">
           {testimonials.map((testimonial, index) => (
             <button
-              key={index}
+              key={testimonial.id}
               onClick={() => setActiveIndex(index)}
               className={`h-0.5 transition-all duration-500 ${
                 index === activeIndex 

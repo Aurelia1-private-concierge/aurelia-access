@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Link2,
@@ -19,6 +19,7 @@ import {
   Newspaper,
   Building2,
   Sparkles,
+  RefreshCw,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,18 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+
+interface BacklinkOpportunity {
+  id: string;
+  category: string;
+  name: string;
+  url: string | null;
+  domain_authority: number;
+  status: string;
+  type: string | null;
+  priority: string;
+}
 
 // Backlink opportunity categories
 const backlinkStrategies = [
@@ -35,13 +48,13 @@ const backlinkStrategies = [
     icon: Newspaper,
     priority: "high",
     opportunities: [
-      { name: "Robb Report", url: "robbreport.com", da: 78, status: "pending", type: "Guest Post" },
-      { name: "Luxury Daily", url: "luxurydaily.com", da: 65, status: "pending", type: "Press Release" },
-      { name: "JustLuxe", url: "justluxe.com", da: 58, status: "pending", type: "Feature Article" },
-      { name: "Elite Traveler", url: "elitetraveler.com", da: 55, status: "pending", type: "Interview" },
-      { name: "Departures", url: "departures.com", da: 62, status: "pending", type: "Editorial" },
-      { name: "How To Spend It", url: "htsi.ft.com", da: 85, status: "pending", type: "Feature" },
-      { name: "Monocle", url: "monocle.com", da: 72, status: "pending", type: "Profile" },
+      { id: "r1", name: "Robb Report", url: "robbreport.com", da: 78, status: "pending", type: "Guest Post" },
+      { id: "r2", name: "Luxury Daily", url: "luxurydaily.com", da: 65, status: "pending", type: "Press Release" },
+      { id: "r3", name: "JustLuxe", url: "justluxe.com", da: 58, status: "pending", type: "Feature Article" },
+      { id: "r4", name: "Elite Traveler", url: "elitetraveler.com", da: 55, status: "pending", type: "Interview" },
+      { id: "r5", name: "Departures", url: "departures.com", da: 62, status: "pending", type: "Editorial" },
+      { id: "r6", name: "How To Spend It", url: "htsi.ft.com", da: 85, status: "pending", type: "Feature" },
+      { id: "r7", name: "Monocle", url: "monocle.com", da: 72, status: "pending", type: "Profile" },
     ],
   },
   {
@@ -49,12 +62,12 @@ const backlinkStrategies = [
     icon: TrendingUp,
     priority: "high",
     opportunities: [
-      { name: "Forbes", url: "forbes.com", da: 95, status: "pending", type: "Contributor" },
-      { name: "Business Insider", url: "businessinsider.com", da: 94, status: "pending", type: "Feature" },
-      { name: "Bloomberg", url: "bloomberg.com", da: 93, status: "pending", type: "Interview" },
-      { name: "Entrepreneur", url: "entrepreneur.com", da: 92, status: "pending", type: "Guest Post" },
-      { name: "Inc.", url: "inc.com", da: 91, status: "pending", type: "Article" },
-      { name: "Fast Company", url: "fastcompany.com", da: 90, status: "pending", type: "Profile" },
+      { id: "b1", name: "Forbes", url: "forbes.com", da: 95, status: "pending", type: "Contributor" },
+      { id: "b2", name: "Business Insider", url: "businessinsider.com", da: 94, status: "pending", type: "Feature" },
+      { id: "b3", name: "Bloomberg", url: "bloomberg.com", da: 93, status: "pending", type: "Interview" },
+      { id: "b4", name: "Entrepreneur", url: "entrepreneur.com", da: 92, status: "pending", type: "Guest Post" },
+      { id: "b5", name: "Inc.", url: "inc.com", da: 91, status: "pending", type: "Article" },
+      { id: "b6", name: "Fast Company", url: "fastcompany.com", da: 90, status: "pending", type: "Profile" },
     ],
   },
   {
@@ -62,11 +75,11 @@ const backlinkStrategies = [
     icon: Globe,
     priority: "medium",
     opportunities: [
-      { name: "Condé Nast Traveler", url: "cntraveler.com", da: 88, status: "pending", type: "Feature" },
-      { name: "Travel + Leisure", url: "travelandleisure.com", da: 86, status: "pending", type: "Review" },
-      { name: "AFAR", url: "afar.com", da: 75, status: "pending", type: "Article" },
-      { name: "Fodor's", url: "fodors.com", da: 78, status: "pending", type: "Guide" },
-      { name: "Lonely Planet", url: "lonelyplanet.com", da: 89, status: "pending", type: "Feature" },
+      { id: "t1", name: "Condé Nast Traveler", url: "cntraveler.com", da: 88, status: "pending", type: "Feature" },
+      { id: "t2", name: "Travel + Leisure", url: "travelandleisure.com", da: 86, status: "pending", type: "Review" },
+      { id: "t3", name: "AFAR", url: "afar.com", da: 75, status: "pending", type: "Article" },
+      { id: "t4", name: "Fodor's", url: "fodors.com", da: 78, status: "pending", type: "Guide" },
+      { id: "t5", name: "Lonely Planet", url: "lonelyplanet.com", da: 89, status: "pending", type: "Feature" },
     ],
   },
   {
@@ -74,11 +87,11 @@ const backlinkStrategies = [
     icon: Sparkles,
     priority: "medium",
     opportunities: [
-      { name: "TechCrunch", url: "techcrunch.com", da: 94, status: "pending", type: "Startup Feature" },
-      { name: "VentureBeat", url: "venturebeat.com", da: 90, status: "pending", type: "AI Article" },
-      { name: "Wired", url: "wired.com", da: 93, status: "pending", type: "Profile" },
-      { name: "The Verge", url: "theverge.com", da: 92, status: "pending", type: "Review" },
-      { name: "Ars Technica", url: "arstechnica.com", da: 89, status: "pending", type: "Feature" },
+      { id: "a1", name: "TechCrunch", url: "techcrunch.com", da: 94, status: "pending", type: "Startup Feature" },
+      { id: "a2", name: "VentureBeat", url: "venturebeat.com", da: 90, status: "pending", type: "AI Article" },
+      { id: "a3", name: "Wired", url: "wired.com", da: 93, status: "pending", type: "Profile" },
+      { id: "a4", name: "The Verge", url: "theverge.com", da: 92, status: "pending", type: "Review" },
+      { id: "a5", name: "Ars Technica", url: "arstechnica.com", da: 89, status: "pending", type: "Feature" },
     ],
   },
   {
@@ -86,12 +99,12 @@ const backlinkStrategies = [
     icon: Building2,
     priority: "low",
     opportunities: [
-      { name: "Crunchbase", url: "crunchbase.com", da: 91, status: "pending", type: "Company Profile" },
-      { name: "LinkedIn Company", url: "linkedin.com", da: 98, status: "active", type: "Company Page" },
-      { name: "G2", url: "g2.com", da: 88, status: "pending", type: "Software Listing" },
-      { name: "Clutch", url: "clutch.co", da: 78, status: "pending", type: "Service Listing" },
-      { name: "Capterra", url: "capterra.com", da: 87, status: "pending", type: "Software Review" },
-      { name: "Product Hunt", url: "producthunt.com", da: 90, status: "pending", type: "Launch" },
+      { id: "d1", name: "Crunchbase", url: "crunchbase.com", da: 91, status: "pending", type: "Company Profile" },
+      { id: "d2", name: "LinkedIn Company", url: "linkedin.com", da: 98, status: "active", type: "Company Page" },
+      { id: "d3", name: "G2", url: "g2.com", da: 88, status: "pending", type: "Software Listing" },
+      { id: "d4", name: "Clutch", url: "clutch.co", da: 78, status: "pending", type: "Service Listing" },
+      { id: "d5", name: "Capterra", url: "capterra.com", da: 87, status: "pending", type: "Software Review" },
+      { id: "d6", name: "Product Hunt", url: "producthunt.com", da: 90, status: "pending", type: "Launch" },
     ],
   },
   {
@@ -99,11 +112,11 @@ const backlinkStrategies = [
     icon: Users,
     priority: "high",
     opportunities: [
-      { name: "HARO (Cision)", url: "helpareporter.com", da: 75, status: "pending", type: "Expert Source" },
-      { name: "Qwoted", url: "qwoted.com", da: 60, status: "pending", type: "Expert Quote" },
-      { name: "SourceBottle", url: "sourcebottle.com", da: 55, status: "pending", type: "Media Query" },
-      { name: "JournoRequests", url: "journorequests.com", da: 45, status: "pending", type: "Expert" },
-      { name: "ResponseSource", url: "responsesource.com", da: 58, status: "pending", type: "Press" },
+      { id: "h1", name: "HARO (Cision)", url: "helpareporter.com", da: 75, status: "pending", type: "Expert Source" },
+      { id: "h2", name: "Qwoted", url: "qwoted.com", da: 60, status: "pending", type: "Expert Quote" },
+      { id: "h3", name: "SourceBottle", url: "sourcebottle.com", da: 55, status: "pending", type: "Media Query" },
+      { id: "h4", name: "JournoRequests", url: "journorequests.com", da: 45, status: "pending", type: "Expert" },
+      { id: "h5", name: "ResponseSource", url: "responsesource.com", da: 58, status: "pending", type: "Press" },
     ],
   },
 ];
@@ -191,21 +204,115 @@ const articleIdeas = [
 ];
 
 const BacklinkStrategyPanel = () => {
-  const [opportunities, setOpportunities] = useState(backlinkStrategies);
+  const [opportunities, setOpportunities] = useState<BacklinkOpportunity[]>([]);
+  const [groupedOpportunities, setGroupedOpportunities] = useState(backlinkStrategies);
+  const [loading, setLoading] = useState(true);
   const [copiedItem, setCopiedItem] = useState<string | null>(null);
-  const [newOpportunity, setNewOpportunity] = useState({ name: "", url: "", type: "" });
+  const [newOpportunity, setNewOpportunity] = useState({ name: "", url: "", type: "", category: "" });
 
-  const totalOpportunities = opportunities.reduce((acc, cat) => acc + cat.opportunities.length, 0);
-  const activeLinks = opportunities.reduce(
-    (acc, cat) => acc + cat.opportunities.filter((o) => o.status === "active").length,
+  // Fetch opportunities from database
+  const fetchOpportunities = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("backlink_opportunities")
+        .select("*")
+        .order("domain_authority", { ascending: false });
+
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        setOpportunities(data);
+        
+        // Group by category
+        const grouped = data.reduce((acc: any, opp: BacklinkOpportunity) => {
+          if (!acc[opp.category]) {
+            acc[opp.category] = [];
+          }
+          acc[opp.category].push({
+            name: opp.name,
+            url: opp.url || "",
+            da: opp.domain_authority,
+            status: opp.status,
+            type: opp.type || "",
+            id: opp.id,
+          });
+          return acc;
+        }, {});
+
+        // Convert to array format
+        const groupedArray = Object.keys(grouped).map(category => ({
+          category,
+          icon: getCategoryIcon(category),
+          priority: getPriorityFromCategory(category),
+          opportunities: grouped[category],
+        }));
+        
+        setGroupedOpportunities(groupedArray.length > 0 ? groupedArray : backlinkStrategies);
+      }
+    } catch (error) {
+      console.error("Error fetching backlink opportunities:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getCategoryIcon = (category: string) => {
+    const icons: Record<string, any> = {
+      "Luxury Publications": Newspaper,
+      "Business & Finance": TrendingUp,
+      "Travel & Lifestyle": Globe,
+      "Tech & AI": Sparkles,
+      "Directories": Building2,
+      "HARO & PR": Users,
+    };
+    return icons[category] || Globe;
+  };
+
+  const getPriorityFromCategory = (category: string) => {
+    const priorities: Record<string, string> = {
+      "Luxury Publications": "high",
+      "Business & Finance": "high",
+      "HARO & PR": "high",
+      "Travel & Lifestyle": "medium",
+      "Tech & AI": "medium",
+      "Directories": "low",
+    };
+    return priorities[category] || "medium";
+  };
+
+  useEffect(() => {
+    fetchOpportunities();
+  }, []);
+
+  const updateStatus = async (oppId: string, newStatus: string) => {
+    try {
+      const { error } = await supabase
+        .from("backlink_opportunities")
+        .update({ status: newStatus })
+        .eq("id", oppId);
+
+      if (error) throw error;
+      
+      toast.success("Status updated");
+      fetchOpportunities();
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Failed to update status");
+    }
+  };
+
+  const totalOpportunities = groupedOpportunities.reduce((acc, cat) => acc + cat.opportunities.length, 0);
+  const activeLinks = groupedOpportunities.reduce(
+    (acc, cat) => acc + cat.opportunities.filter((o: any) => o.status === "active").length,
     0
   );
-  const pendingLinks = opportunities.reduce(
-    (acc, cat) => acc + cat.opportunities.filter((o) => o.status === "pending").length,
+  const pendingLinks = groupedOpportunities.reduce(
+    (acc, cat) => acc + cat.opportunities.filter((o: any) => o.status === "pending").length,
     0
   );
-  const outreachSent = opportunities.reduce(
-    (acc, cat) => acc + cat.opportunities.filter((o) => o.status === "outreach").length,
+  const outreachSent = groupedOpportunities.reduce(
+    (acc, cat) => acc + cat.opportunities.filter((o: any) => o.status === "outreach").length,
     0
   );
 
@@ -214,13 +321,6 @@ const BacklinkStrategyPanel = () => {
     setCopiedItem(label);
     toast.success(`${label} copied to clipboard`);
     setTimeout(() => setCopiedItem(null), 2000);
-  };
-
-  const updateStatus = (categoryIndex: number, oppIndex: number, newStatus: string) => {
-    const updated = [...opportunities];
-    updated[categoryIndex].opportunities[oppIndex].status = newStatus;
-    setOpportunities(updated);
-    toast.success("Status updated");
   };
 
   const getStatusBadge = (status: string) => {
@@ -316,13 +416,13 @@ const BacklinkStrategyPanel = () => {
 
         {/* Opportunities Tab */}
         <TabsContent value="opportunities" className="space-y-6">
-          {opportunities.map((category, catIndex) => (
+          {groupedOpportunities.map((category, catIndex) => (
             <Card key={category.category} className="bg-card/50 border-border/50">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-primary/10">
-                      <category.icon className="w-5 h-5 text-primary" />
+                      {category.icon && <category.icon className="w-5 h-5 text-primary" />}
                     </div>
                     <div>
                       <CardTitle className="text-lg font-medium">{category.category}</CardTitle>
@@ -362,7 +462,7 @@ const BacklinkStrategyPanel = () => {
                         {getStatusBadge(opp.status)}
                         <select
                           value={opp.status}
-                          onChange={(e) => updateStatus(catIndex, oppIndex, e.target.value)}
+                          onChange={(e) => updateStatus(opp.id || opp.name, e.target.value)}
                           className="text-xs bg-background border border-border rounded px-2 py-1"
                         >
                           <option value="pending">Pending</option>

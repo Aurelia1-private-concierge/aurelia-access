@@ -565,6 +565,51 @@ export type Database = {
         }
         Relationships: []
       }
+      backlink_opportunities: {
+        Row: {
+          category: string
+          contacted_at: string | null
+          created_at: string
+          domain_authority: number | null
+          id: string
+          name: string
+          notes: string | null
+          priority: string | null
+          status: string | null
+          type: string | null
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          category: string
+          contacted_at?: string | null
+          created_at?: string
+          domain_authority?: number | null
+          id?: string
+          name: string
+          notes?: string | null
+          priority?: string | null
+          status?: string | null
+          type?: string | null
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          category?: string
+          contacted_at?: string | null
+          created_at?: string
+          domain_authority?: number | null
+          id?: string
+          name?: string
+          notes?: string | null
+          priority?: string | null
+          status?: string | null
+          type?: string | null
+          updated_at?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
       behavioral_triggers: {
         Row: {
           created_at: string
@@ -2160,6 +2205,48 @@ export type Database = {
           signals?: Json | null
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      lead_sources: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          last_scraped_at: string | null
+          leads_found: number | null
+          metadata: Json | null
+          name: string
+          source_type: string
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          last_scraped_at?: string | null
+          leads_found?: number | null
+          metadata?: Json | null
+          name: string
+          source_type: string
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          last_scraped_at?: string | null
+          leads_found?: number | null
+          metadata?: Json | null
+          name?: string
+          source_type?: string
+          updated_at?: string
+          url?: string | null
         }
         Relationships: []
       }
@@ -4536,6 +4623,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      testimonials: {
+        Row: {
+          author: string
+          created_at: string
+          display_order: number | null
+          id: string
+          image_url: string | null
+          is_featured: boolean | null
+          location: string | null
+          member_since: string | null
+          quote: string
+          status: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          author: string
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          location?: string | null
+          member_since?: string | null
+          quote: string
+          status?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          author?: string
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          location?: string | null
+          member_since?: string | null
+          quote?: string
+          status?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       travel_dna_profile: {
         Row: {

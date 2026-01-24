@@ -9,6 +9,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap");
 
 /* 
  * Aurelia Design System - Ultra-Premium Luxury Aesthetic
@@ -22,30 +25,30 @@
 @layer base {
   :root {
     /* Ultra-Premium Dark with warm undertones - WCAG AA compliant */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
+    --background: 220 60% 2%;
+    --foreground: 210 20% 80%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
+    --card: 220 50% 4%;
+    --card-foreground: 210 20% 80%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --popover: 220 50% 4%;
+    --popover-foreground: 210 20% 80%;
 
     /* Champagne Gold as primary - warm luxury with good contrast */
-    --primary: 0 0% 0%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 43 70% 52%;
+    --primary-foreground: 220 60% 3%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 0%;
+    --secondary: 220 30% 8%;
+    --secondary-foreground: 210 20% 80%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 220 20% 12%;
+    --muted-foreground: 215 15% 50%;
 
-    --accent: 0 0% 90%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 220 30% 10%;
+    --accent-foreground: 43 70% 52%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 210 40% 98%;
 
     /* Semantic feedback colors */
     --success: 142 65% 45%;
@@ -53,11 +56,11 @@
     --warning: 38 92% 50%;
     --warning-foreground: 30 8% 5%;
 
-    --border: 0 0% 0%;
-    --input: 0 0% 0%;
-    --ring: 0 0% 0%;
+    --border: 220 20% 12%;
+    --input: 220 20% 12%;
+    --ring: 43 70% 52%;
 
-    --radius: 0rem;
+    --radius: 2.125rem;
 
     /* Luxury color tokens */
     --platinum: 45 10% 88%;
@@ -69,16 +72,16 @@
     --obsidian-light: 30 6% 8%;
 
     /* Gold & Champagne tokens */
-    --gold: 43 65% 55%;
+    --gold: 43 70% 52%;
     --gold-light: 43 70% 70%;
-    --gold-muted: 43 40% 45%;
+    --gold-muted: 43 40% 40%;
     --champagne: 43 35% 80%;
     --champagne-light: 43 40% 88%;
     --bronze: 30 50% 40%;
 
     /* Rich darks */
-    --navy-deep: 220 20% 8%;
-    --navy-light: 220 15% 12%;
+    --navy-deep: 220 60% 2%;
+    --navy-light: 220 50% 6%;
     --ivory: 45 30% 96%;
 
     /* Premium shadows with warm glow */
@@ -103,43 +106,44 @@
     --sidebar-ring: 0 0% 0%;
 
     /* Typography */
-    --font-sans: 'Space Grotesk', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+    --font-sans: "Open Sans", ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
     --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
-    --font-mono: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --font-mono: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
 
     /* Shadows */
     --shadow-2xs: 1px 1px 0px 0px #000000;
     --shadow-xs: 2px 2px 0px 0px #000000;
-    --shadow-sm: 3px 3px 0px 0px #000000;
-    --shadow: 5px 5px 0px 0px #000000;
-    --shadow-md: 8px 8px 0px 0px #000000;
-    --shadow-lg: 12px 12px 0px 0px #000000;
+    --shadow-sm: 0px 1px 1px 0px hsla(0, 0%, 0%, 0.1);
+    --shadow: 0px 1px 2px 0px hsla(0, 0%, 0%, 0.1);
+    --shadow-md: 0px 1px 3px 0px hsla(0, 0%, 0%, 0.1);
+    --shadow-lg: 0px 1px 5px 0px hsla(0, 0%, 0%, 0.1);
     --shadow-xl: 16px 16px 0px 0px #000000;
     --shadow-2xl: 24px 24px 0px 0px #000000;
     --tracking-normal: 0em;
     --spacing: 0.25rem;
+    --slate-soft: 215 15% 50%;
   }
 
   .dark {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
-    --card: 0 0% 0%;
-    --card-foreground: 0 0% 100%;
-    --popover: 0 0% 0%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%;
-    --accent: 0 0% 15%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 100%;
-    --input: 0 0% 100%;
-    --ring: 0 0% 100%;
+    --background: 220 60% 2%;
+    --foreground: 210 20% 80%;
+    --card: 220 50% 4%;
+    --card-foreground: 210 20% 80%;
+    --popover: 220 50% 4%;
+    --popover-foreground: 210 20% 80%;
+    --primary: 43 70% 52%;
+    --primary-foreground: 220 60% 3%;
+    --secondary: 220 30% 8%;
+    --secondary-foreground: 210 20% 80%;
+    --muted: 220 20% 12%;
+    --muted-foreground: 215 15% 50%;
+    --accent: 220 30% 10%;
+    --accent-foreground: 43 70% 52%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 220 20% 12%;
+    --input: 220 20% 12%;
+    --ring: 43 70% 52%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -155,13 +159,15 @@
     --sidebar-ring: 0 0% 100%;
     --shadow-2xs: 1px 1px 0px 0px #ffffff;
     --shadow-xs: 2px 2px 0px 0px #ffffff;
-    --shadow-sm: 3px 3px 0px 0px #ffffff;
-    --shadow: 5px 5px 0px 0px #ffffff;
-    --shadow-md: 8px 8px 0px 0px #ffffff;
-    --shadow-lg: 12px 12px 0px 0px #ffffff;
+    --shadow-sm: 0px 1px 1px 0px hsla(0, 0%, 0%, 0.1);
+    --shadow: 0px 1px 2px 0px hsla(0, 0%, 0%, 0.1);
+    --shadow-md: 0px 1px 3px 0px hsla(0, 0%, 0%, 0.1);
+    --shadow-lg: 0px 1px 5px 0px hsla(0, 0%, 0%, 0.1);
     --shadow-xl: 16px 16px 0px 0px #ffffff;
     --shadow-2xl: 24px 24px 0px 0px #ffffff;
-    --radius: 0rem;
+    --radius: 2.125rem;
+    --font-sans: "Open Sans", ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+    --font-mono: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
   }
 
   /* Light theme - Marble & Platinum */

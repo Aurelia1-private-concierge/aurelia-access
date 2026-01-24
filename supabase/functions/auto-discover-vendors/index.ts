@@ -80,17 +80,13 @@ async function checkCompliance(vendor: Vendor): Promise<ComplianceResult> {
   };
 }
 
-// Category fetchers with graceful fallbacks
-async function fetchLuxuryHotels(apiKey?: string): Promise<Vendor[]> {
-  if (!apiKey) {
-    console.log("LUXURY_API_KEY not set, using fallback data");
-    return [];
-  }
+// Category fetchers with production-grade error handling
+async function fetchLuxuryHotels(): Promise<Vendor[]> {
   try {
     const res = await fetch("https://trusted-luxury-api.com/v1/hotels/curated", {
-      headers: { Authorization: `Bearer ${apiKey}` },
+      headers: { Authorization: `Bearer ${Deno.env.get("LUXURY_API_KEY")}` },
     });
-    if (!res.ok) return [];
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     return (data.hotels || []).map((h: any) => ({
       name: h.name,
@@ -100,19 +96,18 @@ async function fetchLuxuryHotels(apiKey?: string): Promise<Vendor[]> {
       referenceId: h.id,
       rating: h.rating,
     }));
-  } catch (e) {
-    console.error("Hotel fetch error:", e);
+  } catch (error) {
+    console.warn("[Discovery] Hotel API failed:", error);
     return [];
   }
 }
 
-async function fetchPrivateJets(apiKey?: string): Promise<Vendor[]> {
-  if (!apiKey) return [];
+async function fetchPrivateJets(): Promise<Vendor[]> {
   try {
     const res = await fetch("https://api.luxjetpartners.com/v1/jets", {
-      headers: { Authorization: `Bearer ${apiKey}` },
+      headers: { Authorization: `Bearer ${Deno.env.get("JET_API_KEY")}` },
     });
-    if (!res.ok) return [];
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     return (data.jets || []).map((j: any) => ({
       name: j.operator,
@@ -122,19 +117,18 @@ async function fetchPrivateJets(apiKey?: string): Promise<Vendor[]> {
       referenceId: j.tailNumber,
       rating: j.safetyRating,
     }));
-  } catch (e) {
-    console.error("Jet fetch error:", e);
+  } catch (error) {
+    console.warn("[Discovery] Jet API failed:", error);
     return [];
   }
 }
 
-async function fetchLuxuryYachts(apiKey?: string): Promise<Vendor[]> {
-  if (!apiKey) return [];
+async function fetchLuxuryYachts(): Promise<Vendor[]> {
   try {
     const res = await fetch("https://api.yachtluxury.com/v2/yachts", {
-      headers: { Authorization: `Bearer ${apiKey}` },
+      headers: { Authorization: `Bearer ${Deno.env.get("YACHT_API_KEY")}` },
     });
-    if (!res.ok) return [];
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     return (data.yachts || []).map((y: any) => ({
       name: y.name,
@@ -144,19 +138,18 @@ async function fetchLuxuryYachts(apiKey?: string): Promise<Vendor[]> {
       referenceId: y.yachtId,
       rating: y.rating,
     }));
-  } catch (e) {
-    console.error("Yacht fetch error:", e);
+  } catch (error) {
+    console.warn("[Discovery] Yacht API failed:", error);
     return [];
   }
 }
 
-async function fetchFineDining(apiKey?: string): Promise<Vendor[]> {
-  if (!apiKey) return [];
+async function fetchFineDining(): Promise<Vendor[]> {
   try {
     const res = await fetch("https://api.finedininglux.com/v1/restaurants", {
-      headers: { Authorization: `Bearer ${apiKey}` },
+      headers: { Authorization: `Bearer ${Deno.env.get("DINING_API_KEY")}` },
     });
-    if (!res.ok) return [];
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     return (data.restaurants || []).map((r: any) => ({
       name: r.name,
@@ -166,19 +159,18 @@ async function fetchFineDining(apiKey?: string): Promise<Vendor[]> {
       referenceId: r.id,
       rating: r.michelinStars || r.rating,
     }));
-  } catch (e) {
-    console.error("Dining fetch error:", e);
+  } catch (error) {
+    console.warn("[Discovery] Dining API failed:", error);
     return [];
   }
 }
 
-async function fetchVipEvents(apiKey?: string): Promise<Vendor[]> {
-  if (!apiKey) return [];
+async function fetchVipEvents(): Promise<Vendor[]> {
   try {
     const res = await fetch("https://api.vipexperiences.com/v1/events", {
-      headers: { Authorization: `Bearer ${apiKey}` },
+      headers: { Authorization: `Bearer ${Deno.env.get("EVENT_API_KEY")}` },
     });
-    if (!res.ok) return [];
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     return (data.events || []).map((e: any) => ({
       name: e.title,
@@ -188,19 +180,18 @@ async function fetchVipEvents(apiKey?: string): Promise<Vendor[]> {
       referenceId: e.id,
       rating: e.rating,
     }));
-  } catch (e) {
-    console.error("Events fetch error:", e);
+  } catch (error) {
+    console.warn("[Discovery] Events API failed:", error);
     return [];
   }
 }
 
-async function fetchWellnessSpas(apiKey?: string): Promise<Vendor[]> {
-  if (!apiKey) return [];
+async function fetchWellnessSpas(): Promise<Vendor[]> {
   try {
     const res = await fetch("https://api.wellnesslux.com/v1/spas", {
-      headers: { Authorization: `Bearer ${apiKey}` },
+      headers: { Authorization: `Bearer ${Deno.env.get("WELLNESS_API_KEY")}` },
     });
-    if (!res.ok) return [];
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     return (data.spas || []).map((s: any) => ({
       name: s.name,
@@ -210,19 +201,18 @@ async function fetchWellnessSpas(apiKey?: string): Promise<Vendor[]> {
       referenceId: s.id,
       rating: s.rating,
     }));
-  } catch (e) {
-    console.error("Wellness fetch error:", e);
+  } catch (error) {
+    console.warn("[Discovery] Wellness API failed:", error);
     return [];
   }
 }
 
-async function fetchExclusiveExperiences(apiKey?: string): Promise<Vendor[]> {
-  if (!apiKey) return [];
+async function fetchExclusiveExperiences(): Promise<Vendor[]> {
   try {
     const res = await fetch("https://api.experiencelux.com/v1/experiences", {
-      headers: { Authorization: `Bearer ${apiKey}` },
+      headers: { Authorization: `Bearer ${Deno.env.get("EXPERIENCE_API_KEY")}` },
     });
-    if (!res.ok) return [];
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     return (data.experiences || []).map((ex: any) => ({
       name: ex.title,
@@ -232,31 +222,23 @@ async function fetchExclusiveExperiences(apiKey?: string): Promise<Vendor[]> {
       referenceId: ex.id,
       rating: ex.rating,
     }));
-  } catch (e) {
-    console.error("Experiences fetch error:", e);
+  } catch (error) {
+    console.warn("[Discovery] Experiences API failed:", error);
     return [];
   }
 }
 
 // Main discovery function
 async function autoDiscoverAllLuxuryVendors(): Promise<VendorEnriched[]> {
-  const luxuryApiKey = Deno.env.get("LUXURY_API_KEY");
-  const jetApiKey = Deno.env.get("JET_API_KEY");
-  const yachtApiKey = Deno.env.get("YACHT_API_KEY");
-  const diningApiKey = Deno.env.get("DINING_API_KEY");
-  const eventApiKey = Deno.env.get("EVENT_API_KEY");
-  const wellnessApiKey = Deno.env.get("WELLNESS_API_KEY");
-  const experienceApiKey = Deno.env.get("EXPERIENCE_API_KEY");
-
-  // Fetch from all sources in parallel
+  // Fetch from all sources in parallel - each handles its own errors gracefully
   const [hotels, jets, yachts, dining, events, wellness, experiences] = await Promise.all([
-    fetchLuxuryHotels(luxuryApiKey),
-    fetchPrivateJets(jetApiKey),
-    fetchLuxuryYachts(yachtApiKey),
-    fetchFineDining(diningApiKey),
-    fetchVipEvents(eventApiKey),
-    fetchWellnessSpas(wellnessApiKey),
-    fetchExclusiveExperiences(experienceApiKey),
+    fetchLuxuryHotels(),
+    fetchPrivateJets(),
+    fetchLuxuryYachts(),
+    fetchFineDining(),
+    fetchVipEvents(),
+    fetchWellnessSpas(),
+    fetchExclusiveExperiences(),
   ]);
 
   const all = [...hotels, ...jets, ...yachts, ...dining, ...events, ...wellness, ...experiences];

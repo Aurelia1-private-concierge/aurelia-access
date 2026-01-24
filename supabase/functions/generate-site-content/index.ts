@@ -5,7 +5,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const LOVABLE_AI_URL = "https://api.lovable.dev/api/ai-proxy/v2/completions";
+const LOVABLE_AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
 interface GenerateRequest {
   prompt: string;
@@ -45,6 +45,15 @@ serve(async (req) => {
       );
     }
 
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
+      console.error("LOVABLE_API_KEY is not configured");
+      return new Response(
+        JSON.stringify({ error: "AI service not configured" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const toneInstruction = TONE_INSTRUCTIONS[tone] || TONE_INSTRUCTIONS.prestigious;
     const languageName = LANGUAGE_NAMES[language] || "English";
 
@@ -64,9 +73,12 @@ Guidelines:
 
 ${blockType ? `This content is for a "${blockType}" section of the site.` : ""}`;
 
+    console.log("Calling Lovable AI Gateway for content generation...");
+
     const response = await fetch(LOVABLE_AI_URL, {
       method: "POST",
       headers: {
+        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -82,12 +94,29 @@ ${blockType ? `This content is for a "${blockType}" section of the site.` : ""}`
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Lovable AI error:", errorText);
+      console.error("Lovable AI error:", response.status, errorText);
+      
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: "AI credits exhausted. Please add credits to continue." }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
       throw new Error(`AI service error: ${response.status}`);
     }
 
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content || "";
+
+    console.log("Content generated successfully");
 
     return new Response(
       JSON.stringify({ content }),

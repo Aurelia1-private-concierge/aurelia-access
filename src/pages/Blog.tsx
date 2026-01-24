@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Calendar, Clock, ArrowRight, Tag, Search, User, TrendingUp, BookOpen, Rss } from "lucide-react";
+import { Calendar, Clock, ArrowRight, Tag, Search, User, TrendingUp, BookOpen, Rss, Loader2, CheckCircle2 } from "lucide-react";
 import { Logo } from "@/components/brand";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,8 @@ import SocialShareButtons from "@/components/SocialShareButtons";
 import BlogArticleSchema from "@/components/blog/BlogArticleSchema";
 import FAQSchema from "@/components/seo/FAQSchema";
 import { generateVideoListSchema, VIDEO_LIBRARY } from "@/lib/video-seo-schema";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface BlogPost {
   id: string;
@@ -124,6 +126,107 @@ const blogPosts: BlogPost[] = [
 ];
 
 const categories = ["All", "Travel", "Aviation", "Yachting", "Art & Culture", "Wellness", "Real Estate"];
+
+const NewsletterSection = () => {
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+
+  const handleSubscribe = async () => {
+    if (!email || !email.includes("@")) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase
+        .from("launch_signups")
+        .insert({
+          email,
+          source: "blog_newsletter",
+          notification_preference: "email"
+        });
+
+      if (error) {
+        if (error.code === "23505") {
+          toast.info("You're already subscribed to our journal");
+        } else {
+          throw error;
+        }
+      } else {
+        toast.success("Welcome to The Aurelia Journal");
+        setIsSubscribed(true);
+      }
+    } catch (error) {
+      console.error("Newsletter signup error:", error);
+      toast.error("Unable to subscribe. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (isSubscribed) {
+    return (
+      <section className="py-20 border-t border-border/30">
+        <div className="container mx-auto px-6">
+          <div className="max-w-2xl mx-auto text-center">
+            <CheckCircle2 className="w-12 h-12 text-primary mx-auto mb-4" />
+            <h2 className="font-serif text-3xl text-foreground mb-4">
+              You're Subscribed
+            </h2>
+            <p className="text-muted-foreground">
+              Thank you for joining The Aurelia Journal. Expect curated insights in your inbox.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="py-20 border-t border-border/30">
+      <div className="container mx-auto px-6">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="font-serif text-3xl text-foreground mb-4">
+            Subscribe to The Aurelia Journal
+          </h2>
+          <p className="text-muted-foreground mb-8">
+            Receive exclusive insights, early access to experiences, and curated content for discerning individuals.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <Input 
+              placeholder="Enter your email" 
+              className="flex-1" 
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSubscribe()}
+              disabled={isSubmitting}
+            />
+            <Button 
+              className="whitespace-nowrap" 
+              onClick={handleSubscribe}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Subscribing...
+                </>
+              ) : (
+                <>
+                  Subscribe
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
 
 const Blog = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -366,25 +469,7 @@ const Blog = () => {
         </section>
 
         {/* Newsletter CTA */}
-        <section className="py-20 border-t border-border/30">
-          <div className="container mx-auto px-6">
-            <div className="max-w-2xl mx-auto text-center">
-              <h2 className="font-serif text-3xl text-foreground mb-4">
-                Subscribe to The Aurelia Journal
-              </h2>
-              <p className="text-muted-foreground mb-8">
-                Receive exclusive insights, early access to experiences, and curated content for discerning individuals.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                <Input placeholder="Enter your email" className="flex-1" />
-                <Button className="whitespace-nowrap">
-                  Subscribe
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
+        <NewsletterSection />
 
         {/* Social Share Section */}
         <section className="py-12 bg-muted/30 border-t border-border/30">

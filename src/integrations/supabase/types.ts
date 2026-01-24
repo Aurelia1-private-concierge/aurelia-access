@@ -1049,6 +1049,66 @@ export type Database = {
           },
         ]
       }
+      concierge_requests: {
+        Row: {
+          budget_range: string | null
+          category: string
+          created_at: string
+          description: string
+          guest_email: string | null
+          guest_name: string | null
+          id: string
+          internal_notes: string | null
+          location: string | null
+          preferred_date: string | null
+          priority: string
+          responded_at: string | null
+          response: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          budget_range?: string | null
+          category?: string
+          created_at?: string
+          description: string
+          guest_email?: string | null
+          guest_name?: string | null
+          id?: string
+          internal_notes?: string | null
+          location?: string | null
+          preferred_date?: string | null
+          priority?: string
+          responded_at?: string | null
+          response?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          budget_range?: string | null
+          category?: string
+          created_at?: string
+          description?: string
+          guest_email?: string | null
+          guest_name?: string | null
+          id?: string
+          internal_notes?: string | null
+          location?: string | null
+          preferred_date?: string | null
+          priority?: string
+          responded_at?: string | null
+          response?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       contact_automation_logs: {
         Row: {
           automation_type: string

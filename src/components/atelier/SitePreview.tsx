@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { Calendar, MapPin, Clock, Users, Mail, Phone } from "lucide-react";
 import type { MemberSite } from "@/hooks/useAtelier";
@@ -15,16 +14,26 @@ const viewportSizes = {
 };
 
 const SitePreview = ({ site, viewMode }: SitePreviewProps) => {
-  const { branding, content } = site;
+  const branding = site?.branding;
+  const content = site?.content || [];
   const viewport = viewportSizes[viewMode];
 
-  const previewStyles = useMemo(() => ({
+  // Early return if no branding data
+  if (!branding) {
+    return (
+      <div className="h-full w-full flex items-center justify-center p-4">
+        <p className="text-muted-foreground">Loading site preview...</p>
+      </div>
+    );
+  }
+
+  const previewStyles = {
     "--preview-primary": branding.primaryColor,
     "--preview-secondary": branding.secondaryColor,
     "--preview-accent": branding.accentColor,
     "--preview-font-heading": branding.fontHeading,
     "--preview-font-body": branding.fontBody,
-  } as React.CSSProperties), [branding]);
+  } as React.CSSProperties;
 
   const renderBlock = (block: typeof content[0], index: number) => {
     const blockContent = (block?.content || {}) as Record<string, unknown>;

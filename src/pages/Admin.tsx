@@ -1,9 +1,10 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
-import { Shield, Users, Mail, Phone, Send, Search, Download, Trash2, Check, X, RefreshCw, Settings, Loader2 } from "lucide-react";
+import { Shield, Users, Mail, Phone, Send, Search, Download, Trash2, Check, X, RefreshCw, Settings, Loader2, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -111,6 +112,7 @@ interface LaunchSignup {
 
 const Admin = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "analytics");
   const [signups, setSignups] = useState<LaunchSignup[]>([]);
@@ -339,9 +341,20 @@ const Admin = () => {
                 <span className="font-serif text-lg text-foreground">Admin Portal</span>
               </div>
             </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-              <span>Encrypted Session Active</span>
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/admin/guide")}
+                className="gap-2"
+              >
+                <BookOpen className="h-4 w-4" />
+                Guide
+              </Button>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Encrypted Session Active</span>
+              </div>
             </div>
           </div>
         </div>

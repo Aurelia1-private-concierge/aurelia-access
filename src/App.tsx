@@ -76,6 +76,7 @@ const PartnerPlatform = lazy(() => import("./pages/PartnerPlatform"));
 const Marketplace = lazy(() => import("./pages/Marketplace"));
 const PartnerInventory = lazy(() => import("./pages/PartnerInventory"));
 const Auctions = lazy(() => import("./pages/Auctions"));
+const AdminGuide = lazy(() => import("./pages/AdminGuide"));
 const Atelier = lazy(() => import("./pages/Atelier"));
 const SiteBuilder = lazy(() => import("./components/atelier/SiteBuilder"));
 const UserGuide = lazy(() => import("./pages/UserGuide"));
@@ -375,6 +376,16 @@ const AnimatedRoutes = forwardRef<HTMLDivElement>((props, ref) => {
               <AdminRoute>
                 <PageTransition>
                   <Admin />
+                </PageTransition>
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/guide"
+            element={
+              <AdminRoute>
+                <PageTransition>
+                  <AdminGuide />
                 </PageTransition>
               </AdminRoute>
             }

@@ -4514,6 +4514,53 @@ export type Database = {
         }
         Relationships: []
       }
+      sms_conversations: {
+        Row: {
+          channel: string
+          created_at: string
+          direction: string
+          id: string
+          in_reply_to: string | null
+          message: string
+          metadata: Json | null
+          phone_number: string
+          twilio_message_sid: string | null
+          user_id: string | null
+        }
+        Insert: {
+          channel?: string
+          created_at?: string
+          direction: string
+          id?: string
+          in_reply_to?: string | null
+          message: string
+          metadata?: Json | null
+          phone_number: string
+          twilio_message_sid?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          direction?: string
+          id?: string
+          in_reply_to?: string | null
+          message?: string
+          metadata?: Json | null
+          phone_number?: string
+          twilio_message_sid?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sms_conversations_in_reply_to_fkey"
+            columns: ["in_reply_to"]
+            isOneToOne: false
+            referencedRelation: "sms_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       social_posts: {
         Row: {
           campaign: string | null

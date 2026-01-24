@@ -184,7 +184,7 @@ const Waitlist = () => {
           animate={{ opacity: 1, x: 0 }}
           className="fixed top-24 right-6 z-50"
         >
-          <Link to="/home">
+          <Link to="/">
             <Button
               variant="outline"
               size="sm"

@@ -323,7 +323,7 @@ const ColdOutreachPanel = () => {
     }
   };
 
-  const handleAutoFind = async () => {
+const handleAutoFind = async () => {
     if (!finderCategory) {
       toast({ title: "Error", description: "Please select a category", variant: "destructive" });
       return;
@@ -331,40 +331,84 @@ const ColdOutreachPanel = () => {
 
     setIsSearching(true);
     
-    // Simulate AI-powered search
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    
-    const mockResults = [
-      { id: "f1", company: "Jet Linx Aviation", contact: "James Wilson", email: "partnerships@jetlinx.com", location: "Omaha, NE", score: 95 },
-      { id: "f2", company: "XO Private Aviation", contact: "Sarah Chen", email: "partners@flyxo.com", location: "New York, NY", score: 92 },
-      { id: "f3", company: "VistaJet", contact: "Michael Ross", email: "bdev@vistajet.com", location: "London, UK", score: 88 },
-      { id: "f4", company: "NetJets", contact: "Emily Taylor", email: "commercial@netjets.com", location: "Columbus, OH", score: 85 },
-      { id: "f5", company: "Flexjet", contact: "David Kim", email: "partnerships@flexjet.com", location: "Cleveland, OH", score: 82 },
-    ];
-    
-    setSearchResults(mockResults);
-    setIsSearching(false);
-    
-    toast({ title: "Search Complete", description: `Found ${mockResults.length} potential partners` });
+    try {
+      // Call the auto-discover edge function
+      const { data, error } = await supabase.functions.invoke("auto-discover", {
+        body: {
+          mode: "partners",
+          categories: [finderCategory.replace("private_", "").replace("yacht_charter", "yacht").replace("real_estate", "real_estate").replace("collectibles", "art_collectibles")],
+          limit: 10,
+          dryRun: false,
+          location: finderLocation || undefined,
+          keywords: finderKeywords || undefined,
+        }
+      });
+
+      if (error) throw error;
+
+      // Fetch newly discovered partners
+      const { data: partners } = await supabase
+        .from("potential_partners")
+        .select("*")
+        .order("discovered_at", { ascending: false })
+        .limit(10);
+
+      if (partners && partners.length > 0) {
+        const results = partners.map((p: any) => ({
+          id: p.id,
+          company: p.company_name,
+          contact: p.contact_email?.split("@")[0] || "Contact",
+          email: p.contact_email || "",
+          location: p.metadata?.location || finderLocation || "Global",
+          score: p.score || 75,
+        }));
+        
+        setSearchResults(results);
+        toast({ title: "Search Complete", description: `Found ${results.length} potential partners` });
+      } else {
+        setSearchResults([]);
+        toast({ title: "No Results", description: "No partners found. Try different criteria." });
+      }
+    } catch (error) {
+      console.error("Auto-find error:", error);
+      toast({ title: "Error", description: "Search failed. Please try again.", variant: "destructive" });
+    } finally {
+      setIsSearching(false);
+    }
   };
 
-  const handleAddToProspects = async (results: any[]) => {
-    // Add selected results to prospects table
-    for (const result of results) {
-      await (supabase as any).from("partner_prospects").insert({
-        company_name: result.company,
-        contact_name: result.contact,
-        email: result.email,
-        category: finderCategory,
-        source: "auto_finder",
-        status: "new",
-        priority: result.score >= 90 ? "high" : result.score >= 80 ? "medium" : "low",
-      });
+const handleAddToProspects = async (results: any[]) => {
+    try {
+      // Update status in potential_partners table
+      for (const result of results) {
+        await supabase
+          .from("potential_partners")
+          .update({ status: "qualified" })
+          .eq("id", result.id);
+      }
+      
+      toast({ title: "Prospects Qualified", description: `${results.length} prospects marked as qualified` });
+      setFinderDialogOpen(false);
+      setSearchResults([]);
+    } catch (error) {
+      console.error("Error adding prospects:", error);
+      toast({ title: "Error", description: "Failed to add prospects", variant: "destructive" });
     }
-    
-    toast({ title: "Prospects Added", description: `${results.length} prospects added to your pipeline` });
-    setFinderDialogOpen(false);
-    setSearchResults([]);
+  };
+
+  const handleAddSingleProspect = async (result: any) => {
+    try {
+      await supabase
+        .from("potential_partners")
+        .update({ status: "qualified" })
+        .eq("id", result.id);
+      
+      setSearchResults(prev => prev.filter(r => r.id !== result.id));
+      toast({ title: "Prospect Added", description: `${result.company} added to pipeline` });
+    } catch (error) {
+      console.error("Error adding prospect:", error);
+      toast({ title: "Error", description: "Failed to add prospect", variant: "destructive" });
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -986,7 +1030,11 @@ const ColdOutreachPanel = () => {
                         <Badge className={result.score >= 90 ? "bg-green-500/10 text-green-500" : result.score >= 80 ? "bg-amber-500/10 text-amber-500" : ""}>
                           {result.score}% match
                         </Badge>
-                        <Button size="sm" variant="ghost">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleAddSingleProspect(result)}
+                        >
                           <Plus className="h-4 w-4" />
                         </Button>
                       </div>

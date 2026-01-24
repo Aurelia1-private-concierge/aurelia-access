@@ -37,8 +37,8 @@ const MetaverseEntryPoint = () => {
             </p>
           </motion.div>
 
-          {/* Feature Cards */}
-          <div className="grid md:grid-cols-2 gap-8">
+          {/* Feature Cards - Aligned heights */}
+          <div className="grid md:grid-cols-2 gap-8 items-stretch">
             {/* VR/Metaverse Card */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -46,7 +46,7 @@ const MetaverseEntryPoint = () => {
               viewport={{ once: true }}
               whileHover={{ scale: 1.02 }}
               onClick={() => setShowVR(true)}
-              className="group relative cursor-pointer overflow-hidden rounded-3xl border border-border/30 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl p-8"
+              className="group relative cursor-pointer overflow-hidden rounded-3xl border border-border/30 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl p-8 flex flex-col h-full min-h-[400px]"
             >
               {/* Animated background */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -56,7 +56,7 @@ const MetaverseEntryPoint = () => {
                 transition={{ duration: 4, repeat: Infinity }}
               />
               
-              <div className="relative z-10">
+              <div className="relative z-10 flex flex-col h-full">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/30 to-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                   <Glasses className="w-8 h-8 text-primary-foreground" />
                 </div>
@@ -70,7 +70,7 @@ const MetaverseEntryPoint = () => {
                   walk through luxury properties—all from anywhere in the world.
                 </p>
 
-                <ul className="space-y-2 mb-6">
+                <ul className="space-y-2 mb-6 flex-1">
                   {["Virtual property tours", "Interactive yacht previews", "3D collectible examination", "Immersive destination planning"].map((item) => (
                     <li key={item} className="flex items-center gap-2 text-sm text-muted-foreground">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary" />
@@ -79,7 +79,7 @@ const MetaverseEntryPoint = () => {
                   ))}
                 </ul>
 
-                <div className="flex items-center gap-2 text-primary text-sm font-medium group-hover:gap-3 transition-all">
+                <div className="flex items-center gap-2 text-primary text-sm font-medium group-hover:gap-3 transition-all mt-auto">
                   <span>Enter the Metaverse</span>
                   <ChevronRight className="w-4 h-4" />
                 </div>
@@ -93,7 +93,7 @@ const MetaverseEntryPoint = () => {
               viewport={{ once: true }}
               whileHover={{ scale: 1.02 }}
               onClick={() => setShowEQ(true)}
-              className="group relative cursor-pointer overflow-hidden rounded-3xl border border-border/30 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl p-8"
+              className="group relative cursor-pointer overflow-hidden rounded-3xl border border-border/30 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl p-8 flex flex-col h-full min-h-[400px]"
             >
               {/* Animated background */}
               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -103,7 +103,7 @@ const MetaverseEntryPoint = () => {
                 transition={{ duration: 4, repeat: Infinity, delay: 1 }}
               />
               
-              <div className="relative z-10">
+              <div className="relative z-10 flex flex-col h-full">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/30 to-purple-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                   <Brain className="w-8 h-8 text-white" />
                 </div>
@@ -117,7 +117,7 @@ const MetaverseEntryPoint = () => {
                   to anticipate your desires before you express them.
                 </p>
 
-                <ul className="space-y-2 mb-6">
+                <ul className="space-y-2 mb-6 flex-1">
                   {["Emotional preference mapping", "Personalized service calibration", "Anticipatory recommendations", "Mood-aware experiences"].map((item) => (
                     <li key={item} className="flex items-center gap-2 text-sm text-muted-foreground">
                       <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
@@ -126,7 +126,7 @@ const MetaverseEntryPoint = () => {
                   ))}
                 </ul>
 
-                <div className="flex items-center gap-2 text-purple-400 text-sm font-medium group-hover:gap-3 transition-all">
+                <div className="flex items-center gap-2 text-purple-400 text-sm font-medium group-hover:gap-3 transition-all mt-auto">
                   <span>Discover Your Profile</span>
                   <ChevronRight className="w-4 h-4" />
                 </div>

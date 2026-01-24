@@ -1,9 +1,80 @@
-import { useRef, useMemo, Suspense, useState } from "react";
+import { useRef, useMemo, Suspense, useState, useCallback, useEffect, Component, ReactNode } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Sphere, Line, Html } from "@react-three/drei";
 import * as THREE from "three";
 import { motion } from "framer-motion";
+import { AlertTriangle, RefreshCw } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
+// Error Boundary for WebGL/Three.js errors
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+}
+
+class GlobeErrorBoundary extends Component<{ children: ReactNode; onRetry: () => void }, ErrorBoundaryState> {
+  constructor(props: { children: ReactNode; onRetry: () => void }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('[Globe3D] WebGL Error:', error, errorInfo);
+    logGlobeError('webgl_crash', error.message);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="w-full h-[400px] md:h-[500px] flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm rounded-lg border border-primary/20">
+          <AlertTriangle className="w-12 h-12 text-primary/60 mb-4" />
+          <p className="text-muted-foreground mb-2">Globe visualization unavailable</p>
+          <p className="text-xs text-muted-foreground/60 mb-4">WebGL may not be supported</p>
+          <button
+            onClick={() => {
+              this.setState({ hasError: false, error: null });
+              this.props.onRetry();
+            }}
+            className="flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-md transition-colors"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Retry
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// Audit logging helpers
+const logGlobeError = async (errorType: string, message: string) => {
+  try {
+    await supabase.from('audit_logs').insert({
+      action: 'globe_error',
+      resource_type: 'globe_3d',
+      details: { error_type: errorType, message, timestamp: new Date().toISOString() }
+    });
+  } catch (e) {
+    console.warn('[Globe3D] Failed to log error:', e);
+  }
+};
+
+const logGlobeInteraction = async (action: string, details: Record<string, unknown>) => {
+  try {
+    await supabase.from('analytics_events').insert({
+      event_name: `globe_${action}`,
+      event_category: 'globe_interaction',
+      event_data: { ...details, timestamp: new Date().toISOString() }
+    });
+  } catch (e) {
+    // Silent fail for analytics
+  }
+};
 // Aurelia global office locations with coordinates and country details
 const locations = [{
   city: "London",
@@ -381,41 +452,125 @@ function FloatingParticles() {
     </points>;
 }
 
-// Main Globe3D component
+// Main Globe3D component with error handling and audit
 const Globe3D = () => {
   const [hoveredCity, setHoveredCity] = useState<string | null>(null);
-  return <motion.div initial={{
-    opacity: 0
-  }} animate={{
-    opacity: 1
-  }} transition={{
-    duration: 1,
-    delay: 0.3
-  }} className="w-full h-[400px] md:h-[500px] relative">
-      <Canvas camera={{
-      position: [0, 0, 2.5],
-      fov: 45
-    }} dpr={[1, 2]} gl={{
-      antialias: true,
-      alpha: true
-    }} className="text-gold-light">
-        <ambientLight intensity={0.6} />
-        <pointLight position={[10, 10, 10]} intensity={1} color="#F5E6B8" />
-        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#87CEEB" />
-        <pointLight position={[0, 10, 0]} intensity={0.4} color="#ffffff" />
-        
-        <Suspense fallback={null}>
-          <Globe hoveredCity={hoveredCity} setHoveredCity={setHoveredCity} />
-          <FloatingParticles />
-        </Suspense>
-        
-        <OrbitControls enableZoom={false} enablePan={false} autoRotate={!hoveredCity} autoRotateSpeed={0.5} minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI - Math.PI / 4} />
-      </Canvas>
-      
-      {/* Vignette overlay */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-      background: 'radial-gradient(circle at center, transparent 40%, hsl(var(--background)) 100%)'
-    }} />
-    </motion.div>;
+  const [retryKey, setRetryKey] = useState(0);
+  const [isWebGLSupported, setIsWebGLSupported] = useState(true);
+  const interactionStartRef = useRef<number | null>(null);
+
+  // Check WebGL support on mount
+  useEffect(() => {
+    try {
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      if (!gl) {
+        setIsWebGLSupported(false);
+        logGlobeError('webgl_unsupported', 'WebGL not available in browser');
+      }
+    } catch (e) {
+      setIsWebGLSupported(false);
+      logGlobeError('webgl_check_failed', String(e));
+    }
+  }, []);
+
+  // Audit: Track hover interactions with debounce
+  const handleCityHover = useCallback((city: string | null) => {
+    if (city && !hoveredCity) {
+      interactionStartRef.current = Date.now();
+    } else if (!city && hoveredCity && interactionStartRef.current) {
+      const duration = Date.now() - interactionStartRef.current;
+      logGlobeInteraction('city_hover', { 
+        city: hoveredCity, 
+        duration_ms: duration,
+        is_flagship: locations.find(l => l.city === hoveredCity)?.flagship || false
+      });
+      interactionStartRef.current = null;
+    }
+    setHoveredCity(city);
+  }, [hoveredCity]);
+
+  const handleRetry = useCallback(() => {
+    setRetryKey(prev => prev + 1);
+    logGlobeInteraction('retry_attempt', { retry_count: retryKey + 1 });
+  }, [retryKey]);
+
+  // Fallback for unsupported WebGL
+  if (!isWebGLSupported) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="w-full h-[400px] md:h-[500px] flex flex-col items-center justify-center bg-gradient-to-br from-background to-muted/30 rounded-lg border border-primary/20"
+      >
+        <div className="text-center p-8">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+            <span className="text-2xl">🌍</span>
+          </div>
+          <h3 className="text-lg font-semibold text-foreground mb-2">Global Presence</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            Our offices span {locations.length} cities across {new Set(locations.map(l => l.country)).size} countries
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+            {locations.filter(l => l.flagship).map(loc => (
+              <div key={loc.city} className="px-3 py-2 bg-primary/5 rounded-md">
+                <span className="text-primary">★</span> {loc.city}
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
+  return (
+    <GlobeErrorBoundary onRetry={handleRetry}>
+      <motion.div
+        key={retryKey}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 0.3 }}
+        className="w-full h-[400px] md:h-[500px] relative"
+      >
+        <Canvas
+          camera={{ position: [0, 0, 2.5], fov: 45 }}
+          dpr={[1, 2]}
+          gl={{ antialias: true, alpha: true, failIfMajorPerformanceCaveat: true }}
+          onCreated={() => {
+            logGlobeInteraction('canvas_loaded', { timestamp: new Date().toISOString() });
+          }}
+          className="text-gold-light"
+        >
+          <ambientLight intensity={0.6} />
+          <pointLight position={[10, 10, 10]} intensity={1} color="#F5E6B8" />
+          <pointLight position={[-10, -10, -10]} intensity={0.5} color="#87CEEB" />
+          <pointLight position={[0, 10, 0]} intensity={0.4} color="#ffffff" />
+
+          <Suspense fallback={null}>
+            <Globe hoveredCity={hoveredCity} setHoveredCity={handleCityHover} />
+            <FloatingParticles />
+          </Suspense>
+
+          <OrbitControls
+            enableZoom={false}
+            enablePan={false}
+            autoRotate={!hoveredCity}
+            autoRotateSpeed={0.5}
+            minPolarAngle={Math.PI / 4}
+            maxPolarAngle={Math.PI - Math.PI / 4}
+          />
+        </Canvas>
+
+        {/* Vignette overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle at center, transparent 40%, hsl(var(--background)) 100%)'
+          }}
+        />
+      </motion.div>
+    </GlobeErrorBoundary>
+  );
 };
+
 export default Globe3D;

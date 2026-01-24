@@ -71,6 +71,46 @@ const locations = [{
   details: "Japan & Korea Markets"
 }];
 
+// Simplified continent outlines (lat/lng coordinates)
+const continentOutlines: { name: string; points: [number, number][] }[] = [
+  {
+    name: "Europe",
+    points: [
+      [-10, 36], [0, 43], [10, 45], [20, 42], [30, 45], [40, 42], [35, 55], [30, 60], [20, 65], [10, 60], [0, 50], [-10, 44], [-10, 36]
+    ]
+  },
+  {
+    name: "Asia",
+    points: [
+      [40, 42], [50, 40], [60, 35], [70, 25], [80, 20], [90, 25], [100, 20], [110, 22], [120, 30], [130, 35], [140, 40], [145, 45], [140, 55], [130, 60], [110, 55], [90, 50], [70, 55], [50, 55], [40, 42]
+    ]
+  },
+  {
+    name: "Africa",
+    points: [
+      [-15, 30], [0, 35], [10, 35], [20, 32], [35, 30], [40, 20], [50, 12], [45, 0], [40, -10], [35, -25], [30, -35], [20, -35], [15, -30], [12, -20], [5, -5], [-5, 5], [-15, 15], [-20, 20], [-15, 30]
+    ]
+  },
+  {
+    name: "NorthAmerica",
+    points: [
+      [-170, 65], [-160, 70], [-140, 70], [-120, 75], [-100, 75], [-80, 70], [-60, 65], [-75, 55], [-80, 45], [-85, 30], [-100, 25], [-110, 30], [-120, 35], [-125, 45], [-130, 55], [-145, 60], [-170, 65]
+    ]
+  },
+  {
+    name: "SouthAmerica",
+    points: [
+      [-80, 10], [-75, 5], [-70, -5], [-75, -15], [-70, -25], [-65, -40], [-70, -55], [-75, -50], [-80, -40], [-80, -30], [-75, -20], [-80, -5], [-80, 10]
+    ]
+  },
+  {
+    name: "Australia",
+    points: [
+      [115, -20], [125, -15], [135, -12], [145, -15], [150, -25], [150, -35], [145, -40], [135, -35], [125, -35], [115, -30], [115, -20]
+    ]
+  }
+];
+
 // Convert lat/lng to 3D sphere coordinates
 function latLngToVector3(lat: number, lng: number, radius: number): THREE.Vector3 {
   const phi = (90 - lat) * (Math.PI / 180);
@@ -235,20 +275,73 @@ function Globe({
     ...loc,
     position: latLngToVector3(loc.lat, loc.lng, 1.01)
   })), []);
+  // Generate continent outline points
+  const continentLines = useMemo(() => {
+    return continentOutlines.map(continent => {
+      const points = continent.points.map(([lng, lat]) => 
+        latLngToVector3(lat, lng, 1.005)
+      );
+      return { name: continent.name, points };
+    });
+  }, []);
+
   return <group>
       {/* Globe sphere - lighter base color for visibility */}
       <Sphere ref={globeRef} args={[1, 64, 64]}>
-        <meshStandardMaterial color="#2d3748" roughness={0.6} metalness={0.3} transparent opacity={0.95} />
+        <meshStandardMaterial color="#1a1f2e" roughness={0.7} metalness={0.2} transparent opacity={0.98} />
       </Sphere>
       
-      {/* Wireframe overlay - increased visibility */}
-      <Sphere args={[1.002, 32, 32]}>
-        <meshBasicMaterial color="#F5E6B8" wireframe transparent opacity={0.25} />
-      </Sphere>
+      {/* Continent outlines */}
+      {continentLines.map(({ name, points }) => (
+        <Line 
+          key={name}
+          points={points}
+          color="#D4AF37"
+          lineWidth={1.5}
+          transparent
+          opacity={0.6}
+        />
+      ))}
       
-      {/* Atmosphere glow - brighter */}
-      <Sphere ref={atmosphereRef} args={[1.05, 32, 32]}>
-        <meshBasicMaterial color="#F5E6B8" transparent opacity={0.1} side={THREE.BackSide} />
+      {/* Latitude lines (graticule) */}
+      {[-60, -30, 0, 30, 60].map(lat => {
+        const points = [];
+        for (let lng = 0; lng <= 360; lng += 10) {
+          points.push(latLngToVector3(lat, lng - 180, 1.003));
+        }
+        return (
+          <Line 
+            key={`lat-${lat}`}
+            points={points}
+            color="#F5E6B8"
+            lineWidth={0.5}
+            transparent
+            opacity={0.15}
+          />
+        );
+      })}
+      
+      {/* Longitude lines */}
+      {[0, 30, 60, 90, 120, 150, 180, -30, -60, -90, -120, -150].map(lng => {
+        const points = [];
+        for (let lat = -80; lat <= 80; lat += 10) {
+          points.push(latLngToVector3(lat, lng, 1.003));
+        }
+        return (
+          <Line 
+            key={`lng-${lng}`}
+            points={points}
+            color="#F5E6B8"
+            lineWidth={0.5}
+            transparent
+            opacity={0.15}
+          />
+        );
+      })}
+      
+      {/* Atmosphere glow */}
+      <Sphere ref={atmosphereRef} args={[1.06, 32, 32]}>
+        <meshBasicMaterial color="#D4AF37" transparent opacity={0.08} side={THREE.BackSide} />
       </Sphere>
       
       {/* City markers */}

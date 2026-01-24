@@ -4,43 +4,71 @@ import { OrbitControls, Sphere, Line, Html } from "@react-three/drei";
 import * as THREE from "three";
 import { motion } from "framer-motion";
 
-// Aurelia global office locations with coordinates
+// Aurelia global office locations with coordinates and country details
 const locations = [{
   city: "London",
+  country: "United Kingdom",
   lat: 51.5074,
   lng: -0.1278,
   flagship: true,
-  timezone: "GMT"
+  timezone: "GMT",
+  details: "European HQ • 24/7 Operations"
 }, {
   city: "Geneva",
+  country: "Switzerland",
   lat: 46.2044,
   lng: 6.1432,
   flagship: true,
-  timezone: "CET"
+  timezone: "CET",
+  details: "Private Banking • Wealth Management"
 }, {
   city: "Singapore",
+  country: "Singapore",
   lat: 1.3521,
   lng: 103.8198,
   flagship: true,
-  timezone: "SGT"
+  timezone: "SGT",
+  details: "Asia Pacific HQ • Regional Hub"
 }, {
   city: "Dubai",
+  country: "UAE",
   lat: 25.2048,
   lng: 55.2708,
   flagship: false,
-  timezone: "GST"
+  timezone: "GST",
+  details: "Middle East Operations"
 }, {
   city: "New York",
+  country: "USA",
   lat: 40.7128,
   lng: -74.006,
   flagship: false,
-  timezone: "EST"
+  timezone: "EST",
+  details: "Americas Operations"
 }, {
   city: "Hong Kong",
+  country: "China",
   lat: 22.3193,
   lng: 114.1694,
   flagship: false,
-  timezone: "HKT"
+  timezone: "HKT",
+  details: "Greater China Coverage"
+}, {
+  city: "Monaco",
+  country: "Monaco",
+  lat: 43.7384,
+  lng: 7.4246,
+  flagship: false,
+  timezone: "CET",
+  details: "Luxury Concierge • Events"
+}, {
+  city: "Tokyo",
+  country: "Japan",
+  lat: 35.6762,
+  lng: 139.6503,
+  flagship: false,
+  timezone: "JST",
+  details: "Japan & Korea Markets"
 }];
 
 // Convert lat/lng to 3D sphere coordinates
@@ -57,13 +85,19 @@ function latLngToVector3(lat: number, lng: number, radius: number): THREE.Vector
 function CityMarker({
   position,
   city,
+  country,
   flagship,
+  timezone,
+  details,
   isHovered,
   onHover
 }: {
   position: THREE.Vector3;
   city: string;
+  country: string;
   flagship: boolean;
+  timezone: string;
+  details: string;
   isHovered: boolean;
   onHover: (city: string | null) => void;
 }) {
@@ -92,14 +126,27 @@ function CityMarker({
         <meshBasicMaterial color={flagship ? "#FFD700" : "#DAA520"} />
       </mesh>
       
-      {/* City label on hover */}
-      {isHovered && <Html position={[0, 0.08, 0]} center style={{
+      {/* City label on hover - Enhanced with country details */}
+      {isHovered && <Html position={[0, 0.12, 0]} center style={{
       pointerEvents: "none",
       userSelect: "none"
     }}>
-          <div className="bg-background/90 backdrop-blur-sm border border-primary/30 rounded px-3 py-1.5 whitespace-nowrap">
-            <p className="text-xs font-medium text-foreground">{city}</p>
-            {flagship && <p className="text-[10px] text-primary">Flagship Office</p>}
+          <div className="bg-background/95 backdrop-blur-md border border-primary/40 rounded-lg px-4 py-2.5 whitespace-nowrap shadow-lg min-w-[160px]">
+            <div className="flex items-center gap-2 mb-1">
+              <div className={`w-2 h-2 rounded-full ${flagship ? 'bg-primary animate-pulse' : 'bg-muted-foreground'}`} />
+              <p className="text-sm font-semibold text-foreground">{city}</p>
+            </div>
+            <p className="text-xs text-muted-foreground mb-1">{country}</p>
+            <div className="flex items-center gap-2 text-[10px] text-muted-foreground/80">
+              <span className="font-mono">{timezone}</span>
+              <span>•</span>
+              <span>{details}</span>
+            </div>
+            {flagship && (
+              <div className="mt-1.5 pt-1.5 border-t border-primary/20">
+                <p className="text-[10px] text-primary font-medium">★ Flagship Office</p>
+              </div>
+            )}
           </div>
         </Html>}
     </group>;
@@ -176,11 +223,12 @@ function Globe({
     camera
   } = useThree();
   useFrame(state => {
-    if (globeRef.current && !hoveredCity) {
-      globeRef.current.rotation.y += 0.001;
+    if (globeRef.current) {
+      // Continuous slow rotation - slightly faster for visibility
+      globeRef.current.rotation.y += hoveredCity ? 0.0005 : 0.002;
     }
     if (atmosphereRef.current) {
-      atmosphereRef.current.rotation.y += 0.0005;
+      atmosphereRef.current.rotation.y += 0.001;
     }
   });
   const markers = useMemo(() => locations.map(loc => ({
@@ -204,7 +252,7 @@ function Globe({
       </Sphere>
       
       {/* City markers */}
-      {markers.map(loc => <CityMarker key={loc.city} position={loc.position} city={loc.city} flagship={loc.flagship} isHovered={hoveredCity === loc.city} onHover={setHoveredCity} />)}
+      {markers.map(loc => <CityMarker key={loc.city} position={loc.position} city={loc.city} country={loc.country} flagship={loc.flagship} timezone={loc.timezone} details={loc.details} isHovered={hoveredCity === loc.city} onHover={setHoveredCity} />)}
       
       {/* Connection lines */}
       <ConnectionLines hoveredCity={hoveredCity} />

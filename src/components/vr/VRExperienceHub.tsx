@@ -5,15 +5,12 @@ import {
   PerspectiveCamera, 
   Environment, 
   Float, 
-  Text3D, 
-  Center,
   MeshDistortMaterial,
   Sparkles,
   Stars
 } from "@react-three/drei";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Maximize2, RotateCcw, Plane, Anchor, Building2, Gem, Sparkles as SparklesIcon } from "lucide-react";
-import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import * as THREE from "three";
 // Floating luxury orb

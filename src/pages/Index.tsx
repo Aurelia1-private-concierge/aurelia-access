@@ -14,29 +14,20 @@ import Footer from "@/components/Footer";
 const heroVideos = [heroYacht, heroJet, heroHoliday, heroPenthouse];
 
 // Simple error boundary for lazy-loaded sections
-class SectionErrorBoundary extends Component<{
-  children: ReactNode;
-  fallback?: ReactNode;
-}, {
-  hasError: boolean;
-}> {
-  constructor(props: {
-    children: ReactNode;
-    fallback?: ReactNode;
-  }) {
+class SectionErrorBoundary extends Component<{ children: ReactNode; fallback?: ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode; fallback?: ReactNode }) {
     super(props);
-    this.state = {
-      hasError: false
-    };
+    this.state = { hasError: false };
   }
+
   static getDerivedStateFromError() {
-    return {
-      hasError: true
-    };
+    return { hasError: true };
   }
+
   componentDidCatch(error: Error) {
     console.warn("Section failed to load:", error);
   }
+
   render() {
     if (this.state.hasError) {
       return this.props.fallback ?? null;
@@ -83,6 +74,7 @@ const useContextualSoundscapes = () => {
   const [isLoading] = useState(false);
   const [volume, setVolume] = useState(0.3);
   const [currentSection] = useState("hero");
+  
   return {
     isPlaying,
     isLoading,
@@ -90,16 +82,16 @@ const useContextualSoundscapes = () => {
     setVolume,
     currentSection,
     toggleSoundscapes: () => setIsPlaying(prev => !prev),
-    getCurrentSoundscape: () => ({
-      description: "Ambient luxury"
-    })
+    getCurrentSoundscape: () => ({ description: "Ambient luxury" })
   };
 };
 
 // Minimal section loader for lazy components
-const SectionLoader = () => <div className="min-h-[200px] flex items-center justify-center">
+const SectionLoader = () => (
+  <div className="min-h-[200px] flex items-center justify-center">
     <div className="w-8 h-8 border border-primary/30 rounded-full border-t-primary animate-spin" />
-  </div>;
+  </div>
+);
 
 // Force publish: 2026-01-21T09:14
 const Index = () => {
@@ -120,9 +112,7 @@ const Index = () => {
 
     // Defer to idle time or 2 seconds, whichever comes first
     if ('requestIdleCallback' in window) {
-      const idleId = window.requestIdleCallback(scheduleAmbient, {
-        timeout: 2000
-      });
+      const idleId = window.requestIdleCallback(scheduleAmbient, { timeout: 2000 });
       return () => window.cancelIdleCallback(idleId);
     } else {
       const timer = setTimeout(scheduleAmbient, 2000);
@@ -134,12 +124,13 @@ const Index = () => {
   const handleToggleMusic = useCallback(() => {
     musicToggleRef.current?.();
   }, []);
+
   const handleToggleNarrator = useCallback(() => {
     narratorToggleRef.current?.();
   }, []);
-  return <div className="min-h-[100dvh] bg-background overflow-x-hidden relative text-obsidian" style={{
-    contain: 'layout style'
-  }}>
+
+  return (
+    <div className="min-h-[100dvh] bg-background overflow-x-hidden relative" style={{ contain: 'layout style' }}>
       {/* GA4 Analytics - Deferred */}
       <SectionErrorBoundary>
         <Suspense fallback={null}>
@@ -148,7 +139,8 @@ const Index = () => {
       </SectionErrorBoundary>
       
       {/* Ambient Effects - Deferred to reduce TBT */}
-      {showAmbient && <SectionErrorBoundary>
+      {showAmbient && (
+        <SectionErrorBoundary>
           <Suspense fallback={null}>
             <AmbientParticles />
             <GlowingOrb className="top-1/4 -left-48" size="xl" color="gold" intensity="soft" />
@@ -156,14 +148,18 @@ const Index = () => {
             <GlowingOrb className="bottom-1/4 left-1/3" size="md" color="gold" intensity="soft" />
             <CustomCursor />
           </Suspense>
-        </SectionErrorBoundary>}
+        </SectionErrorBoundary>
+      )}
       
       {/* Loading Screen removed - was causing production issues */}
       <ScrollProgress />
       <Navigation />
       
       {/* Hero Section - Critical, not lazy - Rotating luxury video showcase */}
-      <HeroSection videoSources={heroVideos} rotationInterval={15000} />
+      <HeroSection 
+        videoSources={heroVideos}
+        rotationInterval={15000}
+      />
 
       <SectionDivider variant="ornate" />
 
@@ -276,15 +272,35 @@ const Index = () => {
       {/* Floating UI Elements - Lazy loaded */}
       <SectionErrorBoundary>
         <Suspense fallback={null}>
-          <PictureInPicture isEnabled={isPipEnabled} onClose={() => setIsPipEnabled(false)} />
+          <PictureInPicture 
+            isEnabled={isPipEnabled} 
+            onClose={() => setIsPipEnabled(false)} 
+          />
           
-          <VoiceCommands onToggleMusic={handleToggleMusic} onToggleNarrator={handleToggleNarrator} />
+          <VoiceCommands 
+            onToggleMusic={handleToggleMusic}
+            onToggleNarrator={handleToggleNarrator}
+          />
           
-          <MusicControlFAB isPlaying={soundscapes.isPlaying} isLoading={soundscapes.isLoading} volume={soundscapes.volume} onToggle={soundscapes.toggleSoundscapes} onVolumeChange={soundscapes.setVolume} currentSection={soundscapes.currentSection} description={soundscapes.getCurrentSoundscape().description} />
+          <MusicControlFAB
+            isPlaying={soundscapes.isPlaying}
+            isLoading={soundscapes.isLoading}
+            volume={soundscapes.volume}
+            onToggle={soundscapes.toggleSoundscapes}
+            onVolumeChange={soundscapes.setVolume}
+            currentSection={soundscapes.currentSection}
+            description={soundscapes.getCurrentSoundscape().description}
+          />
           
-          <ContextualSoundscapeIndicator currentSection={soundscapes.currentSection} description={soundscapes.getCurrentSoundscape().description} isPlaying={soundscapes.isPlaying} />
+          <ContextualSoundscapeIndicator
+            currentSection={soundscapes.currentSection}
+            description={soundscapes.getCurrentSoundscape().description}
+            isPlaying={soundscapes.isPlaying}
+          />
         </Suspense>
       </SectionErrorBoundary>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;

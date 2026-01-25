@@ -44,6 +44,7 @@ const Membership = lazy(() => import("./pages/Membership"));
 const Discover = lazy(() => import("./pages/Discover"));
 const Referral = lazy(() => import("./pages/Referral"));
 const PartnerRecruitment = lazy(() => import("./pages/PartnerRecruitment"));
+const Prescience = lazy(() => import("./pages/Prescience"));
 
 const TrialApplication = lazy(() => import("./pages/TrialApplication"));
 const CreditHistory = lazy(() => import("./pages/CreditHistory"));
@@ -257,6 +258,16 @@ const AnimatedRoutes = forwardRef<HTMLDivElement>((props, ref) => {
               <ProtectedRoute>
                 <PageTransition>
                   <Dashboard />
+                </PageTransition>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/prescience"
+            element={
+              <ProtectedRoute>
+                <PageTransition>
+                  <Prescience />
                 </PageTransition>
               </ProtectedRoute>
             }

@@ -143,9 +143,10 @@ const Index = () => {
         <SectionErrorBoundary>
           <Suspense fallback={null}>
             <AmbientParticles />
-            <GlowingOrb className="top-1/4 -left-48" size="xl" color="gold" intensity="soft" />
-            <GlowingOrb className="top-1/2 -right-32" size="lg" color="gold" intensity="soft" />
-            <GlowingOrb className="bottom-1/4 left-1/3" size="md" color="gold" intensity="soft" />
+            {/* Orbs positioned within viewport bounds, centered on their own axes */}
+            <GlowingOrb className="top-[20%] left-0 -translate-x-1/2" size="xl" color="gold" intensity="soft" />
+            <GlowingOrb className="top-1/2 right-0 translate-x-1/2 -translate-y-1/2" size="lg" color="gold" intensity="soft" />
+            <GlowingOrb className="bottom-[25%] left-1/3 -translate-x-1/2" size="md" color="gold" intensity="soft" />
             <CustomCursor />
           </Suspense>
         </SectionErrorBoundary>

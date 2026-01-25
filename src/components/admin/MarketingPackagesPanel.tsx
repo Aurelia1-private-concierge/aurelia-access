@@ -10,13 +10,27 @@ import {
   ExternalLink,
   TrendingUp,
   Building2,
-  Globe
+  Globe,
+  Send
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   MARKETING_PACKAGES, 
   UHNW_NETWORKS, 
@@ -26,6 +40,16 @@ import {
 
 const MarketingPackagesPanel = () => {
   const [selectedPackages, setSelectedPackages] = useState<string[]>([]);
+  const [isProposalDialogOpen, setIsProposalDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [proposalForm, setProposalForm] = useState({
+    companyName: "",
+    contactName: "",
+    email: "",
+    phone: "",
+    notes: "",
+    targetLaunchDate: ""
+  });
   
   const togglePackage = (id: string) => {
     setSelectedPackages(prev => 
@@ -41,6 +65,56 @@ const MarketingPackagesPanel = () => {
       currency: 'USD',
       maximumFractionDigits: 0,
     }).format(amount);
+  };
+
+  const handleSubmitProposal = async () => {
+    if (!proposalForm.email || !proposalForm.contactName) {
+      toast.error("Please fill in required fields");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      // Get selected package details
+      const selectedPackageDetails = MARKETING_PACKAGES.filter(pkg => 
+        selectedPackages.includes(pkg.id)
+      ).map(pkg => pkg.name);
+
+      // Submit to concierge_requests table
+      const { error } = await supabase
+        .from("concierge_requests")
+        .insert({
+          title: `Marketing Proposal Request - ${selectedPackageDetails.join(", ")}`,
+          description: `Budget Range: ${formatCurrency(budget.min)} - ${formatCurrency(budget.max)}\n\nPackages: ${selectedPackageDetails.join(", ")}\n\nAdditional Notes: ${proposalForm.notes || "None"}`,
+          category: "marketing",
+          priority: "high",
+          guest_name: proposalForm.contactName,
+          guest_email: proposalForm.email,
+          budget_range: `${formatCurrency(budget.min)} - ${formatCurrency(budget.max)}`,
+          preferred_date: proposalForm.targetLaunchDate || null,
+          location: proposalForm.companyName || null,
+          status: "new"
+        });
+
+      if (error) throw error;
+
+      toast.success("Proposal request submitted successfully! Our team will contact you shortly.");
+      setIsProposalDialogOpen(false);
+      setProposalForm({
+        companyName: "",
+        contactName: "",
+        email: "",
+        phone: "",
+        notes: "",
+        targetLaunchDate: ""
+      });
+      setSelectedPackages([]);
+    } catch (error) {
+      console.error("Error submitting proposal:", error);
+      toast.error("Failed to submit proposal request");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -61,13 +135,121 @@ const MarketingPackagesPanel = () => {
             </div>
             <div className="text-right">
               <p className="text-sm text-muted-foreground">{selectedPackages.length} packages selected</p>
-              <Button size="sm" className="mt-2">
+              <Button 
+                size="sm" 
+                className="mt-2"
+                onClick={() => setIsProposalDialogOpen(true)}
+              >
+                <Send className="w-4 h-4 mr-2" />
                 Request Proposal
               </Button>
             </div>
           </div>
         </motion.div>
       )}
+
+      {/* Proposal Request Dialog */}
+      <Dialog open={isProposalDialogOpen} onOpenChange={setIsProposalDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Request Marketing Proposal</DialogTitle>
+            <DialogDescription>
+              Our team will prepare a detailed proposal for your selected marketing packages.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            {/* Selected Packages Summary */}
+            <div className="bg-muted/50 rounded-lg p-3">
+              <p className="text-sm font-medium mb-2">Selected Packages:</p>
+              <div className="flex flex-wrap gap-1">
+                {MARKETING_PACKAGES.filter(pkg => selectedPackages.includes(pkg.id)).map(pkg => (
+                  <Badge key={pkg.id} variant="secondary" className="text-xs">
+                    {pkg.name}
+                  </Badge>
+                ))}
+              </div>
+              <p className="text-sm text-muted-foreground mt-2">
+                Budget: {formatCurrency(budget.min)} - {formatCurrency(budget.max)}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="contactName">Contact Name *</Label>
+                <Input
+                  id="contactName"
+                  placeholder="Your name"
+                  value={proposalForm.contactName}
+                  onChange={(e) => setProposalForm({ ...proposalForm, contactName: e.target.value })}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={proposalForm.email}
+                  onChange={(e) => setProposalForm({ ...proposalForm, email: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="companyName">Company Name</Label>
+                <Input
+                  id="companyName"
+                  placeholder="Company name"
+                  value={proposalForm.companyName}
+                  onChange={(e) => setProposalForm({ ...proposalForm, companyName: e.target.value })}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="phone">Phone</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="+1 (555) 000-0000"
+                  value={proposalForm.phone}
+                  onChange={(e) => setProposalForm({ ...proposalForm, phone: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="targetLaunchDate">Target Launch Date</Label>
+              <Input
+                id="targetLaunchDate"
+                type="date"
+                value={proposalForm.targetLaunchDate}
+                onChange={(e) => setProposalForm({ ...proposalForm, targetLaunchDate: e.target.value })}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="notes">Additional Notes</Label>
+              <Textarea
+                id="notes"
+                placeholder="Any specific requirements or questions..."
+                rows={3}
+                value={proposalForm.notes}
+                onChange={(e) => setProposalForm({ ...proposalForm, notes: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsProposalDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmitProposal} disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : "Submit Request"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Tabs defaultValue="packages" className="space-y-6">
         <TabsList className="grid w-full grid-cols-3">

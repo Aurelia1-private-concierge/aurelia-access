@@ -74,7 +74,7 @@ import PartnerWaitlistPanel from "@/components/admin/PartnerWaitlistPanel";
 import N8NAutomationHub from "@/components/admin/N8NAutomationHub";
 import BacklinkStrategyPanel from "@/components/admin/BacklinkStrategyPanel";
 import PartnerMessagesPanel from "@/components/admin/PartnerMessagesPanel";
-
+import OnlineUsersIndicator from "@/components/admin/OnlineUsersIndicator";
 // Lazy load recharts-heavy components to prevent circular initialization errors
 const AnalyticsDashboard = lazy(() => import("@/components/admin/AnalyticsDashboard"));
 const VisitorAnalytics = lazy(() => import("@/components/admin/VisitorAnalytics"));
@@ -352,8 +352,9 @@ const Admin = () => {
                 <BookOpen className="h-4 w-4" />
                 Guide
               </Button>
+              <OnlineUsersIndicator />
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
                 <span>Encrypted Session Active</span>
               </div>
             </div>

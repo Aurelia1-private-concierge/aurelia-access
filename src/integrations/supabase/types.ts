@@ -958,6 +958,331 @@ export type Database = {
         }
         Relationships: []
       }
+      circle_activities: {
+        Row: {
+          activity_type: string
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json | null
+          title: string
+          user_id: string | null
+          visibility: string | null
+        }
+        Insert: {
+          activity_type: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          title: string
+          user_id?: string | null
+          visibility?: string | null
+        }
+        Update: {
+          activity_type?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          title?: string
+          user_id?: string | null
+          visibility?: string | null
+        }
+        Relationships: []
+      }
+      circle_connections: {
+        Row: {
+          ai_match_reasons: Json | null
+          ai_match_score: number | null
+          connected_at: string | null
+          created_at: string
+          id: string
+          introduction_note: string | null
+          recipient_id: string
+          requester_id: string
+          status: Database["public"]["Enums"]["connection_status"]
+          updated_at: string
+        }
+        Insert: {
+          ai_match_reasons?: Json | null
+          ai_match_score?: number | null
+          connected_at?: string | null
+          created_at?: string
+          id?: string
+          introduction_note?: string | null
+          recipient_id: string
+          requester_id: string
+          status?: Database["public"]["Enums"]["connection_status"]
+          updated_at?: string
+        }
+        Update: {
+          ai_match_reasons?: Json | null
+          ai_match_score?: number | null
+          connected_at?: string | null
+          created_at?: string
+          id?: string
+          introduction_note?: string | null
+          recipient_id?: string
+          requester_id?: string
+          status?: Database["public"]["Enums"]["connection_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      circle_introductions: {
+        Row: {
+          common_interests: string[] | null
+          created_at: string
+          id: string
+          match_reasons: Json | null
+          match_score: number
+          status: string | null
+          suggested_member_id: string
+          suggested_talking_points: Json | null
+          user_id: string
+          viewed_at: string | null
+        }
+        Insert: {
+          common_interests?: string[] | null
+          created_at?: string
+          id?: string
+          match_reasons?: Json | null
+          match_score: number
+          status?: string | null
+          suggested_member_id: string
+          suggested_talking_points?: Json | null
+          user_id: string
+          viewed_at?: string | null
+        }
+        Update: {
+          common_interests?: string[] | null
+          created_at?: string
+          id?: string
+          match_reasons?: Json | null
+          match_score?: number
+          status?: string | null
+          suggested_member_id?: string
+          suggested_talking_points?: Json | null
+          user_id?: string
+          viewed_at?: string | null
+        }
+        Relationships: []
+      }
+      circle_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_encrypted: boolean | null
+          is_read: boolean | null
+          read_at: string | null
+          recipient_id: string
+          reply_to_id: string | null
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_encrypted?: boolean | null
+          is_read?: boolean | null
+          read_at?: string | null
+          recipient_id: string
+          reply_to_id?: string | null
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_encrypted?: boolean | null
+          is_read?: boolean | null
+          read_at?: string | null
+          recipient_id?: string
+          reply_to_id?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "circle_messages_reply_to_id_fkey"
+            columns: ["reply_to_id"]
+            isOneToOne: false
+            referencedRelation: "circle_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      circle_opportunities: {
+        Row: {
+          category: string | null
+          created_at: string
+          creator_id: string
+          currency: string | null
+          description: string | null
+          expires_at: string | null
+          filled_slots: number | null
+          id: string
+          images: string[] | null
+          location: string | null
+          max_contribution: number | null
+          min_contribution: number | null
+          opportunity_type: Database["public"]["Enums"]["opportunity_type"]
+          requirements: Json | null
+          status: Database["public"]["Enums"]["opportunity_status"]
+          target_date: string | null
+          title: string
+          total_slots: number | null
+          updated_at: string
+          visibility: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          creator_id: string
+          currency?: string | null
+          description?: string | null
+          expires_at?: string | null
+          filled_slots?: number | null
+          id?: string
+          images?: string[] | null
+          location?: string | null
+          max_contribution?: number | null
+          min_contribution?: number | null
+          opportunity_type: Database["public"]["Enums"]["opportunity_type"]
+          requirements?: Json | null
+          status?: Database["public"]["Enums"]["opportunity_status"]
+          target_date?: string | null
+          title: string
+          total_slots?: number | null
+          updated_at?: string
+          visibility?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          creator_id?: string
+          currency?: string | null
+          description?: string | null
+          expires_at?: string | null
+          filled_slots?: number | null
+          id?: string
+          images?: string[] | null
+          location?: string | null
+          max_contribution?: number | null
+          min_contribution?: number | null
+          opportunity_type?: Database["public"]["Enums"]["opportunity_type"]
+          requirements?: Json | null
+          status?: Database["public"]["Enums"]["opportunity_status"]
+          target_date?: string | null
+          title?: string
+          total_slots?: number | null
+          updated_at?: string
+          visibility?: string | null
+        }
+        Relationships: []
+      }
+      circle_opportunity_interests: {
+        Row: {
+          approved: boolean | null
+          approved_at: string | null
+          contribution_amount: number | null
+          created_at: string
+          id: string
+          interest_level: string | null
+          message: string | null
+          opportunity_id: string
+          user_id: string
+        }
+        Insert: {
+          approved?: boolean | null
+          approved_at?: string | null
+          contribution_amount?: number | null
+          created_at?: string
+          id?: string
+          interest_level?: string | null
+          message?: string | null
+          opportunity_id: string
+          user_id: string
+        }
+        Update: {
+          approved?: boolean | null
+          approved_at?: string | null
+          contribution_amount?: number | null
+          created_at?: string
+          id?: string
+          interest_level?: string | null
+          message?: string | null
+          opportunity_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "circle_opportunity_interests_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "circle_opportunities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      circle_profiles: {
+        Row: {
+          assets: string[] | null
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string
+          id: string
+          interests: string[] | null
+          is_discoverable: boolean | null
+          location: string | null
+          net_worth_tier: string | null
+          privacy_level: string | null
+          title: string | null
+          updated_at: string
+          user_id: string
+          verification_status: string | null
+          verified_at: string | null
+        }
+        Insert: {
+          assets?: string[] | null
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name: string
+          id?: string
+          interests?: string[] | null
+          is_discoverable?: boolean | null
+          location?: string | null
+          net_worth_tier?: string | null
+          privacy_level?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id: string
+          verification_status?: string | null
+          verified_at?: string | null
+        }
+        Update: {
+          assets?: string[] | null
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string
+          id?: string
+          interests?: string[] | null
+          is_discoverable?: boolean | null
+          location?: string | null
+          net_worth_tier?: string | null
+          privacy_level?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+          verification_status?: string | null
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       client_notes: {
         Row: {
           client_id: string
@@ -5847,7 +6172,14 @@ export type Database = {
       app_role: "admin" | "partner" | "member"
       bid_status: "pending" | "accepted" | "rejected" | "withdrawn" | "expired"
       certificate_status: "active" | "pending" | "expired" | "revoked"
+      connection_status: "pending" | "accepted" | "declined" | "blocked"
       encryption_key_status: "active" | "rotating" | "retired" | "compromised"
+      opportunity_status: "open" | "filled" | "closed" | "cancelled"
+      opportunity_type:
+        | "co_investment"
+        | "experience"
+        | "deal_flow"
+        | "introduction"
       partner_status: "pending" | "approved" | "suspended" | "rejected"
       recommendation_status: "pending" | "viewed" | "bid_submitted" | "declined"
       request_status:
@@ -5999,7 +6331,15 @@ export const Constants = {
       app_role: ["admin", "partner", "member"],
       bid_status: ["pending", "accepted", "rejected", "withdrawn", "expired"],
       certificate_status: ["active", "pending", "expired", "revoked"],
+      connection_status: ["pending", "accepted", "declined", "blocked"],
       encryption_key_status: ["active", "rotating", "retired", "compromised"],
+      opportunity_status: ["open", "filled", "closed", "cancelled"],
+      opportunity_type: [
+        "co_investment",
+        "experience",
+        "deal_flow",
+        "introduction",
+      ],
       partner_status: ["pending", "approved", "suspended", "rejected"],
       recommendation_status: ["pending", "viewed", "bid_submitted", "declined"],
       request_status: [

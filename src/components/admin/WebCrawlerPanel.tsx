@@ -71,9 +71,23 @@ export const WebCrawlerPanel = () => {
     }
   };
 
+  const isValidUrl = (urlString: string): boolean => {
+    try {
+      const urlToCheck = urlString.startsWith('http') ? urlString : `https://${urlString}`;
+      const parsed = new URL(urlToCheck);
+      return parsed.hostname.includes('.') && !urlString.includes(' ');
+    } catch {
+      return false;
+    }
+  };
+
   const handleScrape = async () => {
     if (!url) {
       toast({ title: 'Error', description: 'Please enter a URL', variant: 'destructive' });
+      return;
+    }
+    if (!isValidUrl(url)) {
+      toast({ title: 'Invalid URL', description: 'Please enter a valid website URL (e.g., example.com)', variant: 'destructive' });
       return;
     }
     setIsLoading(true);
@@ -120,6 +134,10 @@ export const WebCrawlerPanel = () => {
       toast({ title: 'Error', description: 'Please enter a URL', variant: 'destructive' });
       return;
     }
+    if (!isValidUrl(url)) {
+      toast({ title: 'Invalid URL', description: 'Please enter a valid website URL', variant: 'destructive' });
+      return;
+    }
     setIsLoading(true);
     setResult(null);
     
@@ -141,6 +159,10 @@ export const WebCrawlerPanel = () => {
   const handleSummarize = async () => {
     if (!url) {
       toast({ title: 'Error', description: 'Please enter a URL', variant: 'destructive' });
+      return;
+    }
+    if (!isValidUrl(url)) {
+      toast({ title: 'Invalid URL', description: 'Please enter a valid website URL', variant: 'destructive' });
       return;
     }
     setIsLoading(true);
@@ -186,6 +208,10 @@ export const WebCrawlerPanel = () => {
   const handleMap = async () => {
     if (!url) {
       toast({ title: 'Error', description: 'Please enter a URL', variant: 'destructive' });
+      return;
+    }
+    if (!isValidUrl(url)) {
+      toast({ title: 'Invalid URL', description: 'Please enter a valid website URL', variant: 'destructive' });
       return;
     }
     setIsLoading(true);

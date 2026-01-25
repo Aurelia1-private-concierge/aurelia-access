@@ -6,12 +6,13 @@ import heroYacht from "@/assets/hero-yacht.mp4";
 import heroJet from "@/assets/hero-jet.mp4";
 import heroHoliday from "@/assets/hero-luxury-holiday.mp4";
 import heroPenthouse from "@/assets/hero-penthouse.mp4";
+import heroLuxuryShowcase from "@/assets/hero-luxury-showcase.mp4";
 import ScrollProgress from "@/components/ScrollProgress";
 import SectionDivider from "@/components/SectionDivider";
 import Footer from "@/components/Footer";
 
 // Array of luxury videos for rotating hero showcase
-const heroVideos = [heroYacht, heroJet, heroHoliday, heroPenthouse];
+const heroVideos = [heroLuxuryShowcase, heroYacht, heroJet, heroHoliday, heroPenthouse];
 
 // Simple error boundary for lazy-loaded sections
 class SectionErrorBoundary extends Component<{ children: ReactNode; fallback?: ReactNode }, { hasError: boolean }> {

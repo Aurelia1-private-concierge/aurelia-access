@@ -61,7 +61,7 @@ const TwitterProfile = lazy(() => import("./pages/TwitterProfile"));
 const YouTubeProfile = lazy(() => import("./pages/YouTubeProfile"));
 const MediaKit = lazy(() => import("./pages/MediaKit"));
 const Blog = lazy(() => import("./pages/Blog"));
-const Gallery = lazy(() => import("./pages/Gallery"));
+
 const Security = lazy(() => import("./pages/Security"));
 const AdCreatives = lazy(() => import("./pages/AdCreatives"));
 const DirectorySubmissions = lazy(() => import("./pages/DirectorySubmissions"));
@@ -487,14 +487,6 @@ const AnimatedRoutes = forwardRef<HTMLDivElement>((props, ref) => {
             element={
               <PageTransition>
                 <MediaKit />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/gallery"
-            element={
-              <PageTransition>
-                <Gallery />
               </PageTransition>
             }
           />

@@ -208,7 +208,11 @@ const Navigation = () => {
                 </div>
                 
                 {discoverLinks.map((link, index) => (
-                  <DropdownMenuItem key={link.href} asChild>
+                  <DropdownMenuItem 
+                    key={link.href} 
+                    asChild
+                    onSelect={(e) => e.preventDefault()}
+                  >
                     <Link
                       to={link.href}
                       className={`w-full cursor-pointer text-xs tracking-[0.1em] font-light px-3 py-2.5 rounded-lg transition-all duration-200 flex items-center gap-3 group/item ${

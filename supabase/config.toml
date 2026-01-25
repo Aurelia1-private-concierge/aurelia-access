@@ -218,3 +218,9 @@ verify_jwt = false
 
 [functions.prescience-engine]
 verify_jwt = false
+
+[functions.social-publish]
+verify_jwt = false
+
+[functions.generate-social-content]
+verify_jwt = false

@@ -5277,6 +5277,305 @@ export type Database = {
           },
         ]
       }
+      social_accounts: {
+        Row: {
+          access_token_encrypted: string | null
+          account_id: string | null
+          account_name: string
+          avatar_url: string | null
+          created_at: string | null
+          created_by: string | null
+          id: string
+          is_active: boolean | null
+          metadata: Json | null
+          platform: Database["public"]["Enums"]["social_platform"]
+          profile_url: string | null
+          refresh_token_encrypted: string | null
+          token_expires_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          access_token_encrypted?: string | null
+          account_id?: string | null
+          account_name: string
+          avatar_url?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          platform: Database["public"]["Enums"]["social_platform"]
+          profile_url?: string | null
+          refresh_token_encrypted?: string | null
+          token_expires_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          access_token_encrypted?: string | null
+          account_id?: string | null
+          account_name?: string
+          avatar_url?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          platform?: Database["public"]["Enums"]["social_platform"]
+          profile_url?: string | null
+          refresh_token_encrypted?: string | null
+          token_expires_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      social_advertising_posts: {
+        Row: {
+          account_id: string | null
+          campaign_id: string | null
+          content: string
+          created_at: string | null
+          created_by: string | null
+          engagement_metrics: Json | null
+          error_message: string | null
+          hashtags: string[] | null
+          id: string
+          media_urls: string[] | null
+          metadata: Json | null
+          platform: Database["public"]["Enums"]["social_platform"]
+          platform_post_id: string | null
+          platform_url: string | null
+          published_at: string | null
+          retry_count: number | null
+          scheduled_at: string | null
+          status: Database["public"]["Enums"]["social_post_status"] | null
+          updated_at: string | null
+        }
+        Insert: {
+          account_id?: string | null
+          campaign_id?: string | null
+          content: string
+          created_at?: string | null
+          created_by?: string | null
+          engagement_metrics?: Json | null
+          error_message?: string | null
+          hashtags?: string[] | null
+          id?: string
+          media_urls?: string[] | null
+          metadata?: Json | null
+          platform: Database["public"]["Enums"]["social_platform"]
+          platform_post_id?: string | null
+          platform_url?: string | null
+          published_at?: string | null
+          retry_count?: number | null
+          scheduled_at?: string | null
+          status?: Database["public"]["Enums"]["social_post_status"] | null
+          updated_at?: string | null
+        }
+        Update: {
+          account_id?: string | null
+          campaign_id?: string | null
+          content?: string
+          created_at?: string | null
+          created_by?: string | null
+          engagement_metrics?: Json | null
+          error_message?: string | null
+          hashtags?: string[] | null
+          id?: string
+          media_urls?: string[] | null
+          metadata?: Json | null
+          platform?: Database["public"]["Enums"]["social_platform"]
+          platform_post_id?: string | null
+          platform_url?: string | null
+          published_at?: string | null
+          retry_count?: number | null
+          scheduled_at?: string | null
+          status?: Database["public"]["Enums"]["social_post_status"] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_advertising_posts_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "social_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "social_advertising_posts_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "social_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_campaigns: {
+        Row: {
+          budget_cents: number | null
+          campaign_type: string | null
+          content_templates: Json | null
+          created_at: string | null
+          created_by: string | null
+          currency: string | null
+          description: string | null
+          end_date: string | null
+          id: string
+          metrics: Json | null
+          name: string
+          start_date: string | null
+          status: Database["public"]["Enums"]["social_campaign_status"] | null
+          target_audience: Json | null
+          target_platforms:
+            | Database["public"]["Enums"]["social_platform"][]
+            | null
+          updated_at: string | null
+        }
+        Insert: {
+          budget_cents?: number | null
+          campaign_type?: string | null
+          content_templates?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          metrics?: Json | null
+          name: string
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["social_campaign_status"] | null
+          target_audience?: Json | null
+          target_platforms?:
+            | Database["public"]["Enums"]["social_platform"][]
+            | null
+          updated_at?: string | null
+        }
+        Update: {
+          budget_cents?: number | null
+          campaign_type?: string | null
+          content_templates?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          metrics?: Json | null
+          name?: string
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["social_campaign_status"] | null
+          target_audience?: Json | null
+          target_platforms?:
+            | Database["public"]["Enums"]["social_platform"][]
+            | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      social_content_library: {
+        Row: {
+          category: string | null
+          content_template: string
+          created_at: string | null
+          created_by: string | null
+          hashtag_sets: string[] | null
+          id: string
+          media_urls: string[] | null
+          performance_score: number | null
+          platform: Database["public"]["Enums"]["social_platform"] | null
+          target_audience: string[] | null
+          times_used: number | null
+          title: string
+          tone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          content_template: string
+          created_at?: string | null
+          created_by?: string | null
+          hashtag_sets?: string[] | null
+          id?: string
+          media_urls?: string[] | null
+          performance_score?: number | null
+          platform?: Database["public"]["Enums"]["social_platform"] | null
+          target_audience?: string[] | null
+          times_used?: number | null
+          title: string
+          tone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          content_template?: string
+          created_at?: string | null
+          created_by?: string | null
+          hashtag_sets?: string[] | null
+          id?: string
+          media_urls?: string[] | null
+          performance_score?: number | null
+          platform?: Database["public"]["Enums"]["social_platform"] | null
+          target_audience?: string[] | null
+          times_used?: number | null
+          title?: string
+          tone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      social_post_analytics: {
+        Row: {
+          clicks: number | null
+          comments: number | null
+          demographics: Json | null
+          engagement_rate: number | null
+          id: string
+          impressions: number | null
+          likes: number | null
+          metadata: Json | null
+          post_id: string
+          reach: number | null
+          recorded_at: string | null
+          shares: number | null
+        }
+        Insert: {
+          clicks?: number | null
+          comments?: number | null
+          demographics?: Json | null
+          engagement_rate?: number | null
+          id?: string
+          impressions?: number | null
+          likes?: number | null
+          metadata?: Json | null
+          post_id: string
+          reach?: number | null
+          recorded_at?: string | null
+          shares?: number | null
+        }
+        Update: {
+          clicks?: number | null
+          comments?: number | null
+          demographics?: Json | null
+          engagement_rate?: number | null
+          id?: string
+          impressions?: number | null
+          likes?: number | null
+          metadata?: Json | null
+          post_id?: string
+          reach?: number | null
+          recorded_at?: string | null
+          shares?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_post_analytics_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "social_advertising_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       social_posts: {
         Row: {
           campaign: string | null
@@ -6201,6 +6500,26 @@ export type Database = {
         | "shopping"
         | "chauffeur"
       site_status: "draft" | "published" | "archived"
+      social_campaign_status:
+        | "draft"
+        | "active"
+        | "paused"
+        | "completed"
+        | "archived"
+      social_platform:
+        | "twitter"
+        | "linkedin"
+        | "instagram"
+        | "facebook"
+        | "reddit"
+        | "threads"
+      social_post_status:
+        | "draft"
+        | "scheduled"
+        | "publishing"
+        | "published"
+        | "failed"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -6363,6 +6682,29 @@ export const Constants = {
         "chauffeur",
       ],
       site_status: ["draft", "published", "archived"],
+      social_campaign_status: [
+        "draft",
+        "active",
+        "paused",
+        "completed",
+        "archived",
+      ],
+      social_platform: [
+        "twitter",
+        "linkedin",
+        "instagram",
+        "facebook",
+        "reddit",
+        "threads",
+      ],
+      social_post_status: [
+        "draft",
+        "scheduled",
+        "publishing",
+        "published",
+        "failed",
+        "cancelled",
+      ],
     },
   },
 } as const

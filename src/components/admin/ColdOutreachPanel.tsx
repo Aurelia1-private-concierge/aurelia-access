@@ -202,6 +202,12 @@ const ColdOutreachPanel = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   
+  // Start campaign dialog state
+  const [startCampaignDialogOpen, setStartCampaignDialogOpen] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState<OutreachCampaign | null>(null);
+  const [targetCount, setTargetCount] = useState(50);
+  const [isStarting, setIsStarting] = useState(false);
+  
   const { logAdminAction } = useAdminAuditLog();
 
   // Fetch campaigns from database
@@ -338,6 +344,79 @@ const ColdOutreachPanel = () => {
       toast({ title: "Error", description: "Failed to create campaign", variant: "destructive" });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleStartDraftCampaign = (campaign: OutreachCampaign) => {
+    setSelectedCampaign(campaign);
+    setTargetCount(50);
+    setStartCampaignDialogOpen(true);
+  };
+
+  const handleConfirmStartCampaign = async () => {
+    if (!selectedCampaign) return;
+    
+    setIsStarting(true);
+    try {
+      // Fetch qualified prospects from the campaign's category
+      const { data: prospects, error: prospectError } = await supabase
+        .from("potential_partners")
+        .select("id, company_name, contact_email")
+        .eq("category", selectedCampaign.category.replace("private_", "").replace("yacht_charter", "yacht").replace("real_estate", "real_estate"))
+        .eq("status", "qualified")
+        .not("contact_email", "is", null)
+        .limit(targetCount);
+
+      if (prospectError) throw prospectError;
+
+      const actualTargetCount = prospects?.length || 0;
+
+      if (actualTargetCount === 0) {
+        toast({ 
+          title: "No Prospects Available", 
+          description: "Add qualified prospects to this category first using Auto-Find Partners",
+          variant: "destructive" 
+        });
+        setIsStarting(false);
+        return;
+      }
+
+      // Update campaign with target count and set status to active
+      const { error } = await supabase
+        .from("outreach_campaigns")
+        .update({ 
+          target_count: actualTargetCount,
+          status: "active",
+          start_date: new Date().toISOString()
+        })
+        .eq("id", selectedCampaign.id);
+
+      if (error) throw error;
+
+      setCampaigns((prev) =>
+        prev.map((c) => c.id === selectedCampaign.id 
+          ? { ...c, target_count: actualTargetCount, status: "active", start_date: new Date().toISOString() } 
+          : c
+        )
+      );
+      
+      logAdminAction("admin.campaign_status_changed", "campaign", selectedCampaign.id, { 
+        target_count: actualTargetCount,
+        category: selectedCampaign.category 
+      });
+      
+      toast({ 
+        title: "Campaign Started", 
+        description: `Targeting ${actualTargetCount} prospects in ${getCategoryLabel(selectedCampaign.category)}` 
+      });
+      
+      setStartCampaignDialogOpen(false);
+      setSelectedCampaign(null);
+    } catch (error) {
+      console.error("Error starting campaign:", error);
+      toast({ title: "Error", description: "Failed to start campaign", variant: "destructive" });
+    } finally {
+      setIsStarting(false);
     }
   };
 
@@ -643,18 +722,27 @@ const handleAddToProspects = async (results: any[]) => {
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant={campaign.status === "active" ? "outline" : "default"}
-                            onClick={() => handleToggleCampaign(campaign.id)}
-                            disabled={campaign.status === "draft" && campaign.target_count === 0}
-                          >
-                            {campaign.status === "active" ? (
-                              <><Pause className="h-3 w-3 mr-1" /> Pause</>
-                            ) : (
-                              <><Play className="h-3 w-3 mr-1" /> Start</>
-                            )}
-                          </Button>
+                          {campaign.status === "draft" && campaign.target_count === 0 ? (
+                            <Button
+                              size="sm"
+                              variant="default"
+                              onClick={() => handleStartDraftCampaign(campaign)}
+                            >
+                              <Play className="h-3 w-3 mr-1" /> Start
+                            </Button>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant={campaign.status === "active" ? "outline" : "default"}
+                              onClick={() => handleToggleCampaign(campaign.id)}
+                            >
+                              {campaign.status === "active" ? (
+                                <><Pause className="h-3 w-3 mr-1" /> Pause</>
+                              ) : (
+                                <><Play className="h-3 w-3 mr-1" /> Start</>
+                              )}
+                            </Button>
+                          )}
                           <Button size="sm" variant="ghost">
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -1062,6 +1150,81 @@ const handleAddToProspects = async (results: any[]) => {
               </div>
             )}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Start Campaign Dialog */}
+      <Dialog open={startCampaignDialogOpen} onOpenChange={setStartCampaignDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Start Campaign</DialogTitle>
+            <DialogDescription>
+              Configure and launch your outreach campaign
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            {selectedCampaign && (
+              <>
+                <div className="p-4 bg-muted/30 rounded-lg border border-border/50">
+                  <p className="font-medium">{selectedCampaign.name}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Category: {getCategoryLabel(selectedCampaign.category)}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedCampaign.sequence_steps}-step email sequence
+                  </p>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="targetCount">Target Prospects (max)</Label>
+                  <Input
+                    id="targetCount"
+                    type="number"
+                    min={10}
+                    max={500}
+                    value={targetCount}
+                    onChange={(e) => setTargetCount(parseInt(e.target.value) || 50)}
+                    placeholder="50"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    The campaign will target up to this many qualified prospects in the selected category.
+                  </p>
+                </div>
+
+                <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                  <p className="text-sm text-amber-600 dark:text-amber-400">
+                    <strong>Note:</strong> Make sure you have qualified prospects in this category. 
+                    Use "Auto-Find Partners" to discover and qualify new prospects first.
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
+          <DialogFooter className="flex gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setStartCampaignDialogOpen(false)}
+              disabled={isStarting}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleConfirmStartCampaign}
+              disabled={isStarting}
+            >
+              {isStarting ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Starting...
+                </>
+              ) : (
+                <>
+                  <Play className="h-4 w-4 mr-2" />
+                  Start Campaign
+                </>
+              )}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

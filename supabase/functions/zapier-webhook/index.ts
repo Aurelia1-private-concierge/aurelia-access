@@ -76,13 +76,23 @@ serve(async (req) => {
       );
     }
 
-    // Check admin role - only admins can trigger webhooks
-    const { data: isAdmin } = await supabase.rpc("has_role", {
-      _user_id: user.id,
-      _role: "admin",
-    });
+    // Check admin role - query user_roles table directly to avoid RPC overload ambiguity
+    const { data: adminRole, error: roleError } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("role", "admin")
+      .maybeSingle();
 
-    if (!isAdmin) {
+    if (roleError) {
+      console.error("Error checking admin role:", roleError);
+      return new Response(
+        JSON.stringify({ error: "Failed to verify admin status" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (!adminRole) {
       console.log(`Zapier webhook rejected: User ${user.id} is not admin`);
       return new Response(
         JSON.stringify({ error: "Admin access required" }),

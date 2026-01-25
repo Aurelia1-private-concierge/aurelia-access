@@ -197,3 +197,18 @@ verify_jwt = false
 
 [functions.vip-alert-notify]
 verify_jwt = false
+
+[functions.prismatic-gateway]
+verify_jwt = false
+
+[functions.process-notification-outbox]
+verify_jwt = false
+
+[functions.event-notify]
+verify_jwt = false
+
+[functions.auto-discover-vendors]
+verify_jwt = false
+
+[functions.ai-partner-matching]
+verify_jwt = false

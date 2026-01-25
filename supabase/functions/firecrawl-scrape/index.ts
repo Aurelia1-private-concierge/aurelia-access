@@ -120,7 +120,8 @@ Deno.serve(async (req) => {
       requestBody.headers = options.headers;
     }
 
-    const response = await fetch('https://api.firecrawl.dev/v1/scrape', {
+    // First attempt
+    let response = await fetch('https://api.firecrawl.dev/v1/scrape', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -129,12 +130,47 @@ Deno.serve(async (req) => {
       body: JSON.stringify(requestBody),
     });
 
-    const data = await response.json();
+    let data = await response.json();
+
+    // If first attempt fails with browser/loading error, retry with simpler options
+    if (!response.ok && data.error?.includes('failed to load')) {
+      console.log('First attempt failed, retrying with simpler options...');
+      
+      const retryBody = {
+        url: formattedUrl,
+        formats: ['markdown'],
+        onlyMainContent: true,
+        waitFor: 5000, // Wait longer for page to load
+      };
+      
+      response = await fetch('https://api.firecrawl.dev/v1/scrape', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(retryBody),
+      });
+      
+      data = await response.json();
+    }
 
     if (!response.ok) {
       console.error('Firecrawl API error:', data);
+      
+      // Provide user-friendly error messages
+      let userError = data.error || `Request failed with status ${response.status}`;
+      if (userError.includes('failed to load') || userError.includes('undefined')) {
+        userError = `Unable to access this website. The site may be blocking automated access, have security protections (CloudFlare, etc.), or be temporarily unavailable. Try a different URL or check if the site is publicly accessible.`;
+      }
+      
       return new Response(
-        JSON.stringify({ success: false, error: data.error || `Request failed with status ${response.status}` }),
+        JSON.stringify({ 
+          success: false, 
+          error: userError,
+          technicalError: data.error,
+          suggestion: 'Some websites block automated scraping. Try using the site\'s public API if available, or contact the site owner for data access.'
+        }),
         { status: response.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

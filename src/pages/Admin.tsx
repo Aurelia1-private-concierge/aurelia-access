@@ -87,6 +87,7 @@ const ConversionFunnelDashboard = lazy(() => import("@/components/admin/Conversi
 const AttributionAnalytics = lazy(() => import("@/components/admin/AttributionAnalytics"));
 const FunnelDropoffAnalytics = lazy(() => import("@/components/admin/FunnelDropoffAnalytics"));
 const VIPLeadsPanel = lazy(() => import("@/components/admin/VIPLeadsPanel"));
+const GlobalAuditDashboard = lazy(() => import("@/components/admin/GlobalAuditDashboard"));
 
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -402,8 +403,15 @@ const Admin = () => {
             <TabsTrigger value="systemhealth">System Health</TabsTrigger>
             <TabsTrigger value="publication">Publication</TabsTrigger>
             <TabsTrigger value="auctions">Auctions</TabsTrigger>
+            <TabsTrigger value="globalaudit">Global Audit</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="globalaudit" className="space-y-6">
+            <Suspense fallback={<ChartLoading />}>
+              <GlobalAuditDashboard />
+            </Suspense>
+          </TabsContent>
 
           <TabsContent value="settings" className="space-y-6">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>

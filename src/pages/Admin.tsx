@@ -88,6 +88,7 @@ const AttributionAnalytics = lazy(() => import("@/components/admin/AttributionAn
 const FunnelDropoffAnalytics = lazy(() => import("@/components/admin/FunnelDropoffAnalytics"));
 const VIPLeadsPanel = lazy(() => import("@/components/admin/VIPLeadsPanel"));
 const GlobalAuditDashboard = lazy(() => import("@/components/admin/GlobalAuditDashboard"));
+const SocialAdvertisingDashboard = lazy(() => import("@/components/admin/SocialAdvertisingDashboard"));
 
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -404,12 +405,19 @@ const Admin = () => {
             <TabsTrigger value="publication">Publication</TabsTrigger>
             <TabsTrigger value="auctions">Auctions</TabsTrigger>
             <TabsTrigger value="globalaudit">Global Audit</TabsTrigger>
+            <TabsTrigger value="socialads">Social Advertising</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
           <TabsContent value="globalaudit" className="space-y-6">
             <Suspense fallback={<ChartLoading />}>
               <GlobalAuditDashboard />
+            </Suspense>
+          </TabsContent>
+
+          <TabsContent value="socialads" className="space-y-6">
+            <Suspense fallback={<ChartLoading />}>
+              <SocialAdvertisingDashboard />
             </Suspense>
           </TabsContent>
 

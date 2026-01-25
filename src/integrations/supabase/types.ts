@@ -3516,6 +3516,98 @@ export type Database = {
         }
         Relationships: []
       }
+      prismatic_api_logs: {
+        Row: {
+          created_at: string
+          endpoint: string
+          error_message: string | null
+          id: string
+          integration_id: string | null
+          ip_address: string | null
+          method: string
+          request_payload: Json | null
+          response_status: number
+          response_time_ms: number | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          endpoint: string
+          error_message?: string | null
+          id?: string
+          integration_id?: string | null
+          ip_address?: string | null
+          method: string
+          request_payload?: Json | null
+          response_status: number
+          response_time_ms?: number | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string
+          error_message?: string | null
+          id?: string
+          integration_id?: string | null
+          ip_address?: string | null
+          method?: string
+          request_payload?: Json | null
+          response_status?: number
+          response_time_ms?: number | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prismatic_api_logs_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "prismatic_integrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prismatic_integrations: {
+        Row: {
+          api_key_hash: string
+          created_at: string
+          id: string
+          integration_id: string
+          is_active: boolean
+          last_used_at: string | null
+          metadata: Json | null
+          name: string
+          rate_limit_per_minute: number
+          scopes: string[]
+          updated_at: string
+        }
+        Insert: {
+          api_key_hash: string
+          created_at?: string
+          id?: string
+          integration_id: string
+          is_active?: boolean
+          last_used_at?: string | null
+          metadata?: Json | null
+          name: string
+          rate_limit_per_minute?: number
+          scopes?: string[]
+          updated_at?: string
+        }
+        Update: {
+          api_key_hash?: string
+          created_at?: string
+          id?: string
+          integration_id?: string
+          is_active?: boolean
+          last_used_at?: string | null
+          metadata?: Json | null
+          name?: string
+          rate_limit_per_minute?: number
+          scopes?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       proactive_notification_queue: {
         Row: {
           created_at: string
@@ -5428,6 +5520,10 @@ export type Database = {
       }
       check_launch_signup_rate_limit: {
         Args: { p_email: string; p_phone: string }
+        Returns: boolean
+      }
+      check_prismatic_rate_limit: {
+        Args: { p_integration_id: string; p_limit?: number }
         Returns: boolean
       }
       check_rate_limit: {

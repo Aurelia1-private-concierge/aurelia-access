@@ -215,3 +215,6 @@ verify_jwt = false
 
 [functions.generate-marketing-narration]
 verify_jwt = false
+
+[functions.prescience-engine]
+verify_jwt = false

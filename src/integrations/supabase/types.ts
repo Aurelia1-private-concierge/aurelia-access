@@ -2265,6 +2265,90 @@ export type Database = {
         }
         Relationships: []
       }
+      lifestyle_opportunities: {
+        Row: {
+          auto_book_enabled: boolean | null
+          available_from: string | null
+          available_until: string | null
+          booking_reference: string | null
+          category: string
+          created_at: string | null
+          currency: string | null
+          description: string
+          estimated_cost: number | null
+          expires_at: string | null
+          external_data: Json | null
+          id: string
+          images: Json | null
+          location: string | null
+          match_reasons: Json
+          match_score: number
+          member_response: string | null
+          opportunity_type: string
+          priority: number | null
+          responded_at: string | null
+          status: string | null
+          suggested_dates: Json | null
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          auto_book_enabled?: boolean | null
+          available_from?: string | null
+          available_until?: string | null
+          booking_reference?: string | null
+          category: string
+          created_at?: string | null
+          currency?: string | null
+          description: string
+          estimated_cost?: number | null
+          expires_at?: string | null
+          external_data?: Json | null
+          id?: string
+          images?: Json | null
+          location?: string | null
+          match_reasons: Json
+          match_score: number
+          member_response?: string | null
+          opportunity_type: string
+          priority?: number | null
+          responded_at?: string | null
+          status?: string | null
+          suggested_dates?: Json | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          auto_book_enabled?: boolean | null
+          available_from?: string | null
+          available_until?: string | null
+          booking_reference?: string | null
+          category?: string
+          created_at?: string | null
+          currency?: string | null
+          description?: string
+          estimated_cost?: number | null
+          expires_at?: string | null
+          external_data?: Json | null
+          id?: string
+          images?: Json | null
+          location?: string | null
+          match_reasons?: Json
+          match_score?: number
+          member_response?: string | null
+          opportunity_type?: string
+          priority?: number | null
+          responded_at?: string | null
+          status?: string | null
+          suggested_dates?: Json | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       login_alerts: {
         Row: {
           alert_type: string
@@ -2356,6 +2440,117 @@ export type Database = {
           login_count?: number | null
           os?: string | null
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      member_important_dates: {
+        Row: {
+          associated_person: string | null
+          created_at: string | null
+          date_type: string
+          date_value: string
+          description: string | null
+          id: string
+          preferences: Json | null
+          recurring: boolean | null
+          reminder_days: number | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          associated_person?: string | null
+          created_at?: string | null
+          date_type: string
+          date_value: string
+          description?: string | null
+          id?: string
+          preferences?: Json | null
+          recurring?: boolean | null
+          reminder_days?: number | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          associated_person?: string | null
+          created_at?: string | null
+          date_type?: string
+          date_value?: string
+          description?: string | null
+          id?: string
+          preferences?: Json | null
+          recurring?: boolean | null
+          reminder_days?: number | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      member_preference_dna: {
+        Row: {
+          adventure_score: number | null
+          avoided_categories: Json | null
+          confidence_score: number | null
+          created_at: string | null
+          currency: string | null
+          data_points_analyzed: number | null
+          id: string
+          last_learning_at: string | null
+          luxury_threshold: number | null
+          preferred_booking_lead_days: number | null
+          preferred_cuisines: Json | null
+          preferred_destinations: Json | null
+          preferred_experiences: Json | null
+          preferred_travel_months: Json | null
+          privacy_preference: number | null
+          social_preference: number | null
+          spontaneity_score: number | null
+          typical_spend_per_experience: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          adventure_score?: number | null
+          avoided_categories?: Json | null
+          confidence_score?: number | null
+          created_at?: string | null
+          currency?: string | null
+          data_points_analyzed?: number | null
+          id?: string
+          last_learning_at?: string | null
+          luxury_threshold?: number | null
+          preferred_booking_lead_days?: number | null
+          preferred_cuisines?: Json | null
+          preferred_destinations?: Json | null
+          preferred_experiences?: Json | null
+          preferred_travel_months?: Json | null
+          privacy_preference?: number | null
+          social_preference?: number | null
+          spontaneity_score?: number | null
+          typical_spend_per_experience?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          adventure_score?: number | null
+          avoided_categories?: Json | null
+          confidence_score?: number | null
+          created_at?: string | null
+          currency?: string | null
+          data_points_analyzed?: number | null
+          id?: string
+          last_learning_at?: string | null
+          luxury_threshold?: number | null
+          preferred_booking_lead_days?: number | null
+          preferred_cuisines?: Json | null
+          preferred_destinations?: Json | null
+          preferred_experiences?: Json | null
+          preferred_travel_months?: Json | null
+          privacy_preference?: number | null
+          social_preference?: number | null
+          spontaneity_score?: number | null
+          typical_spend_per_experience?: number | null
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []
@@ -3430,6 +3625,39 @@ export type Database = {
           status?: string | null
           title?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      preference_signals: {
+        Row: {
+          category: string
+          created_at: string | null
+          id: string
+          processed: boolean | null
+          sentiment_score: number | null
+          signal_data: Json
+          signal_type: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          id?: string
+          processed?: boolean | null
+          sentiment_score?: number | null
+          signal_data: Json
+          signal_type: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          id?: string
+          processed?: boolean | null
+          sentiment_score?: number | null
+          signal_data?: Json
+          signal_type?: string
+          user_id?: string
         }
         Relationships: []
       }

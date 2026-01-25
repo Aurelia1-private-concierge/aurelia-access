@@ -697,7 +697,7 @@ export const WebCrawlerPanel = () => {
               )}
               
               {/* Search results */}
-              {activeTab === 'search' && result.data && (
+              {activeTab === 'search' && result.data && Array.isArray(result.data) && (
                 <div className="space-y-3">
                   {result.data.map((item: any, idx: number) => (
                     <div key={idx} className="p-3 rounded-lg bg-muted/50 space-y-1">

@@ -212,3 +212,6 @@ verify_jwt = false
 
 [functions.ai-partner-matching]
 verify_jwt = false
+
+[functions.generate-marketing-narration]
+verify_jwt = false

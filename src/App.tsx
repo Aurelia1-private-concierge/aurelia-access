@@ -80,6 +80,7 @@ const AdminGuide = lazy(() => import("./pages/AdminGuide"));
 const Atelier = lazy(() => import("./pages/Atelier"));
 const SiteBuilder = lazy(() => import("./components/atelier/SiteBuilder"));
 const UserGuide = lazy(() => import("./pages/UserGuide"));
+const VideoShowcase = lazy(() => import("./pages/VideoShowcase"));
 
 // Production debugging
 const log = (msg: string) => console.log(`[App ${Date.now()}] ${msg}`);
@@ -495,6 +496,14 @@ const AnimatedRoutes = forwardRef<HTMLDivElement>((props, ref) => {
             element={
               <PageTransition>
                 <Blog />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/videos"
+            element={
+              <PageTransition>
+                <VideoShowcase />
               </PageTransition>
             }
           />

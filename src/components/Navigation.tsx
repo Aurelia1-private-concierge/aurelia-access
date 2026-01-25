@@ -31,6 +31,7 @@ const primaryLinks = [
 const discoverLinks = [
   { href: "/services/marketplace", label: "Marketplace" },
   { href: "/auctions", label: "Auction House" },
+  { href: "/videos", label: "Video Showcase" },
 ];
 
 // All page links for mobile menu
@@ -38,6 +39,7 @@ const pageLinks = [
   { href: "/services", label: "Services" },
   { href: "/services/marketplace", label: "Marketplace" },
   { href: "/auctions", label: "Auctions" },
+  { href: "/videos", label: "Videos" },
   { href: "/blog", label: "Journal" },
   { href: "/orla", label: "Meet Orla" },
   { href: "/partners/join", label: "Partners" },

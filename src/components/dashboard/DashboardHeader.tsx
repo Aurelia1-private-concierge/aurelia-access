@@ -1,6 +1,7 @@
 import { Shield, Search, Crown, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import NotificationPanel from "./NotificationPanel";
+import OrlaIntelligenceSwitch from "./OrlaIntelligenceSwitch";
 import { useTierTheme } from "@/contexts/TierThemeContext";
 import { cn } from "@/lib/utils";
 import { type ActiveView } from "./DashboardSidebar";
@@ -73,6 +74,9 @@ const DashboardHeader = ({ activeView }: DashboardHeaderProps) => {
       </div>
 
       <div className="flex items-center gap-2 sm:gap-4">
+        {/* EQ/IQ Mode Switch */}
+        <OrlaIntelligenceSwitch />
+
         {/* Search */}
         <div className={cn(
           "hidden md:flex items-center gap-2 px-4 py-2 bg-muted/30 border rounded-lg",

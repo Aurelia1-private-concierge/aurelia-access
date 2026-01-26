@@ -246,6 +246,51 @@ export type Database = {
         }
         Relationships: []
       }
+      attribution_events: {
+        Row: {
+          campaign: string | null
+          channel: string | null
+          content: string | null
+          created_at: string | null
+          event_value: number | null
+          id: string
+          medium: string | null
+          page_path: string | null
+          session_id: string
+          source: string | null
+          touchpoint_type: string
+          user_id: string | null
+        }
+        Insert: {
+          campaign?: string | null
+          channel?: string | null
+          content?: string | null
+          created_at?: string | null
+          event_value?: number | null
+          id?: string
+          medium?: string | null
+          page_path?: string | null
+          session_id: string
+          source?: string | null
+          touchpoint_type: string
+          user_id?: string | null
+        }
+        Update: {
+          campaign?: string | null
+          channel?: string | null
+          content?: string | null
+          created_at?: string | null
+          event_value?: number | null
+          id?: string
+          medium?: string | null
+          page_path?: string | null
+          session_id?: string
+          source?: string | null
+          touchpoint_type?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       auction_bids: {
         Row: {
           amount: number
@@ -900,6 +945,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      campaign_alerts: {
+        Row: {
+          acknowledged: boolean | null
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          alert_type: string
+          campaign_id: string
+          campaign_name: string | null
+          current_value: number | null
+          id: string
+          message: string | null
+          threshold: number | null
+          triggered_at: string | null
+        }
+        Insert: {
+          acknowledged?: boolean | null
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type: string
+          campaign_id: string
+          campaign_name?: string | null
+          current_value?: number | null
+          id?: string
+          message?: string | null
+          threshold?: number | null
+          triggered_at?: string | null
+        }
+        Update: {
+          acknowledged?: boolean | null
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type?: string
+          campaign_id?: string
+          campaign_name?: string | null
+          current_value?: number | null
+          id?: string
+          message?: string | null
+          threshold?: number | null
+          triggered_at?: string | null
+        }
+        Relationships: []
       }
       certificates: {
         Row: {
@@ -1571,6 +1658,51 @@ export type Database = {
           status?: string
           updated_at?: string
           webhook_sent?: boolean | null
+        }
+        Relationships: []
+      }
+      content_gaps: {
+        Row: {
+          assigned_to: string | null
+          competitor_coverage: Json | null
+          content_type: string | null
+          created_at: string | null
+          difficulty_score: number | null
+          id: string
+          keyword: string
+          priority: string | null
+          search_volume: number | null
+          status: string | null
+          target_page: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          competitor_coverage?: Json | null
+          content_type?: string | null
+          created_at?: string | null
+          difficulty_score?: number | null
+          id?: string
+          keyword: string
+          priority?: string | null
+          search_volume?: number | null
+          status?: string | null
+          target_page?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          competitor_coverage?: Json | null
+          content_type?: string | null
+          created_at?: string | null
+          difficulty_score?: number | null
+          id?: string
+          keyword?: string
+          priority?: string | null
+          search_volume?: number | null
+          status?: string | null
+          target_page?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -2674,6 +2806,51 @@ export type Database = {
         }
         Relationships: []
       }
+      local_seo_markets: {
+        Row: {
+          citations_count: number | null
+          city: string
+          country: string
+          created_at: string | null
+          gbp_claimed: boolean | null
+          id: string
+          landing_page_url: string | null
+          local_keywords: Json | null
+          priority: number | null
+          region: string | null
+          schema_implemented: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          citations_count?: number | null
+          city: string
+          country: string
+          created_at?: string | null
+          gbp_claimed?: boolean | null
+          id?: string
+          landing_page_url?: string | null
+          local_keywords?: Json | null
+          priority?: number | null
+          region?: string | null
+          schema_implemented?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          citations_count?: number | null
+          city?: string
+          country?: string
+          created_at?: string | null
+          gbp_claimed?: boolean | null
+          id?: string
+          landing_page_url?: string | null
+          local_keywords?: Json | null
+          priority?: number | null
+          region?: string | null
+          schema_implemented?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       login_alerts: {
         Row: {
           alert_type: string
@@ -2766,6 +2943,60 @@ export type Database = {
           os?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      marketing_strategies: {
+        Row: {
+          category: string
+          channels: string[] | null
+          created_at: string | null
+          description: string | null
+          estimated_hours_weekly: number | null
+          estimated_monthly_budget: number | null
+          expected_results: string | null
+          expected_roi: string | null
+          id: string
+          name: string
+          priority: number | null
+          status: Database["public"]["Enums"]["strategy_status"] | null
+          target_cpa: number | null
+          type: Database["public"]["Enums"]["strategy_type"]
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          channels?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          estimated_hours_weekly?: number | null
+          estimated_monthly_budget?: number | null
+          expected_results?: string | null
+          expected_roi?: string | null
+          id?: string
+          name: string
+          priority?: number | null
+          status?: Database["public"]["Enums"]["strategy_status"] | null
+          target_cpa?: number | null
+          type: Database["public"]["Enums"]["strategy_type"]
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          channels?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          estimated_hours_weekly?: number | null
+          estimated_monthly_budget?: number | null
+          expected_results?: string | null
+          expected_roi?: string | null
+          id?: string
+          name?: string
+          priority?: number | null
+          status?: Database["public"]["Enums"]["strategy_status"] | null
+          target_cpa?: number | null
+          type?: Database["public"]["Enums"]["strategy_type"]
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -2925,6 +3156,66 @@ export type Database = {
           template_id?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      network_partnerships: {
+        Row: {
+          conversions_from_referrals: number | null
+          created_at: string | null
+          engagement_notes: string | null
+          id: string
+          last_contact_at: string | null
+          network_name: string
+          network_type: string | null
+          next_followup_at: string | null
+          partnership_status:
+            | Database["public"]["Enums"]["partnership_status"]
+            | null
+          playbook_url: string | null
+          primary_contact_email: string | null
+          primary_contact_name: string | null
+          primary_contact_phone: string | null
+          referrals_received: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          conversions_from_referrals?: number | null
+          created_at?: string | null
+          engagement_notes?: string | null
+          id?: string
+          last_contact_at?: string | null
+          network_name: string
+          network_type?: string | null
+          next_followup_at?: string | null
+          partnership_status?:
+            | Database["public"]["Enums"]["partnership_status"]
+            | null
+          playbook_url?: string | null
+          primary_contact_email?: string | null
+          primary_contact_name?: string | null
+          primary_contact_phone?: string | null
+          referrals_received?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          conversions_from_referrals?: number | null
+          created_at?: string | null
+          engagement_notes?: string | null
+          id?: string
+          last_contact_at?: string | null
+          network_name?: string
+          network_type?: string | null
+          next_followup_at?: string | null
+          partnership_status?:
+            | Database["public"]["Enums"]["partnership_status"]
+            | null
+          playbook_url?: string | null
+          primary_contact_email?: string | null
+          primary_contact_name?: string | null
+          primary_contact_phone?: string | null
+          referrals_received?: number | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -6685,6 +6976,7 @@ export type Database = {
         | "deal_flow"
         | "introduction"
       partner_status: "pending" | "approved" | "suspended" | "rejected"
+      partnership_status: "active" | "pending" | "negotiating" | "declined"
       recommendation_status: "pending" | "viewed" | "bid_submitted" | "declined"
       request_status:
         | "pending"
@@ -6725,6 +7017,8 @@ export type Database = {
         | "published"
         | "failed"
         | "cancelled"
+      strategy_status: "active" | "planned" | "paused"
+      strategy_type: "free" | "paid"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -6865,6 +7159,7 @@ export const Constants = {
         "introduction",
       ],
       partner_status: ["pending", "approved", "suspended", "rejected"],
+      partnership_status: ["active", "pending", "negotiating", "declined"],
       recommendation_status: ["pending", "viewed", "bid_submitted", "declined"],
       request_status: [
         "pending",
@@ -6910,6 +7205,8 @@ export const Constants = {
         "failed",
         "cancelled",
       ],
+      strategy_status: ["active", "planned", "paused"],
+      strategy_type: ["free", "paid"],
     },
   },
 } as const

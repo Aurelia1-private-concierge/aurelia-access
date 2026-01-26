@@ -21,6 +21,7 @@ import { ReducedMotionProvider } from "./components/a11y/ReducedMotionProvider";
 import VisitorTracker from "./components/VisitorTracker";
 import GlobalQuantumWrapper from "./components/GlobalQuantumWrapper";
 import ApolloTracker from "./components/ApolloTracker";
+import { OrlaIntelligenceProvider } from "./contexts/OrlaIntelligenceContext";
 import "@/i18n";
 
 // Eagerly load the landing page for best LCP
@@ -631,17 +632,19 @@ const App = () => {
                   <Sonner position="top-right" richColors closeButton />
                   <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
                     <AuthProvider>
-                      <SessionTimeoutProvider timeoutMinutes={30} warningMinutes={5}>
-                        <VisitorTracker />
-                        <ApolloTracker />
-                        <SkipLink />
-                        <main id="main-content">
-                          <AnimatedRoutes />
-                        </main>
-                        <GlobalElements />
-                        <BackToTop />
-                        <CookieConsent />
-                      </SessionTimeoutProvider>
+                      <OrlaIntelligenceProvider defaultMode="eq">
+                        <SessionTimeoutProvider timeoutMinutes={30} warningMinutes={5}>
+                          <VisitorTracker />
+                          <ApolloTracker />
+                          <SkipLink />
+                          <main id="main-content">
+                            <AnimatedRoutes />
+                          </main>
+                          <GlobalElements />
+                          <BackToTop />
+                          <CookieConsent />
+                        </SessionTimeoutProvider>
+                      </OrlaIntelligenceProvider>
                     </AuthProvider>
                   </BrowserRouter>
                 </TooltipProvider>

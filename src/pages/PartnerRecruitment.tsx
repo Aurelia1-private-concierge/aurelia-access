@@ -69,6 +69,7 @@ const PartnerRecruitment = () => {
         email: formData.email,
         phone: formData.phone || null,
         website: formData.website || null,
+        category: formData.categories[0] || "general", // Required field - use first category
         categories: formData.categories,
         description: formData.description || null,
         experience_years: formData.experience_years ? parseInt(formData.experience_years) : null,

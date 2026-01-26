@@ -1,5 +1,5 @@
-import { Suspense, useRef, useState } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Suspense, useRef, useState, useCallback, memo, useMemo } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { 
   OrbitControls, 
   PerspectiveCamera, 
@@ -7,42 +7,46 @@ import {
   Float, 
   MeshDistortMaterial,
   Sparkles,
-  Stars
+  Stars,
+  AdaptiveDpr,
+  AdaptiveEvents
 } from "@react-three/drei";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Maximize2, RotateCcw, Plane, Anchor, Building2, Gem, Sparkles as SparklesIcon } from "lucide-react";
+import { X, Maximize2, RotateCcw, Plane, Anchor, Building2, Gem, Sparkles as SparklesIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import * as THREE from "three";
-// Floating luxury orb
-const LuxuryOrb = ({ position, color, scale = 1 }: { position: [number, number, number]; color: string; scale?: number }) => {
+
+// Performance-optimized floating orb with reduced animation complexity
+const LuxuryOrb = memo(({ position, color, scale = 1 }: { position: [number, number, number]; color: string; scale?: number }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   
   useFrame((state) => {
     if (meshRef.current) {
-      meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
-      meshRef.current.rotation.y += 0.005;
+      // Simplified rotation for better performance
+      meshRef.current.rotation.y += 0.003;
     }
   });
 
   return (
-    <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
+    <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.8}>
       <mesh ref={meshRef} position={position} scale={scale}>
-        <sphereGeometry args={[1, 64, 64]} />
+        <sphereGeometry args={[1, 32, 32]} />
         <MeshDistortMaterial
           color={color}
           attach="material"
-          distort={0.3}
-          speed={2}
-          roughness={0.1}
-          metalness={0.9}
+          distort={0.2}
+          speed={1.5}
+          roughness={0.15}
+          metalness={0.85}
         />
       </mesh>
     </Float>
   );
-};
+});
 
-// Experience portal
-const ExperiencePortal = ({ 
+LuxuryOrb.displayName = "LuxuryOrb";
+// Experience portal - optimized with memo and reduced particle count
+const ExperiencePortal = memo(({ 
   position, 
   label, 
   onClick,
@@ -55,63 +59,79 @@ const ExperiencePortal = ({
 }) => {
   const ringRef = useRef<THREE.Mesh>(null);
   
-  useFrame((state) => {
+  useFrame(() => {
     if (ringRef.current) {
-      ringRef.current.rotation.z += active ? 0.02 : 0.005;
-      ringRef.current.rotation.x = Math.sin(state.clock.elapsedTime) * 0.1;
+      ringRef.current.rotation.z += active ? 0.015 : 0.003;
     }
   });
+
+  const emissiveIntensity = active ? 0.4 : 0.08;
+  const ringColor = active ? "#d4af37" : "#555555";
 
   return (
     <group position={position} onClick={onClick}>
       <mesh ref={ringRef}>
-        <torusGeometry args={[1.5, 0.1, 16, 100]} />
+        <torusGeometry args={[1.5, 0.08, 12, 48]} />
         <meshStandardMaterial 
-          color={active ? "#d4af37" : "#666666"} 
-          emissive={active ? "#d4af37" : "#333333"}
-          emissiveIntensity={active ? 0.5 : 0.1}
-          metalness={0.9}
-          roughness={0.1}
+          color={ringColor} 
+          emissive={ringColor}
+          emissiveIntensity={emissiveIntensity}
+          metalness={0.85}
+          roughness={0.15}
         />
       </mesh>
       <mesh>
-        <circleGeometry args={[1.4, 64]} />
+        <circleGeometry args={[1.4, 32]} />
         <meshStandardMaterial 
           color="#0a0a0a" 
           transparent 
-          opacity={0.8}
+          opacity={0.75}
           side={THREE.DoubleSide}
         />
       </mesh>
-      <Sparkles count={20} scale={3} size={2} speed={0.5} color="#d4af37" />
+      {/* Reduced sparkle count for performance */}
+      <Sparkles count={10} scale={2.5} size={1.5} speed={0.3} color="#d4af37" />
     </group>
   );
-};
+});
 
-// Main scene
-const VRScene = ({ activeExperience, setActiveExperience }: { 
+ExperiencePortal.displayName = "ExperiencePortal";
+
+// Main scene - optimized with useMemo for static elements
+const VRScene = memo(({ activeExperience, setActiveExperience }: { 
   activeExperience: string | null;
   setActiveExperience: (exp: string | null) => void;
 }) => {
+  const handleAviationClick = useCallback(() => setActiveExperience("aviation"), [setActiveExperience]);
+  const handleYachtsClick = useCallback(() => setActiveExperience("yachts"), [setActiveExperience]);
+  const handlePropertiesClick = useCallback(() => setActiveExperience("properties"), [setActiveExperience]);
+  const handleCollectiblesClick = useCallback(() => setActiveExperience("collectibles"), [setActiveExperience]);
+
   return (
     <>
-      <PerspectiveCamera makeDefault position={[0, 0, 10]} fov={60} />
+      {/* Adaptive performance */}
+      <AdaptiveDpr pixelated />
+      <AdaptiveEvents />
+      
+      <PerspectiveCamera makeDefault position={[0, 0, 10]} fov={55} />
       <OrbitControls 
         enableZoom={true} 
         enablePan={false}
-        minDistance={5}
-        maxDistance={20}
+        minDistance={6}
+        maxDistance={18}
         autoRotate
-        autoRotateSpeed={0.5}
+        autoRotateSpeed={0.3}
+        enableDamping
+        dampingFactor={0.05}
       />
       
       {/* Ambient lighting */}
-      <ambientLight intensity={0.3} />
-      <pointLight position={[10, 10, 10]} intensity={1} color="#d4af37" />
-      <pointLight position={[-10, -10, -10]} intensity={0.5} color="#4169e1" />
+      <ambientLight intensity={0.25} />
+      <pointLight position={[10, 10, 10]} intensity={0.8} color="#d4af37" />
+      <pointLight position={[-10, -10, -10]} intensity={0.4} color="#4169e1" />
       
-      {/* Background */}
-      <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+      {/* Background - reduced star count */}
+      <Stars radius={80} depth={40} count={2500} factor={3} saturation={0} fade speed={0.8} />
       
       {/* Central luxury orb */}
       <LuxuryOrb position={[0, 0, 0]} color="#d4af37" scale={1.5} />
@@ -120,37 +140,49 @@ const VRScene = ({ activeExperience, setActiveExperience }: {
       <ExperiencePortal 
         position={[-4, 2, 0]} 
         label="Aviation"
-        onClick={() => setActiveExperience("aviation")}
+        onClick={handleAviationClick}
         active={activeExperience === "aviation"}
       />
       <ExperiencePortal 
         position={[4, 2, 0]} 
         label="Yachts"
-        onClick={() => setActiveExperience("yachts")}
+        onClick={handleYachtsClick}
         active={activeExperience === "yachts"}
       />
       <ExperiencePortal 
         position={[-4, -2, 0]} 
         label="Properties"
-        onClick={() => setActiveExperience("properties")}
+        onClick={handlePropertiesClick}
         active={activeExperience === "properties"}
       />
       <ExperiencePortal 
         position={[4, -2, 0]} 
         label="Collectibles"
-        onClick={() => setActiveExperience("collectibles")}
+        onClick={handleCollectiblesClick}
         active={activeExperience === "collectibles"}
       />
       
       {/* Floating accent orbs */}
-      <LuxuryOrb position={[-6, 0, -3]} color="#4169e1" scale={0.5} />
-      <LuxuryOrb position={[6, 0, -3]} color="#9932cc" scale={0.5} />
-      <LuxuryOrb position={[0, 4, -3]} color="#20b2aa" scale={0.5} />
+      <LuxuryOrb position={[-6, 0, -3]} color="#4169e1" scale={0.4} />
+      <LuxuryOrb position={[6, 0, -3]} color="#9932cc" scale={0.4} />
+      <LuxuryOrb position={[0, 4, -3]} color="#20b2aa" scale={0.4} />
       
       <Environment preset="night" />
     </>
   );
-};
+});
+
+VRScene.displayName = "VRScene";
+
+// Loading fallback for Canvas
+const CanvasLoader = () => (
+  <div className="absolute inset-0 flex items-center justify-center bg-background">
+    <div className="text-center">
+      <Loader2 className="w-8 h-8 text-primary animate-spin mx-auto mb-4" />
+      <p className="text-sm text-muted-foreground">Loading experience...</p>
+    </div>
+  </div>
+);
 
 interface VRExperienceHubProps {
   isOpen: boolean;
@@ -168,7 +200,7 @@ const VRExperienceHub = ({ isOpen, onClose }: VRExperienceHubProps) => {
   const [activeExperience, setActiveExperience] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  const toggleFullscreen = () => {
+  const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen();
       setIsFullscreen(true);
@@ -176,7 +208,15 @@ const VRExperienceHub = ({ isOpen, onClose }: VRExperienceHubProps) => {
       document.exitFullscreen();
       setIsFullscreen(false);
     }
-  };
+  }, []);
+
+  const resetView = useCallback(() => setActiveExperience(null), []);
+
+  // Memoize experience data
+  const activeExp = useMemo(() => 
+    experiences.find(e => e.id === activeExperience), 
+    [activeExperience]
+  );
 
   return (
     <AnimatePresence>
@@ -204,7 +244,7 @@ const VRExperienceHub = ({ isOpen, onClose }: VRExperienceHubProps) => {
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setActiveExperience(null)}
+                onClick={resetView}
                 className="p-2 rounded-full hover:bg-secondary/50 text-muted-foreground hover:text-foreground transition-colors"
                 title="Reset view"
               >
@@ -227,12 +267,21 @@ const VRExperienceHub = ({ isOpen, onClose }: VRExperienceHubProps) => {
             </div>
           </div>
 
-          {/* 3D Canvas */}
-          <Canvas className="w-full h-full">
-            <Suspense fallback={null}>
+          {/* 3D Canvas with performance optimizations */}
+          <Suspense fallback={<CanvasLoader />}>
+            <Canvas 
+              className="w-full h-full"
+              dpr={[1, 1.5]} // Limit DPR for performance
+              performance={{ min: 0.5 }}
+              gl={{ 
+                antialias: true, 
+                alpha: false,
+                powerPreference: "high-performance"
+              }}
+            >
               <VRScene activeExperience={activeExperience} setActiveExperience={setActiveExperience} />
-            </Suspense>
-          </Canvas>
+            </Canvas>
+          </Suspense>
 
           {/* Experience selector */}
           <div className="absolute bottom-0 left-0 right-0 z-10 p-6 bg-gradient-to-t from-background via-background/80 to-transparent">
@@ -271,10 +320,10 @@ const VRExperienceHub = ({ isOpen, onClose }: VRExperienceHubProps) => {
                 className="absolute top-24 left-6 w-72 p-4 rounded-xl bg-card/90 backdrop-blur-xl border border-primary/30"
               >
                 <h3 className="text-lg font-serif text-foreground mb-2">
-                  {experiences.find(e => e.id === activeExperience)?.label}
+                  {activeExp?.label}
                 </h3>
                 <p className="text-xs text-muted-foreground mb-4">
-                  {experiences.find(e => e.id === activeExperience)?.description}
+                  {activeExp?.description}
                 </p>
                 <button 
                   onClick={() => {

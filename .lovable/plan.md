@@ -1,257 +1,285 @@
 
+# Aurelia Private Concierge - Comprehensive Analysis & Enhancement Plan
 
-# UHNWI Social Media Advertising System
+## Executive Summary
 
-## Overview
-This plan creates a comprehensive **Multi-Platform Social Advertising Suite** to automatically promote Aurelia across all UHNWI (Ultra High Net Worth Individual) social media platforms. The system will leverage existing infrastructure while adding true automated posting capabilities via platform APIs and n8n integration.
-
-## Current State Analysis
-Your project already has:
-- **Social Scheduler** (`SocialScheduler.tsx`) - Manual post scheduling to database
-- **Automated Posting UI** (`AutomatedPosting.tsx`) - Automation rules interface (UI only)
-- **Marketing Packages** (`marketing-packages.ts`) - UHNW networks and social strategy definitions
-- **Ad Creatives Gallery** (`AdCreatives.tsx`) - Ready-to-use ad assets
-- **N8N Automation Hub** - Workflow integration infrastructure
-- **n8n-proxy Edge Function** - Server-side proxy for n8n webhooks
-
-**Gap identified**: The current system schedules posts to a database but lacks actual API integration to publish them automatically.
+Aurelia is a sophisticated luxury private concierge platform built with React, TypeScript, Supabase, and Lovable Cloud. The codebase is mature with 130+ database tables, 70+ edge functions, and extensive features including AI concierge (Orla), VR experiences, partner marketplace, and social advertising suite.
 
 ---
 
-## Target Platforms
+## Phase 1: Issues Identified & Fixes Required
 
-### Primary UHNWI Platforms
-| Platform | Audience | Integration Method |
-|----------|----------|-------------------|
-| **LinkedIn** | C-Suite, Family Offices, PE/VC | LinkedIn Marketing API |
-| **X (Twitter)** | Tech executives, Crypto wealth | Twitter API v2 |
-| **Instagram** | Lifestyle affluents, Luxury enthusiasts | Meta Graph API |
-| **Facebook** | Private groups, Wealth networks | Meta Graph API |
-| **Reddit** | r/fatFIRE, r/UHNWI, r/HENRYfinance | Reddit API |
-| **Threads** | Emerging affluent network | Meta Threads API |
+### 1.1 Critical Security Issues
 
-### Niche UHNWI Communities (Content Distribution)
-- Tiger 21 newsletters
-- YPO chapter communications
-- Family Office Exchange updates
-- Campden Wealth forums
+**RLS Policy Warnings (15 instances)**
+- **Issue**: Database linter detected 15 `USING (true)` or `WITH CHECK (true)` RLS policies on UPDATE/INSERT/DELETE operations
+- **Impact**: Potential unauthorized data modification
+- **Fix**: Audit and tighten overly permissive RLS policies to require proper authentication checks
+
+
+### 1.2 Functional Issues
+
+**Social Advertising Suite**
+- The `social-publish` edge function is deployed but returns credential errors
+- UI should gracefully handle missing credentials with setup instructions
+- Add connection status indicators for each platform
+
+**Email System**
+- `send-email` function requires service role authorization
+- Currently functional but may fail silently if called without proper authorization header
+- Add better error handling in calling code
+
+**Messaging Systems**
+- `useConciergeChat.ts` and `useCircleMessaging.ts` are well-implemented
+- Minor: Add offline message queuing for better UX
+- Add typing indicators for real-time feel
+
+### 1.3 UI/UX Issues
+
+**Metaverse Graphics** (Recently Fixed)
+- Graphics were too large - now optimized with reduced sizes
+- VRExperienceHub uses performance optimizations (AdaptiveDpr, AdaptiveEvents)
+- Verify rendering on various devices
+
+**EQ/IQ Mode Switch** (Recently Added)
+- Located in dashboard header
+- Integration with Orla's system prompts complete
+- Test mode switching affects AI responses correctly
 
 ---
 
-## Architecture
+## Phase 2: Component Analysis
+
+### 2.1 Core Systems Status
+
+| System | Status | Notes |
+|--------|--------|-------|
+| Authentication | Working | MFA, rate limiting, device tracking implemented |
+| Authorization (RLS) | Needs Review | 15 permissive policies flagged |
+| Concierge Chat | Working | Real-time messaging functional |
+| Partner Portal | Working | Application form fixed (category mapping) |
+| Social Advertising | Partial | Edge functions deployed, needs API keys |
+| Email System | Working | Resend integration complete |
+| VR Experience | Working | Performance optimized |
+| Crossbeam Components | Working | Newly added animated beam visualizations |
+
+### 2.2 Edge Functions Analysis
+
+**Deployed & Working:**
+- `send-email`, `broadcast-notification`, `partner-waitlist-notify`
+- `social-publish`, `generate-social-content` (need API keys)
+- `check-subscription`, `health-check`, `visitor-tracking`
+- 70+ total edge functions deployed
+
+**Requiring External Configuration:**
+- `social-publish` - Twitter, LinkedIn, Meta, Reddit API keys
+- `send-sms` - Twilio (already configured)
+- `perplexity-search` - Perplexity API key
+
+---
+
+## Phase 3: Recommended Enhancements
+
+### 3.1 Security Hardening
+
+1. **Audit RLS Policies**
+   - Review all 15 flagged policies
+   - Replace `USING (true)` with `USING (auth.uid() = user_id)` where appropriate
+   - Document intentionally public tables
+
+2. **API Key Validation**
+   - Add edge function health checks for configured credentials
+   - Display configuration status in admin panel
+
+3. **Session Security**
+   - Already has session timeout (SessionTimeoutProvider)
+   - Add session revocation on password change
+
+### 3.2 Performance Optimizations
+
+1. **Lazy Loading Enhancement**
+   - Current: Most pages lazy-loaded
+   - Add: Route-based code splitting for admin sections
+
+2. **Image Optimization**
+   - Add WebP fallbacks for hero videos
+   - Implement blur placeholder loading
+
+3. **Database Query Optimization**
+   - Add indexes on frequently queried columns
+   - Implement query result caching
+
+### 3.3 Feature Recommendations
+
+1. **Social Platform Connection Wizard**
+   - Guided OAuth flow for connecting social accounts
+   - Connection status dashboard
+
+2. **Enhanced Orla EQ/IQ**
+   - Add conversation memory persistence across modes
+   - Implement mood detection from user messages
+
+3. **Partner Performance Dashboard**
+   - Real-time metrics for partners
+   - Commission tracking visualization
+
+4. **Offline Capability**
+   - Service worker message queue
+   - Offline request drafting
+
+---
+
+## Phase 4: Implementation Tasks
+
+### 4.1 Immediate Fixes (Priority 1)
 
 ```text
-+-------------------+     +------------------------+     +------------------+
-|                   |     |                        |     |                  |
-|  Admin Dashboard  +---->+  social_campaigns      +---->+  Edge Function   |
-|  (Schedule Posts) |     |  social_posts          |     |  social-publish  |
-|                   |     |  social_accounts       |     |                  |
-+-------------------+     +------------------------+     +--------+---------+
-                                                                  |
-                          +---------------------------------------+
-                          |
-          +---------------+---------------+---------------+
-          |               |               |               |
-    +-----v-----+   +-----v-----+   +-----v-----+   +-----v-----+
-    | LinkedIn  |   |  Twitter  |   |   Meta    |   |  Reddit   |
-    |    API    |   |   API v2  |   | Graph API |   |    API    |
-    +-----------+   +-----------+   +-----------+   +-----------+
+Task 1: Audit RLS Policies
+- Query all policies with USING (true)
+- Categorize by table sensitivity
+- Update policies for user-owned data tables
+
+Task 2: Social Advertising Credential Handling
+- Add credential check endpoint
+- Display setup instructions in UI when missing
+- Add "Connect Account" buttons with OAuth flow placeholders
+
+Task 3: Error Boundary Enhancement
+- Add error reporting to Sentry
+- Improve user-facing error messages
+- Add retry mechanisms for transient failures
+```
+
+### 4.2 Functional Enhancements (Priority 2)
+
+```text
+Task 4: Messaging System Enhancement
+- Add typing indicators to ConciergeChat
+- Implement read receipts UI improvements
+- Add offline message drafts with sync
+
+Task 5: Admin Dashboard Improvements
+- Add social platform connection status
+- Add API credential configuration panel
+- Add real-time edge function health monitoring
+
+Task 6: Partner Application Flow
+- Add application status tracking UI
+- Implement automated follow-up emails
+- Add application review workflow for admins
+```
+
+### 4.3 New Features (Priority 3)
+
+```text
+Task 7: Notification System Enhancement
+- Push notification improvements
+- In-app notification center redesign
+- Notification preferences per category
+
+Task 8: Analytics Dashboard
+- Real-time visitor analytics
+- Conversion funnel visualization
+- A/B test results dashboard
+
+Task 9: Mobile Responsiveness Audit
+- Test all pages on mobile
+- Fix any layout issues
+- Optimize touch targets
 ```
 
 ---
 
-## Implementation Components
+## Phase 5: Testing Strategy
 
-### 1. Database Schema Extensions
+### 5.1 Unit Testing
 
-**New Tables:**
-- `social_accounts` - Store connected platform credentials (encrypted)
-- `social_campaigns` - Multi-platform advertising campaigns
-- `social_post_analytics` - Track engagement metrics per post
-- `social_content_library` - Reusable content templates for UHNWI messaging
+- Vitest is already configured
+- Add tests for critical hooks:
+  - `useConciergeChat`
+  - `useAuth`
+  - `useSocialAdvertising`
+  - `useCircleMessaging`
 
-**Schema Updates:**
-- Add `platform_post_id` to `social_posts` for tracking published posts
-- Add `engagement_metrics` JSONB column for likes/shares/comments
+### 5.2 Integration Testing
 
-### 2. Edge Functions (Backend Publishing)
+- Test edge function invocations
+- Test real-time subscription handling
+- Test authentication flows
 
-**`social-publish/index.ts`**
-- Unified publishing endpoint for all platforms
-- Platform-specific adapters for API differences
-- Rate limiting and retry logic
-- Webhook callback for n8n integration
+### 5.3 E2E Testing (Playwright available)
 
-**`social-scheduler-cron/index.ts`**
-- Scheduled function (every 5 minutes)
-- Queries `social_posts` for due items
-- Triggers `social-publish` for each pending post
-- Updates post status and captures `platform_post_id`
+- Test complete user journeys:
+  - Sign up -> Onboarding -> Dashboard
+  - Partner application flow
+  - Service request creation
 
-**Platform Adapters:**
-- `twitter-adapter.ts` - X/Twitter API v2 posting
-- `linkedin-adapter.ts` - LinkedIn Share API
-- `meta-adapter.ts` - Instagram/Facebook/Threads
-- `reddit-adapter.ts` - Reddit submission API
+### 5.4 Security Testing
 
-### 3. Admin Dashboard Enhancement
-
-**New "Social Advertising" Tab** (`SocialAdvertisingDashboard.tsx`)
-- Platform connection management (OAuth flows)
-- Unified content calendar view
-- Campaign builder with UHNWI targeting presets
-- Real-time engagement analytics
-- AI content generator for platform-specific messaging
-
-**Components:**
-- `PlatformConnector.tsx` - OAuth integration UI
-- `CampaignBuilder.tsx` - Multi-platform campaign creation
-- `ContentCalendar.tsx` - Visual post scheduling
-- `EngagementMetrics.tsx` - Cross-platform analytics
-- `UHNWIAudienceSelector.tsx` - Pre-defined targeting profiles
-
-### 4. AI-Powered Content Optimization
-
-**`generate-social-content/index.ts`** Edge Function
-- Generate platform-optimized variations of base content
-- Adapt tone for each platform's UHNWI audience
-- Suggest optimal posting times based on engagement data
-- A/B test headline variations
-
-**Content Templates:**
-- LinkedIn: Thought leadership, industry insights
-- Twitter/X: Quick insights, luxury news commentary
-- Instagram: Lifestyle imagery captions
-- Reddit: Community-appropriate r/fatFIRE messaging
-- Facebook: Long-form exclusive access narratives
-
-### 5. N8N Workflow Integration
-
-**Pre-built Workflows:**
-- `social_post_scheduled` - Trigger when new post is scheduled
-- `social_post_published` - Log successful publications
-- `social_engagement_alert` - Notify on high engagement
-- `social_content_approved` - Trigger multi-platform distribution
+- Verify RLS policies block unauthorized access
+- Test rate limiting on auth endpoints
+- Verify MFA flow completion
 
 ---
 
-## Required API Credentials (Secrets)
+## Technical Details
 
-| Secret Name | Platform | Purpose |
-|-------------|----------|---------|
-| `TWITTER_CONSUMER_KEY` | X/Twitter | App authentication |
-| `TWITTER_CONSUMER_SECRET` | X/Twitter | App authentication |
-| `TWITTER_ACCESS_TOKEN` | X/Twitter | User posting access |
-| `TWITTER_ACCESS_TOKEN_SECRET` | X/Twitter | User posting access |
-| `LINKEDIN_CLIENT_ID` | LinkedIn | OAuth app |
-| `LINKEDIN_CLIENT_SECRET` | LinkedIn | OAuth app |
-| `META_APP_ID` | Instagram/Facebook | Graph API access |
-| `META_APP_SECRET` | Instagram/Facebook | Graph API access |
-| `REDDIT_CLIENT_ID` | Reddit | App authentication |
-| `REDDIT_CLIENT_SECRET` | Reddit | App authentication |
+### Database Schema Summary
+- 130+ tables covering all platform features
+- Key tables: profiles, partners, service_requests, conversations, social_campaigns
+- Well-structured with proper foreign key relationships
 
----
+### Edge Function Architecture
+- 70+ functions covering all backend needs
+- Proper CORS headers implemented
+- Service role authorization for sensitive operations
 
-## Pre-Built Campaign Templates
+### Frontend Architecture
+- React 18 with TypeScript
+- Lazy loading for route optimization
+- Framer Motion for animations
+- Tailwind CSS with custom theming
+- React Query for server state
 
-### 1. "Beyond Ordinary" Launch Campaign
-- 30-day multi-platform rollout
-- Staggered content across LinkedIn, Instagram, X
-- Targeting: C-Suite, Family Office principals
-- Budget allocation recommendations
+### Configured Secrets
+- RESEND_API_KEY (email)
+- STRIPE_SECRET_KEY (payments)
+- ELEVENLABS_API_KEY (voice AI)
+- TWILIO credentials (SMS)
+- FIRECRAWL_API_KEY (scraping)
+- LOVABLE_API_KEY (AI gateway)
 
-### 2. "The Circle" Community Promotion
-- Highlight exclusive member benefits
-- Reddit r/fatFIRE native advertising
-- LinkedIn thought leadership series
-
-### 3. "Prescience" AI Feature Showcase
-- Tech-focused messaging for crypto/tech wealth
-- Twitter threads, LinkedIn articles
-- Instagram Stories showcasing the AI interface
-
-### 4. Partner Spotlight Series
-- Rotating content featuring vetted partners
-- Cross-platform distribution with tracking links
+### Missing Secrets for Full Functionality
+- TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET
+- TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_TOKEN_SECRET
+- LINKEDIN_CLIENT_ID, LINKEDIN_CLIENT_SECRET
+- META_APP_ID, META_APP_SECRET
+- REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET
+- PERPLEXITY_API_KEY
 
 ---
 
-## Targeting Presets (From Existing Config)
+## Estimated Effort
 
-**LinkedIn:**
-- C-Suite titles, Company size 500+
-- Industries: Finance, Tech, Legal, Healthcare
-- Seniority: Director and above
-- Interests: Luxury travel, Private aviation, Fine wine
-
-**Instagram:**
-- Interests: Luxury, Travel, Yachts, Private jets
-- Behaviors: Frequent travelers, Luxury purchasers
-- Location: Major financial centers
-
-**Reddit:**
-- r/fatFIRE (10M+ net worth discussions)
-- r/HENRYfinance (High Earners)
-- r/ExpatFIRE (International UHNW)
+| Phase | Description | Estimate |
+|-------|-------------|----------|
+| 1 | Security Fixes (RLS policies) | 2-3 hours |
+| 2 | Social Advertising UI improvements | 1-2 hours |
+| 3 | Messaging enhancements | 2-3 hours |
+| 4 | Admin dashboard improvements | 2-3 hours |
+| 5 | Unit test coverage | 3-4 hours |
+| 6 | Integration testing | 2-3 hours |
+| **Total** | | **12-18 hours** |
 
 ---
 
-## Files to Create
+## Next Steps
 
-1. `supabase/migrations/[timestamp]_social_advertising_schema.sql`
-2. `supabase/functions/social-publish/index.ts`
-3. `supabase/functions/social-scheduler-cron/index.ts`
-4. `supabase/functions/generate-social-content/index.ts`
-5. `src/components/admin/SocialAdvertisingDashboard.tsx`
-6. `src/components/admin/social/PlatformConnector.tsx`
-7. `src/components/admin/social/CampaignBuilder.tsx`
-8. `src/components/admin/social/ContentCalendar.tsx`
-9. `src/components/admin/social/EngagementMetrics.tsx`
-10. `src/components/admin/social/UHNWIAudienceSelector.tsx`
-11. `src/hooks/useSocialAdvertising.ts`
-12. `src/lib/social-adapters/twitter.ts`
-13. `src/lib/social-adapters/linkedin.ts`
-14. `src/lib/social-adapters/meta.ts`
-15. `src/lib/social-adapters/reddit.ts`
+Upon approval, I will:
 
----
-
-## Files to Modify
-
-1. `src/pages/Admin.tsx` - Add "Social Advertising" tab
-2. `supabase/config.toml` - Register new Edge Functions
-3. `src/lib/marketing-packages.ts` - Add campaign automation hooks
-
----
-
-## Implementation Phases
-
-### Phase 1: Foundation
-- Database schema for social accounts and campaigns
-- Admin UI for platform connection management
-- Basic post scheduling enhancement
-
-### Phase 2: Publishing Engine
-- Edge function for multi-platform publishing
-- Twitter API integration (existing code patterns available)
-- Scheduled cron for automatic posting
-
-### Phase 3: Full Platform Support
-- LinkedIn, Meta (Instagram/Facebook), Reddit adapters
-- Cross-platform campaign builder
-- Analytics integration
-
-### Phase 4: AI Optimization
-- Content generation for platform-specific messaging
-- Optimal timing suggestions
-- Engagement prediction
-
----
-
-## Security Considerations
-
-- All API credentials stored as Supabase secrets
-- OAuth tokens encrypted in `social_accounts` table
-- Rate limiting per platform to avoid API bans
-- Admin-only access via existing RLS patterns
-
+1. Fix the 15 RLS policy security warnings
+2. Enhance the social advertising UI to gracefully handle missing credentials
+3. Add typing indicators and read receipt improvements to messaging
+4. Create comprehensive unit tests for critical hooks
+5. Add admin panel configuration for missing API credentials
+6. Run full E2E testing on critical user journeys

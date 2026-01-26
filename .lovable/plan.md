@@ -1,342 +1,303 @@
 
-# Aurelia Private Concierge - Comprehensive Analysis & Enhancement Plan
+# Comprehensive SEO and Marketing Strategies Enhancement
 
-## Executive Summary
+## Overview
 
-Aurelia is a sophisticated luxury private concierge platform built with React, TypeScript, Supabase, and Lovable Cloud. The codebase is mature with 130+ database tables, 70+ edge functions, and extensive features including AI concierge (Orla), VR experiences, partner marketplace, and social advertising suite.
-
----
-
-## ✅ ALL PHASES COMPLETED - January 2026
-
-### Phase 1: Security Audit ✅
-- **RLS Policies Reviewed**: 15 flagged policies analyzed
-- **Finding**: Policies are intentionally permissive for public tracking features
-- **Status**: Documented as intentional
-
-### Phase 2: Ultra Premium Video Bot ✅
-- **UltraPremiumVideoBot.tsx**: Voice + Chat modes with ElevenLabs/Lovable AI
-- **VideoBotTrigger.tsx**: Floating launcher with premium animations
-- **Integration**: Added to GlobalElements.tsx globally
-
-### Phase 3: Social Advertising UI ✅
-- **PlatformCredentialStatus.tsx**: Credential status display with setup instructions
-- **check-social-credentials edge function**: Platform API key verification
-- **Integration**: Added "API Setup" tab to SocialAdvertisingDashboard
-
-### Phase 4: Messaging Enhancements ✅
-- **TypingIndicator.tsx**: Three variants (minimal, luxury, default)
-- **ReadReceipt.tsx**: Three variants (icon-only, with-time, detailed)
-- **Exported via**: src/components/chat/index.ts
-
-### Phase 5: Unit Testing ✅
-- **Test setup enhanced**: Extended mocks, timeouts, pool configuration
-- **useSocialAdvertising.test.ts**: Platform info, audience presets, hook tests
-- **useConciergeChat.test.ts**: Initialization, methods, state management
-- **useAuth.test.ts**: Sign up, sign in, sign out, error handling
-
-### Phase 6: Integration Testing ✅
-- **edgeFunctions.test.ts**: Tests for check-social-credentials, check-subscription, visitor-tracking, send-email
-- **realtime.test.ts**: Channel management, presence, broadcast tests
-
-### Phase 7: E2E Testing ✅
-- **auth.spec.ts**: Login flow, protected routes, form validation
-- **homepage.spec.ts**: Branding, hero, navigation, footer, responsive
-- **partner.spec.ts**: Partner application flow, portal access
-
-### Phase 8: New Features ✅
-- **useOfflineQueue.ts**: Offline request queuing with sync
-- **useMessageDrafts.ts**: Auto-save message drafts locally
-- **NetworkStatus.tsx**: Online/offline indicator component
-- **OfflineDashboard.tsx**: Manage pending actions and drafts
-- **PartnerPerformanceDashboard.tsx**: Metrics, tier progress, commissions
-
-### Ultra Premium Video Bot (NEW)
-- **UltraPremiumVideoBot.tsx**: Created comprehensive AI video concierge with:
-  - Voice mode (ElevenLabs integration)
-  - Chat mode (Lovable AI streaming)
-  - Camera/video preview support
-  - Audio level visualization
-  - Luxury animations and premium UI
-  - Minimized/expanded/fullscreen modes
-- **VideoBotTrigger.tsx**: Floating launcher with hover effects
-- **Integration**: Added to GlobalElements.tsx for global availability
+This plan delivers a complete overhaul of the marketing and SEO infrastructure, introducing a clear **Free vs. Paid strategy framework**, enhanced network components, and advanced conversion optimization tools. The focus is on actionable, measurable tactics for UHNW client acquisition.
 
 ---
 
-## Phase 1: Issues Identified & Fixes Required
+## Phase 1: Free/Paid Strategy Framework
 
-### 1.1 Critical Security Issues
+### 1.1 Create Strategy Constants Library
 
-**RLS Policy Warnings (15 instances)**
-- **Issue**: Database linter detected 15 `USING (true)` or `WITH CHECK (true)` RLS policies on UPDATE/INSERT/DELETE operations
-- **Impact**: Potential unauthorized data modification
-- **Fix**: Audit and tighten overly permissive RLS policies to require proper authentication checks
+**New File:** `src/lib/marketing-strategies.ts`
 
+Define two core strategy categories with detailed tactics, timelines, and expected outcomes:
 
-### 1.2 Functional Issues
+**FREE STRATEGIES (Organic Growth):**
+| Strategy | Channels | Time Investment | Expected Results |
+|----------|----------|-----------------|------------------|
+| SEO Content Marketing | Blog, FAQ, Service Pages | 4-6 hrs/week | 30-50% organic traffic increase |
+| Social Media Organic | LinkedIn, Instagram, X | 2-3 hrs/day | Brand awareness, 5-10 leads/month |
+| Community Engagement | r/fatFIRE, YPO Forums, LinkedIn Groups | 3-5 hrs/week | Relationship building, referrals |
+| PR & Earned Media | HARO, Journalist Outreach | 2-3 hrs/week | High-DA backlinks, credibility |
+| Referral Program | Member-to-member | Ongoing | 15-25% of new signups |
+| Email Newsletter | Weekly digest | 2-3 hrs/week | Nurture leads, 20%+ open rate |
+| Guest Posting | Forbes, Robb Report, TechCrunch | 4-8 hrs/article | Authority backlinks |
+| Video Content | YouTube, LinkedIn Video | 4-6 hrs/week | Engagement, brand personality |
 
-**Social Advertising Suite**
-- The `social-publish` edge function is deployed but returns credential errors
-- UI should gracefully handle missing credentials with setup instructions
-- Add connection status indicators for each platform
+**PAID STRATEGIES (Accelerated Growth):**
+| Strategy | Monthly Budget | Target CPA | Expected Results |
+|----------|---------------|------------|------------------|
+| LinkedIn Ads (C-Suite) | $5K-15K | $150-300 | 20-50 qualified leads |
+| Google Ads (Luxury Intent) | $3K-10K | $100-250 | High-intent traffic |
+| Meta Ads (Lookalike) | $3K-8K | $80-200 | Retargeting conversions |
+| Reddit Ads (r/fatFIRE) | $1K-3K | $50-150 | Niche UHNW audience |
+| Programmatic Display | $5K-20K | $200-400 | Brand awareness, retargeting |
+| Influencer Partnerships | $5K-50K | $300-800 | Credibility, reach |
+| Event Sponsorships | $10K-100K | N/A | Direct networking |
+| Native Advertising | $5K-15K | $150-350 | Content distribution |
 
-**Email System**
-- `send-email` function requires service role authorization
-- Currently functional but may fail silently if called without proper authorization header
-- Add better error handling in calling code
+### 1.2 Strategy Management Dashboard
 
-**Messaging Systems**
-- `useConciergeChat.ts` and `useCircleMessaging.ts` are well-implemented
-- Minor: Add offline message queuing for better UX
-- Add typing indicators for real-time feel
+**New Component:** `src/components/admin/StrategyManagementPanel.tsx`
 
-### 1.3 UI/UX Issues
-
-**Metaverse Graphics** (Recently Fixed)
-- Graphics were too large - now optimized with reduced sizes
-- VRExperienceHub uses performance optimizations (AdaptiveDpr, AdaptiveEvents)
-- Verify rendering on various devices
-
-**EQ/IQ Mode Switch** (Recently Added)
-- Located in dashboard header
-- Integration with Orla's system prompts complete
-- Test mode switching affects AI responses correctly
-
----
-
-## Phase 2: Component Analysis
-
-### 2.1 Core Systems Status
-
-| System | Status | Notes |
-|--------|--------|-------|
-| Authentication | Working | MFA, rate limiting, device tracking implemented |
-| Authorization (RLS) | Needs Review | 15 permissive policies flagged |
-| Concierge Chat | Working | Real-time messaging functional |
-| Partner Portal | Working | Application form fixed (category mapping) |
-| Social Advertising | Partial | Edge functions deployed, needs API keys |
-| Email System | Working | Resend integration complete |
-| VR Experience | Working | Performance optimized |
-| Crossbeam Components | Working | Newly added animated beam visualizations |
-
-### 2.2 Edge Functions Analysis
-
-**Deployed & Working:**
-- `send-email`, `broadcast-notification`, `partner-waitlist-notify`
-- `social-publish`, `generate-social-content` (need API keys)
-- `check-subscription`, `health-check`, `visitor-tracking`
-- 70+ total edge functions deployed
-
-**Requiring External Configuration:**
-- `social-publish` - Twitter, LinkedIn, Meta, Reddit API keys
-- `send-sms` - Twilio (already configured)
-- `perplexity-search` - Perplexity API key
+Features:
+- Toggle between Free and Paid strategy views
+- Activity tracker for organic efforts (content published, outreach sent)
+- Budget allocation and spend tracking for paid campaigns
+- ROI calculator comparing free vs. paid performance
+- Strategy recommendation engine based on current funnel data
 
 ---
 
-## Phase 3: Recommended Enhancements
+## Phase 2: Enhanced Network Components
 
-### 3.1 Security Hardening
+### 2.1 UHNW Network Integration Panel
 
-1. **Audit RLS Policies**
-   - Review all 15 flagged policies
-   - Replace `USING (true)` with `USING (auth.uid() = user_id)` where appropriate
-   - Document intentionally public tables
+**Enhanced File:** `src/components/admin/MarketingPackagesPanel.tsx`
 
-2. **API Key Validation**
-   - Add edge function health checks for configured credentials
-   - Display configuration status in admin panel
+New features for the UHNW Networks tab:
+- **Partnership Status Tracker**: Active, Pending, Negotiating, Declined
+- **Contact Management**: Store key contacts for each network (Tiger 21, YPO, etc.)
+- **Engagement History**: Log meetings, calls, emails with network representatives
+- **ROI Tracking**: Track referrals and conversions from each network
+- **Integration Playbooks**: Step-by-step guides for accessing each network
 
-3. **Session Security**
-   - Already has session timeout (SessionTimeoutProvider)
-   - Add session revocation on password change
+### 2.2 Partner Network Expansion
 
-### 3.2 Performance Optimizations
+**New Component:** `src/components/admin/PartnerNetworkGraph.tsx`
 
-1. **Lazy Loading Enhancement**
-   - Current: Most pages lazy-loaded
-   - Add: Route-based code splitting for admin sections
+Visual network graph showing:
+- Connected partners and their relationship strength
+- Referral flow between partners
+- Geographic distribution of partner network
+- Service category coverage gaps
+- Interactive filtering by category, region, tier
 
-2. **Image Optimization**
-   - Add WebP fallbacks for hero videos
-   - Implement blur placeholder loading
+### 2.3 The Circle Community Enhancements
 
-3. **Database Query Optimization**
-   - Add indexes on frequently queried columns
-   - Implement query result caching
+**Enhanced File:** `src/pages/Circle.tsx` and related components
 
-### 3.3 Feature Recommendations
-
-1. **Social Platform Connection Wizard**
-   - Guided OAuth flow for connecting social accounts
-   - Connection status dashboard
-
-2. **Enhanced Orla EQ/IQ**
-   - Add conversation memory persistence across modes
-   - Implement mood detection from user messages
-
-3. **Partner Performance Dashboard**
-   - Real-time metrics for partners
-   - Commission tracking visualization
-
-4. **Offline Capability**
-   - Service worker message queue
-   - Offline request drafting
+New features:
+- **Investment Syndicate Formation**: Allow members to create and join deal rooms
+- **Member Directory Filters**: Filter by industry, location, asset class interests
+- **Networking Events Calendar**: Virtual and in-person Circle gatherings
+- **Deal Flow Pipeline**: Track opportunities from introduction to close
+- **AI Matchmaking Improvements**: Enhanced scoring based on complementary assets
 
 ---
 
-## Phase 4: Implementation Tasks
+## Phase 3: Advanced SEO Infrastructure
 
-### 4.1 Immediate Fixes (Priority 1)
+### 3.1 Content Gap Analysis Tool
+
+**New Component:** `src/components/admin/ContentGapAnalyzer.tsx`
+
+Features:
+- Identify high-value keywords with no existing content
+- Competitor content audit (Quintessentially, Velocity Black)
+- Content calendar recommendations based on gaps
+- Search volume and difficulty metrics for target keywords
+- Automated content briefs generation
+
+### 3.2 Local SEO for Key Markets
+
+**New File:** `src/lib/local-seo.ts`
+
+Geographic targeting for wealth centers:
+- London, Monaco, Dubai, Singapore, NYC, Geneva, Hong Kong
+- Location-specific landing pages with localized schema markup
+- Google Business Profile optimization guidance
+- Local citation building tracker
+
+### 3.3 Technical SEO Monitoring
+
+**Enhanced Component:** `src/components/admin/SEODashboard.tsx`
+
+New tabs:
+- **Core Web Vitals**: Real-time LCP, FID, CLS monitoring
+- **Crawl Status**: Indexed pages, crawl errors, sitemap health
+- **Backlink Monitor**: New/lost backlinks, referring domains DA
+- **Schema Validator**: Test all structured data implementations
+- **Mobile Usability**: Page-by-page mobile scores
+
+---
+
+## Phase 4: Conversion Optimization Suite
+
+### 4.1 A/B Testing Integration
+
+**Enhanced Use of Existing:** `ab_tests` table and `ABTestingPanel.tsx`
+
+Connect A/B testing to marketing pages:
+- Homepage hero variants
+- CTA button colors and copy
+- Membership pricing page layouts
+- Trial application form fields
+- Landing page headline testing
+
+### 4.2 Funnel Optimization Dashboard
+
+**Enhanced Component:** `src/components/admin/ConversionFunnelDashboard.tsx`
+
+New features:
+- **Stage-by-Stage Analysis**: Detailed drop-off reasons per funnel stage
+- **Cohort Comparison**: Compare performance by traffic source
+- **Predictive Scoring**: ML-based likelihood to convert scores
+- **Intervention Triggers**: Automated actions when drop-off detected
+- **Revenue Attribution**: Tie conversions back to specific campaigns
+
+### 4.3 Lead Scoring Enhancements
+
+**Enhanced Hook:** `src/hooks/useLeadScoring.ts`
+
+Additional scoring signals:
+- Content engagement depth (pages viewed, time on site)
+- Social proof interactions (viewed testimonials, case studies)
+- Pricing page engagement patterns
+- Return visit frequency
+- UTM source quality weighting
+
+---
+
+## Phase 5: Campaign Management System
+
+### 5.1 Unified Campaign Dashboard
+
+**New Component:** `src/components/admin/CampaignHubDashboard.tsx`
+
+Central command center for all campaigns:
+- All active campaigns across free/paid channels
+- Real-time performance metrics from `funnel_events`
+- Budget vs. actual spend comparison
+- Campaign health scores (green/yellow/red)
+- Quick actions: pause, boost, duplicate campaigns
+
+### 5.2 Multi-Touch Attribution
+
+**New Component:** `src/components/admin/AttributionModelPanel.tsx`
+
+Attribution models:
+- First-touch, last-touch, linear, time-decay
+- Custom model builder
+- Visualize customer journey paths
+- Channel contribution analysis
+- ROI by attribution model comparison
+
+### 5.3 Automated Campaign Alerts
+
+**Database Migration:** New `campaign_alerts` table
 
 ```text
-Task 1: Audit RLS Policies
-- Query all policies with USING (true)
-- Categorize by table sensitivity
-- Update policies for user-owned data tables
-
-Task 2: Social Advertising Credential Handling
-- Add credential check endpoint
-- Display setup instructions in UI when missing
-- Add "Connect Account" buttons with OAuth flow placeholders
-
-Task 3: Error Boundary Enhancement
-- Add error reporting to Sentry
-- Improve user-facing error messages
-- Add retry mechanisms for transient failures
-```
-
-### 4.2 Functional Enhancements (Priority 2)
-
-```text
-Task 4: Messaging System Enhancement
-- Add typing indicators to ConciergeChat
-- Implement read receipts UI improvements
-- Add offline message drafts with sync
-
-Task 5: Admin Dashboard Improvements
-- Add social platform connection status
-- Add API credential configuration panel
-- Add real-time edge function health monitoring
-
-Task 6: Partner Application Flow
-- Add application status tracking UI
-- Implement automated follow-up emails
-- Add application review workflow for admins
-```
-
-### 4.3 New Features (Priority 3)
-
-```text
-Task 7: Notification System Enhancement
-- Push notification improvements
-- In-app notification center redesign
-- Notification preferences per category
-
-Task 8: Analytics Dashboard
-- Real-time visitor analytics
-- Conversion funnel visualization
-- A/B test results dashboard
-
-Task 9: Mobile Responsiveness Audit
-- Test all pages on mobile
-- Fix any layout issues
-- Optimize touch targets
+campaign_alerts:
+  - id: uuid
+  - campaign_id: text
+  - alert_type: enum (budget_depleted, performance_drop, goal_achieved)
+  - threshold: numeric
+  - triggered_at: timestamptz
+  - acknowledged: boolean
 ```
 
 ---
 
-## Phase 5: Testing Strategy
+## Phase 6: Content & Social Strategy Engine
 
-### 5.1 Unit Testing
+### 6.1 Content Calendar with AI Suggestions
 
-- Vitest is already configured
-- Add tests for critical hooks:
-  - `useConciergeChat`
-  - `useAuth`
-  - `useSocialAdvertising`
-  - `useCircleMessaging`
+**Enhanced Component:** `src/components/admin/social/ContentCalendar.tsx`
 
-### 5.2 Integration Testing
+New features:
+- AI-generated content suggestions based on trending topics
+- Optimal posting time recommendations
+- Content pillar mapping (Education, Inspiration, Promotion)
+- Holiday and event-based content prompts
+- Performance predictions per post type
 
-- Test edge function invocations
-- Test real-time subscription handling
-- Test authentication flows
+### 6.2 Social Listening Dashboard
 
-### 5.3 E2E Testing (Playwright available)
+**New Component:** `src/components/admin/SocialListeningPanel.tsx`
 
-- Test complete user journeys:
-  - Sign up -> Onboarding -> Dashboard
-  - Partner application flow
-  - Service request creation
-
-### 5.4 Security Testing
-
-- Verify RLS policies block unauthorized access
-- Test rate limiting on auth endpoints
-- Verify MFA flow completion
+Monitor:
+- Brand mentions across platforms
+- Competitor activity tracking
+- Industry trend analysis
+- Sentiment analysis of mentions
+- Engagement opportunity alerts
 
 ---
 
-## Technical Details
+## Database Changes
 
-### Database Schema Summary
-- 130+ tables covering all platform features
-- Key tables: profiles, partners, service_requests, conversations, social_campaigns
-- Well-structured with proper foreign key relationships
+New tables required:
 
-### Edge Function Architecture
-- 70+ functions covering all backend needs
-- Proper CORS headers implemented
-- Service role authorization for sensitive operations
+```text
+marketing_strategies:
+  - id: uuid
+  - name: text
+  - type: enum (free, paid)
+  - category: text
+  - description: text
+  - estimated_hours_weekly: numeric
+  - estimated_monthly_budget: numeric
+  - expected_roi: text
+  - status: enum (active, planned, paused)
+  - created_at: timestamptz
 
-### Frontend Architecture
-- React 18 with TypeScript
-- Lazy loading for route optimization
-- Framer Motion for animations
-- Tailwind CSS with custom theming
-- React Query for server state
+network_partnerships:
+  - id: uuid
+  - network_name: text
+  - partnership_status: enum (active, pending, negotiating, declined)
+  - primary_contact_name: text
+  - primary_contact_email: text
+  - engagement_notes: text
+  - referrals_received: integer
+  - last_contact_at: timestamptz
 
-### Configured Secrets
-- RESEND_API_KEY (email)
-- STRIPE_SECRET_KEY (payments)
-- ELEVENLABS_API_KEY (voice AI)
-- TWILIO credentials (SMS)
-- FIRECRAWL_API_KEY (scraping)
-- LOVABLE_API_KEY (AI gateway)
-
-### Missing Secrets for Full Functionality
-- TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET
-- TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_TOKEN_SECRET
-- LINKEDIN_CLIENT_ID, LINKEDIN_CLIENT_SECRET
-- META_APP_ID, META_APP_SECRET
-- REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET
-- PERPLEXITY_API_KEY
-
----
-
-## Estimated Effort
-
-| Phase | Description | Estimate |
-|-------|-------------|----------|
-| 1 | Security Fixes (RLS policies) | 2-3 hours |
-| 2 | Social Advertising UI improvements | 1-2 hours |
-| 3 | Messaging enhancements | 2-3 hours |
-| 4 | Admin dashboard improvements | 2-3 hours |
-| 5 | Unit test coverage | 3-4 hours |
-| 6 | Integration testing | 2-3 hours |
-| **Total** | | **12-18 hours** |
+campaign_alerts:
+  - id: uuid
+  - campaign_id: text
+  - alert_type: text
+  - threshold: numeric
+  - triggered_at: timestamptz
+  - acknowledged: boolean
+```
 
 ---
 
-## Next Steps
+## Technical Considerations
 
-Upon approval, I will:
+### Existing Infrastructure to Leverage
+- `funnel_events` table for conversion tracking
+- `lead_scores` table for scoring enhancements
+- `social_campaigns` and `social_post_analytics` for social data
+- `backlink_opportunities` table for link building
+- `ab_tests` infrastructure for experimentation
 
-1. Fix the 15 RLS policy security warnings
-2. Enhance the social advertising UI to gracefully handle missing credentials
-3. Add typing indicators and read receipt improvements to messaging
-4. Create comprehensive unit tests for critical hooks
-5. Add admin panel configuration for missing API credentials
-6. Run full E2E testing on critical user journeys
+### Integration Points
+- Apollo.io for visitor identification (already configured)
+- Social advertising suite for paid campaign management
+- Ad Spend dashboard for budget tracking
+- Campaign URL builder for UTM consistency
+
+### Performance Considerations
+- Lazy load dashboard components
+- Use React Query for data caching
+- Implement pagination for large data tables
+- Background sync for real-time metrics
+
+---
+
+## Implementation Summary
+
+| Phase | Components | Estimated Complexity |
+|-------|-----------|---------------------|
+| Phase 1 | Strategy Framework | Medium |
+| Phase 2 | Network Components | Medium-High |
+| Phase 3 | SEO Infrastructure | Medium |
+| Phase 4 | Conversion Optimization | High |
+| Phase 5 | Campaign Management | High |
+| Phase 6 | Content Strategy Engine | Medium |
+
+This comprehensive plan transforms the marketing infrastructure into a data-driven growth engine with clear visibility into both organic and paid acquisition channels, enabling informed budget allocation and strategy optimization.

@@ -7,6 +7,7 @@ import { useSocialAdvertising } from "@/hooks/useSocialAdvertising";
 
 // Import sub-components
 import PlatformConnector from "./social/PlatformConnector";
+import PlatformCredentialStatus from "./social/PlatformCredentialStatus";
 import CampaignBuilder from "./social/CampaignBuilder";
 import ContentCalendar from "./social/ContentCalendar";
 import EngagementMetrics from "./social/EngagementMetrics";
@@ -91,7 +92,8 @@ const SocialAdvertisingDashboard = forwardRef<HTMLDivElement>((_, ref) => {
           <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
           <TabsTrigger value="ai-generator">AI Generator</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="platforms">Platform Connections</TabsTrigger>
+          <TabsTrigger value="platforms">Connections</TabsTrigger>
+          <TabsTrigger value="credentials">API Setup</TabsTrigger>
         </TabsList>
 
         <TabsContent value="calendar">
@@ -128,6 +130,10 @@ const SocialAdvertisingDashboard = forwardRef<HTMLDivElement>((_, ref) => {
               console.log("Disconnect", accountId);
             }}
           />
+        </TabsContent>
+
+        <TabsContent value="credentials">
+          <PlatformCredentialStatus />
         </TabsContent>
       </Tabs>
 

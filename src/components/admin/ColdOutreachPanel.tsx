@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef } from "react";
 import { motion } from "framer-motion";
 import {
   Zap,
@@ -176,7 +176,7 @@ The Aurelia Team`,
   },
 ];
 
-const ColdOutreachPanel = () => {
+const ColdOutreachPanel = forwardRef<HTMLDivElement, React.ComponentPropsWithoutRef<"div">>((props, ref) => {
   const [campaigns, setCampaigns] = useState<OutreachCampaign[]>([]);
   const [sources, setSources] = useState<ProspectSource[]>([]);
   const [loading, setLoading] = useState(true);
@@ -535,7 +535,7 @@ const handleAddToProspects = async (results: any[]) => {
   }
 
   return (
-    <div className="space-y-6">
+    <div ref={ref} className="space-y-6" {...props}>
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center justify-between">
@@ -1229,6 +1229,8 @@ const handleAddToProspects = async (results: any[]) => {
       </Dialog>
     </div>
   );
-};
+});
+
+ColdOutreachPanel.displayName = "ColdOutreachPanel";
 
 export default ColdOutreachPanel;

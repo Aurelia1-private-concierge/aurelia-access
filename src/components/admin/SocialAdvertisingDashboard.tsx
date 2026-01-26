@@ -12,6 +12,7 @@ import CampaignBuilder from "./social/CampaignBuilder";
 import ContentCalendar from "./social/ContentCalendar";
 import EngagementMetrics from "./social/EngagementMetrics";
 import AIContentGenerator from "./social/AIContentGenerator";
+import AdSpendDashboard from "./social/AdSpendDashboard";
 
 const SocialAdvertisingDashboard = forwardRef<HTMLDivElement>((_, ref) => {
   const {
@@ -90,6 +91,7 @@ const SocialAdvertisingDashboard = forwardRef<HTMLDivElement>((_, ref) => {
         <TabsList className="bg-card border border-border/50 h-auto flex-wrap gap-1 p-1">
           <TabsTrigger value="calendar">Content Calendar</TabsTrigger>
           <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
+          <TabsTrigger value="ad-spend">💰 Ad Spend</TabsTrigger>
           <TabsTrigger value="ai-generator">AI Generator</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="platforms">Connections</TabsTrigger>
@@ -109,6 +111,10 @@ const SocialAdvertisingDashboard = forwardRef<HTMLDivElement>((_, ref) => {
             campaigns={campaigns}
             onCreateCampaign={createCampaign}
           />
+        </TabsContent>
+
+        <TabsContent value="ad-spend">
+          <AdSpendDashboard />
         </TabsContent>
 
         <TabsContent value="ai-generator">

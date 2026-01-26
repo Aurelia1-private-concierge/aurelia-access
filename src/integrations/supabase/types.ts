@@ -5328,6 +5328,210 @@ export type Database = {
         }
         Relationships: []
       }
+      social_ad_accounts: {
+        Row: {
+          access_token_encrypted: string | null
+          account_id: string
+          account_name: string | null
+          account_status: string | null
+          created_at: string
+          id: string
+          metadata: Json | null
+          permissions: Json | null
+          platform: string
+          refresh_token_encrypted: string | null
+          token_expires_at: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          access_token_encrypted?: string | null
+          account_id: string
+          account_name?: string | null
+          account_status?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          permissions?: Json | null
+          platform: string
+          refresh_token_encrypted?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          access_token_encrypted?: string | null
+          account_id?: string
+          account_name?: string | null
+          account_status?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          permissions?: Json | null
+          platform?: string
+          refresh_token_encrypted?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      social_ad_budgets: {
+        Row: {
+          alert_threshold: number | null
+          budget_amount: number
+          campaign_id: string | null
+          created_at: string
+          currency: string
+          daily_limit: number | null
+          end_date: string | null
+          id: string
+          platform: string
+          spent_amount: number
+          start_date: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          alert_threshold?: number | null
+          budget_amount?: number
+          campaign_id?: string | null
+          created_at?: string
+          currency?: string
+          daily_limit?: number | null
+          end_date?: string | null
+          id?: string
+          platform: string
+          spent_amount?: number
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          alert_threshold?: number | null
+          budget_amount?: number
+          campaign_id?: string | null
+          created_at?: string
+          currency?: string
+          daily_limit?: number | null
+          end_date?: string | null
+          id?: string
+          platform?: string
+          spent_amount?: number
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_ad_budgets_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "social_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_ad_metrics: {
+        Row: {
+          budget_id: string | null
+          clicks: number | null
+          conversions: number | null
+          cpa: number | null
+          cpc: number | null
+          cpm: number | null
+          created_at: string
+          date: string
+          id: string
+          impressions: number | null
+          platform: string
+          revenue: number | null
+          roas: number | null
+          spend: number | null
+        }
+        Insert: {
+          budget_id?: string | null
+          clicks?: number | null
+          conversions?: number | null
+          cpa?: number | null
+          cpc?: number | null
+          cpm?: number | null
+          created_at?: string
+          date: string
+          id?: string
+          impressions?: number | null
+          platform: string
+          revenue?: number | null
+          roas?: number | null
+          spend?: number | null
+        }
+        Update: {
+          budget_id?: string | null
+          clicks?: number | null
+          conversions?: number | null
+          cpa?: number | null
+          cpc?: number | null
+          cpm?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          impressions?: number | null
+          platform?: string
+          revenue?: number | null
+          roas?: number | null
+          spend?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_ad_metrics_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "social_ad_budgets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_ad_transactions: {
+        Row: {
+          amount: number
+          budget_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json | null
+          platform_transaction_id: string | null
+          transaction_type: string
+        }
+        Insert: {
+          amount: number
+          budget_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          platform_transaction_id?: string | null
+          transaction_type: string
+        }
+        Update: {
+          amount?: number
+          budget_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          platform_transaction_id?: string | null
+          transaction_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_ad_transactions_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "social_ad_budgets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       social_advertising_posts: {
         Row: {
           account_id: string | null
@@ -6356,6 +6560,7 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      check_budget_alert: { Args: { p_budget_id: string }; Returns: Json }
       check_ip_rate_limit: {
         Args: {
           p_ip_address: string

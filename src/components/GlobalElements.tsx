@@ -9,6 +9,7 @@ const SystemHealthIndicator = lazy(() => import("./SystemHealthIndicator"));
 const OfflineBanner = lazy(() => import("./OfflineBanner"));
 const NotificationPermissionPrompt = lazy(() => import("./NotificationPermissionPrompt"));
 const HelpFAB = lazy(() => import("./help/HelpFAB"));
+const VideoBotTrigger = lazy(() => import("./video/VideoBotTrigger"));
 
 // Lazy load heavy components
 const AmbientParticles = lazy(() => import("./AmbientParticles"));
@@ -21,6 +22,7 @@ interface GlobalElementsProps {
   showOrla?: boolean;
   showHealthIndicator?: boolean;
   showNotificationPrompt?: boolean;
+  showVideoBot?: boolean;
 }
 
 const GlobalElements = ({
@@ -30,6 +32,7 @@ const GlobalElements = ({
   showOrla = true,
   showHealthIndicator = true,
   showNotificationPrompt = true,
+  showVideoBot = true,
 }: GlobalElementsProps) => {
   const location = useLocation();
   
@@ -84,6 +87,7 @@ const GlobalElements = ({
       <Suspense fallback={null}>
         {showWhatsApp && <FloatingWhatsApp />}
         {showOrla && <OrlaFAB />}
+        {showVideoBot && <VideoBotTrigger position="bottom-left" />}
         <HelpFAB />
       </Suspense>
     </>

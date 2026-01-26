@@ -75,6 +75,7 @@ import N8NAutomationHub from "@/components/admin/N8NAutomationHub";
 import BacklinkStrategyPanel from "@/components/admin/BacklinkStrategyPanel";
 import PartnerMessagesPanel from "@/components/admin/PartnerMessagesPanel";
 import OnlineUsersIndicator from "@/components/admin/OnlineUsersIndicator";
+import APIKeysPanel from "@/components/admin/APIKeysPanel";
 // Lazy load recharts-heavy components to prevent circular initialization errors
 const AnalyticsDashboard = lazy(() => import("@/components/admin/AnalyticsDashboard"));
 const VisitorAnalytics = lazy(() => import("@/components/admin/VisitorAnalytics"));
@@ -406,6 +407,7 @@ const Admin = () => {
             <TabsTrigger value="auctions">Auctions</TabsTrigger>
             <TabsTrigger value="globalaudit">Global Audit</TabsTrigger>
             <TabsTrigger value="socialads">Social Advertising</TabsTrigger>
+            <TabsTrigger value="apikeys">API Keys</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
@@ -419,6 +421,10 @@ const Admin = () => {
             <Suspense fallback={<ChartLoading />}>
               <SocialAdvertisingDashboard />
             </Suspense>
+          </TabsContent>
+
+          <TabsContent value="apikeys" className="space-y-6">
+            <APIKeysPanel />
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-6">

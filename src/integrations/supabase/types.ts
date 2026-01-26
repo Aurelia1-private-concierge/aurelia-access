@@ -3223,6 +3223,8 @@ export type Database = {
         Row: {
           attempts: number
           created_at: string
+          delivery_confirmed_at: string | null
+          delivery_method: string | null
           error_message: string | null
           event_summary: Json
           id: string
@@ -3238,6 +3240,8 @@ export type Database = {
         Insert: {
           attempts?: number
           created_at?: string
+          delivery_confirmed_at?: string | null
+          delivery_method?: string | null
           error_message?: string | null
           event_summary: Json
           id?: string
@@ -3253,6 +3257,8 @@ export type Database = {
         Update: {
           attempts?: number
           created_at?: string
+          delivery_confirmed_at?: string | null
+          delivery_method?: string | null
           error_message?: string | null
           event_summary?: Json
           id?: string
@@ -3585,6 +3591,12 @@ export type Database = {
         Row: {
           attachments: string[] | null
           created_at: string
+          delivered_at: string | null
+          delivery_method: string | null
+          delivery_status: string | null
+          email_clicked_at: string | null
+          email_opened_at: string | null
+          email_sent_at: string | null
           id: string
           message: string
           read: boolean
@@ -3595,6 +3607,12 @@ export type Database = {
         Insert: {
           attachments?: string[] | null
           created_at?: string
+          delivered_at?: string | null
+          delivery_method?: string | null
+          delivery_status?: string | null
+          email_clicked_at?: string | null
+          email_opened_at?: string | null
+          email_sent_at?: string | null
           id?: string
           message: string
           read?: boolean
@@ -3605,6 +3623,12 @@ export type Database = {
         Update: {
           attachments?: string[] | null
           created_at?: string
+          delivered_at?: string | null
+          delivery_method?: string | null
+          delivery_status?: string | null
+          email_clicked_at?: string | null
+          email_opened_at?: string | null
+          email_sent_at?: string | null
           id?: string
           message?: string
           read?: boolean
@@ -6811,6 +6835,18 @@ export type Database = {
           element_id: string | null
           hour: string | null
           page_path: string | null
+        }
+        Relationships: []
+      }
+      partner_message_delivery_stats: {
+        Row: {
+          avg_delivery_seconds: number | null
+          date: string | null
+          delivered_count: number | null
+          delivery_method: string | null
+          delivery_status: string | null
+          message_count: number | null
+          opened_count: number | null
         }
         Relationships: []
       }

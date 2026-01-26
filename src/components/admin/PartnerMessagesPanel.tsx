@@ -17,7 +17,13 @@ import {
   CheckCircle2,
   Circle,
   Search,
-  Filter
+  Filter,
+  Check,
+  CheckCheck,
+  Mail,
+  MailOpen,
+  AlertCircle,
+  Loader2
 } from "lucide-react";
 import { format } from "date-fns";
 import {
@@ -35,6 +41,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+type DeliveryStatus = 'pending' | 'sent' | 'delivered' | 'failed';
+type DeliveryMethod = 'in_app' | 'email' | 'both';
 
 interface PartnerMessage {
   id: string;
@@ -45,6 +60,12 @@ interface PartnerMessage {
   read: boolean;
   attachments: string[] | null;
   created_at: string;
+  delivery_status: DeliveryStatus;
+  delivered_at: string | null;
+  delivery_method: DeliveryMethod;
+  email_sent_at: string | null;
+  email_opened_at: string | null;
+  email_clicked_at: string | null;
   request?: {
     title: string;
   } | null;
@@ -54,6 +75,80 @@ interface PartnerInfo {
   id: string;
   company_name: string;
 }
+
+// Delivery Status Indicator Component
+const DeliveryIndicator: React.FC<{
+  status: DeliveryStatus;
+  method: DeliveryMethod;
+  deliveredAt: string | null;
+  emailSentAt: string | null;
+  emailOpenedAt: string | null;
+}> = ({ status, method, deliveredAt, emailSentAt, emailOpenedAt }) => {
+  const getStatusIcon = () => {
+    switch (status) {
+      case 'pending':
+        return <Loader2 className="w-3.5 h-3.5 text-muted-foreground animate-spin" />;
+      case 'sent':
+        return <Check className="w-3.5 h-3.5 text-muted-foreground" />;
+      case 'delivered':
+        return <CheckCheck className="w-3.5 h-3.5 text-primary" />;
+      case 'failed':
+        return <AlertCircle className="w-3.5 h-3.5 text-destructive" />;
+      default:
+        return <Circle className="w-3.5 h-3.5 text-muted-foreground" />;
+    }
+  };
+
+  const getEmailIcon = () => {
+    if (emailOpenedAt) {
+      return <MailOpen className="w-3.5 h-3.5 text-primary" />;
+    }
+    if (emailSentAt) {
+      return <Mail className="w-3.5 h-3.5 text-accent-foreground" />;
+    }
+    return null;
+  };
+
+  const getTooltipContent = () => {
+    const lines: string[] = [];
+    
+    if (status === 'pending') lines.push('⏳ Sending...');
+    if (status === 'sent') lines.push('✓ Sent');
+    if (status === 'delivered') lines.push('✓✓ Delivered');
+    if (status === 'failed') lines.push('✗ Delivery failed');
+    
+    if (deliveredAt) {
+      lines.push(`Delivered: ${format(new Date(deliveredAt), "MMM d, HH:mm")}`);
+    }
+    
+    if (method === 'email' || method === 'both') {
+      if (emailSentAt) {
+        lines.push(`📧 Email sent: ${format(new Date(emailSentAt), "MMM d, HH:mm")}`);
+      }
+      if (emailOpenedAt) {
+        lines.push(`👁 Email opened: ${format(new Date(emailOpenedAt), "MMM d, HH:mm")}`);
+      }
+    }
+    
+    return lines.join('\n');
+  };
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="flex items-center gap-1">
+            {getStatusIcon()}
+            {(method === 'email' || method === 'both') && getEmailIcon()}
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="left" className="whitespace-pre-line text-xs">
+          {getTooltipContent()}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
 
 const PartnerMessagesPanel: React.FC = () => {
   const { user } = useAuth();
@@ -309,9 +404,18 @@ const PartnerMessagesPanel: React.FC = () => {
                           </p>
                         </div>
                       </div>
-                      <div className="text-xs text-muted-foreground flex items-center gap-1 whitespace-nowrap">
-                        <Clock className="w-3 h-3" />
-                        {format(new Date(message.created_at), "MMM d, HH:mm")}
+                      <div className="flex flex-col items-end gap-2">
+                        <div className="text-xs text-muted-foreground flex items-center gap-1 whitespace-nowrap">
+                          <Clock className="w-3 h-3" />
+                          {format(new Date(message.created_at), "MMM d, HH:mm")}
+                        </div>
+                        <DeliveryIndicator
+                          status={message.delivery_status || 'pending'}
+                          method={message.delivery_method || 'in_app'}
+                          deliveredAt={message.delivered_at}
+                          emailSentAt={message.email_sent_at}
+                          emailOpenedAt={message.email_opened_at}
+                        />
                       </div>
                     </div>
                   </div>
@@ -341,10 +445,21 @@ const PartnerMessagesPanel: React.FC = () => {
             <div className="p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center justify-between mb-2 text-xs text-muted-foreground">
                 <span>From Partner</span>
-                <span>
-                  {selectedMessage &&
-                    format(new Date(selectedMessage.created_at), "MMM d, yyyy 'at' HH:mm")}
-                </span>
+                <div className="flex items-center gap-3">
+                  {selectedMessage && (
+                    <DeliveryIndicator
+                      status={selectedMessage.delivery_status || 'pending'}
+                      method={selectedMessage.delivery_method || 'in_app'}
+                      deliveredAt={selectedMessage.delivered_at}
+                      emailSentAt={selectedMessage.email_sent_at}
+                      emailOpenedAt={selectedMessage.email_opened_at}
+                    />
+                  )}
+                  <span>
+                    {selectedMessage &&
+                      format(new Date(selectedMessage.created_at), "MMM d, yyyy 'at' HH:mm")}
+                  </span>
+                </div>
               </div>
               <p className="text-sm whitespace-pre-wrap">{selectedMessage?.message}</p>
             </div>

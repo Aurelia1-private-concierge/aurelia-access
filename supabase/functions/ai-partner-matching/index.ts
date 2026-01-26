@@ -15,7 +15,7 @@ interface Partner {
   id: string;
   company_name: string;
   categories: string[];
-  regions_served: string[];
+  service_regions: string[] | null;
   min_budget: number | null;
   max_budget: number | null;
   rating: number;
@@ -80,7 +80,7 @@ serve(async (req) => {
         id,
         company_name,
         categories,
-        regions_served,
+        service_regions,
         min_budget,
         max_budget,
         rating,
@@ -270,8 +270,8 @@ function calculateMatchScore(partner: Partner, request: ServiceRequest): { score
   }
 
   // Location match (bonus 10 points)
-  if (request.location && partner.regions_served) {
-    const regions = partner.regions_served.map(r => r.toLowerCase());
+  if (request.location && partner.service_regions) {
+    const regions = partner.service_regions.map(r => r.toLowerCase());
     const requestLocation = request.location.toLowerCase();
     
     if (regions.some(r => requestLocation.includes(r) || r.includes(requestLocation))) {

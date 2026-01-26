@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useRef, memo } from "react";
 import { 
   Shield, Lock, Key, Eye, Server, FileCheck, 
   Fingerprint, AlertTriangle, Clock, Award,
@@ -9,6 +10,143 @@ import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { BRAND } from "@/components/brand";
+import { AnimatedBeam } from "@/components/ui/animated-beam";
+
+// Security Layers Section with Crossbeam Visualization
+interface SecurityLayer {
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  description: string;
+  badge: string;
+}
+
+const SecurityLayersSection = memo(({ securityLayers }: { securityLayers: SecurityLayer[] }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const centerRef = useRef<HTMLDivElement>(null);
+  const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  return (
+    <section className="py-24">
+      <div className="max-w-6xl mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 
+            className="text-3xl md:text-4xl font-normal mb-4"
+            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+          >
+            Multi-Layered Protection
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Six interlocking security layers ensure your data remains impenetrable
+          </p>
+        </motion.div>
+
+        {/* Crossbeam visualization - visible on larger screens */}
+        <div ref={containerRef} className="hidden lg:block relative h-[400px] mb-16">
+          {/* Central shield hub */}
+          <div 
+            ref={centerRef}
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
+          >
+            <div className="relative">
+              <div className="absolute inset-0 w-20 h-20 bg-primary/20 rounded-full blur-xl animate-pulse" />
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-primary/60 border border-primary/40 flex items-center justify-center backdrop-blur-xl">
+                <Shield className="w-10 h-10 text-primary" />
+              </div>
+            </div>
+          </div>
+
+          {/* Layer nodes arranged in circle */}
+          {securityLayers.map((layer, index) => {
+            const angle = (index * 2 * Math.PI) / securityLayers.length - Math.PI / 2;
+            const radius = 38;
+            const left = `${50 + radius * Math.cos(angle)}%`;
+            const top = `${50 + radius * Math.sin(angle)}%`;
+
+            return (
+              <motion.div
+                key={layer.title}
+                ref={(el) => { nodeRefs.current[index] = el; }}
+                initial={{ scale: 0, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.1 * index }}
+                className="absolute -translate-x-1/2 -translate-y-1/2 z-10 group"
+                style={{ left, top }}
+              >
+                <div className="relative cursor-pointer">
+                  <div className="w-14 h-14 rounded-full bg-card/80 border border-border/40 flex items-center justify-center backdrop-blur-xl group-hover:border-primary/50 group-hover:bg-primary/10 transition-all duration-300">
+                    <layer.icon className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+                  </div>
+                  <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-[10px] text-primary font-medium tracking-wide">
+                      {layer.badge}
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+
+          {/* Animated beams connecting nodes to center */}
+          {nodeRefs.current.map((nodeRef, index) => {
+            if (!nodeRef || !centerRef.current) return null;
+            return (
+              <AnimatedBeam
+                key={`security-beam-${index}`}
+                containerRef={containerRef as React.RefObject<HTMLDivElement>}
+                fromRef={{ current: nodeRef } as React.RefObject<HTMLDivElement>}
+                toRef={centerRef as React.RefObject<HTMLDivElement>}
+                duration={3 + index * 0.2}
+                delay={index * 0.15}
+                curvature={8}
+                pathOpacity={0.08}
+                pathWidth={1}
+                gradientStartColor="hsl(var(--primary))"
+                gradientStopColor="hsl(var(--primary) / 0.2)"
+              />
+            );
+          })}
+        </div>
+
+        {/* Card grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {securityLayers.map((layer, index) => (
+            <motion.div
+              key={layer.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              className="group relative p-8 bg-card/50 border border-border/30 rounded-lg hover:border-primary/30 hover:bg-card/80 transition-all duration-500"
+            >
+              <div className="absolute top-4 right-4">
+                <span className="text-[10px] uppercase tracking-widest text-primary/60 px-2 py-1 bg-primary/10 rounded-full">
+                  {layer.badge}
+                </span>
+              </div>
+              
+              <div className="w-12 h-12 rounded-full border border-primary/30 flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors">
+                <layer.icon className="w-5 h-5 text-primary" />
+              </div>
+              
+              <h3 className="text-lg font-medium mb-3">{layer.title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {layer.description}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
+
+SecurityLayersSection.displayName = "SecurityLayersSection";
 
 const Security = () => {
   const { t } = useTranslation();
@@ -135,55 +273,8 @@ const Security = () => {
         </div>
       </section>
 
-      {/* Security Layers */}
-      <section className="py-24">
-        <div className="max-w-6xl mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 
-              className="text-3xl md:text-4xl font-normal mb-4"
-              style={{ fontFamily: "'Cormorant Garamond', serif" }}
-            >
-              Multi-Layered Protection
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Six interlocking security layers ensure your data remains impenetrable
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {securityLayers.map((layer, index) => (
-              <motion.div
-                key={layer.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="group relative p-8 bg-card/50 border border-border/30 rounded-lg hover:border-primary/30 hover:bg-card/80 transition-all duration-500"
-              >
-                <div className="absolute top-4 right-4">
-                  <span className="text-[10px] uppercase tracking-widest text-primary/60 px-2 py-1 bg-primary/10 rounded-full">
-                    {layer.badge}
-                  </span>
-                </div>
-                
-                <div className="w-12 h-12 rounded-full border border-primary/30 flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors">
-                  <layer.icon className="w-5 h-5 text-primary" />
-                </div>
-                
-                <h3 className="text-lg font-medium mb-3">{layer.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {layer.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Security Layers with Crossbeam Visualization */}
+      <SecurityLayersSection securityLayers={securityLayers} />
 
       {/* Certifications */}
       <section className="py-20 bg-card/30 border-y border-border/20">

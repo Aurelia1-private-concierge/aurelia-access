@@ -41,6 +41,8 @@ import {
 const MarketingPackagesPanel = () => {
   const [selectedPackages, setSelectedPackages] = useState<string[]>([]);
   const [isProposalDialogOpen, setIsProposalDialogOpen] = useState(false);
+  const [isNetworkDialogOpen, setIsNetworkDialogOpen] = useState(false);
+  const [selectedNetwork, setSelectedNetwork] = useState<typeof UHNW_NETWORKS[0] | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [proposalForm, setProposalForm] = useState({
     companyName: "",
@@ -50,6 +52,18 @@ const MarketingPackagesPanel = () => {
     notes: "",
     targetLaunchDate: ""
   });
+
+  const handleLearnMore = (network: typeof UHNW_NETWORKS[0]) => {
+    setSelectedNetwork(network);
+    setIsNetworkDialogOpen(true);
+  };
+
+  const handleRequestNetworkAccess = () => {
+    if (selectedNetwork) {
+      toast.success(`Access request for ${selectedNetwork.name} submitted. Our team will contact you shortly.`);
+      setIsNetworkDialogOpen(false);
+    }
+  };
   
   const togglePackage = (id: string) => {
     setSelectedPackages(prev => 
@@ -251,6 +265,62 @@ const MarketingPackagesPanel = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Network Details Dialog */}
+      <Dialog open={isNetworkDialogOpen} onOpenChange={setIsNetworkDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-primary" />
+              {selectedNetwork?.name}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedNetwork?.description}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Member Requirement</p>
+                <p className="text-sm">{selectedNetwork?.memberRequirement}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Access Method</p>
+                <Badge variant="secondary">{selectedNetwork?.accessMethod}</Badge>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Benefits of Access:</p>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  Direct access to ultra-high-net-worth individuals
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  Curated networking opportunities
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  Exclusive event invitations
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsNetworkDialogOpen(false)}>
+              Close
+            </Button>
+            <Button onClick={handleRequestNetworkAccess}>
+              <Send className="w-4 h-4 mr-2" />
+              Request Access
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Tabs defaultValue="packages" className="space-y-6">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="packages">Marketing Packages</TabsTrigger>
@@ -369,7 +439,15 @@ const MarketingPackagesPanel = () => {
                       <p className="text-xs text-muted-foreground">Access Method</p>
                       <Badge variant="secondary">{network.accessMethod}</Badge>
                     </div>
-                    <Button variant="outline" size="sm" className="w-full mt-4">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full mt-4"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleLearnMore(network);
+                      }}
+                    >
                       <ExternalLink className="w-4 h-4 mr-2" />
                       Learn More
                     </Button>

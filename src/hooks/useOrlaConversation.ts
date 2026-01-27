@@ -41,10 +41,19 @@ export const useOrlaConversation = (
   const [isThinking, setIsThinking] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const isProcessingRef = useRef(false);
+  const isMountedRef = useRef(true);
 
   // Web Speech hooks
   const webSpeech = useWebSpeech({ rate: 0.95, pitch: 1, volume: 1 });
   const recognition = useWebSpeechRecognition({ continuous: false });
+
+  // Track mounted state for cleanup
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   // Check ElevenLabs availability on mount
   useEffect(() => {
@@ -54,6 +63,8 @@ export const useOrlaConversation = (
           "elevenlabs-conversation-token"
         );
 
+        if (!isMountedRef.current) return;
+
         // Check for signed_url which is what the edge function returns
         if (error || !data?.signed_url) {
           console.log("ElevenLabs not available, Web Speech mode ready");
@@ -62,7 +73,9 @@ export const useOrlaConversation = (
           setMode("elevenlabs");
         }
       } catch {
-        setMode(recognition.isSupported && webSpeech.isSupported ? "webspeech" : "none");
+        if (isMountedRef.current) {
+          setMode(recognition.isSupported && webSpeech.isSupported ? "webspeech" : "none");
+        }
       }
     };
 
@@ -85,7 +98,8 @@ export const useOrlaConversation = (
         !recognition.isListening &&
         recognition.transcript &&
         isConnected &&
-        !isProcessingRef.current
+        !isProcessingRef.current &&
+        isMountedRef.current
       ) {
         isProcessingRef.current = true;
         const userText = recognition.transcript.trim();
@@ -111,6 +125,7 @@ Keep responses concise (2-3 sentences) for voice delivery. Be helpful and elegan
               },
             });
 
+            if (!isMountedRef.current) return;
             setIsThinking(false);
 
             if (error) {
@@ -127,10 +142,12 @@ Keep responses concise (2-3 sentences) for voice delivery. Be helpful and elegan
             webSpeech.speak(agentResponse);
           } catch (err) {
             console.error("AI response error:", err);
-            setIsThinking(false);
-            const fallbackResponse = "I apologize, I'm having trouble processing that request. Please try again.";
-            onTranscript?.("agent", fallbackResponse);
-            webSpeech.speak(fallbackResponse);
+            if (isMountedRef.current) {
+              setIsThinking(false);
+              const fallbackResponse = "I apologize, I'm having trouble processing that request. Please try again.";
+              onTranscript?.("agent", fallbackResponse);
+              webSpeech.speak(fallbackResponse);
+            }
           }
         }
 
@@ -139,9 +156,10 @@ Keep responses concise (2-3 sentences) for voice delivery. Be helpful and elegan
 
         // Start listening again after speaking
         const checkAndRestart = () => {
+          if (!isMountedRef.current) return;
           if (!webSpeech.isSpeaking && isConnected) {
             recognition.startListening();
-          } else if (isConnected) {
+          } else if (isConnected && isMountedRef.current) {
             setTimeout(checkAndRestart, 500);
           }
         };
@@ -150,15 +168,25 @@ Keep responses concise (2-3 sentences) for voice delivery. Be helpful and elegan
     };
 
     processUserSpeech();
-  }, [recognition.isListening, recognition.transcript, isConnected, onTranscript, webSpeech]);
+  }, [recognition.isListening, recognition.transcript, isConnected, onTranscript, webSpeech, recognition]);
 
   const startConversation = useCallback(async () => {
     setIsConnecting(true);
     setError(null);
 
     try {
-      // Request microphone permission
-      await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Request microphone permission with mobile-friendly constraints
+      const constraints: MediaStreamConstraints = {
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+      };
+      
+      await navigator.mediaDevices.getUserMedia(constraints);
+
+      if (!isMountedRef.current) return;
 
       if (mode === "webspeech") {
         setIsConnected(true);
@@ -171,7 +199,7 @@ Keep responses concise (2-3 sentences) for voice delivery. Be helpful and elegan
 
         // Start listening after greeting
         setTimeout(() => {
-          if (!webSpeech.isSpeaking) {
+          if (!webSpeech.isSpeaking && isMountedRef.current) {
             recognition.startListening();
           }
         }, 3000);
@@ -184,8 +212,10 @@ Keep responses concise (2-3 sentences) for voice delivery. Be helpful and elegan
       }
     } catch (err) {
       console.error("Failed to start conversation:", err);
-      setError(err instanceof Error ? err.message : "Failed to start conversation");
-      setIsConnecting(false);
+      if (isMountedRef.current) {
+        setError(err instanceof Error ? err.message : "Failed to start conversation");
+        setIsConnecting(false);
+      }
     }
   }, [mode, onTranscript, webSpeech, recognition]);
 

@@ -56,7 +56,8 @@ const OrlaVoiceAvatarInner = ({
         const { data, error } = await supabase.functions.invoke(
           "elevenlabs-conversation-token"
         );
-        setUseElevenLabs(!error && !!data?.token);
+        // Check for signed_url which is what the edge function returns
+        setUseElevenLabs(!error && !!data?.signed_url);
       } catch {
         setUseElevenLabs(false);
       }
@@ -145,18 +146,18 @@ const OrlaVoiceAvatarInner = ({
     setEmotion("curious");
     
     if (useElevenLabs) {
-      // Use ElevenLabs
+      // Use ElevenLabs with signed URL for WebSocket connection
       try {
         await navigator.mediaDevices.getUserMedia({ audio: true });
         const { data, error } = await supabase.functions.invoke("elevenlabs-conversation-token");
 
-        if (error || !data?.token) {
+        if (error || !data?.signed_url) {
           throw new Error(error?.message || "Failed to get conversation token");
         }
 
+        // Use signedUrl for WebSocket connection type
         await conversation.startSession({
-          conversationToken: data.token,
-          connectionType: "webrtc",
+          signedUrl: data.signed_url,
         });
       } catch (error) {
         console.error("Failed to start ElevenLabs conversation:", error);

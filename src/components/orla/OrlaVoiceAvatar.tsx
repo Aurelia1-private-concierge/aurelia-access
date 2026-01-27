@@ -2,11 +2,12 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useConversation } from "@elevenlabs/react";
 import { motion, AnimatePresence } from "framer-motion";
 import Orla3DAvatar from "./Orla3DAvatar";
-import { OrlaExpressionProvider, useOrlaExpression, OrlaEmotion } from "./OrlaExpressionController";
+import { OrlaExpressionProvider, useOrlaExpression } from "./OrlaExpressionController";
 import { Button } from "@/components/ui/button";
-import { Mic, MicOff, Volume2, VolumeX, Sparkles } from "lucide-react";
+import { Mic, MicOff, Volume2, VolumeX, Sparkles, Wifi, WifiOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useOrlaConversation } from "@/hooks/useOrlaConversation";
 
 interface OrlaVoiceAvatarProps {
   size?: number;
@@ -27,15 +28,46 @@ const OrlaVoiceAvatarInner = ({
 }: OrlaVoiceAvatarProps) => {
   const { toast } = useToast();
   const { state, setSpeaking, setListening, setThinking, reactToContent, setEmotion } = useOrlaExpression();
-  const [isConnecting, setIsConnecting] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTranscript, setCurrentTranscript] = useState("");
+  const [useElevenLabs, setUseElevenLabs] = useState<boolean | null>(null);
   const volumeRef = useRef<() => number>(() => 0);
 
+  // Web Speech fallback conversation
+  const webConversation = useOrlaConversation({
+    onTranscript: (role, text) => {
+      setCurrentTranscript(text);
+      onTranscript?.(role, text);
+      if (role === "agent") {
+        reactToContent(text);
+      }
+    },
+    onStateChange: ({ isListening, isSpeaking, isThinking }) => {
+      setListening(isListening);
+      setSpeaking(isSpeaking);
+      setThinking(isThinking);
+    },
+  });
+
+  // Check ElevenLabs availability
+  useEffect(() => {
+    const checkElevenLabs = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke(
+          "elevenlabs-conversation-token"
+        );
+        setUseElevenLabs(!error && !!data?.token);
+      } catch {
+        setUseElevenLabs(false);
+      }
+    };
+    checkElevenLabs();
+  }, []);
+
+  // ElevenLabs conversation (only used when available)
   const conversation = useConversation({
     onConnect: () => {
-      console.log("Connected to Orla");
-      setIsConnecting(false);
+      console.log("Connected to Orla (ElevenLabs)");
       setEmotion("warm");
       toast({
         title: "Connected to Orla",
@@ -73,7 +105,6 @@ const OrlaVoiceAvatarInner = ({
     },
     onError: (error) => {
       console.error("Orla error:", error);
-      setIsConnecting(false);
       toast({
         variant: "destructive",
         title: "Connection Error",
@@ -82,20 +113,22 @@ const OrlaVoiceAvatarInner = ({
     },
   });
 
-  // Track speaking state
+  // Track ElevenLabs speaking state
   useEffect(() => {
-    setSpeaking(conversation.isSpeaking);
-    if (conversation.isSpeaking) {
-      setThinking(false);
+    if (useElevenLabs) {
+      setSpeaking(conversation.isSpeaking);
+      if (conversation.isSpeaking) {
+        setThinking(false);
+      }
     }
-  }, [conversation.isSpeaking, setSpeaking, setThinking]);
+  }, [conversation.isSpeaking, setSpeaking, setThinking, useElevenLabs]);
 
-  // Track listening state
+  // Track ElevenLabs listening state
   useEffect(() => {
-    if (conversation.status === "connected" && !conversation.isSpeaking) {
+    if (useElevenLabs && conversation.status === "connected" && !conversation.isSpeaking) {
       setListening(true);
     }
-  }, [conversation.status, conversation.isSpeaking, setListening]);
+  }, [conversation.status, conversation.isSpeaking, setListening, useElevenLabs]);
 
   // Volume getter for lip-sync
   useEffect(() => {
@@ -109,41 +142,46 @@ const OrlaVoiceAvatarInner = ({
   }, [conversation]);
 
   const startConversation = useCallback(async () => {
-    setIsConnecting(true);
     setEmotion("curious");
     
-    try {
-      // Request microphone permission
-      await navigator.mediaDevices.getUserMedia({ audio: true });
+    if (useElevenLabs) {
+      // Use ElevenLabs
+      try {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        const { data, error } = await supabase.functions.invoke("elevenlabs-conversation-token");
 
-      // Get token from edge function
-      const { data, error } = await supabase.functions.invoke("elevenlabs-conversation-token");
+        if (error || !data?.token) {
+          throw new Error(error?.message || "Failed to get conversation token");
+        }
 
-      if (error || !data?.token) {
-        throw new Error(error?.message || "Failed to get conversation token");
+        await conversation.startSession({
+          conversationToken: data.token,
+          connectionType: "webrtc",
+        });
+      } catch (error) {
+        console.error("Failed to start ElevenLabs conversation:", error);
+        setEmotion("neutral");
+        toast({
+          variant: "destructive",
+          title: "Connection Error",
+          description: "Please enable microphone access to speak with Orla.",
+        });
       }
-
-      // Start the conversation
-      await conversation.startSession({
-        conversationToken: data.token,
-        connectionType: "webrtc",
-      });
-    } catch (error) {
-      console.error("Failed to start conversation:", error);
-      setIsConnecting(false);
-      setEmotion("neutral");
-      toast({
-        variant: "destructive",
-        title: "Microphone Access Required",
-        description: "Please enable microphone access to speak with Orla.",
-      });
+    } else {
+      // Use Web Speech fallback
+      await webConversation.startConversation();
+      setEmotion("warm");
     }
-  }, [conversation, toast, setEmotion]);
+  }, [conversation, toast, setEmotion, useElevenLabs, webConversation]);
 
   const endConversation = useCallback(async () => {
-    await conversation.endSession();
+    if (useElevenLabs) {
+      await conversation.endSession();
+    } else {
+      webConversation.endConversation();
+    }
     setEmotion("neutral");
-  }, [conversation, setEmotion]);
+  }, [conversation, setEmotion, useElevenLabs, webConversation]);
 
   const toggleMute = useCallback(async () => {
     try {
@@ -154,7 +192,12 @@ const OrlaVoiceAvatarInner = ({
     }
   }, [conversation, isMuted]);
 
-  const isConnected = conversation.status === "connected";
+  // Determine connection status
+  const isConnected = useElevenLabs 
+    ? conversation.status === "connected" 
+    : webConversation.isConnected;
+  
+  const isConnecting = webConversation.isConnecting;
 
   return (
     <div className="flex flex-col items-center gap-6">
@@ -202,6 +245,18 @@ const OrlaVoiceAvatarInner = ({
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Mode indicator */}
+        {useElevenLabs === false && isConnected && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute -top-2 right-0 flex items-center gap-1 px-2 py-0.5 bg-accent/20 rounded-full"
+          >
+            <Wifi className="w-3 h-3 text-accent" />
+            <span className="text-[10px] text-accent">Free Voice</span>
+          </motion.div>
+        )}
       </div>
 
       {/* Transcript display */}

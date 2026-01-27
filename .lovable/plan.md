@@ -1,303 +1,374 @@
 
-# Comprehensive SEO and Marketing Strategies Enhancement
+# Comprehensive Enhancement Plan: Aurelia Private Concierge
 
 ## Overview
 
-This plan delivers a complete overhaul of the marketing and SEO infrastructure, introducing a clear **Free vs. Paid strategy framework**, enhanced network components, and advanced conversion optimization tools. The focus is on actionable, measurable tactics for UHNW client acquisition.
+This plan implements five major enhancements to the Aurelia platform:
+1. **Family/Enterprise Membership Management** - Multi-member access with permission controls
+2. **Biometric Authentication (WebAuthn)** - Passkey/fingerprint/face ID support
+3. **Enhanced Payment Processing** - Full Stripe subscription integration
+4. **Competitive Bidding Experience** - Improved partner bid workflows
+5. **Pay-As-You-Go Model** - Credits-only membership without subscription
 
 ---
 
-## Phase 1: Free/Paid Strategy Framework
+## 1. Family/Enterprise Membership Management
 
-### 1.1 Create Strategy Constants Library
+### Current State
+- Single-user profiles exist in `profiles` table
+- No household or family linking mechanism
+- No delegated permissions system
 
-**New File:** `src/lib/marketing-strategies.ts`
+### Implementation
 
-Define two core strategy categories with detailed tactics, timelines, and expected outcomes:
-
-**FREE STRATEGIES (Organic Growth):**
-| Strategy | Channels | Time Investment | Expected Results |
-|----------|----------|-----------------|------------------|
-| SEO Content Marketing | Blog, FAQ, Service Pages | 4-6 hrs/week | 30-50% organic traffic increase |
-| Social Media Organic | LinkedIn, Instagram, X | 2-3 hrs/day | Brand awareness, 5-10 leads/month |
-| Community Engagement | r/fatFIRE, YPO Forums, LinkedIn Groups | 3-5 hrs/week | Relationship building, referrals |
-| PR & Earned Media | HARO, Journalist Outreach | 2-3 hrs/week | High-DA backlinks, credibility |
-| Referral Program | Member-to-member | Ongoing | 15-25% of new signups |
-| Email Newsletter | Weekly digest | 2-3 hrs/week | Nurture leads, 20%+ open rate |
-| Guest Posting | Forbes, Robb Report, TechCrunch | 4-8 hrs/article | Authority backlinks |
-| Video Content | YouTube, LinkedIn Video | 4-6 hrs/week | Engagement, brand personality |
-
-**PAID STRATEGIES (Accelerated Growth):**
-| Strategy | Monthly Budget | Target CPA | Expected Results |
-|----------|---------------|------------|------------------|
-| LinkedIn Ads (C-Suite) | $5K-15K | $150-300 | 20-50 qualified leads |
-| Google Ads (Luxury Intent) | $3K-10K | $100-250 | High-intent traffic |
-| Meta Ads (Lookalike) | $3K-8K | $80-200 | Retargeting conversions |
-| Reddit Ads (r/fatFIRE) | $1K-3K | $50-150 | Niche UHNW audience |
-| Programmatic Display | $5K-20K | $200-400 | Brand awareness, retargeting |
-| Influencer Partnerships | $5K-50K | $300-800 | Credibility, reach |
-| Event Sponsorships | $10K-100K | N/A | Direct networking |
-| Native Advertising | $5K-15K | $150-350 | Content distribution |
-
-### 1.2 Strategy Management Dashboard
-
-**New Component:** `src/components/admin/StrategyManagementPanel.tsx`
-
-Features:
-- Toggle between Free and Paid strategy views
-- Activity tracker for organic efforts (content published, outreach sent)
-- Budget allocation and spend tracking for paid campaigns
-- ROI calculator comparing free vs. paid performance
-- Strategy recommendation engine based on current funnel data
-
----
-
-## Phase 2: Enhanced Network Components
-
-### 2.1 UHNW Network Integration Panel
-
-**Enhanced File:** `src/components/admin/MarketingPackagesPanel.tsx`
-
-New features for the UHNW Networks tab:
-- **Partnership Status Tracker**: Active, Pending, Negotiating, Declined
-- **Contact Management**: Store key contacts for each network (Tiger 21, YPO, etc.)
-- **Engagement History**: Log meetings, calls, emails with network representatives
-- **ROI Tracking**: Track referrals and conversions from each network
-- **Integration Playbooks**: Step-by-step guides for accessing each network
-
-### 2.2 Partner Network Expansion
-
-**New Component:** `src/components/admin/PartnerNetworkGraph.tsx`
-
-Visual network graph showing:
-- Connected partners and their relationship strength
-- Referral flow between partners
-- Geographic distribution of partner network
-- Service category coverage gaps
-- Interactive filtering by category, region, tier
-
-### 2.3 The Circle Community Enhancements
-
-**Enhanced File:** `src/pages/Circle.tsx` and related components
-
-New features:
-- **Investment Syndicate Formation**: Allow members to create and join deal rooms
-- **Member Directory Filters**: Filter by industry, location, asset class interests
-- **Networking Events Calendar**: Virtual and in-person Circle gatherings
-- **Deal Flow Pipeline**: Track opportunities from introduction to close
-- **AI Matchmaking Improvements**: Enhanced scoring based on complementary assets
-
----
-
-## Phase 3: Advanced SEO Infrastructure
-
-### 3.1 Content Gap Analysis Tool
-
-**New Component:** `src/components/admin/ContentGapAnalyzer.tsx`
-
-Features:
-- Identify high-value keywords with no existing content
-- Competitor content audit (Quintessentially, Velocity Black)
-- Content calendar recommendations based on gaps
-- Search volume and difficulty metrics for target keywords
-- Automated content briefs generation
-
-### 3.2 Local SEO for Key Markets
-
-**New File:** `src/lib/local-seo.ts`
-
-Geographic targeting for wealth centers:
-- London, Monaco, Dubai, Singapore, NYC, Geneva, Hong Kong
-- Location-specific landing pages with localized schema markup
-- Google Business Profile optimization guidance
-- Local citation building tracker
-
-### 3.3 Technical SEO Monitoring
-
-**Enhanced Component:** `src/components/admin/SEODashboard.tsx`
-
-New tabs:
-- **Core Web Vitals**: Real-time LCP, FID, CLS monitoring
-- **Crawl Status**: Indexed pages, crawl errors, sitemap health
-- **Backlink Monitor**: New/lost backlinks, referring domains DA
-- **Schema Validator**: Test all structured data implementations
-- **Mobile Usability**: Page-by-page mobile scores
-
----
-
-## Phase 4: Conversion Optimization Suite
-
-### 4.1 A/B Testing Integration
-
-**Enhanced Use of Existing:** `ab_tests` table and `ABTestingPanel.tsx`
-
-Connect A/B testing to marketing pages:
-- Homepage hero variants
-- CTA button colors and copy
-- Membership pricing page layouts
-- Trial application form fields
-- Landing page headline testing
-
-### 4.2 Funnel Optimization Dashboard
-
-**Enhanced Component:** `src/components/admin/ConversionFunnelDashboard.tsx`
-
-New features:
-- **Stage-by-Stage Analysis**: Detailed drop-off reasons per funnel stage
-- **Cohort Comparison**: Compare performance by traffic source
-- **Predictive Scoring**: ML-based likelihood to convert scores
-- **Intervention Triggers**: Automated actions when drop-off detected
-- **Revenue Attribution**: Tie conversions back to specific campaigns
-
-### 4.3 Lead Scoring Enhancements
-
-**Enhanced Hook:** `src/hooks/useLeadScoring.ts`
-
-Additional scoring signals:
-- Content engagement depth (pages viewed, time on site)
-- Social proof interactions (viewed testimonials, case studies)
-- Pricing page engagement patterns
-- Return visit frequency
-- UTM source quality weighting
-
----
-
-## Phase 5: Campaign Management System
-
-### 5.1 Unified Campaign Dashboard
-
-**New Component:** `src/components/admin/CampaignHubDashboard.tsx`
-
-Central command center for all campaigns:
-- All active campaigns across free/paid channels
-- Real-time performance metrics from `funnel_events`
-- Budget vs. actual spend comparison
-- Campaign health scores (green/yellow/red)
-- Quick actions: pause, boost, duplicate campaigns
-
-### 5.2 Multi-Touch Attribution
-
-**New Component:** `src/components/admin/AttributionModelPanel.tsx`
-
-Attribution models:
-- First-touch, last-touch, linear, time-decay
-- Custom model builder
-- Visualize customer journey paths
-- Channel contribution analysis
-- ROI by attribution model comparison
-
-### 5.3 Automated Campaign Alerts
-
-**Database Migration:** New `campaign_alerts` table
+#### Database Schema
+Create new tables for family/enterprise structure:
 
 ```text
-campaign_alerts:
-  - id: uuid
-  - campaign_id: text
-  - alert_type: enum (budget_depleted, performance_drop, goal_achieved)
-  - threshold: numeric
-  - triggered_at: timestamptz
-  - acknowledged: boolean
+households
+├── id (uuid, primary key)
+├── name (text) - "The Smith Family" or "Smith Enterprises"
+├── type (enum: 'family' | 'enterprise')
+├── primary_member_id (uuid → profiles)
+├── subscription_id (text) - Shared Stripe subscription
+├── credit_pool_enabled (boolean) - Share credits across members
+├── created_at, updated_at
+
+household_members
+├── id (uuid, primary key)
+├── household_id (uuid → households)
+├── user_id (uuid → auth.users)
+├── role (enum: 'owner' | 'admin' | 'member' | 'dependent')
+├── permissions (jsonb) - Granular access controls
+├── spending_limit (numeric) - Optional per-member limit
+├── invited_by (uuid)
+├── joined_at
+├── status (enum: 'active' | 'pending' | 'suspended')
+```
+
+#### Permission System
+```text
+permissions: {
+  can_request_services: boolean,
+  can_accept_bids: boolean,
+  can_view_billing: boolean,
+  can_manage_members: boolean,
+  can_use_pool_credits: boolean,
+  service_categories: string[] | 'all'
+}
+```
+
+#### Frontend Components
+- **FamilyDashboard.tsx** - Overview of all household members and activity
+- **MemberInviteFlow.tsx** - Email-based invitation system
+- **PermissionEditor.tsx** - Role-based access control UI
+- **HouseholdSettings.tsx** - Manage shared settings and credit pooling
+
+#### Key Features
+- Primary member controls subscription billing
+- Optional credit pooling with per-member spending limits
+- Activity feed showing all member requests
+- Invitation flow with email verification
+- Dependents (children) with restricted permissions
+
+---
+
+## 2. Biometric Authentication (WebAuthn)
+
+### Current State
+- Email/password authentication via Supabase Auth
+- QuantumBiometric component exists for UI visualization only
+- No actual WebAuthn implementation
+
+### Implementation
+
+#### Database Schema
+```text
+user_passkeys
+├── id (uuid, primary key)
+├── user_id (uuid → auth.users)
+├── credential_id (text, unique) - WebAuthn credential ID
+├── public_key (text) - Stored public key
+├── counter (integer) - Replay attack prevention
+├── device_name (text) - "MacBook Pro", "iPhone 15"
+├── created_at
+├── last_used_at
+```
+
+#### Edge Function: `webauthn-register`
+- Generates registration challenge
+- Validates and stores credential
+- Uses `@simplewebauthn/server` for Deno
+
+#### Edge Function: `webauthn-authenticate`
+- Generates authentication challenge
+- Verifies signature
+- Returns session token on success
+
+#### Frontend Integration
+- **PasskeyManager.tsx** - Register/manage passkeys in settings
+- **BiometricLogin.tsx** - "Sign in with Passkey" button on auth page
+- Enhanced **QuantumBiometric.tsx** - Connect to real WebAuthn flows
+
+#### Security Flow
+```text
+Registration:
+1. User clicks "Add Passkey" in security settings
+2. Server generates challenge via Edge Function
+3. Browser prompts for biometric (Touch ID/Face ID/Windows Hello)
+4. Credential stored in database
+5. User can now use passkey for login
+
+Authentication:
+1. User clicks "Sign in with Passkey"
+2. Server sends challenge
+3. Device authenticates user biometrically
+4. Signed response verified server-side
+5. Session created, user logged in
 ```
 
 ---
 
-## Phase 6: Content & Social Strategy Engine
+## 3. Enhanced Payment Processing (Stripe)
 
-### 6.1 Content Calendar with AI Suggestions
+### Current State
+- Subscription tiers defined in `membership-tiers.ts` (Silver/Gold/Platinum)
+- `create-checkout` and `check-subscription` Edge Functions exist
+- Credit packages in `credit_packages` table
+- Webhook handling in `stripe-credits-webhook`
 
-**Enhanced Component:** `src/components/admin/social/ContentCalendar.tsx`
+### Issues Identified
+- Stripe products/prices return empty (need creation in Stripe dashboard)
+- Missing subscription lifecycle webhook handlers
+- No automatic monthly credit allocation
 
-New features:
-- AI-generated content suggestions based on trending topics
-- Optimal posting time recommendations
-- Content pillar mapping (Education, Inspiration, Promotion)
-- Holiday and event-based content prompts
-- Performance predictions per post type
+### Implementation
 
-### 6.2 Social Listening Dashboard
+#### Stripe Product Setup
+Create in Stripe Dashboard (or via API):
+```text
+Products:
+- Silver Membership (Monthly & Annual)
+- Gold Membership (Monthly & Annual)  
+- Platinum Membership (Monthly & Annual)
+- Pay-As-You-Go (No subscription, credits only)
 
-**New Component:** `src/components/admin/SocialListeningPanel.tsx`
+Credit Packs:
+- Starter (5 credits - $99)
+- Value (15 credits - $249)
+- Premium (30 credits - $449)
+- Elite (50 credits - $699)
+```
 
-Monitor:
-- Brand mentions across platforms
-- Competitor activity tracking
-- Industry trend analysis
-- Sentiment analysis of mentions
-- Engagement opportunity alerts
+#### Enhanced Webhooks
+Update `stripe-credits-webhook` to handle:
+- `invoice.paid` - Monthly credit allocation
+- `customer.subscription.updated` - Tier changes
+- `customer.subscription.deleted` - Cancellation cleanup
+
+#### Subscription Lifecycle Edge Function
+```text
+On invoice.paid:
+1. Identify tier from product_id
+2. Get monthly credit allocation for tier
+3. Add credits to user_credits.balance
+4. Record credit_transaction (type: 'allocation')
+5. Send notification to user
+```
+
+#### Frontend Enhancements
+- Real-time subscription status in dashboard
+- Upgrade/downgrade flow with proration preview
+- Invoice history with download links
+- Credit usage analytics chart
 
 ---
 
-## Database Changes
+## 4. Competitive Bidding Experience
 
-New tables required:
+### Current State
+- `service_request_bids` table with full bid structure
+- `BidComparisonView.tsx` for comparing bids
+- Partner bidding hook `usePartnerBidding.ts`
+- Bid revisions tracked in `bid_revisions`
 
+### Enhancements
+
+#### Real-Time Bidding Improvements
+- **Live Bid Counter** - Show "3 partners are viewing this opportunity"
+- **Countdown Timer** - Optional bid deadline with urgency indicator
+- **Bid Notifications** - Push notifications when new bids arrive
+
+#### Enhanced Comparison Features
 ```text
-marketing_strategies:
-  - id: uuid
-  - name: text
-  - type: enum (free, paid)
-  - category: text
-  - description: text
-  - estimated_hours_weekly: numeric
-  - estimated_monthly_budget: numeric
-  - expected_roi: text
-  - status: enum (active, planned, paused)
-  - created_at: timestamptz
+BidComparisonView Enhancements:
+- Side-by-side partner comparison cards
+- Partner rating/review history display
+- AI-powered "Best Match" recommendation badge
+- One-click negotiate/counter-offer flow
+- Video introduction from partners (optional)
+```
 
-network_partnerships:
-  - id: uuid
-  - network_name: text
-  - partnership_status: enum (active, pending, negotiating, declined)
-  - primary_contact_name: text
-  - primary_contact_email: text
-  - engagement_notes: text
-  - referrals_received: integer
-  - last_contact_at: timestamptz
+#### Blind Bidding Option
+```text
+service_requests table addition:
+- blind_bidding (boolean) - Hide competitor bid amounts
+- reserve_price (numeric) - Minimum acceptable bid
+```
 
-campaign_alerts:
-  - id: uuid
-  - campaign_id: text
-  - alert_type: text
-  - threshold: numeric
-  - triggered_at: timestamptz
-  - acknowledged: boolean
+#### Partner Experience
+- **Quick Bid Templates** - Pre-saved pricing for common requests
+- **Bid Analytics Dashboard** - Win rate, average response time
+- **Competitor Insights** - Anonymous market positioning data
+
+---
+
+## 5. Pay-As-You-Go Model
+
+### Current State
+- Credit packages exist but require visiting purchase modal
+- No subscription-free membership option
+- Credits tied to subscription tiers
+
+### Implementation
+
+#### New Membership Tier
+Add to `membership-tiers.ts`:
+```typescript
+{
+  id: "paygo",
+  name: "Pay As You Go",
+  description: "No commitment. Purchase credits as needed.",
+  monthlyPrice: 0,
+  annualPrice: 0,
+  monthlyPriceId: null, // No subscription
+  annualPriceId: null,
+  productIds: [],
+  monthlyCredits: 0,
+  features: [
+    "No monthly fee",
+    "Purchase credits anytime",
+    "Access to all services",
+    "Orla AI Companion",
+    "Standard response times",
+    "Credits never expire"
+  ]
+}
+```
+
+#### Database Updates
+```text
+user_credits table addition:
+- membership_type (enum: 'subscription' | 'paygo' | 'trial')
+
+check-subscription Edge Function update:
+- Return tier: 'paygo' for users with credits but no subscription
+- Allow service access based on credit balance
+```
+
+#### Pricing Strategy
+```text
+Pay-As-You-Go Credit Rates (higher than subscription):
+- Per credit: ~$20-25 (vs ~$13-15 for subscribers)
+- Bulk discounts still apply for larger packs
+- No monthly allocation, all purchased
+```
+
+#### Frontend Updates
+- **Membership Page** - Add PAYGO tier with "Get Started Free" CTA
+- **Dashboard** - Prominent "Buy Credits" button for PAYGO users
+- **Credit Balance Widget** - Low balance warnings with quick-purchase
+- **Onboarding** - Option to skip subscription, start with credit pack
+
+#### User Flow
+```text
+1. User signs up (free)
+2. Completes profile onboarding
+3. Can immediately purchase credit pack
+4. Submit service requests using credits
+5. Prompt to subscribe after N requests (optional)
 ```
 
 ---
 
-## Technical Considerations
+## Technical Implementation Summary
 
-### Existing Infrastructure to Leverage
-- `funnel_events` table for conversion tracking
-- `lead_scores` table for scoring enhancements
-- `social_campaigns` and `social_post_analytics` for social data
-- `backlink_opportunities` table for link building
-- `ab_tests` infrastructure for experimentation
+### New Database Tables
+| Table | Purpose |
+|-------|---------|
+| `households` | Family/enterprise groupings |
+| `household_members` | Member roles and permissions |
+| `user_passkeys` | WebAuthn credential storage |
 
-### Integration Points
-- Apollo.io for visitor identification (already configured)
-- Social advertising suite for paid campaign management
-- Ad Spend dashboard for budget tracking
-- Campaign URL builder for UTM consistency
+### New Edge Functions
+| Function | Purpose |
+|----------|---------|
+| `webauthn-register` | Passkey registration flow |
+| `webauthn-authenticate` | Passkey login verification |
+| `household-invite` | Send member invitations |
+| `allocate-monthly-credits` | Subscription credit allocation |
 
-### Performance Considerations
-- Lazy load dashboard components
-- Use React Query for data caching
-- Implement pagination for large data tables
-- Background sync for real-time metrics
+### Modified Edge Functions
+| Function | Changes |
+|----------|---------|
+| `check-subscription` | Support PAYGO tier, household context |
+| `stripe-credits-webhook` | Handle `invoice.paid`, subscription updates |
+| `uhnwi-service-matcher` | Consider household preferences |
+
+### New Frontend Components
+| Component | Purpose |
+|-----------|---------|
+| `FamilyDashboard.tsx` | Household overview and management |
+| `MemberInviteFlow.tsx` | Invitation workflow |
+| `PasskeyManager.tsx` | Manage registered passkeys |
+| `BiometricLogin.tsx` | WebAuthn login UI |
+| `PayGoOnboarding.tsx` | Credits-first signup flow |
+| `BidCountdownTimer.tsx` | Urgency indicator for bids |
+
+### Modified Frontend Components
+| Component | Changes |
+|-----------|---------|
+| `Membership.tsx` | Add PAYGO tier, household toggle |
+| `Auth.tsx` | Add passkey login option |
+| `BidComparisonView.tsx` | Enhanced comparison features |
+| `CreditPurchaseModal.tsx` | Prominent placement for PAYGO users |
 
 ---
 
-## Implementation Summary
+## Implementation Order
 
-| Phase | Components | Estimated Complexity |
-|-------|-----------|---------------------|
-| Phase 1 | Strategy Framework | Medium |
-| Phase 2 | Network Components | Medium-High |
-| Phase 3 | SEO Infrastructure | Medium |
-| Phase 4 | Conversion Optimization | High |
-| Phase 5 | Campaign Management | High |
-| Phase 6 | Content Strategy Engine | Medium |
+### Phase 1: Payment Foundation (Priority)
+1. Create Stripe products/prices in dashboard
+2. Update `stripe-credits-webhook` for subscription lifecycle
+3. Implement automatic monthly credit allocation
+4. Add Pay-As-You-Go tier to membership page
 
-This comprehensive plan transforms the marketing infrastructure into a data-driven growth engine with clear visibility into both organic and paid acquisition channels, enabling informed budget allocation and strategy optimization.
+### Phase 2: Family/Enterprise
+1. Create database tables with RLS policies
+2. Build household management Edge Functions
+3. Develop FamilyDashboard and member management UI
+4. Implement credit pooling logic
+
+### Phase 3: Biometric Authentication
+1. Create `user_passkeys` table
+2. Build WebAuthn Edge Functions
+3. Integrate with auth flow
+4. Add passkey management to security settings
+
+### Phase 4: Bidding Enhancements
+1. Add blind bidding and deadline features
+2. Implement real-time presence indicators
+3. Build enhanced comparison UI
+4. Add partner analytics dashboard
+
+---
+
+## Security Considerations
+
+- **RLS Policies**: All new tables require proper row-level security
+- **Household Access**: Members can only see their own household
+- **WebAuthn**: Credentials never leave the device; only public keys stored
+- **Credit Transactions**: Audit trail for all credit movements
+- **Permission Validation**: Server-side checks for all household operations
+
+This comprehensive plan transforms Aurelia into a full-featured platform supporting individuals, families, and enterprises with modern authentication and flexible payment options.

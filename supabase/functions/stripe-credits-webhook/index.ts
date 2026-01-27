@@ -12,6 +12,38 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[STRIPE-CREDITS-WEBHOOK] ${step}${detailsStr}`);
 };
 
+// Map product IDs to monthly credit allocations
+const TIER_CREDITS: Record<string, number> = {
+  "prod_Ts5HAYiH4FXdPJ": 5,    // Silver Monthly
+  "prod_Ts5IziHQ8aBVBk": 5,    // Silver Annual
+  "prod_Ts5J8xal3xrVGe": 15,   // Gold Monthly
+  "prod_Ts5JJ4lhh13l9m": 15,   // Gold Annual
+  "prod_Ts5KqzhPH0Zbto": 999,  // Platinum Monthly (unlimited)
+  "prod_Ts5K3NqvPvE4BO": 999,  // Platinum Annual (unlimited)
+  // Legacy product IDs
+  "prod_TkuyLghfj6iAvD": 5,
+  "prod_TkuyMbYydw2D3z": 5,
+  "prod_TkuyEsqqaYVkqj": 15,
+  "prod_Tkuy4Hr5m0YSCZ": 15,
+  "prod_TkuzCZQ1Wyg24N": 999,
+  "prod_Tkv18can27J3JZ": 999,
+};
+
+const TIER_NAMES: Record<string, string> = {
+  "prod_Ts5HAYiH4FXdPJ": "Silver",
+  "prod_Ts5IziHQ8aBVBk": "Silver",
+  "prod_Ts5J8xal3xrVGe": "Gold",
+  "prod_Ts5JJ4lhh13l9m": "Gold",
+  "prod_Ts5KqzhPH0Zbto": "Platinum",
+  "prod_Ts5K3NqvPvE4BO": "Platinum",
+  "prod_TkuyLghfj6iAvD": "Silver",
+  "prod_TkuyMbYydw2D3z": "Silver",
+  "prod_TkuyEsqqaYVkqj": "Gold",
+  "prod_Tkuy4Hr5m0YSCZ": "Gold",
+  "prod_TkuzCZQ1Wyg24N": "Platinum",
+  "prod_Tkv18can27J3JZ": "Platinum",
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -28,7 +60,7 @@ serve(async (req) => {
     });
   }
 
-  const stripe = new Stripe(stripeSecretKey, { apiVersion: "2025-01-27.acacia" });
+  const stripe = new Stripe(stripeSecretKey, { apiVersion: "2025-08-27.basil" });
   
   const supabaseClient = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
@@ -157,6 +189,137 @@ serve(async (req) => {
           newBalance,
           sessionId: session.id 
         });
+      }
+    }
+
+    // Handle invoice.paid for subscription credit allocation
+    if (event.type === "invoice.paid") {
+      const invoice = event.data.object as Stripe.Invoice;
+      
+      // Only process subscription invoices (not one-time payments)
+      if (invoice.subscription && invoice.customer_email) {
+        logStep("Processing subscription invoice", { 
+          invoiceId: invoice.id,
+          email: invoice.customer_email,
+          subscriptionId: invoice.subscription
+        });
+
+        // Get the subscription to find the product
+        const subscription = await stripe.subscriptions.retrieve(invoice.subscription as string);
+        const productId = subscription.items.data[0]?.price.product as string;
+        
+        const credits = TIER_CREDITS[productId];
+        const tierName = TIER_NAMES[productId] || "Member";
+        
+        if (credits) {
+          // Find the user by email
+          const { data: userData, error: userError } = await supabaseClient.auth.admin
+            .listUsers();
+          
+          if (userError) {
+            logStep("Error finding user", { error: userError.message });
+          } else {
+            const user = userData.users.find(u => u.email === invoice.customer_email);
+            
+            if (user) {
+              // Get current credits
+              const { data: currentCredits } = await supabaseClient
+                .from("user_credits")
+                .select("*")
+                .eq("user_id", user.id)
+                .maybeSingle();
+
+              let newBalance: number;
+
+              if (currentCredits) {
+                newBalance = currentCredits.balance + credits;
+                await supabaseClient
+                  .from("user_credits")
+                  .update({ 
+                    balance: newBalance,
+                    monthly_allocation: credits,
+                  })
+                  .eq("user_id", user.id);
+              } else {
+                newBalance = credits;
+                await supabaseClient
+                  .from("user_credits")
+                  .insert({
+                    user_id: user.id,
+                    balance: credits,
+                    monthly_allocation: credits,
+                  });
+              }
+
+              // Record the allocation transaction
+              await supabaseClient
+                .from("credit_transactions")
+                .insert({
+                  user_id: user.id,
+                  amount: credits,
+                  transaction_type: "allocation",
+                  description: `Monthly ${tierName} membership credit allocation`,
+                  balance_after: newBalance,
+                });
+
+              // Notify user
+              await supabaseClient
+                .from("notifications")
+                .insert({
+                  user_id: user.id,
+                  type: "credit_allocation",
+                  title: "Monthly Credits Added",
+                  description: `Your ${credits === 999 ? "unlimited" : credits} monthly ${tierName} credits have been added to your account.`,
+                  action_url: "/dashboard",
+                });
+
+              logStep("Monthly credits allocated", { 
+                userId: user.id, 
+                credits, 
+                tierName,
+                newBalance 
+              });
+            }
+          }
+        }
+      }
+    }
+
+    // Handle customer.subscription.deleted for cleanup
+    if (event.type === "customer.subscription.deleted") {
+      const subscription = event.data.object as Stripe.Subscription;
+      const customerId = subscription.customer as string;
+      
+      logStep("Subscription cancelled", { 
+        subscriptionId: subscription.id,
+        customerId 
+      });
+
+      // Get customer email
+      const customer = await stripe.customers.retrieve(customerId);
+      if (customer && !customer.deleted && customer.email) {
+        // Find user and update their monthly allocation to 0
+        const { data: userData } = await supabaseClient.auth.admin.listUsers();
+        const user = userData?.users.find(u => u.email === customer.email);
+        
+        if (user) {
+          await supabaseClient
+            .from("user_credits")
+            .update({ monthly_allocation: 0 })
+            .eq("user_id", user.id);
+
+          await supabaseClient
+            .from("notifications")
+            .insert({
+              user_id: user.id,
+              type: "subscription_cancelled",
+              title: "Subscription Ended",
+              description: "Your subscription has ended. You can still use your remaining credits or subscribe again anytime.",
+              action_url: "/membership",
+            });
+
+          logStep("User subscription cleanup complete", { userId: user.id });
+        }
       }
     }
 

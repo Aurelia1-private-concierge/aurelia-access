@@ -12,6 +12,23 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
 };
 
+// Map product IDs to tiers
+const TIER_MAP: Record<string, string> = {
+  "prod_Ts5HAYiH4FXdPJ": "silver",
+  "prod_Ts5IziHQ8aBVBk": "silver",
+  "prod_Ts5J8xal3xrVGe": "gold",
+  "prod_Ts5JJ4lhh13l9m": "gold",
+  "prod_Ts5KqzhPH0Zbto": "platinum",
+  "prod_Ts5K3NqvPvE4BO": "platinum",
+  // Legacy product IDs
+  "prod_TkuyLghfj6iAvD": "silver",
+  "prod_TkuyMbYydw2D3z": "silver",
+  "prod_TkuyEsqqaYVkqj": "gold",
+  "prod_Tkuy4Hr5m0YSCZ": "gold",
+  "prod_TkuzCZQ1Wyg24N": "platinum",
+  "prod_Tkv18can27J3JZ": "platinum",
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -45,6 +62,7 @@ serve(async (req) => {
         tier: null,
         subscription_end: null,
         is_trial: false,
+        is_paygo: false,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
@@ -59,6 +77,7 @@ serve(async (req) => {
         tier: null,
         subscription_end: null,
         is_trial: false,
+        is_paygo: false,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
@@ -70,7 +89,7 @@ serve(async (req) => {
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
 
     if (customers.data.length === 0) {
-      logStep("No Stripe customer found, checking for active trial");
+      logStep("No Stripe customer found, checking for active trial or PAYGO");
       
       // Check for active trial
       const { data: trialData } = await supabaseClient
@@ -85,22 +104,46 @@ serve(async (req) => {
         logStep("Active trial found", { trialEnds: trialData.trial_ends_at });
         return new Response(JSON.stringify({ 
           subscribed: true,
-          tier: "gold", // Trial gets Gold access
+          tier: "gold",
           subscription_end: trialData.trial_ends_at,
           is_trial: true,
           trial_ends_at: trialData.trial_ends_at,
+          is_paygo: false,
         }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 200,
         });
       }
 
-      logStep("No trial found, returning unsubscribed state");
+      // Check for PAYGO user (has credits but no subscription)
+      const { data: creditsData } = await supabaseClient
+        .from("user_credits")
+        .select("balance")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (creditsData && creditsData.balance > 0) {
+        logStep("PAYGO user with credits", { balance: creditsData.balance });
+        return new Response(JSON.stringify({ 
+          subscribed: true,
+          tier: "paygo",
+          subscription_end: null,
+          is_trial: false,
+          is_paygo: true,
+          credit_balance: creditsData.balance,
+        }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+
+      logStep("No trial or credits found, returning unsubscribed state");
       return new Response(JSON.stringify({ 
         subscribed: false,
         tier: null,
         subscription_end: null,
         is_trial: false,
+        is_paygo: false,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
@@ -126,17 +169,7 @@ serve(async (req) => {
       subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
       productId = subscription.items.data[0].price.product as string;
       
-      // Map product IDs to tiers
-      const tierMap: Record<string, string> = {
-        "prod_TkuyLghfj6iAvD": "silver",
-        "prod_TkuyMbYydw2D3z": "silver",
-        "prod_TkuyEsqqaYVkqj": "gold",
-        "prod_Tkuy4Hr5m0YSCZ": "gold",
-        "prod_TkuzCZQ1Wyg24N": "platinum",
-        "prod_Tkv18can27J3JZ": "platinum",
-      };
-      
-      tier = tierMap[productId] || "member";
+      tier = TIER_MAP[productId] || "member";
       logStep("Active subscription found", { 
         subscriptionId: subscription.id, 
         tier, 
@@ -144,6 +177,28 @@ serve(async (req) => {
         endDate: subscriptionEnd 
       });
     } else {
+      // No active subscription - check for PAYGO
+      const { data: creditsData } = await supabaseClient
+        .from("user_credits")
+        .select("balance")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (creditsData && creditsData.balance > 0) {
+        logStep("No subscription but has credits - PAYGO user", { balance: creditsData.balance });
+        return new Response(JSON.stringify({ 
+          subscribed: true,
+          tier: "paygo",
+          subscription_end: null,
+          is_trial: false,
+          is_paygo: true,
+          credit_balance: creditsData.balance,
+        }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+      
       logStep("No active subscription found");
     }
 
@@ -153,6 +208,7 @@ serve(async (req) => {
       product_id: productId,
       subscription_end: subscriptionEnd,
       is_trial: false,
+      is_paygo: false,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

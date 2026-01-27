@@ -54,7 +54,8 @@ export const useOrlaConversation = (
           "elevenlabs-conversation-token"
         );
 
-        if (error || !data?.token) {
+        // Check for signed_url which is what the edge function returns
+        if (error || !data?.signed_url) {
           console.log("ElevenLabs not available, Web Speech mode ready");
           setMode(recognition.isSupported && webSpeech.isSupported ? "webspeech" : "none");
         } else {

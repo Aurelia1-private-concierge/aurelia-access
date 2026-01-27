@@ -4021,12 +4021,18 @@ export type Database = {
           email: string
           id: string
           logo_url: string | null
+          max_budget: number | null
+          min_budget: number | null
           notes: string | null
           phone: string | null
+          rating: number | null
+          response_rate: number | null
+          service_regions: string[] | null
           status: Database["public"]["Enums"]["partner_status"]
           stripe_account_id: string | null
           stripe_onboarding_complete: boolean | null
           stripe_payouts_enabled: boolean | null
+          total_bookings: number | null
           updated_at: string
           user_id: string
           verification_documents: string[] | null
@@ -4041,12 +4047,18 @@ export type Database = {
           email: string
           id?: string
           logo_url?: string | null
+          max_budget?: number | null
+          min_budget?: number | null
           notes?: string | null
           phone?: string | null
+          rating?: number | null
+          response_rate?: number | null
+          service_regions?: string[] | null
           status?: Database["public"]["Enums"]["partner_status"]
           stripe_account_id?: string | null
           stripe_onboarding_complete?: boolean | null
           stripe_payouts_enabled?: boolean | null
+          total_bookings?: number | null
           updated_at?: string
           user_id: string
           verification_documents?: string[] | null
@@ -4061,12 +4073,18 @@ export type Database = {
           email?: string
           id?: string
           logo_url?: string | null
+          max_budget?: number | null
+          min_budget?: number | null
           notes?: string | null
           phone?: string | null
+          rating?: number | null
+          response_rate?: number | null
+          service_regions?: string[] | null
           status?: Database["public"]["Enums"]["partner_status"]
           stripe_account_id?: string | null
           stripe_onboarding_complete?: boolean | null
           stripe_payouts_enabled?: boolean | null
+          total_bookings?: number | null
           updated_at?: string
           user_id?: string
           verification_documents?: string[] | null

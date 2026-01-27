@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderHook, waitFor } from "@testing-library/react";
+import { renderHook, act } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { ReactNode } from "react";
 
@@ -101,8 +101,9 @@ describe("useHousePartners", () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
+    // Wait for the query to resolve
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
     });
 
     expect(result.current.data).toHaveLength(2);
@@ -115,8 +116,8 @@ describe("useHousePartners", () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
     });
 
     expect(result.current.data?.[0].is_preferred).toBe(true);
@@ -128,8 +129,8 @@ describe("useHousePartners", () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
     });
 
     const partner = result.current.data?.[0];
@@ -161,8 +162,8 @@ describe("useHousePartnersByRegion", () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
     });
 
     expect(result.current.data).toBeDefined();

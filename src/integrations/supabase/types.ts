@@ -2364,6 +2364,215 @@ export type Database = {
           },
         ]
       }
+      house_partner_services: {
+        Row: {
+          amount: number | null
+          client_id: string | null
+          completed_at: string | null
+          created_at: string
+          house_partner_id: string
+          id: string
+          notes: string | null
+          rating: number | null
+          service_description: string
+          service_request_id: string | null
+          status: string
+        }
+        Insert: {
+          amount?: number | null
+          client_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          house_partner_id: string
+          id?: string
+          notes?: string | null
+          rating?: number | null
+          service_description: string
+          service_request_id?: string | null
+          status?: string
+        }
+        Update: {
+          amount?: number | null
+          client_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          house_partner_id?: string
+          id?: string
+          notes?: string | null
+          rating?: number | null
+          service_description?: string
+          service_request_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "house_partner_services_house_partner_id_fkey"
+            columns: ["house_partner_id"]
+            isOneToOne: false
+            referencedRelation: "house_partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "house_partner_services_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      house_partners: {
+        Row: {
+          category: string
+          company_name: string | null
+          contact_notes: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          email: string | null
+          id: string
+          is_active: boolean | null
+          is_preferred: boolean | null
+          metadata: Json | null
+          name: string
+          phone: string | null
+          pricing_tier: string | null
+          rating: number | null
+          service_regions: string[] | null
+          subcategories: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          company_name?: string | null
+          contact_notes?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_preferred?: boolean | null
+          metadata?: Json | null
+          name: string
+          phone?: string | null
+          pricing_tier?: string | null
+          rating?: number | null
+          service_regions?: string[] | null
+          subcategories?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          company_name?: string | null
+          contact_notes?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_preferred?: boolean | null
+          metadata?: Json | null
+          name?: string
+          phone?: string | null
+          pricing_tier?: string | null
+          rating?: number | null
+          service_regions?: string[] | null
+          subcategories?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      household_members: {
+        Row: {
+          created_at: string
+          household_id: string
+          id: string
+          invited_by: string | null
+          invited_email: string | null
+          joined_at: string | null
+          permissions: Json
+          role: Database["public"]["Enums"]["household_role"]
+          spending_limit: number | null
+          status: Database["public"]["Enums"]["household_member_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          household_id: string
+          id?: string
+          invited_by?: string | null
+          invited_email?: string | null
+          joined_at?: string | null
+          permissions?: Json
+          role?: Database["public"]["Enums"]["household_role"]
+          spending_limit?: number | null
+          status?: Database["public"]["Enums"]["household_member_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          household_id?: string
+          id?: string
+          invited_by?: string | null
+          invited_email?: string | null
+          joined_at?: string | null
+          permissions?: Json
+          role?: Database["public"]["Enums"]["household_role"]
+          spending_limit?: number | null
+          status?: Database["public"]["Enums"]["household_member_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "household_members_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      households: {
+        Row: {
+          created_at: string
+          credit_pool_enabled: boolean
+          id: string
+          name: string
+          primary_member_id: string
+          subscription_id: string | null
+          total_pool_credits: number
+          type: Database["public"]["Enums"]["household_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          credit_pool_enabled?: boolean
+          id?: string
+          name: string
+          primary_member_id: string
+          subscription_id?: string | null
+          total_pool_credits?: number
+          type?: Database["public"]["Enums"]["household_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          credit_pool_enabled?: boolean
+          id?: string
+          name?: string
+          primary_member_id?: string
+          subscription_id?: string | null
+          total_pool_credits?: number
+          type?: Database["public"]["Enums"]["household_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       impact_investments: {
         Row: {
           amount: number
@@ -7023,6 +7232,9 @@ export type Database = {
       certificate_status: "active" | "pending" | "expired" | "revoked"
       connection_status: "pending" | "accepted" | "declined" | "blocked"
       encryption_key_status: "active" | "rotating" | "retired" | "compromised"
+      household_member_status: "active" | "pending" | "suspended"
+      household_role: "owner" | "admin" | "member" | "dependent"
+      household_type: "family" | "enterprise"
       opportunity_status: "open" | "filled" | "closed" | "cancelled"
       opportunity_type:
         | "co_investment"
@@ -7205,6 +7417,9 @@ export const Constants = {
       certificate_status: ["active", "pending", "expired", "revoked"],
       connection_status: ["pending", "accepted", "declined", "blocked"],
       encryption_key_status: ["active", "rotating", "retired", "compromised"],
+      household_member_status: ["active", "pending", "suspended"],
+      household_role: ["owner", "admin", "member", "dependent"],
+      household_type: ["family", "enterprise"],
       opportunity_status: ["open", "filled", "closed", "cancelled"],
       opportunity_type: [
         "co_investment",

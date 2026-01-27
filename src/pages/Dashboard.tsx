@@ -15,6 +15,7 @@ import ConciergeChat from "@/components/dashboard/ConciergeChat";
 import ServiceRequestsView from "@/components/dashboard/ServiceRequestsView";
 import LoginSecurityPanel from "@/components/dashboard/LoginSecurityPanel";
 import GlobalImpactPlatform from "@/components/dashboard/GlobalImpactPlatform";
+import { FamilyDashboard } from "@/components/household/FamilyDashboard";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { TierThemeProvider, useTierTheme } from "@/contexts/TierThemeContext";
 import { cn } from "@/lib/utils";
@@ -54,7 +55,7 @@ const DashboardContent = () => {
   // Update view when URL params change
   useEffect(() => {
     const tab = searchParams.get("tab") as ActiveView | null;
-    if (tab && ["portfolio", "messaging", "documents", "referrals", "calendar", "chat", "devices", "concierge", "requests", "security", "impact"].includes(tab)) {
+    if (tab && ["portfolio", "messaging", "documents", "referrals", "calendar", "chat", "devices", "concierge", "requests", "security", "impact", "family"].includes(tab)) {
       setActiveView(tab);
     }
   }, [searchParams]);
@@ -83,6 +84,8 @@ const DashboardContent = () => {
         return <DeviceConnections />;
       case "security":
         return <LoginSecurityPanel />;
+      case "family":
+        return <FamilyDashboard />;
       default:
         return <PortfolioOverview />;
     }

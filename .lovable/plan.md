@@ -1,224 +1,304 @@
 
-
-# Comprehensive Page Review and Testing Plan
+# Security Hardening & Audit Remediation Plan
 
 ## Executive Summary
-This plan addresses three main objectives:
-1. Fix identified issues across all pages
-2. Ensure proper alignment, viewability, and error-free components
-3. Implement comprehensive testing coverage
-4. fix all button and links globally
-5. Make spinning globe slightly smaller
----
-
-## Phase 1: Dialog Accessibility Fixes
-
-### Issue Identified
-Console warnings showing "Missing `Description` or `aria-describedby={undefined}` for {DialogContent}" indicate several dialogs are missing required DialogDescription components for accessibility compliance.
-
-### Files Requiring DialogDescription Addition
-
-| Component | Location | Current State |
-|-----------|----------|---------------|
-| HousePartnersPanel | src/components/admin/HousePartnersPanel.tsx | Missing DialogDescription after DialogTitle (line 248-249) |
-| FamilyDashboard | src/components/household/FamilyDashboard.tsx | Missing DialogDescription in 3 dialogs (lines 265, 381, 384) |
-| BiddingManagementPanel | src/components/admin/BiddingManagementPanel.tsx | Missing DialogDescription (line 197) |
-
-### Fix Strategy
-Add DialogDescription with appropriate context to each dialog:
-- HousePartnersPanel: "Add or edit house partner vendor details"
-- FamilyDashboard Create: "Set up a family or enterprise household account"
-- FamilyDashboard Invite: "Send an invitation to join your household"
-- BiddingManagementPanel: "Review and manage bids from house partners"
+This plan addresses four critical security and operational items flagged in the Global Audit Dashboard:
+1. **16 Permissive RLS Policies** - Review and tighten INSERT/UPDATE policies with `USING(true)` or `WITH CHECK(true)`
+2. **Contact Form Rate Limiting** - Already implemented, but needs enhancement for the Contact page
+3. **CAPTCHA Protection for Trial Applications** - Add Cloudflare Turnstile to high-risk forms
+4. **Edge Function Monitoring & Backup Verification** - Implement cold start tracking and backup health checks
 
 ---
 
-## Phase 2: Component and Navigation Verification
+## Phase 1: RLS Policy Analysis & Remediation
 
-### Areas Confirmed Working
-- Dashboard sidebar includes "Family/Team" navigation (line 39)
-- Mobile sidebar includes "Family" navigation (line 41)
-- DashboardHeader includes "family" view title mapping (line 21)
-- Dashboard.tsx correctly renders FamilyDashboard for "family" view
-- Routes properly configured in App.tsx
+### Current State
+16 tables have permissive policies flagged by the linter. After analysis, they fall into three categories:
 
-### Recommended Enhancements
+### Category A: Intentionally Public Analytics (Keep As-Is with Documentation)
+These tables are designed for anonymous visitor tracking and analytics. The `INSERT` with `WITH CHECK(true)` is intentional:
 
-#### 2.1 SelectContent Component Improvements
-Ensure all Select components have proper background and z-index per dropdowns guidance:
-- Add `className="bg-background z-50"` to SelectContent components if missing
+| Table | Policy | Justification |
+|-------|--------|---------------|
+| `ab_test_assignments` | Anyone can create assignments | Anonymous A/B test tracking |
+| `attribution_events` | Anyone can insert attribution events | Marketing attribution |
+| `exit_intent_conversions` | Anyone can insert conversions | Conversion tracking |
+| `lead_scores` | Anyone can insert/update | Anonymous lead scoring |
+| `performance_metrics` | Anyone can insert | Client-side performance data |
+| `uptime_checks` | Service can insert | Automated health checks |
 
-#### 2.2 Table Responsiveness
-Review tables in HousePartnersPanel and BiddingManagementPanel for mobile overflow handling.
+**Action**: Update security findings to mark these as intentional with `ignore = true` and documented reason.
 
----
+### Category B: Service Role Only (Restrict to Service Role)
+These tables should only be writable by backend functions using service role:
 
-## Phase 3: New Feature Integration Validation
+| Table | Current Policy | Fix |
+|-------|----------------|-----|
+| `prismatic_api_logs` | Service role can insert | Restrict to `auth.jwt()->>'role' = 'service_role'` |
+| `proactive_notification_queue` | System can insert | Restrict to service role only |
+| `vip_alerts` | System can insert | Restrict to service role only |
+| `sms_conversations` | Service role can insert | Restrict to service role only |
 
-### House Partners System
-- Database tables: `house_partners`, `house_partner_services` - verified in schema
-- Hook: `useHousePartners.ts` - correctly queries active partners with sorting
-- UI: HousePartnersPanel - complete CRUD operations implemented
+### Category C: Authenticated with Validation (Tighten Policies)
+These tables need user identification or additional validation:
 
-### Bidding System
-- Database tables: `house_partner_bids` - verified in schema
-- Hook: `useHousePartnerBids.ts` - handles bid creation, acceptance, status updates
-- UI: BiddingManagementPanel - displays requests with bidding enabled
-
-### Family/Household System
-- Database tables: `households`, `household_members` - verified in schema
-- UI: FamilyDashboard - creates households, invites members, manages credit pooling
-
-### Passkey/WebAuthn System
-- Database table: `passkey_credentials` - verified in schema
-- Hook: `usePasskeys.ts` - handles registration, authentication, deletion
-- UI: PasskeyManager - integrated into Profile page
+| Table | Current Policy | New Policy |
+|-------|----------------|------------|
+| `concierge_requests` | Anyone can create | Require `auth.uid()` or rate limit by IP |
+| `partner_applications` | Anyone can submit | Require `auth.uid()` and tie to user |
+| `partner_waitlist` | Anyone can join | Keep public but add rate limiting |
+| `referral_shares` | Anyone can insert | Require valid referral_code exists |
 
 ---
 
-## Phase 4: Comprehensive Testing Implementation
+## Phase 2: Contact Form Rate Limiting Enhancement
 
-### 4.1 Unit Tests for New Hooks
+### Current Implementation
+- `ContactSection.tsx` (homepage): Uses `checkRateLimit()` with fingerprint + email
+- `Contact.tsx` (dedicated page): **Missing rate limiting** - needs to be added
 
-**File: `src/test/hooks/useHousePartners.test.ts`**
+### Enhancement Plan
+Add rate limiting to `Contact.tsx` using the existing infrastructure:
+
 ```text
-Tests:
-- Fetches house partners successfully
-- Filters by category when provided
-- Sorts by preferred status and rating
-- Handles query errors gracefully
-```
+File: src/pages/Contact.tsx
 
-**File: `src/test/hooks/useHousePartnerBids.test.ts`**
-```text
-Tests:
-- Fetches bids for a specific service request
-- Creates new bid with correct parameters
-- Accepts bid and rejects competing bids
-- Enables/disables bidding on requests
-```
+1. Import rate limiting utilities:
+   - import { checkRateLimit, generateFingerprint } from "@/lib/rate-limit"
 
-**File: `src/test/hooks/usePasskeys.test.ts`**
-```text
-Tests:
-- Detects WebAuthn support
-- Fetches existing passkey credentials
-- Handles unsupported browser gracefully
-- Mock registration flow validation
-```
+2. Add rate check before form submission:
+   - Generate identifier: `${generateFingerprint()}_${email}`
+   - Call checkRateLimit() with action_type "contact_form"
+   - Block submission if rate limited
 
-### 4.2 Component Tests
-
-**File: `src/test/components/HousePartnersPanel.test.tsx`**
-```text
-Tests:
-- Renders empty state when no partners
-- Displays partner list correctly
-- Opens add dialog when button clicked
-- Form validation works correctly
-```
-
-**File: `src/test/components/FamilyDashboard.test.tsx`**
-```text
-Tests:
-- Shows create household prompt when none exists
-- Displays household info when present
-- Credit pool toggle works
-- Member list renders correctly
-```
-
-### 4.3 Integration Tests
-
-**File: `src/test/integration/householdFlow.test.ts`**
-```text
-Tests:
-- Create household flow
-- Invite member flow
-- Toggle credit pooling
-- Member role changes
+3. Show user-friendly error message on rate limit
 ```
 
 ---
 
-## Phase 5: Edge Function Validation
+## Phase 3: CAPTCHA Protection for Trial Applications
 
-### Functions to Test
-1. `check-subscription` - Verify PAYGO tier support
-2. `stripe-credits-webhook` - Verify credit allocation on invoice.paid
+### Implementation: Cloudflare Turnstile
+Turnstile is the recommended invisible CAPTCHA that protects forms without user friction.
 
-### Testing Approach
-Use existing edge function test infrastructure in `src/test/integration/edgeFunctions.test.ts`.
+### Required Changes
 
----
+#### 3.1 Add Turnstile Secret to Edge Functions
+```text
+Secret: TURNSTILE_SECRET_KEY
+Purpose: Server-side verification of Turnstile tokens
+```
 
-## Phase 6: RLS Policy Verification
+#### 3.2 Create Verification Edge Function
+```text
+File: supabase/functions/verify-turnstile/index.ts
 
-### Critical Tables to Verify
-| Table | Expected Policy |
-|-------|-----------------|
-| house_partners | Admin-only write, authenticated read |
-| house_partner_bids | Admin/assigned partner write, authenticated read |
-| households | Owner/member access only |
-| household_members | Household member visibility |
-| passkey_credentials | User's own credentials only |
+- Accepts turnstile token from client
+- Calls Cloudflare's /siteverify endpoint
+- Returns success/failure
+- Logs failed verifications for monitoring
+```
 
----
+#### 3.3 Update Trial Application Form
+```text
+File: src/pages/TrialApplication.tsx
 
-## Implementation Sequence
+1. Add Turnstile widget component
+2. Capture token on form submission
+3. Verify token before database insert
+4. Show error if verification fails
+```
 
-1. **Accessibility Fixes** (Priority: High)
-   - Add DialogDescription to all dialogs missing them
-   - Estimated: 4 files, ~15 lines each
+#### 3.4 Create Reusable Turnstile Component
+```text
+File: src/components/security/TurnstileWidget.tsx
 
-2. **UI Polish** (Priority: Medium)
-   - Verify SelectContent styling
-   - Check table responsiveness
-   - Estimated: Review 6 components
-
-3. **Test Suite Expansion** (Priority: High)
-   - Create 3 new hook test files
-   - Create 2 new component test files
-   - Add integration test
-   - Estimated: 6 new test files, ~300 lines total
-
-4. **Run Full Test Suite**
-   - Execute Vitest unit tests
-   - Execute integration tests
-   - Review and fix any failures
+- Invisible mode by default
+- Callback for token capture
+- Error handling for blocked requests
+- Loading state management
+```
 
 ---
 
-## Technical Notes
+## Phase 4: Edge Function Monitoring
 
-### Test Mocking Requirements
-New tests will require mocking:
-- Supabase client for database operations
-- WebAuthn API for passkey tests
-- React Query for hook state management
+### 4.1 Cold Start Tracking
+Enhance the existing `health-check` function to track and store cold start times:
+
+```text
+Changes to: supabase/functions/health-check/index.ts
+
+1. Add timing for edge function invocations
+2. Distinguish between warm and cold starts
+3. Store response times in uptime_checks with metadata:
+   - is_cold_start: boolean
+   - boot_time_ms: number
+   - execution_time_ms: number
+
+4. Alert if cold start exceeds threshold (e.g., 2000ms)
+```
+
+### 4.2 Edge Function Performance Table
+```text
+New table: edge_function_metrics
+
+Columns:
+- id (uuid, primary key)
+- function_name (text)
+- invoked_at (timestamptz)
+- response_time_ms (integer)
+- is_cold_start (boolean)
+- status (text: success, error, timeout)
+- created_at (timestamptz)
+```
+
+### 4.3 Dashboard Integration
+Add edge function metrics to the Global Audit Dashboard:
+- Average cold start time
+- Cold start frequency
+- Slowest functions (user-facing)
+
+---
+
+## Phase 5: Automated Backup Verification
+
+### 5.1 Database Backup Check
+Supabase automatically creates daily backups. We'll add verification:
+
+```text
+New scheduled task in: supabase/functions/scheduled-tasks/index.ts
+
+Task type: "backup_verification"
+
+Actions:
+1. Query pg_stat_archiver for last successful archive
+2. Verify backup timestamp is within 24 hours
+3. Store result in health_events table
+4. Alert if backup is stale (> 24h)
+```
+
+### 5.2 Storage Backup Verification
+Check that critical storage buckets are accessible:
+
+```text
+Checks:
+- List files in avatars bucket
+- List files in consignments bucket
+- Verify bucket policies are intact
+- Log results to health_events
+```
+
+### 5.3 Backup Health Dashboard Widget
+Add backup status to Admin System Health tab:
+- Last successful backup timestamp
+- Backup size trend
+- Restoration test status (manual)
+
+---
+
+## Technical Implementation Details
+
+### Database Migration Required
+```sql
+-- 1. Tighten service-role-only policies
+DROP POLICY IF EXISTS "Service role can insert API logs" ON public.prismatic_api_logs;
+CREATE POLICY "Service role only" ON public.prismatic_api_logs
+  FOR INSERT TO service_role
+  WITH CHECK (true);
+
+DROP POLICY IF EXISTS "System can insert notifications" ON public.proactive_notification_queue;
+CREATE POLICY "Service role only" ON public.proactive_notification_queue
+  FOR INSERT TO service_role
+  WITH CHECK (true);
+
+DROP POLICY IF EXISTS "System can insert VIP alerts" ON public.vip_alerts;
+CREATE POLICY "Service role only" ON public.vip_alerts
+  FOR INSERT TO service_role
+  WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Service role can insert SMS" ON public.sms_conversations;
+CREATE POLICY "Service role only" ON public.sms_conversations
+  FOR INSERT TO service_role
+  WITH CHECK (true);
+
+-- 2. Add referral validation
+DROP POLICY IF EXISTS "Anyone can insert referral shares" ON public.referral_shares;
+CREATE POLICY "Authenticated users with valid referral" ON public.referral_shares
+  FOR INSERT TO authenticated
+  WITH CHECK (
+    EXISTS (SELECT 1 FROM referral_codes WHERE code = referral_code)
+  );
+
+-- 3. Create edge function metrics table
+CREATE TABLE IF NOT EXISTS public.edge_function_metrics (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  function_name text NOT NULL,
+  invoked_at timestamptz NOT NULL DEFAULT now(),
+  response_time_ms integer NOT NULL,
+  is_cold_start boolean DEFAULT false,
+  status text NOT NULL DEFAULT 'success',
+  metadata jsonb,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- Index for performance queries
+CREATE INDEX idx_edge_metrics_function ON public.edge_function_metrics(function_name, invoked_at DESC);
+
+-- RLS: Service role only for inserts, admins can read
+ALTER TABLE public.edge_function_metrics ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Service role can insert metrics" ON public.edge_function_metrics
+  FOR INSERT TO service_role
+  WITH CHECK (true);
+
+CREATE POLICY "Admins can view metrics" ON public.edge_function_metrics
+  FOR SELECT TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'));
+```
 
 ### Files to Create
 | File | Purpose |
 |------|---------|
-| src/test/hooks/useHousePartners.test.ts | House partner hook tests |
-| src/test/hooks/useHousePartnerBids.test.ts | Bidding hook tests |
-| src/test/hooks/usePasskeys.test.ts | Passkey hook tests |
-| src/test/components/HousePartnersPanel.test.tsx | Admin panel tests |
-| src/test/components/FamilyDashboard.test.tsx | Household UI tests |
+| `supabase/functions/verify-turnstile/index.ts` | CAPTCHA token verification |
+| `src/components/security/TurnstileWidget.tsx` | Reusable CAPTCHA component |
 
 ### Files to Modify
 | File | Changes |
 |------|---------|
-| src/components/admin/HousePartnersPanel.tsx | Add DialogDescription |
-| src/components/admin/BiddingManagementPanel.tsx | Add DialogDescription |
-| src/components/household/FamilyDashboard.tsx | Add DialogDescription (3 locations) |
+| `src/pages/Contact.tsx` | Add rate limiting (lines 43-60) |
+| `src/pages/TrialApplication.tsx` | Add Turnstile CAPTCHA |
+| `supabase/functions/health-check/index.ts` | Add cold start tracking |
+| `supabase/functions/scheduled-tasks/index.ts` | Add backup verification task |
+| `supabase/config.toml` | Add verify-turnstile function config |
+
+---
+
+## Implementation Priority
+
+| Phase | Priority | Complexity | Impact |
+|-------|----------|------------|--------|
+| 1. RLS Policy Fixes | High | Low | Security |
+| 2. Contact Form Rate Limit | High | Low | Abuse Prevention |
+| 3. CAPTCHA for Trials | Medium | Medium | Spam Prevention |
+| 4. Edge Function Monitoring | Medium | Medium | Observability |
+| 5. Backup Verification | Low | Low | Disaster Recovery |
 
 ---
 
 ## Success Criteria
 
-- Zero console warnings for missing DialogDescription
-- All new tests pass
-- Existing tests remain green
-- Visual review confirms proper alignment
-- Mobile responsiveness verified
+1. Database linter shows only intentionally-public policies (documented)
+2. Contact page rejects submissions after 5 attempts in 60 minutes
+3. Trial applications require valid Turnstile token
+4. Edge function cold starts are tracked and alertable
+5. Backup age is verified daily and alerts if stale
+
+---
+
+## Security Findings Updates
+After implementation, update the security findings to:
+- Mark intentional analytics policies as "ignored" with documented reason
+- Delete resolved RLS policy findings
+- Add new finding for any tables that remain permissive
 

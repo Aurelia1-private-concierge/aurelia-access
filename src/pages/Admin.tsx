@@ -76,6 +76,7 @@ import BacklinkStrategyPanel from "@/components/admin/BacklinkStrategyPanel";
 import PartnerMessagesPanel from "@/components/admin/PartnerMessagesPanel";
 import OnlineUsersIndicator from "@/components/admin/OnlineUsersIndicator";
 import APIKeysPanel from "@/components/admin/APIKeysPanel";
+import { HousePartnersPanel } from "@/components/admin/HousePartnersPanel";
 // Lazy load recharts-heavy components to prevent circular initialization errors
 const AnalyticsDashboard = lazy(() => import("@/components/admin/AnalyticsDashboard"));
 const VisitorAnalytics = lazy(() => import("@/components/admin/VisitorAnalytics"));
@@ -408,8 +409,13 @@ const Admin = () => {
             <TabsTrigger value="globalaudit">Global Audit</TabsTrigger>
             <TabsTrigger value="socialads">Social Advertising</TabsTrigger>
             <TabsTrigger value="apikeys">API Keys</TabsTrigger>
+            <TabsTrigger value="housepartners">House Partners</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="housepartners" className="space-y-6">
+            <HousePartnersPanel />
+          </TabsContent>
 
           <TabsContent value="globalaudit" className="space-y-6">
             <Suspense fallback={<ChartLoading />}>

@@ -17,7 +17,8 @@ import {
   ShieldCheck,
   Globe,
   X,
-  Menu
+  Menu,
+  Users
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -37,6 +38,7 @@ const menuItems = [
   { id: "concierge" as const, label: "Concierge", icon: Headphones },
   { id: "requests" as const, label: "Requests", icon: ClipboardList },
   { id: "impact" as const, label: "Impact", icon: Globe },
+  { id: "family" as const, label: "Family", icon: Users },
   { id: "calendar" as const, label: "Calendar", icon: Calendar },
   { id: "chat" as const, label: "Chat", icon: MessageCircle },
   { id: "messaging" as const, label: "Messages", icon: MessageSquareLock },

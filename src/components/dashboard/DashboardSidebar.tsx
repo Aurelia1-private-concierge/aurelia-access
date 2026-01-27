@@ -15,7 +15,8 @@ import {
   Headphones,
   ClipboardList,
   ShieldCheck,
-  Globe
+  Globe,
+  Users
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -23,7 +24,7 @@ import { AnimatedLogo } from "@/components/brand";
 import { useTierTheme } from "@/contexts/TierThemeContext";
 import { cn } from "@/lib/utils";
 
-export type ActiveView = "portfolio" | "messaging" | "documents" | "referrals" | "calendar" | "chat" | "devices" | "concierge" | "requests" | "security" | "impact";
+export type ActiveView = "portfolio" | "messaging" | "documents" | "referrals" | "calendar" | "chat" | "devices" | "concierge" | "requests" | "security" | "impact" | "family";
 
 interface DashboardSidebarProps {
   activeView: ActiveView;
@@ -35,6 +36,7 @@ const menuItems = [
   { id: "concierge" as const, label: "Concierge", icon: Headphones },
   { id: "requests" as const, label: "Service Requests", icon: ClipboardList },
   { id: "impact" as const, label: "Global Impact", icon: Globe },
+  { id: "family" as const, label: "Family/Team", icon: Users },
   { id: "calendar" as const, label: "Calendar", icon: Calendar },
   { id: "chat" as const, label: "Live Chat", icon: MessageCircle },
   { id: "messaging" as const, label: "Secure Messages", icon: MessageSquareLock },

@@ -15,6 +15,7 @@ const viewTitles: Record<ActiveView, string> = {
   concierge: "Concierge Chat",
   requests: "Service Requests",
   impact: "Global Impact",
+  family: "Family & Team",
   messaging: "Secure Messaging",
   documents: "Document Vault",
   referrals: "Referral Program",

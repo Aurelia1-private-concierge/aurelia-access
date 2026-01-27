@@ -4,25 +4,46 @@ export interface MembershipTier {
   description: string;
   monthlyPrice: number;
   annualPrice: number;
-  monthlyPriceId: string;
-  annualPriceId: string;
+  monthlyPriceId: string | null;
+  annualPriceId: string | null;
   productIds: string[];
   features: string[];
   highlighted?: boolean;
   monthlyCredits: number;
   isUnlimited?: boolean;
+  isPaygo?: boolean;
 }
 
 export const MEMBERSHIP_TIERS: MembershipTier[] = [
+  {
+    id: "paygo",
+    name: "Pay As You Go",
+    description: "No commitment. Purchase credits as needed.",
+    monthlyPrice: 0,
+    annualPrice: 0,
+    monthlyPriceId: null,
+    annualPriceId: null,
+    productIds: [],
+    monthlyCredits: 0,
+    isPaygo: true,
+    features: [
+      "No monthly fee",
+      "Purchase credits anytime",
+      "Access to all services",
+      "Orla AI Companion",
+      "Standard response times",
+      "Credits never expire",
+    ],
+  },
   {
     id: "silver",
     name: "Silver",
     description: "Essential luxury concierge access with 24/7 support",
     monthlyPrice: 1500,
     annualPrice: 14400,
-    monthlyPriceId: "price_1SnP8AArqEFrL3mlSSDHZRBj",
-    annualPriceId: "price_1SnP8QArqEFrL3mldq1NgplE",
-    productIds: ["prod_TkuyLghfj6iAvD", "prod_TkuyMbYydw2D3z"],
+    monthlyPriceId: "price_1SuL7CPPYSzPwBucJVUSr1Au",
+    annualPriceId: "price_1SuL81PPYSzPwBucOvBlox3T",
+    productIds: ["prod_Ts5HAYiH4FXdPJ", "prod_Ts5IziHQ8aBVBk"],
     monthlyCredits: 5,
     features: [
       "5 Service Credits/month",
@@ -39,9 +60,9 @@ export const MEMBERSHIP_TIERS: MembershipTier[] = [
     description: "Premium luxury concierge with priority access and dedicated manager",
     monthlyPrice: 3500,
     annualPrice: 33600,
-    monthlyPriceId: "price_1SnP8gArqEFrL3mliI4kupIo",
-    annualPriceId: "price_1SnP90ArqEFrL3ml1MWEs2Qt",
-    productIds: ["prod_TkuyEsqqaYVkqj", "prod_Tkuy4Hr5m0YSCZ"],
+    monthlyPriceId: "price_1SuL8XPPYSzPwBucrVLQJdYt",
+    annualPriceId: "price_1SuL95PPYSzPwBuc0pDb4hQH",
+    productIds: ["prod_Ts5J8xal3xrVGe", "prod_Ts5JJ4lhh13l9m"],
     monthlyCredits: 15,
     features: [
       "15 Service Credits/month",
@@ -60,9 +81,9 @@ export const MEMBERSHIP_TIERS: MembershipTier[] = [
     description: "Ultimate luxury experience with unlimited access and white-glove service",
     monthlyPrice: 7500,
     annualPrice: 72000,
-    monthlyPriceId: "price_1SnP9JArqEFrL3mlwquYSICP",
-    annualPriceId: "price_1SnPBAArqEFrL3mlqNp6J9yf",
-    productIds: ["prod_TkuzCZQ1Wyg24N", "prod_Tkv18can27J3JZ"],
+    monthlyPriceId: "price_1SuLAGPPYSzPwBucsVucbQIJ",
+    annualPriceId: "price_1SuLAGPPYSzPwBucsVucbQIJ",
+    productIds: ["prod_Ts5KqzhPH0Zbto", "prod_Ts5K3NqvPvE4BO"],
     monthlyCredits: 999,
     isUnlimited: true,
     features: [

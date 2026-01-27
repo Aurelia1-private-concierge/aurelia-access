@@ -13,6 +13,8 @@ interface SubscriptionState {
   error: string | null;
   isTrial: boolean;
   trialEndsAt: string | null;
+  isPaygo: boolean;
+  creditBalance: number | null;
 }
 
 export const useSubscription = () => {
@@ -27,6 +29,8 @@ export const useSubscription = () => {
     error: null,
     isTrial: false,
     trialEndsAt: null,
+    isPaygo: false,
+    creditBalance: null,
   });
 
   const checkSubscription = useCallback(async () => {
@@ -58,6 +62,8 @@ export const useSubscription = () => {
         error: null,
         isTrial: data.is_trial || false,
         trialEndsAt: data.trial_ends_at || null,
+        isPaygo: data.is_paygo || false,
+        creditBalance: data.credit_balance || null,
       });
     } catch (error) {
       console.error("Error checking subscription:", error);
@@ -83,6 +89,8 @@ export const useSubscription = () => {
         error: null,
         isTrial: false,
         trialEndsAt: null,
+        isPaygo: false,
+        creditBalance: null,
       });
     }
   }, [user, checkSubscription]);

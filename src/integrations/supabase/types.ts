@@ -655,6 +655,33 @@ export type Database = {
         }
         Relationships: []
       }
+      backup_verification_logs: {
+        Row: {
+          created_at: string
+          details: Json | null
+          id: string
+          status: string
+          verification_type: string
+          verified_at: string
+        }
+        Insert: {
+          created_at?: string
+          details?: Json | null
+          id?: string
+          status?: string
+          verification_type: string
+          verified_at?: string
+        }
+        Update: {
+          created_at?: string
+          details?: Json | null
+          id?: string
+          status?: string
+          verification_type?: string
+          verified_at?: string
+        }
+        Relationships: []
+      }
       behavioral_triggers: {
         Row: {
           created_at: string
@@ -1941,6 +1968,39 @@ export type Database = {
           service_title?: string
           traveler_archetype?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      edge_function_metrics: {
+        Row: {
+          created_at: string
+          function_name: string
+          id: string
+          invoked_at: string
+          is_cold_start: boolean | null
+          metadata: Json | null
+          response_time_ms: number
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          function_name: string
+          id?: string
+          invoked_at?: string
+          is_cold_start?: boolean | null
+          metadata?: Json | null
+          response_time_ms: number
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          function_name?: string
+          id?: string
+          invoked_at?: string
+          is_cold_start?: boolean | null
+          metadata?: Json | null
+          response_time_ms?: number
+          status?: string
         }
         Relationships: []
       }

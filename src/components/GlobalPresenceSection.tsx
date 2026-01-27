@@ -33,7 +33,7 @@ const locations = [{
   timezone: "HKT",
   flagship: false
 }];
-const GlobeLoader = () => <div className="w-full h-[400px] md:h-[500px] flex items-center justify-center">
+const GlobeLoader = () => <div className="w-full h-[320px] md:h-[400px] flex items-center justify-center">
     <div className="w-10 h-10 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
   </div>;
 const GlobalPresenceSection = () => {

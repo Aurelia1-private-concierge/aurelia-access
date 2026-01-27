@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -247,6 +248,9 @@ export function HousePartnersPanel() {
               <DialogTitle>
                 {editingPartner ? "Edit House Partner" : "Add House Partner"}
               </DialogTitle>
+              <DialogDescription>
+                Add or edit house partner vendor details for your pre-vetted network.
+              </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -299,7 +303,7 @@ export function HousePartnersPanel() {
                     <SelectTrigger>
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background z-50">
                       {SERVICE_CATEGORIES.map((cat) => (
                         <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                       ))}
@@ -315,7 +319,7 @@ export function HousePartnersPanel() {
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background z-50">
                       <SelectItem value="budget">Budget</SelectItem>
                       <SelectItem value="standard">Standard</SelectItem>
                       <SelectItem value="premium">Premium</SelectItem>

@@ -148,7 +148,18 @@ const OrlaVoiceAvatarInner = ({
     if (useElevenLabs) {
       // Use ElevenLabs with signed URL for WebSocket connection
       try {
-        await navigator.mediaDevices.getUserMedia({ audio: true });
+        // Mobile-friendly audio constraints
+        const constraints: MediaStreamConstraints = {
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+          },
+        };
+        const micStream = await navigator.mediaDevices.getUserMedia(constraints);
+        // Stop the test stream - ElevenLabs SDK will request its own
+        micStream.getTracks().forEach(track => track.stop());
+        
         const { data, error } = await supabase.functions.invoke("elevenlabs-conversation-token");
 
         if (error || !data?.signed_url) {
@@ -162,10 +173,19 @@ const OrlaVoiceAvatarInner = ({
       } catch (error) {
         console.error("Failed to start ElevenLabs conversation:", error);
         setEmotion("neutral");
+        const err = error as Error;
+        let description = "Please enable microphone access to speak with Orla.";
+        if (err.name === "NotFoundError") {
+          description = "No microphone found on this device.";
+        } else if (err.name === "NotReadableError") {
+          description = "Microphone is in use by another app.";
+        } else if (err.message?.includes("token")) {
+          description = "Could not connect to voice service. Please try again.";
+        }
         toast({
           variant: "destructive",
           title: "Connection Error",
-          description: "Please enable microphone access to speak with Orla.",
+          description,
         });
       }
     } else {

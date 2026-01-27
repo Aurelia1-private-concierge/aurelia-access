@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Camera,
   CameraOff,
   Minimize2,
   Maximize2,
-  Settings,
   RotateCcw,
   Sparkles,
 } from "lucide-react";
@@ -29,56 +28,122 @@ const OrlaVideoPreview: React.FC<OrlaVideoPreviewProps> = ({
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
   const [hasMultipleCameras, setHasMultipleCameras] = useState(false);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const isMountedRef = useRef(true);
+
+  // Track mounted state for cleanup
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     // Check for multiple cameras
     navigator.mediaDevices.enumerateDevices().then((devices) => {
-      const cameras = devices.filter((d) => d.kind === "videoinput");
-      setHasMultipleCameras(cameras.length > 1);
+      if (isMountedRef.current) {
+        const cameras = devices.filter((d) => d.kind === "videoinput");
+        setHasMultipleCameras(cameras.length > 1);
+      }
+    }).catch(() => {
+      // Ignore enumeration errors
     });
   }, []);
+
+  const stopCamera = useCallback(() => {
+    if (stream) {
+      stream.getTracks().forEach((track) => {
+        track.stop();
+      });
+      setStream(null);
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  }, [stream]);
+
+  const startCamera = useCallback(async () => {
+    setCameraError(null);
+    
+    // Stop existing stream first
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+    }
+    
+    try {
+      // Mobile-friendly constraints
+      const constraints: MediaStreamConstraints = {
+        video: {
+          width: { ideal: 640, max: 1280 },
+          height: { ideal: 480, max: 720 },
+          facingMode: facingMode,
+        },
+        audio: false, // Don't request audio for video preview
+      };
+      
+      const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+      
+      if (!isMountedRef.current) {
+        // Component unmounted, clean up
+        mediaStream.getTracks().forEach((track) => track.stop());
+        return;
+      }
+      
+      setStream(mediaStream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
+        // Ensure video plays on mobile
+        videoRef.current.play().catch(() => {
+          // Autoplay might be blocked, that's ok
+        });
+      }
+    } catch (error) {
+      console.error("Failed to start camera:", error);
+      if (isMountedRef.current) {
+        if (error instanceof Error) {
+          if (error.name === "NotAllowedError") {
+            setCameraError("Camera access denied. Please enable in settings.");
+          } else if (error.name === "NotFoundError") {
+            setCameraError("No camera found on this device.");
+          } else if (error.name === "NotReadableError") {
+            setCameraError("Camera is in use by another app.");
+          } else {
+            setCameraError("Could not access camera.");
+          }
+        }
+      }
+    }
+  }, [facingMode, stream]);
 
   useEffect(() => {
     if (isEnabled && isConversationActive) {
       startCamera();
-    } else if (stream) {
+    } else if (!isEnabled || !isConversationActive) {
       stopCamera();
     }
+  }, [isEnabled, isConversationActive, startCamera, stopCamera]);
 
+  // Cleanup on unmount
+  useEffect(() => {
     return () => {
       if (stream) {
         stream.getTracks().forEach((track) => track.stop());
       }
     };
-  }, [isEnabled, isConversationActive, facingMode]);
+  }, [stream]);
 
-  const startCamera = async () => {
-    try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          width: { ideal: 640 },
-          height: { ideal: 480 },
-          facingMode: facingMode,
-        },
-      });
-      setStream(mediaStream);
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-      }
-    } catch (error) {
-      console.error("Failed to start camera:", error);
+  // Handle facing mode change
+  useEffect(() => {
+    if (isEnabled && isConversationActive && stream) {
+      // Restart camera with new facing mode
+      startCamera();
     }
-  };
-
-  const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      setStream(null);
-    }
-  };
+  }, [facingMode]);
 
   const toggleCamera = () => {
     setIsEnabled(!isEnabled);
+    setCameraError(null);
   };
 
   const switchCamera = () => {
@@ -95,8 +160,7 @@ const OrlaVideoPreview: React.FC<OrlaVideoPreviewProps> = ({
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.9, y: 20 }}
       className={cn(
-        "fixed z-40",
-        isExpanded ? "bottom-24 right-4" : "bottom-24 right-4",
+        "fixed z-40 bottom-24 right-4",
         className
       )}
     >
@@ -194,8 +258,11 @@ const OrlaVideoPreview: React.FC<OrlaVideoPreviewProps> = ({
 
             {/* No stream fallback */}
             {!stream && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/80">
-                <CameraOff className="w-8 h-8 text-white/40" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 p-2">
+                <CameraOff className="w-8 h-8 text-white/40 mb-2" />
+                {cameraError && (
+                  <p className="text-[10px] text-white/60 text-center">{cameraError}</p>
+                )}
               </div>
             )}
           </div>

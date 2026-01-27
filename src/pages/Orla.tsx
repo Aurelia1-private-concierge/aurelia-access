@@ -185,19 +185,33 @@ const Orla = () => {
     setTranscript([]);
     
     try {
-      // Step 1: Request microphone permission
+      // Step 1: Request microphone permission with mobile-friendly constraints
       console.log("Requesting microphone permission...");
       try {
-        await navigator.mediaDevices.getUserMedia({ audio: true });
+        const constraints: MediaStreamConstraints = {
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+          },
+        };
+        const micStream = await navigator.mediaDevices.getUserMedia(constraints);
+        // Stop the stream immediately - we just needed permission
+        micStream.getTracks().forEach(track => track.stop());
         console.log("Microphone permission granted");
         setMicPermission("granted");
       } catch (micError) {
         console.error("Microphone permission error:", micError);
-        if ((micError as Error).name === "NotAllowedError") {
+        const err = micError as Error;
+        if (err.name === "NotAllowedError") {
           toast.error("Microphone access is required to speak with Orla");
           setMicPermission("denied");
+        } else if (err.name === "NotFoundError") {
+          toast.error("No microphone found on this device");
+        } else if (err.name === "NotReadableError") {
+          toast.error("Microphone is in use by another app");
         } else {
-          toast.error("Could not access microphone: " + (micError as Error).message);
+          toast.error("Could not access microphone: " + err.message);
         }
         setIsConnecting(false);
         return;
@@ -224,12 +238,16 @@ const Orla = () => {
 
       if (error) {
         console.error("Edge function error:", error);
+        // More user-friendly error messages
+        if (error.message?.includes("not configured")) {
+          throw new Error("Voice service is not configured. Please contact support.");
+        }
         throw new Error(error.message || "Failed to get conversation token");
       }
       
       if (!data?.signed_url) {
         console.error("No signed URL in response:", data);
-        throw new Error(data?.error || "No signed URL received from server");
+        throw new Error(data?.error || "Voice service temporarily unavailable. Please try again.");
       }
 
       // Store agent ID for cleanup
@@ -245,6 +263,10 @@ const Orla = () => {
         console.log("Conversation started successfully!");
       } catch (sessionError) {
         console.error("ElevenLabs session start failed:", sessionError);
+        const err = sessionError as Error;
+        if (err.message?.includes("microphone")) {
+          throw new Error("Could not access microphone. Please check your permissions.");
+        }
         throw new Error("Failed to start voice session. Please try again.");
       }
       

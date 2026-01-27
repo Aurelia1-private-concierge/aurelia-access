@@ -530,7 +530,7 @@ const Globe3D = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 0.3 }}
-        className="w-full h-[400px] md:h-[500px] relative"
+        className="w-full h-[320px] md:h-[400px] relative"
       >
         <Canvas
           camera={{ position: [0, 0, 2.5], fov: 45 }}

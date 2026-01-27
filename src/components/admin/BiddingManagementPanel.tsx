@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -195,6 +196,9 @@ function BidManagementDialog({
             <Gavel className="h-5 w-5 text-primary" />
             Manage Bids
           </DialogTitle>
+          <DialogDescription>
+            Review and manage bids from house partners for this service request.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -222,7 +226,7 @@ function BidManagementDialog({
                     <SelectTrigger>
                       <SelectValue placeholder="Select partner" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background z-50">
                       {partners?.filter(p => p.is_active).map((p) => (
                         <SelectItem key={p.id} value={p.id}>
                           {p.name} {p.company_name && `(${p.company_name})`}

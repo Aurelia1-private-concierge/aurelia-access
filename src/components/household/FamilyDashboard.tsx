@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -263,6 +264,9 @@ export function FamilyDashboard() {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Create Household</DialogTitle>
+                <DialogDescription>
+                  Set up a family or enterprise household account to share membership benefits.
+                </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div className="space-y-2">
@@ -280,7 +284,7 @@ export function FamilyDashboard() {
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background z-50">
                       <SelectItem value="family">Family</SelectItem>
                       <SelectItem value="enterprise">Enterprise</SelectItem>
                     </SelectContent>
@@ -381,6 +385,9 @@ export function FamilyDashboard() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Invite Member</DialogTitle>
+                  <DialogDescription>
+                    Send an invitation to join your household and share membership benefits.
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div className="space-y-2">
@@ -399,7 +406,7 @@ export function FamilyDashboard() {
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-background z-50">
                         <SelectItem value="admin">Admin (full access)</SelectItem>
                         <SelectItem value="member">Member (request services)</SelectItem>
                         <SelectItem value="dependent">Dependent (limited)</SelectItem>

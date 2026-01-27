@@ -227,3 +227,12 @@ verify_jwt = false
 
 [functions.elevenlabs-tts]
 verify_jwt = false
+
+[functions.uhnwi-service-matcher]
+verify_jwt = false
+
+[functions.lovable-ai]
+verify_jwt = false
+
+[functions.check-social-credentials]
+verify_jwt = false

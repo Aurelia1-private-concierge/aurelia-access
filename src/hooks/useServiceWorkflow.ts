@@ -103,6 +103,7 @@ export const useServiceWorkflow = (serviceRequestId?: string) => {
           category: data.category as "chauffeur" | "collectibles" | "dining" | "events_access" | "private_aviation" | "real_estate" | "security" | "shopping" | "travel" | "wellness" | "yacht_charter",
           status: "pending" as const,
           requirements: data.requirements || null,
+          auto_recommend_partners: true, // Enable automatic partner matching
         };
 
         const { data: newRequest, error } = await supabase
@@ -124,6 +125,9 @@ export const useServiceWorkflow = (serviceRequestId?: string) => {
           is_visible_to_client: true,
         });
 
+        // Trigger automated partner matching in background
+        triggerPartnerMatching(newRequest.id).catch(console.error);
+
         await fetchRequests();
         return newRequest as unknown as ServiceRequest;
       } catch (error) {
@@ -135,6 +139,27 @@ export const useServiceWorkflow = (serviceRequestId?: string) => {
     },
     [user, fetchRequests]
   );
+
+  // Trigger automated partner matching
+  const triggerPartnerMatching = useCallback(async (requestId: string) => {
+    try {
+      const { error } = await supabase.functions.invoke("uhnwi-service-matcher", {
+        body: {
+          service_request_id: requestId,
+          auto_outreach: true,
+          max_partners: 5,
+        },
+      });
+
+      if (error) {
+        console.error("Partner matching failed:", error);
+      } else {
+        console.log("Partner matching triggered for request:", requestId);
+      }
+    } catch (err) {
+      console.error("Failed to trigger partner matching:", err);
+    }
+  }, []);
 
   // Cancel a request
   const cancelRequest = useCallback(

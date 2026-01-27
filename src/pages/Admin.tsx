@@ -77,6 +77,7 @@ import PartnerMessagesPanel from "@/components/admin/PartnerMessagesPanel";
 import OnlineUsersIndicator from "@/components/admin/OnlineUsersIndicator";
 import APIKeysPanel from "@/components/admin/APIKeysPanel";
 import { HousePartnersPanel } from "@/components/admin/HousePartnersPanel";
+import { BiddingManagementPanel } from "@/components/admin/BiddingManagementPanel";
 // Lazy load recharts-heavy components to prevent circular initialization errors
 const AnalyticsDashboard = lazy(() => import("@/components/admin/AnalyticsDashboard"));
 const VisitorAnalytics = lazy(() => import("@/components/admin/VisitorAnalytics"));
@@ -410,11 +411,20 @@ const Admin = () => {
             <TabsTrigger value="socialads">Social Advertising</TabsTrigger>
             <TabsTrigger value="apikeys">API Keys</TabsTrigger>
             <TabsTrigger value="housepartners">House Partners</TabsTrigger>
+            <TabsTrigger value="bidding">Bidding</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
           <TabsContent value="housepartners" className="space-y-6">
             <HousePartnersPanel />
+          </TabsContent>
+
+          <TabsContent value="bidding" className="space-y-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-serif text-3xl text-foreground mb-2">Partner Bidding</h1>
+              <p className="text-muted-foreground">Manage bids from house partners on service requests</p>
+            </motion.div>
+            <BiddingManagementPanel />
           </TabsContent>
 
           <TabsContent value="globalaudit" className="space-y-6">

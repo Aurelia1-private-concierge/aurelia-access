@@ -16,6 +16,7 @@ import { logger } from "@/lib/logger";
 import AvatarCropModal from "@/components/profile/AvatarCropModal";
 import NotificationSettings from "@/components/dashboard/NotificationSettings";
 import TwoFactorSetup from "@/components/auth/TwoFactorSetup";
+import PasskeyManager from "@/components/auth/PasskeyManager";
 import AvatarSettingsPanel from "@/components/profile/AvatarSettingsPanel";
 import AvatarStyleGallery from "@/components/profile/AvatarStyleGallery";
 import AvatarModelSelector from "@/components/orla/avatars/AvatarModelSelector";
@@ -680,6 +681,9 @@ const Profile = () => {
               )}
             </CardContent>
           </Card>
+
+          {/* Passkeys Section */}
+          <PasskeyManager />
         </motion.div>
 
         {/* Save Button */}

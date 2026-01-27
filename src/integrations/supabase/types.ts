@@ -2364,6 +2364,60 @@ export type Database = {
           },
         ]
       }
+      house_partner_bids: {
+        Row: {
+          bid_amount: number
+          created_at: string | null
+          currency: string | null
+          estimated_timeline: string | null
+          house_partner_id: string
+          id: string
+          notes: string | null
+          service_request_id: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          bid_amount: number
+          created_at?: string | null
+          currency?: string | null
+          estimated_timeline?: string | null
+          house_partner_id: string
+          id?: string
+          notes?: string | null
+          service_request_id: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          bid_amount?: number
+          created_at?: string | null
+          currency?: string | null
+          estimated_timeline?: string | null
+          house_partner_id?: string
+          id?: string
+          notes?: string | null
+          service_request_id?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "house_partner_bids_house_partner_id_fkey"
+            columns: ["house_partner_id"]
+            isOneToOne: false
+            referencedRelation: "house_partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "house_partner_bids_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       house_partner_services: {
         Row: {
           amount: number | null
@@ -4301,6 +4355,48 @@ export type Database = {
         }
         Relationships: []
       }
+      passkey_credentials: {
+        Row: {
+          backed_up: boolean | null
+          counter: number
+          created_at: string | null
+          credential_id: string
+          device_name: string | null
+          device_type: string | null
+          id: string
+          last_used_at: string | null
+          public_key: string
+          transports: string[] | null
+          user_id: string
+        }
+        Insert: {
+          backed_up?: boolean | null
+          counter?: number
+          created_at?: string | null
+          credential_id: string
+          device_name?: string | null
+          device_type?: string | null
+          id?: string
+          last_used_at?: string | null
+          public_key: string
+          transports?: string[] | null
+          user_id: string
+        }
+        Update: {
+          backed_up?: boolean | null
+          counter?: number
+          created_at?: string | null
+          credential_id?: string
+          device_name?: string | null
+          device_type?: string | null
+          id?: string
+          last_used_at?: string | null
+          public_key?: string
+          transports?: string[] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       performance_metrics: {
         Row: {
           created_at: string
@@ -5605,6 +5701,7 @@ export type Database = {
           partner_response: string | null
           preferred_date: string | null
           requirements: Json | null
+          selected_bid_id: string | null
           service_id: string | null
           status: Database["public"]["Enums"]["request_status"]
           title: string
@@ -5636,6 +5733,7 @@ export type Database = {
           partner_response?: string | null
           preferred_date?: string | null
           requirements?: Json | null
+          selected_bid_id?: string | null
           service_id?: string | null
           status?: Database["public"]["Enums"]["request_status"]
           title: string
@@ -5667,6 +5765,7 @@ export type Database = {
           partner_response?: string | null
           preferred_date?: string | null
           requirements?: Json | null
+          selected_bid_id?: string | null
           service_id?: string | null
           status?: Database["public"]["Enums"]["request_status"]
           title?: string
@@ -5690,6 +5789,13 @@ export type Database = {
             columns: ["partner_id"]
             isOneToOne: false
             referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_selected_bid_id_fkey"
+            columns: ["selected_bid_id"]
+            isOneToOne: false
+            referencedRelation: "house_partner_bids"
             referencedColumns: ["id"]
           },
           {

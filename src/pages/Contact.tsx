@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useHapticFeedback } from "@/hooks/useHapticFeedback";
+import { checkRateLimit, generateFingerprint } from "@/lib/rate-limit";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -45,6 +46,21 @@ const Contact = () => {
     haptics.tap();
 
     try {
+      // Rate limit check (5 requests per 60 minutes)
+      const identifier = `${generateFingerprint()}_${data.email}`;
+      const rateCheck = await checkRateLimit(identifier, "contact_form", 5, 60);
+      
+      if (!rateCheck.allowed) {
+        haptics.error();
+        toast({
+          title: "Rate Limited",
+          description: rateCheck.error || "Too many requests. Please try again later.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
       // Insert contact submission
       const { data: submission, error } = await supabase
         .from("contact_submissions")

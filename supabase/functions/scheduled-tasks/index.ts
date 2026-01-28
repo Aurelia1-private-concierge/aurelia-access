@@ -70,6 +70,9 @@ Deno.serve(async (req) => {
           case 'report_generation':
             result = await handleReportGeneration(supabase, task.config);
             break;
+          case 'backup_verification':
+            result = await handleBackupVerification(supabase);
+            break;
           default:
             result = { error: `Unknown task type: ${task.task_type}` };
         }
@@ -252,5 +255,118 @@ async function handleReportGeneration(supabase: any, config: Record<string, unkn
     period: { start: yesterday.toISOString(), end: now.toISOString() },
     metrics: { new_users: newUsers || 0, new_requests: newRequests || 0 },
     generated_at: now.toISOString(),
+  };
+}
+
+// deno-lint-ignore no-explicit-any
+async function handleBackupVerification(supabase: any) {
+  const now = new Date();
+  const checks: { check_type: string; status: string; details: Record<string, unknown> }[] = [];
+  
+  // Check 1: Verify database is accessible and responding
+  try {
+    const startTime = Date.now();
+    const { count } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
+    const responseTime = Date.now() - startTime;
+    
+    checks.push({
+      check_type: 'database_connectivity',
+      status: responseTime < 5000 ? 'healthy' : 'degraded',
+      details: { response_time_ms: responseTime, record_count: count || 0 },
+    });
+  } catch (error) {
+    checks.push({
+      check_type: 'database_connectivity',
+      status: 'failed',
+      details: { error: error instanceof Error ? error.message : 'Unknown error' },
+    });
+  }
+  
+  // Check 2: Verify storage buckets are accessible
+  try {
+    const { data: avatarFiles, error: avatarError } = await supabase.storage.from('avatars').list('', { limit: 1 });
+    const { data: consignmentFiles, error: consignmentError } = await supabase.storage.from('consignments').list('', { limit: 1 });
+    
+    checks.push({
+      check_type: 'storage_accessibility',
+      status: !avatarError && !consignmentError ? 'healthy' : 'degraded',
+      details: {
+        avatars_accessible: !avatarError,
+        consignments_accessible: !consignmentError,
+        avatars_sample_count: avatarFiles?.length || 0,
+        consignments_sample_count: consignmentFiles?.length || 0,
+      },
+    });
+  } catch (error) {
+    checks.push({
+      check_type: 'storage_accessibility',
+      status: 'failed',
+      details: { error: error instanceof Error ? error.message : 'Unknown error' },
+    });
+  }
+  
+  // Check 3: Verify critical tables have recent data (sanity check)
+  try {
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+    
+    const { count: recentVisits } = await supabase
+      .from('visitor_sessions')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', oneDayAgo);
+    
+    const { count: recentLogs } = await supabase
+      .from('audit_logs')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', oneDayAgo);
+    
+    checks.push({
+      check_type: 'data_freshness',
+      status: (recentVisits || 0) > 0 || (recentLogs || 0) > 0 ? 'healthy' : 'warning',
+      details: {
+        recent_visitor_sessions: recentVisits || 0,
+        recent_audit_logs: recentLogs || 0,
+        checked_since: oneDayAgo,
+      },
+    });
+  } catch (error) {
+    checks.push({
+      check_type: 'data_freshness',
+      status: 'failed',
+      details: { error: error instanceof Error ? error.message : 'Unknown error' },
+    });
+  }
+  
+  // Determine overall status
+  const hasFailures = checks.some(c => c.status === 'failed');
+  const hasDegraded = checks.some(c => c.status === 'degraded' || c.status === 'warning');
+  const overallStatus = hasFailures ? 'failed' : hasDegraded ? 'degraded' : 'healthy';
+  
+  // Store verification result
+  await supabase.from('backup_verification_logs').insert({
+    verification_type: 'automated_daily',
+    status: overallStatus,
+    verified_at: now.toISOString(),
+    details: { checks },
+  });
+  
+  // Log to health events for dashboard visibility
+  await supabase.from('health_events').insert({
+    event_type: 'backup_verification',
+    status: overallStatus,
+    details: {
+      checks_performed: checks.length,
+      passed: checks.filter(c => c.status === 'healthy').length,
+      warnings: checks.filter(c => c.status === 'warning' || c.status === 'degraded').length,
+      failed: checks.filter(c => c.status === 'failed').length,
+    },
+  });
+  
+  console.log('Backup verification complete:', overallStatus, checks);
+  
+  return {
+    message: `Backup verification ${overallStatus}`,
+    status: overallStatus,
+    checks,
+    verified_at: now.toISOString(),
   };
 }

@@ -351,6 +351,7 @@ async function handleBackupVerification(supabase: any) {
   
   // Log to health events for dashboard visibility
   await supabase.from('health_events').insert({
+    component: 'backup_verification',
     event_type: 'backup_verification',
     status: overallStatus,
     details: {

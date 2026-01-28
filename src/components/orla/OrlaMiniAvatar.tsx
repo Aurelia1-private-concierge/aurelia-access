@@ -1,6 +1,7 @@
 import { memo, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import orlaAvatarFabOptimized from "@/assets/orla-avatar-fab-optimized.webp";
+// Use tiny avatar for FAB (56-80px display) - only 5KB vs 990KB original
+import orlaAvatarTiny from "@/assets/orla-avatar-tiny.webp";
 import orlaAvatarSmall from "@/assets/orla-avatar-small.webp";
 
 interface OrlaMiniAvatarProps {
@@ -128,8 +129,9 @@ const OrlaMiniAvatar = memo(({
       </AnimatePresence>
 
       {/* Static avatar image - using size-appropriate optimized version */}
+      {/* orlaAvatarTiny (~5KB) for sizes ≤80px, orlaAvatarSmall (~30KB) for larger */}
       <motion.img
-        src={size <= 80 ? orlaAvatarFabOptimized : orlaAvatarSmall}
+        src={size <= 80 ? orlaAvatarTiny : orlaAvatarSmall}
         alt="Orla"
         width={size}
         height={size}

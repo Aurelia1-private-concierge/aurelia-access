@@ -5,6 +5,10 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Cold start tracking
+const bootTime = Date.now();
+let isFirstRequest = true;
+
 // Endpoints to monitor
 const ENDPOINTS = [
   { name: 'Frontend', url: 'https://aurelia-privateconcierge.com', type: 'frontend' },
@@ -61,6 +65,10 @@ async function checkEndpoint(endpoint: { name: string; url: string; type: string
 }
 
 Deno.serve(async (req) => {
+  const requestStartTime = Date.now();
+  const isColdStart = isFirstRequest;
+  isFirstRequest = false;
+  
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -71,7 +79,7 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
     );
 
-    console.log('Starting health checks for', ENDPOINTS.length, 'endpoints');
+    console.log('Starting health checks for', ENDPOINTS.length, 'endpoints', isColdStart ? '(COLD START)' : '(warm)');
     
     // Check all endpoints in parallel
     const results = await Promise.all(ENDPOINTS.map(checkEndpoint));
@@ -136,6 +144,9 @@ Deno.serve(async (req) => {
     }
 
     // Calculate summary
+    const executionTime = Date.now() - requestStartTime;
+    const coldStartBootTime = isColdStart ? (requestStartTime - bootTime) : null;
+    
     const summary = {
       total_endpoints: results.length,
       healthy: results.filter(r => r.status === 'healthy').length,
@@ -145,7 +156,30 @@ Deno.serve(async (req) => {
         results.reduce((sum, r) => sum + (r.response_time_ms || 0), 0) / results.length
       ),
       checked_at: new Date().toISOString(),
+      is_cold_start: isColdStart,
+      execution_time_ms: executionTime,
+      boot_time_ms: coldStartBootTime,
     };
+
+    // Track edge function metrics
+    try {
+      await supabase.from('edge_function_metrics').insert({
+        function_name: 'health-check',
+        invoked_at: new Date().toISOString(),
+        response_time_ms: executionTime,
+        is_cold_start: isColdStart,
+        status: 'success',
+        metadata: {
+          boot_time_ms: coldStartBootTime,
+          endpoints_checked: results.length,
+          healthy_count: summary.healthy,
+          degraded_count: summary.degraded,
+          down_count: summary.down,
+        },
+      });
+    } catch (metricsError) {
+      console.error('Failed to record metrics:', metricsError);
+    }
 
     console.log('Health check complete:', summary);
 
@@ -154,6 +188,27 @@ Deno.serve(async (req) => {
     });
 
   } catch (error) {
+    const executionTime = Date.now() - requestStartTime;
+    
+    // Track failed metrics
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') || '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
+    );
+    
+    try {
+      await supabase.from('edge_function_metrics').insert({
+        function_name: 'health-check',
+        invoked_at: new Date().toISOString(),
+        response_time_ms: executionTime,
+        is_cold_start: isColdStart,
+        status: 'error',
+        metadata: { error: error instanceof Error ? error.message : 'Unknown error' },
+      });
+    } catch {
+      // Ignore metrics recording errors
+    }
+    
     console.error('Health check error:', error);
     return new Response(JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }), {
       status: 500,

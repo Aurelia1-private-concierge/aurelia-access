@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-webhook-secret",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-webhook-secret, x-webhook-signature",
 };
 
 interface WebhookPayload {
@@ -11,6 +11,56 @@ interface WebhookPayload {
   data: any;
   timestamp?: string;
 }
+
+/**
+ * Verify HMAC-SHA256 webhook signature
+ */
+const verifyWebhookSignature = async (
+  body: string,
+  signature: string | null,
+  secret: string
+): Promise<boolean> => {
+  if (!signature || !secret) return false;
+  
+  try {
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(secret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+    
+    const expectedSig = await crypto.subtle.sign(
+      'HMAC',
+      key,
+      encoder.encode(body)
+    );
+    
+    const expected = Array.from(new Uint8Array(expectedSig))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+    
+    // Constant-time comparison to prevent timing attacks
+    if (signature.length !== expected.length) return false;
+    let result = 0;
+    for (let i = 0; i < signature.length; i++) {
+      result |= signature.charCodeAt(i) ^ expected.charCodeAt(i);
+    }
+    return result === 0;
+  } catch (error) {
+    console.error('Signature verification error:', error);
+    return false;
+  }
+};
+
+/**
+ * Validate UUID format
+ */
+const isValidUUID = (id: string): boolean => {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+};
 
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
@@ -153,21 +203,79 @@ const handler = async (req: Request): Promise<Response> => {
     }
     
     // POST without action: Receive incoming webhook (from n8n or external services)
+    // SECURED: Requires HMAC signature verification
     if (req.method === "POST" && !action) {
-      const payload: WebhookPayload = await req.json();
+      const webhookSecret = Deno.env.get('WEBHOOK_SECRET');
       
-      console.log("Received webhook:", JSON.stringify(payload));
+      // Require webhook secret to be configured
+      if (!webhookSecret) {
+        console.error('WEBHOOK_SECRET not configured - rejecting request');
+        return new Response(
+          JSON.stringify({ error: 'Webhook endpoint not configured' }),
+          { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+      
+      // Get signature from header
+      const signature = req.headers.get('x-webhook-signature');
+      
+      // Read body as text for signature verification
+      const body = await req.text();
+      
+      // Verify HMAC signature
+      if (!await verifyWebhookSignature(body, signature, webhookSecret)) {
+        console.error('Invalid webhook signature - rejecting request');
+        return new Response(
+          JSON.stringify({ error: 'Invalid signature' }),
+          { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+      
+      // Parse payload after verification
+      let payload: WebhookPayload;
+      try {
+        payload = JSON.parse(body);
+      } catch {
+        return new Response(
+          JSON.stringify({ error: 'Invalid JSON payload' }),
+          { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+      
+      console.log("Received verified webhook:", payload.event);
       
       // Process based on event type
       switch (payload.event) {
         case 'contact_status_update':
           // Update contact submission status from CRM/n8n
           if (payload.data?.contact_id && payload.data?.status) {
+            // Validate UUID format
+            if (!isValidUUID(payload.data.contact_id)) {
+              return new Response(
+                JSON.stringify({ error: 'Invalid contact_id format' }),
+                { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+              );
+            }
+            
+            // Validate status value (whitelist allowed statuses)
+            const allowedStatuses = ['new', 'contacted', 'qualified', 'converted', 'closed', 'cancelled'];
+            if (!allowedStatuses.includes(payload.data.status)) {
+              return new Response(
+                JSON.stringify({ error: 'Invalid status value' }),
+                { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+              );
+            }
+            
+            // Sanitize notes (limit length, strip potential injection)
+            const sanitizedNotes = payload.data.notes 
+              ? String(payload.data.notes).slice(0, 1000).replace(/<[^>]*>/g, '')
+              : null;
+            
             await supabase
               .from('contact_submissions')
               .update({ 
                 status: payload.data.status,
-                notes: payload.data.notes || null,
+                notes: sanitizedNotes,
                 updated_at: new Date().toISOString(),
               })
               .eq('id', payload.data.contact_id);
@@ -179,6 +287,20 @@ const handler = async (req: Request): Promise<Response> => {
         case 'assign_contact':
           // Assign contact to a team member
           if (payload.data?.contact_id && payload.data?.assigned_to) {
+            // Validate UUID formats
+            if (!isValidUUID(payload.data.contact_id)) {
+              return new Response(
+                JSON.stringify({ error: 'Invalid contact_id format' }),
+                { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+              );
+            }
+            if (!isValidUUID(payload.data.assigned_to)) {
+              return new Response(
+                JSON.stringify({ error: 'Invalid assigned_to format' }),
+                { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+              );
+            }
+            
             await supabase
               .from('contact_submissions')
               .update({ 
@@ -194,6 +316,17 @@ const handler = async (req: Request): Promise<Response> => {
         case 'add_note':
           // Add note to contact
           if (payload.data?.contact_id && payload.data?.note) {
+            // Validate UUID format
+            if (!isValidUUID(payload.data.contact_id)) {
+              return new Response(
+                JSON.stringify({ error: 'Invalid contact_id format' }),
+                { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+              );
+            }
+            
+            // Sanitize note content
+            const sanitizedNote = String(payload.data.note).slice(0, 2000).replace(/<[^>]*>/g, '');
+            
             const { data: contact } = await supabase
               .from('contact_submissions')
               .select('notes')
@@ -201,7 +334,7 @@ const handler = async (req: Request): Promise<Response> => {
               .single();
             
             const existingNotes = contact?.notes || '';
-            const newNote = `[${new Date().toISOString()}] ${payload.data.note}`;
+            const newNote = `[${new Date().toISOString()}] ${sanitizedNote}`;
             const updatedNotes = existingNotes ? `${existingNotes}\n\n${newNote}` : newNote;
             
             await supabase
@@ -231,7 +364,7 @@ const handler = async (req: Request): Promise<Response> => {
   } catch (error: any) {
     console.error("Webhook receiver error:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: "Internal server error" }),
       { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }

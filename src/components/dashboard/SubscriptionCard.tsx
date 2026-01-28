@@ -1,17 +1,19 @@
 import { motion } from "framer-motion";
-import { Crown, Shield, Sparkles, Calendar, ArrowUpRight, Loader2 } from "lucide-react";
+import { Crown, Shield, Sparkles, Calendar, ArrowUpRight, Loader2, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const tierIcons = {
+  paygo: Wallet,
   silver: Shield,
   gold: Crown,
   platinum: Sparkles,
 };
 
 const tierColors = {
+  paygo: "text-emerald-400",
   silver: "text-slate-400",
   gold: "text-primary",
   platinum: "text-purple-400",

@@ -7280,6 +7280,7 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      anonymize_ip: { Args: { ip: string }; Returns: string }
       check_budget_alert: { Args: { p_budget_id: string }; Returns: Json }
       check_ip_rate_limit: {
         Args: {
@@ -7312,6 +7313,9 @@ export type Database = {
         }
         Returns: boolean
       }
+      cleanup_old_behavior_events: { Args: never; Returns: number }
+      cleanup_old_funnel_events: { Args: never; Returns: number }
+      cleanup_old_visitor_logs: { Args: never; Returns: number }
       get_expiring_certificates: {
         Args: { days_threshold?: number }
         Returns: {
@@ -7391,6 +7395,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      run_data_retention_cleanup: { Args: never; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "partner" | "member"

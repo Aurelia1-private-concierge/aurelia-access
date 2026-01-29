@@ -186,6 +186,169 @@ export type Database = {
           },
         ]
       }
+      ai_insights: {
+        Row: {
+          action_notes: string | null
+          action_taken: boolean | null
+          category: string
+          created_at: string | null
+          data: Json | null
+          description: string
+          expires_at: string | null
+          generated_by: string | null
+          id: string
+          insight_type: string
+          is_actionable: boolean | null
+          is_read: boolean | null
+          severity: string | null
+          title: string
+        }
+        Insert: {
+          action_notes?: string | null
+          action_taken?: boolean | null
+          category: string
+          created_at?: string | null
+          data?: Json | null
+          description: string
+          expires_at?: string | null
+          generated_by?: string | null
+          id?: string
+          insight_type: string
+          is_actionable?: boolean | null
+          is_read?: boolean | null
+          severity?: string | null
+          title: string
+        }
+        Update: {
+          action_notes?: string | null
+          action_taken?: boolean | null
+          category?: string
+          created_at?: string | null
+          data?: Json | null
+          description?: string
+          expires_at?: string | null
+          generated_by?: string | null
+          id?: string
+          insight_type?: string
+          is_actionable?: boolean | null
+          is_read?: boolean | null
+          severity?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_insights_generated_by_fkey"
+            columns: ["generated_by"]
+            isOneToOne: false
+            referencedRelation: "ai_specialists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_query_logs: {
+        Row: {
+          context: Json | null
+          created_at: string | null
+          error_message: string | null
+          id: string
+          query_text: string
+          query_type: string
+          response_text: string | null
+          response_time_ms: number | null
+          specialist_id: string | null
+          status: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          context?: Json | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          query_text: string
+          query_type: string
+          response_text?: string | null
+          response_time_ms?: number | null
+          specialist_id?: string | null
+          status?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          context?: Json | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          query_text?: string
+          query_type?: string
+          response_text?: string | null
+          response_time_ms?: number | null
+          specialist_id?: string | null
+          status?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_query_logs_specialist_id_fkey"
+            columns: ["specialist_id"]
+            isOneToOne: false
+            referencedRelation: "ai_specialists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_specialists: {
+        Row: {
+          avg_response_time_ms: number | null
+          capabilities: string[] | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          model: string
+          name: string
+          specializations: string[] | null
+          success_rate: number | null
+          system_prompt: string | null
+          total_queries: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          avg_response_time_ms?: number | null
+          capabilities?: string[] | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          model?: string
+          name: string
+          specializations?: string[] | null
+          success_rate?: number | null
+          system_prompt?: string | null
+          total_queries?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          avg_response_time_ms?: number | null
+          capabilities?: string[] | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          model?: string
+          name?: string
+          specializations?: string[] | null
+          success_rate?: number | null
+          system_prompt?: string | null
+          total_queries?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       analytics_events: {
         Row: {
           created_at: string
@@ -1902,6 +2065,36 @@ export type Database = {
           fetched_at?: string
           id?: string
           rates?: Json
+        }
+        Relationships: []
+      }
+      db_schema_cache: {
+        Row: {
+          id: string
+          last_analyzed_at: string | null
+          row_count: number | null
+          sample_data: Json | null
+          schema_json: Json
+          table_name: string
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          last_analyzed_at?: string | null
+          row_count?: number | null
+          sample_data?: Json | null
+          schema_json: Json
+          table_name: string
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          last_analyzed_at?: string | null
+          row_count?: number | null
+          sample_data?: Json | null
+          schema_json?: Json
+          table_name?: string
+          updated_at?: string | null
         }
         Relationships: []
       }

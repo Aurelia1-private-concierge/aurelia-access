@@ -78,6 +78,7 @@ import OnlineUsersIndicator from "@/components/admin/OnlineUsersIndicator";
 import APIKeysPanel from "@/components/admin/APIKeysPanel";
 import { HousePartnersPanel } from "@/components/admin/HousePartnersPanel";
 import { BiddingManagementPanel } from "@/components/admin/BiddingManagementPanel";
+import { AIDatabaseManagementPanel } from "@/components/admin/ai-database";
 // Lazy load recharts-heavy components to prevent circular initialization errors
 const AnalyticsDashboard = lazy(() => import("@/components/admin/AnalyticsDashboard"));
 const VisitorAnalytics = lazy(() => import("@/components/admin/VisitorAnalytics"));
@@ -412,11 +413,16 @@ const Admin = () => {
             <TabsTrigger value="apikeys">API Keys</TabsTrigger>
             <TabsTrigger value="housepartners">House Partners</TabsTrigger>
             <TabsTrigger value="bidding">Bidding</TabsTrigger>
+            <TabsTrigger value="aidb">AI Database</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
           <TabsContent value="housepartners" className="space-y-6">
             <HousePartnersPanel />
+          </TabsContent>
+
+          <TabsContent value="aidb" className="space-y-6">
+            <AIDatabaseManagementPanel />
           </TabsContent>
 
           <TabsContent value="bidding" className="space-y-6">

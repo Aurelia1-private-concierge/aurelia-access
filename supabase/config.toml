@@ -236,3 +236,6 @@ verify_jwt = false
 
 [functions.check-social-credentials]
 verify_jwt = false
+
+[functions.ai-database-query]
+verify_jwt = false

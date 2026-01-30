@@ -136,6 +136,63 @@ export type Database = {
         }
         Relationships: []
       }
+      affiliate_sales: {
+        Row: {
+          affiliate_code: string
+          client_email: string
+          client_name: string
+          client_phone: string | null
+          commission_amount: number | null
+          commission_rate: number | null
+          created_at: string
+          experience_name: string
+          id: string
+          message: string | null
+          notes: string | null
+          partner_company: string
+          preferred_category: string | null
+          sale_amount: number | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          affiliate_code: string
+          client_email: string
+          client_name: string
+          client_phone?: string | null
+          commission_amount?: number | null
+          commission_rate?: number | null
+          created_at?: string
+          experience_name: string
+          id?: string
+          message?: string | null
+          notes?: string | null
+          partner_company: string
+          preferred_category?: string | null
+          sale_amount?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          affiliate_code?: string
+          client_email?: string
+          client_name?: string
+          client_phone?: string | null
+          commission_amount?: number | null
+          commission_rate?: number | null
+          created_at?: string
+          experience_name?: string
+          id?: string
+          message?: string | null
+          notes?: string | null
+          partner_company?: string
+          preferred_category?: string | null
+          sale_amount?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ai_conversation_memory: {
         Row: {
           confidence: number | null

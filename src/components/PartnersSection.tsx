@@ -1,9 +1,13 @@
-import PartnerNetworkComingSoon from "./PartnerNetworkComingSoon";
+import VettedPartnersSection from "./VettedPartnersSection";
 
-// Wrapper component that can switch between Coming Soon and full partner display
-// Currently shows Coming Soon state while partner network is being curated
 const PartnersSection = () => {
-  return <PartnerNetworkComingSoon />;
+  return (
+    <section className="py-16 px-4">
+      <div className="max-w-7xl mx-auto">
+        <VettedPartnersSection limit={6} showHeader={true} />
+      </div>
+    </section>
+  );
 };
 
 export default PartnersSection;

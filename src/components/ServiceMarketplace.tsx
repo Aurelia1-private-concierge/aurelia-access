@@ -34,7 +34,6 @@ import {
 } from '@/hooks/useServiceAvailability';
 import { useAuth } from '@/contexts/AuthContext';
 import { format, addDays } from 'date-fns';
-import MarketplaceComingSoon from './MarketplaceComingSoon';
 import VettedPartnersSection from './VettedPartnersSection';
 
 const categoryIcons: Record<ServiceCategory, React.ReactNode> = {
@@ -270,13 +269,19 @@ export const ServiceMarketplace: React.FC = () => {
     loadInitialData();
   }, [fetchCategories, fetchFeatured]);
 
-  // Show coming soon if no services are available
+  // Show vetted partners section if no services are available
   const hasNoServices = hasCheckedData && !isLoading && 
     inventory.length === 0 && featuredServices.length === 0 &&
     categories.every(c => c.count === 0);
 
   if (hasNoServices) {
-    return <MarketplaceComingSoon />;
+    return (
+      <section className="py-16 px-4 bg-background min-h-[60vh]">
+        <div className="max-w-7xl mx-auto">
+          <VettedPartnersSection limit={9} showHeader={true} />
+        </div>
+      </section>
+    );
   }
 
   const toggleAmenity = (amenityId: string) => {

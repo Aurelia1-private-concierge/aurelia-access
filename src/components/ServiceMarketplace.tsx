@@ -269,16 +269,13 @@ export const ServiceMarketplace: React.FC = () => {
     loadInitialData();
   }, [fetchCategories, fetchFeatured]);
 
-  // Show vetted partners section if no services are available
-  const hasNoServices = hasCheckedData && !isLoading && 
-    inventory.length === 0 && featuredServices.length === 0 &&
-    categories.every(c => c.count === 0);
-
-  if (hasNoServices) {
+  // Show loading state while checking data
+  if (!hasCheckedData || isLoading) {
     return (
       <section className="py-16 px-4 bg-background min-h-[60vh]">
-        <div className="max-w-7xl mx-auto">
-          <VettedPartnersSection limit={9} showHeader={true} />
+        <div className="max-w-7xl mx-auto flex flex-col items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+          <p className="text-muted-foreground">Loading marketplace...</p>
         </div>
       </section>
     );

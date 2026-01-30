@@ -22,8 +22,8 @@ const TriptychSEO = () => {
           "@id": `${siteUrl}/experiences/triptych#event`,
           "name": "TRIPTYCH: A Restricted Cultural Immersion",
           "description": "An unprecedented symphonic encounter, high-level Brazilian gastronomy, and forms of access that are never publicly announced. A composed passage where time, sound, territory, aesthetics, and human presence are treated as living material.",
-          "startDate": "2025-06-19",
-          "endDate": "2025-06-24",
+          "startDate": "2026-06-19",
+          "endDate": "2026-06-24",
           "eventStatus": "https://schema.org/EventScheduled",
           "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
           "location": {
@@ -51,8 +51,8 @@ const TriptychSEO = () => {
               "price": "206000",
               "priceCurrency": "USD",
               "availability": "https://schema.org/LimitedAvailability",
-              "validFrom": "2025-01-01",
-              "validThrough": "2025-04-30",
+              "validFrom": "2026-01-01",
+              "validThrough": "2026-04-30",
               "url": `${siteUrl}/experiences/triptych#inquiry`
             },
             {
@@ -61,8 +61,8 @@ const TriptychSEO = () => {
               "price": "274000",
               "priceCurrency": "USD",
               "availability": "https://schema.org/LimitedAvailability",
-              "validFrom": "2025-01-01",
-              "validThrough": "2025-04-30",
+              "validFrom": "2026-01-01",
+              "validThrough": "2026-04-30",
               "url": `${siteUrl}/experiences/triptych#inquiry`
             },
             {
@@ -71,8 +71,8 @@ const TriptychSEO = () => {
               "price": "342000",
               "priceCurrency": "USD",
               "availability": "https://schema.org/LimitedAvailability",
-              "validFrom": "2025-01-01",
-              "validThrough": "2025-04-30",
+              "validFrom": "2026-01-01",
+              "validThrough": "2026-04-30",
               "url": `${siteUrl}/experiences/triptych#inquiry`
             },
             {
@@ -81,8 +81,8 @@ const TriptychSEO = () => {
               "price": "456000",
               "priceCurrency": "USD",
               "availability": "https://schema.org/LimitedAvailability",
-              "validFrom": "2025-01-01",
-              "validThrough": "2025-04-30",
+              "validFrom": "2026-01-01",
+              "validThrough": "2026-04-30",
               "url": `${siteUrl}/experiences/triptych#inquiry`
             }
           ],
@@ -123,7 +123,7 @@ const TriptychSEO = () => {
               "name": "What is TRIPTYCH?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "TRIPTYCH is a restricted cultural immersion in Rio de Janeiro (June 19-24, 2025) featuring an unprecedented symphonic encounter, high-level Brazilian gastronomy, and forms of access never publicly announced. It is the inaugural moment of Beyond Privé Brasilis."
+                "text": "TRIPTYCH is a restricted cultural immersion in Rio de Janeiro (June 19-24, 2026) featuring an unprecedented symphonic encounter, high-level Brazilian gastronomy, and forms of access never publicly announced. It is the inaugural moment of Beyond Privé Brasilis."
               }
             },
             {
@@ -147,7 +147,7 @@ const TriptychSEO = () => {
               "name": "When is the application deadline?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Applications close on April 30, 2025. Early application is encouraged due to limited availability."
+                "text": "Applications close on April 30, 2026. Early application is encouraged due to limited availability."
               }
             }
           ]
@@ -195,8 +195,8 @@ const TriptychSEO = () => {
 
   return (
     <SEOHead
-      title="TRIPTYCH | A Restricted Cultural Immersion | Rio de Janeiro June 2025"
-      description="Experience an unprecedented symphonic encounter, high-level Brazilian gastronomy, and exclusive cultural access in Rio de Janeiro. June 19-24, 2025. By invitation only. Applications close April 30."
+      title="TRIPTYCH | A Restricted Cultural Immersion | Rio de Janeiro June 2026"
+      description="Experience an unprecedented symphonic encounter, high-level Brazilian gastronomy, and exclusive cultural access in Rio de Janeiro. June 19-24, 2026. By invitation only. Applications close April 30."
       type="product"
     />
   );

@@ -16,7 +16,7 @@ const TriptychDeadlineBanner = () => {
             <span className="text-primary font-medium">Limited Availability</span>
             <span className="text-muted-foreground mx-2">•</span>
             <span className="text-muted-foreground">Applications close </span>
-            <span className="text-foreground font-medium">April 30, 2025</span>
+            <span className="text-foreground font-medium">April 30, 2026</span>
           </p>
         </div>
       </div>

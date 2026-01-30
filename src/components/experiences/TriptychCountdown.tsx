@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
-const DEADLINE = new Date("2025-04-30T23:59:59");
+const DEADLINE = new Date("2026-04-30T23:59:59");
 
 interface TimeLeft {
   days: number;
@@ -63,7 +63,7 @@ const TriptychCountdown = () => {
       className="mt-8"
     >
       <p className="text-[10px] uppercase tracking-[0.3em] text-primary mb-4 text-center">
-        Applications Close April 30, 2025
+        Applications Close April 30, 2026
       </p>
       <div className="flex items-center justify-center gap-3 md:gap-4">
         {timeBlocks.map((block, index) => (

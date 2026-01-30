@@ -239,3 +239,6 @@ verify_jwt = false
 
 [functions.ai-database-query]
 verify_jwt = false
+
+[functions.auto-service-matcher]
+verify_jwt = false

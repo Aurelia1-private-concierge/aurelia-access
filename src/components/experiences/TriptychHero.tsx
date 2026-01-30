@@ -75,7 +75,7 @@ const TriptychHero = () => {
           </span>
           <span className="hidden sm:block w-8 h-px bg-border" />
           <span className="text-primary text-sm uppercase tracking-[0.3em]">
-            June 19–24, 2025
+            June 19–24, 2026
           </span>
         </motion.div>
 

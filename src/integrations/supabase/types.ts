@@ -6342,6 +6342,48 @@ export type Database = {
           },
         ]
       }
+      service_recommendations: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          match_reasons: Json | null
+          match_score: number
+          metadata: Json | null
+          recommendation_type: string
+          status: string
+          target_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          match_reasons?: Json | null
+          match_score: number
+          metadata?: Json | null
+          recommendation_type: string
+          status?: string
+          target_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          match_reasons?: Json | null
+          match_score?: number
+          metadata?: Json | null
+          recommendation_type?: string
+          status?: string
+          target_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       service_request_bids: {
         Row: {
           attachments: string[] | null
@@ -7632,6 +7674,33 @@ export type Database = {
           monthly_allocation?: number
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_interests: {
+        Row: {
+          created_at: string
+          id: string
+          interest_type: string
+          proficiency_level: string | null
+          user_id: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          interest_type: string
+          proficiency_level?: string | null
+          user_id: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          interest_type?: string
+          proficiency_level?: string | null
+          user_id?: string
+          value?: string
         }
         Relationships: []
       }

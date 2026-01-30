@@ -10,28 +10,36 @@ const AFFILIATE_CODE = "APC-TRIPTYCH-001";
 
 const accessCategories = [
   {
-    name: "Category I",
+    name: "EXIMIUS",
+    tier: "Category I",
     subtitle: "Essential Immersion",
     description: "Access to the symbolic heart: The Night of Passage and The Gathering of Living Culture",
     icon: Music,
+    pricing: { usd: 206000, eur: 169000, gbp: 145000 },
   },
   {
-    name: "Category II",
+    name: "SINGULARIS",
+    tier: "Category II",
     subtitle: "Cultural Depth",
     description: "Enhanced cultural encounters with private gastronomic experiences and curated site visits",
     icon: UtensilsCrossed,
+    pricing: { usd: 274000, eur: 226000, gbp: 195000 },
   },
   {
-    name: "Category III",
+    name: "EGREGIUS",
+    tier: "Category III",
     subtitle: "Elevated Access",
     description: "Premium positioning, private styling environment, and exclusive behind-the-scenes access",
     icon: Sparkles,
+    pricing: { usd: 342000, eur: 282000, gbp: 239000 },
   },
   {
-    name: "Category IV",
+    name: "UNUM",
+    tier: "Category IV",
     subtitle: "Founding Circle",
     description: "Complete immersion with private transfers, dedicated concierge, and founding member status",
     icon: Crown,
+    pricing: { usd: 456000, eur: 376000, gbp: 318000 },
   },
 ];
 
@@ -210,16 +218,24 @@ const Triptych = () => {
                   >
                     {category.name}
                   </h3>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+                    {category.tier}
+                  </p>
                   <p className="text-xs uppercase tracking-wider text-primary mb-3">
                     {category.subtitle}
                   </p>
                   <p className="text-sm text-muted-foreground font-light leading-relaxed">
                     {category.description}
                   </p>
-                  <div className="mt-4 pt-4 border-t border-border/10">
-                    <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
-                      Pricing upon application
-                    </span>
+                  <div className="mt-4 pt-4 border-t border-border/10 space-y-1">
+                    <div className="text-lg text-foreground font-light">
+                      ${category.pricing.usd.toLocaleString()}
+                    </div>
+                    <div className="flex gap-3 text-[10px] text-muted-foreground">
+                      <span>€{category.pricing.eur.toLocaleString()}</span>
+                      <span>•</span>
+                      <span>£{category.pricing.gbp.toLocaleString()}</span>
+                    </div>
                   </div>
                 </motion.div>
               ))}

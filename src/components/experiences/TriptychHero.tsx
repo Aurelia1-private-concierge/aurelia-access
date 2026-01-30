@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import triptychHeroImage from "@/assets/triptych-hero.jpg";
+import TriptychCountdown from "./TriptychCountdown";
 
 const TriptychHero = () => {
   const scrollToInquiry = () => {
@@ -90,13 +91,16 @@ const TriptychHero = () => {
           shared selectively with those who seek interpretation, not observation.
         </motion.p>
 
+        {/* Countdown Timer */}
+        <TriptychCountdown />
+
         {/* CTA Button */}
         <motion.button
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1 }}
+          transition={{ duration: 0.8, delay: 1.4 }}
           onClick={scrollToInquiry}
-          className="group px-8 py-4 border border-primary/30 text-primary text-xs uppercase tracking-[0.3em] hover:bg-primary hover:text-primary-foreground transition-all duration-500"
+          className="group mt-8 px-8 py-4 border border-primary/30 text-primary text-xs uppercase tracking-[0.3em] hover:bg-primary hover:text-primary-foreground transition-all duration-500"
         >
           Express Interest
         </motion.button>

@@ -3,7 +3,8 @@ import { SEOHead } from "@/components/SEOHead";
 import TriptychHero from "@/components/experiences/TriptychHero";
 import TriptychTimeline from "@/components/experiences/TriptychTimeline";
 import TriptychInquiryForm from "@/components/experiences/TriptychInquiryForm";
-import { ArrowLeft, MapPin, Calendar, Users, Sparkles, Music, UtensilsCrossed, Crown } from "lucide-react";
+import TriptychDeadlineBanner from "@/components/experiences/TriptychDeadlineBanner";
+import { ArrowLeft, MapPin, Calendar, Users, Sparkles, Music, UtensilsCrossed, Crown, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const AFFILIATE_CODE = "APC-TRIPTYCH-001";
@@ -71,6 +72,9 @@ const Triptych = () => {
 
         {/* Hero */}
         <TriptychHero />
+
+        {/* Deadline Banner */}
+        <TriptychDeadlineBanner />
 
         {/* Philosophy Section */}
         <section className="py-24 md:py-32 px-6 relative overflow-hidden">
@@ -314,9 +318,17 @@ const Triptych = () => {
               >
                 Begin the Conversation
               </h2>
-              <p className="text-muted-foreground font-light">
+              <p className="text-muted-foreground font-light mb-4">
                 Submit your interest and our team will be in touch to discuss access categories and availability.
               </p>
+              
+              {/* Urgency text */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-sm">
+                <Clock className="w-4 h-4 text-primary" />
+                <span className="text-sm text-foreground">
+                  <span className="text-primary font-medium">Final deadline:</span> April 30, 2025
+                </span>
+              </div>
             </motion.div>
 
             <TriptychInquiryForm affiliateCode={AFFILIATE_CODE} />

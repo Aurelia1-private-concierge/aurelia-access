@@ -84,6 +84,11 @@ const SiteBuilder = lazy(() => import("./components/atelier/SiteBuilder"));
 const UserGuide = lazy(() => import("./pages/UserGuide"));
 const VideoShowcase = lazy(() => import("./pages/VideoShowcase"));
 
+// Social Platform Pages
+const Companies = lazy(() => import("./pages/Companies"));
+const Jobs = lazy(() => import("./pages/Jobs"));
+const Feed = lazy(() => import("./pages/Feed"));
+
 // Production debugging
 const log = (msg: string) => console.log(`[App ${Date.now()}] ${msg}`);
 log("App.tsx module loading");
@@ -411,6 +416,49 @@ const AnimatedRoutes = forwardRef<HTMLDivElement>((props, ref) => {
                   <AdminGuide />
                 </PageTransition>
               </AdminRoute>
+            }
+          />
+          {/* Social Platform Routes */}
+          <Route
+            path="/companies"
+            element={
+              <PageTransition>
+                <Companies />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/companies/:slug"
+            element={
+              <PageTransition>
+                <Companies />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/jobs"
+            element={
+              <PageTransition>
+                <Jobs />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/jobs/:id"
+            element={
+              <PageTransition>
+                <Jobs />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/feed"
+            element={
+              <ProtectedRoute>
+                <PageTransition>
+                  <Feed />
+                </PageTransition>
+              </ProtectedRoute>
             }
           />
           <Route

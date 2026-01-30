@@ -1599,6 +1599,165 @@ export type Database = {
         }
         Relationships: []
       }
+      comment_likes: {
+        Row: {
+          comment_id: string
+          created_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          comment_id: string
+          created_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          comment_id?: string
+          created_at?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_likes_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "post_comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      companies: {
+        Row: {
+          company_size: string | null
+          cover_image_url: string | null
+          created_at: string | null
+          description: string | null
+          founded_year: number | null
+          id: string
+          industry: string | null
+          is_featured: boolean | null
+          is_verified: boolean | null
+          location: string | null
+          logo_url: string | null
+          metadata: Json | null
+          name: string
+          owner_id: string | null
+          slug: string
+          status: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          company_size?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          founded_year?: number | null
+          id?: string
+          industry?: string | null
+          is_featured?: boolean | null
+          is_verified?: boolean | null
+          location?: string | null
+          logo_url?: string | null
+          metadata?: Json | null
+          name: string
+          owner_id?: string | null
+          slug: string
+          status?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          company_size?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          founded_year?: number | null
+          id?: string
+          industry?: string | null
+          is_featured?: boolean | null
+          is_verified?: boolean | null
+          location?: string | null
+          logo_url?: string | null
+          metadata?: Json | null
+          name?: string
+          owner_id?: string | null
+          slug?: string
+          status?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
+      company_followers: {
+        Row: {
+          company_id: string
+          created_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_followers_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_members: {
+        Row: {
+          company_id: string
+          id: string
+          is_verified: boolean | null
+          joined_at: string | null
+          role: string | null
+          title: string | null
+          user_id: string
+        }
+        Insert: {
+          company_id: string
+          id?: string
+          is_verified?: boolean | null
+          joined_at?: string | null
+          role?: string | null
+          title?: string | null
+          user_id: string
+        }
+        Update: {
+          company_id?: string
+          id?: string
+          is_verified?: boolean | null
+          joined_at?: string | null
+          role?: string | null
+          title?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_members_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       concierge_fees: {
         Row: {
           amount: number
@@ -1893,6 +2052,48 @@ export type Database = {
           status?: string | null
           target_page?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      content_reports: {
+        Row: {
+          action_taken: string | null
+          content_id: string
+          content_type: string
+          created_at: string | null
+          description: string | null
+          id: string
+          reason: string
+          reporter_id: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+        }
+        Insert: {
+          action_taken?: string | null
+          content_id: string
+          content_type: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          reason: string
+          reporter_id?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+        }
+        Update: {
+          action_taken?: string | null
+          content_id?: string
+          content_type?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          reason?: string
+          reporter_id?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
         }
         Relationships: []
       }
@@ -3058,6 +3259,157 @@ export type Database = {
           user_agent?: string | null
         }
         Relationships: []
+      }
+      job_applications: {
+        Row: {
+          applicant_id: string
+          cover_letter: string | null
+          created_at: string | null
+          id: string
+          job_id: string
+          notes: string | null
+          portfolio_url: string | null
+          resume_url: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          applicant_id: string
+          cover_letter?: string | null
+          created_at?: string | null
+          id?: string
+          job_id: string
+          notes?: string | null
+          portfolio_url?: string | null
+          resume_url?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          applicant_id?: string
+          cover_letter?: string | null
+          created_at?: string | null
+          id?: string
+          job_id?: string
+          notes?: string | null
+          portfolio_url?: string | null
+          resume_url?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jobs: {
+        Row: {
+          application_email: string | null
+          application_url: string | null
+          applications_count: number | null
+          benefits: string[] | null
+          company_id: string
+          created_at: string | null
+          description: string
+          experience_level: string | null
+          expires_at: string | null
+          id: string
+          is_featured: boolean | null
+          is_remote: boolean | null
+          job_type: string | null
+          location: string | null
+          posted_by: string | null
+          requirements: string | null
+          responsibilities: string | null
+          salary_currency: string | null
+          salary_max: number | null
+          salary_min: number | null
+          salary_period: string | null
+          skills: string[] | null
+          slug: string
+          status: string | null
+          title: string
+          updated_at: string | null
+          views_count: number | null
+        }
+        Insert: {
+          application_email?: string | null
+          application_url?: string | null
+          applications_count?: number | null
+          benefits?: string[] | null
+          company_id: string
+          created_at?: string | null
+          description: string
+          experience_level?: string | null
+          expires_at?: string | null
+          id?: string
+          is_featured?: boolean | null
+          is_remote?: boolean | null
+          job_type?: string | null
+          location?: string | null
+          posted_by?: string | null
+          requirements?: string | null
+          responsibilities?: string | null
+          salary_currency?: string | null
+          salary_max?: number | null
+          salary_min?: number | null
+          salary_period?: string | null
+          skills?: string[] | null
+          slug: string
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          views_count?: number | null
+        }
+        Update: {
+          application_email?: string | null
+          application_url?: string | null
+          applications_count?: number | null
+          benefits?: string[] | null
+          company_id?: string
+          created_at?: string | null
+          description?: string
+          experience_level?: string | null
+          expires_at?: string | null
+          id?: string
+          is_featured?: boolean | null
+          is_remote?: boolean | null
+          job_type?: string | null
+          location?: string | null
+          posted_by?: string | null
+          requirements?: string | null
+          responsibilities?: string | null
+          salary_currency?: string | null
+          salary_max?: number | null
+          salary_min?: number | null
+          salary_period?: string | null
+          skills?: string[] | null
+          slug?: string
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          views_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jobs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       key_rotation_history: {
         Row: {
@@ -4730,6 +5082,157 @@ export type Database = {
           },
         ]
       }
+      post_comments: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string | null
+          id: string
+          likes_count: number | null
+          parent_id: string | null
+          post_id: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string | null
+          id?: string
+          likes_count?: number | null
+          parent_id?: string | null
+          post_id: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string | null
+          id?: string
+          likes_count?: number | null
+          parent_id?: string | null
+          post_id?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "post_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_likes: {
+        Row: {
+          created_at: string | null
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          author_id: string
+          comments_count: number | null
+          company_id: string | null
+          content: string
+          content_type: string | null
+          created_at: string | null
+          id: string
+          is_featured: boolean | null
+          is_pinned: boolean | null
+          likes_count: number | null
+          media_urls: string[] | null
+          shares_count: number | null
+          status: string | null
+          tags: string[] | null
+          title: string | null
+          updated_at: string | null
+          views_count: number | null
+          visibility: string | null
+        }
+        Insert: {
+          author_id: string
+          comments_count?: number | null
+          company_id?: string | null
+          content: string
+          content_type?: string | null
+          created_at?: string | null
+          id?: string
+          is_featured?: boolean | null
+          is_pinned?: boolean | null
+          likes_count?: number | null
+          media_urls?: string[] | null
+          shares_count?: number | null
+          status?: string | null
+          tags?: string[] | null
+          title?: string | null
+          updated_at?: string | null
+          views_count?: number | null
+          visibility?: string | null
+        }
+        Update: {
+          author_id?: string
+          comments_count?: number | null
+          company_id?: string | null
+          content?: string
+          content_type?: string | null
+          created_at?: string | null
+          id?: string
+          is_featured?: boolean | null
+          is_pinned?: boolean | null
+          likes_count?: number | null
+          media_urls?: string[] | null
+          shares_count?: number | null
+          status?: string | null
+          tags?: string[] | null
+          title?: string | null
+          updated_at?: string | null
+          views_count?: number | null
+          visibility?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       potential_partners: {
         Row: {
           category: string
@@ -5311,6 +5814,35 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      saved_jobs: {
+        Row: {
+          created_at: string | null
+          id: string
+          job_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          job_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          job_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_jobs_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       scheduled_mcp_tasks: {
         Row: {
@@ -7049,6 +7581,30 @@ export type Database = {
         }
         Relationships: []
       }
+      user_connections: {
+        Row: {
+          created_at: string | null
+          follower_id: string
+          following_id: string
+          id: string
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          follower_id: string
+          following_id: string
+          id?: string
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          follower_id?: string
+          following_id?: string
+          id?: string
+          status?: string | null
+        }
+        Relationships: []
+      }
       user_credits: {
         Row: {
           balance: number
@@ -7075,6 +7631,42 @@ export type Database = {
           last_allocation_at?: string | null
           monthly_allocation?: number
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          link: string | null
+          message: string | null
+          metadata: Json | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          link?: string | null
+          message?: string | null
+          metadata?: Json | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          link?: string | null
+          message?: string | null
+          metadata?: Json | null
+          title?: string
+          type?: string
           user_id?: string
         }
         Relationships: []

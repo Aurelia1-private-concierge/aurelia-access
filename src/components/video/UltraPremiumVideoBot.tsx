@@ -98,14 +98,30 @@ const UltraPremiumVideoBot: React.FC<UltraPremiumVideoBotProps> = ({
   const startCamera = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+        video: { 
+          width: { ideal: 1280 }, 
+          height: { ideal: 720 },
+          facingMode: 'user'
+        },
       });
       setLocalStream(stream);
       if (videoRef.current) {
+        // Set mobile-required attributes before assigning source
+        videoRef.current.muted = true;
+        videoRef.current.playsInline = true;
         videoRef.current.srcObject = stream;
+        
+        // Explicitly play the video
+        try {
+          await videoRef.current.play();
+        } catch (playError) {
+          console.error("Video playback failed:", playError);
+          // Video will still show, just won't autoplay
+        }
       }
       setIsVideoEnabled(true);
     } catch (error) {
+      console.error("Camera access error:", error);
       toast.error("Camera access required for video features");
     }
   }, []);
@@ -289,6 +305,10 @@ const UltraPremiumVideoBot: React.FC<UltraPremiumVideoBotProps> = ({
             playsInline
             muted
             className="w-full h-full object-cover transform scale-x-[-1]"
+            onLoadedMetadata={() => {
+              // Ensure video plays when metadata is loaded
+              videoRef.current?.play().catch(() => {});
+            }}
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">

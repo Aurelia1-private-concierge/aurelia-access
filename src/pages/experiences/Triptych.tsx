@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { SEOHead } from "@/components/SEOHead";
+import TriptychSEO from "@/components/experiences/TriptychSEO";
 import TriptychHero from "@/components/experiences/TriptychHero";
 import TriptychTimeline from "@/components/experiences/TriptychTimeline";
 import TriptychInquiryForm from "@/components/experiences/TriptychInquiryForm";
@@ -47,11 +47,7 @@ const accessCategories = [
 const Triptych = () => {
   return (
     <>
-      <SEOHead
-        title="TRIPTYCH | A Restricted Cultural Immersion | Rio de Janeiro"
-        description="Between June 19-24, experience an unprecedented symphonic encounter, high-level Brazilian gastronomy, and forms of access never publicly announced. By invitation only."
-        type="product"
-      />
+      <TriptychSEO />
       
       <div className="min-h-screen bg-background text-foreground">
         {/* Navigation */}

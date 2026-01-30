@@ -59,6 +59,7 @@ import TrialApplicationsPanel from "@/components/admin/TrialApplicationsPanel";
 import SocialScheduler from "@/components/admin/SocialScheduler";
 import SecurityGuidePanel from "@/components/admin/SecurityGuidePanel";
 import AffiliateSalesPanel from "@/components/admin/AffiliateSalesPanel";
+import TriptychMarketingPanel from "@/components/admin/TriptychMarketingPanel";
 import CampaignURLBuilder from "@/components/admin/CampaignURLBuilder";
 import AuditLogsPanel from "@/components/admin/AuditLogsPanel";
 import PartnerDiscoveryPanel from "@/components/admin/PartnerDiscoveryPanel";
@@ -416,11 +417,16 @@ const Admin = () => {
             <TabsTrigger value="bidding">Bidding</TabsTrigger>
             <TabsTrigger value="aidb">AI Database</TabsTrigger>
             <TabsTrigger value="affiliate">Affiliate Sales</TabsTrigger>
+            <TabsTrigger value="triptych">TRIPTYCH Marketing</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
           <TabsContent value="affiliate" className="space-y-6">
             <AffiliateSalesPanel />
+          </TabsContent>
+
+          <TabsContent value="triptych" className="space-y-6">
+            <TriptychMarketingPanel />
           </TabsContent>
 
           <TabsContent value="housepartners" className="space-y-6">

@@ -94,16 +94,26 @@ const TriptychHero = () => {
         {/* Countdown Timer */}
         <TriptychCountdown />
 
-        {/* CTA Button */}
-        <motion.button
+        {/* CTA Buttons */}
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.4 }}
-          onClick={scrollToInquiry}
-          className="group mt-8 px-8 py-4 border border-primary/30 text-primary text-xs uppercase tracking-[0.3em] hover:bg-primary hover:text-primary-foreground transition-all duration-500"
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8"
         >
-          Express Interest
-        </motion.button>
+          <button
+            onClick={scrollToInquiry}
+            className="group px-8 py-4 border border-primary/30 text-primary text-xs uppercase tracking-[0.3em] hover:bg-primary hover:text-primary-foreground transition-all duration-500"
+          >
+            Express Interest
+          </button>
+          <a
+            href="mailto:partners@aurelia-privateconcierge.com?subject=Partnership%20Inquiry%20-%20TRIPTYCH"
+            className="group px-8 py-4 bg-primary/10 border border-primary/20 text-primary text-xs uppercase tracking-[0.3em] hover:bg-primary/20 transition-all duration-500"
+          >
+            Partner With Us
+          </a>
+        </motion.div>
 
         {/* Scroll indicator */}
         <motion.div

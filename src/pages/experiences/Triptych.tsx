@@ -285,7 +285,7 @@ const Triptych = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-primary" />
-                  <span>June 19-24, 2025</span>
+                  <span>June 19-24, 2026</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-primary" />
@@ -322,7 +322,7 @@ const Triptych = () => {
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-sm">
                 <Clock className="w-4 h-4 text-primary" />
                 <span className="text-sm text-foreground">
-                  <span className="text-primary font-medium">Final deadline:</span> April 30, 2025
+                  <span className="text-primary font-medium">Final deadline:</span> April 30, 2026
                 </span>
               </div>
             </motion.div>

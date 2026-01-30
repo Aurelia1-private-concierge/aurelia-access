@@ -1,138 +1,122 @@
 
-# Partner Experience Sales Page: TRIPTYCH by Journeys Beyond Limits
+# Add Price List to TRIPTYCH Experience Page
 
 ## Overview
 
-Creating a dedicated landing page to sell the TRIPTYCH cultural immersion experience (June 19-24, Rio de Janeiro) with affiliate tracking so you (Tyrone/Aurelia) are identified as the referring seller and earn the 6-10% commission.
+Adding the official pricing for all four access categories with multi-currency display (USD, EUR, GBP) to the TRIPTYCH landing page.
 
-## What We'll Build
+## Pricing Data
 
-### 1. New Sales Landing Page: `/experiences/triptych`
-A luxurious, immersive landing page featuring:
+| Category | Latin Name | USD | EUR | GBP |
+|----------|------------|-----|-----|-----|
+| Category I | EXIMIUS | $206,000 | €169,000 | £145,000 |
+| Category II | SINGULARIS | $274,000 | €226,000 | £195,000 |
+| Category III | EGREGIUS | $342,000 | €282,000 | £239,000 |
+| Category IV | UNUM | $456,000 | €376,000 | £318,000 |
 
-- **Hero Section**: Stunning visual introduction with "Rio de Janeiro | June 19-24, 2025"
-- **Experience Description**: The cultural immersion narrative from Bruno's materials
-- **Access Categories**: 4 distinct tiers with different pricing levels
-- **Itinerary Timeline**: Day-by-day breakdown (June 19-24)
-- **Trust Elements**: Partner logo, location imagery, social proof
-- **Contact/Inquiry Form**: Capture interested leads with your affiliate code embedded
+## Implementation
 
-### 2. Affiliate Code System
+### File: `src/pages/experiences/Triptych.tsx`
 
-Your unique referral code will be: `APC-TRIPTYCH-001`
+**Update the `accessCategories` array** (lines 11-36) to include Latin names and pricing:
 
-This code will be:
-- Automatically embedded in all form submissions
-- Tracked in a new `affiliate_sales` database table
-- Linked to the submission when sent to Bruno's team
-- Visible in your admin dashboard for tracking
+```typescript
+const accessCategories = [
+  {
+    name: "EXIMIUS",
+    tier: "Category I",
+    subtitle: "Essential Immersion",
+    description: "Access to the symbolic heart: The Night of Passage and The Gathering of Living Culture",
+    icon: Music,
+    pricing: {
+      usd: 206000,
+      eur: 169000,
+      gbp: 145000,
+    },
+  },
+  {
+    name: "SINGULARIS",
+    tier: "Category II",
+    subtitle: "Cultural Depth",
+    description: "Enhanced cultural encounters with private gastronomic experiences and curated site visits",
+    icon: UtensilsCrossed,
+    pricing: {
+      usd: 274000,
+      eur: 226000,
+      gbp: 195000,
+    },
+  },
+  {
+    name: "EGREGIUS",
+    tier: "Category III",
+    subtitle: "Elevated Access",
+    description: "Premium positioning, private styling environment, and exclusive behind-the-scenes access",
+    icon: Sparkles,
+    pricing: {
+      usd: 342000,
+      eur: 282000,
+      gbp: 239000,
+    },
+  },
+  {
+    name: "UNUM",
+    tier: "Category IV",
+    subtitle: "Founding Circle",
+    description: "Complete immersion with private transfers, dedicated concierge, and founding member status",
+    icon: Crown,
+    pricing: {
+      usd: 456000,
+      eur: 376000,
+      gbp: 318000,
+    },
+  },
+];
+```
 
-### 3. Database Structure
+**Update the category card rendering** (around lines 194-226) to display pricing:
+
+Replace the "Pricing upon application" text with actual multi-currency prices:
+
+```tsx
+<div className="mt-4 pt-4 border-t border-border/10 space-y-1">
+  <div className="text-lg text-foreground font-light">
+    ${category.pricing.usd.toLocaleString()}
+  </div>
+  <div className="flex gap-3 text-[10px] text-muted-foreground">
+    <span>€{category.pricing.eur.toLocaleString()}</span>
+    <span>•</span>
+    <span>£{category.pricing.gbp.toLocaleString()}</span>
+  </div>
+</div>
+```
+
+## Visual Design
+
+The pricing will be displayed elegantly within each category card:
 
 ```text
-New Table: affiliate_sales
-+------------------+------------------+
-| Column           | Purpose          |
-+------------------+------------------+
-| id               | Unique ID        |
-| affiliate_code   | Your tracking ID |
-| experience_name  | "TRIPTYCH"       |
-| partner_company  | Journeys Beyond  |
-| client_name      | Interested buyer |
-| client_email     | Buyer email      |
-| category         | Access category  |
-| status           | pending/sold     |
-| sale_amount      | When sold        |
-| commission_rate  | 6-10%            |
-| created_at       | Timestamp        |
-+------------------+------------------+
++---------------------------+
+|  🎵                       |
+|  EXIMIUS                  |
+|  Category I               |
+|  Essential Immersion      |
+|  [description text]       |
+|  ─────────────────────    |
+|  $206,000                 |
+|  €169,000 • £145,000      |
++---------------------------+
 ```
 
-### 4. Admin Tracking Panel
+## Changes Summary
 
-A new section in your admin dashboard to:
-- View all TRIPTYCH inquiries with your affiliate code
-- Track conversion status (inquiry → sale)
-- Calculate projected commission earnings
-- Export lead list for follow-up with Bruno
+| Location | Change |
+|----------|--------|
+| `accessCategories` array | Add `tier`, rename `name` to Latin names, add `pricing` object |
+| Category cards | Replace "Pricing upon application" with formatted prices |
+| Card display | Show USD prominently, EUR/GBP as secondary line |
 
-## Page Design Specifications
+## Technical Notes
 
-### Visual Style
-- Dark, sophisticated aesthetic matching Aurelia branding
-- Subtle gold/amber accents for luxury feel
-- High-end imagery of Rio, cultural events, fine dining
-- Elegant typography with serif headings
-
-### Content Sections
-
-1. **Hero**: "TRIPTYCH" title with subtitle "A Restricted Cultural Immersion | Rio de Janeiro"
-2. **Philosophy**: Bruno's narrative about interpretation over observation
-3. **The Experience**: Night of Passage, The Gathering of Living Culture
-4. **Access Categories**: 4 tiers with inquiry buttons
-5. **Timeline**: Visual day-by-day flow
-6. **Founding Members**: Beyond Privé Brasilis introduction
-7. **Inquiry Form**: Name, email, phone, preferred category, message
-
-### Category Pricing Display
-Categories will show "Pricing upon application" (as Bruno hasn't shared exact prices), with an inquiry button for each tier.
-
-## Technical Implementation
-
-### Files to Create
-
-| File | Purpose |
-|------|---------|
-| `src/pages/experiences/Triptych.tsx` | Main landing page |
-| `src/components/experiences/TriptychHero.tsx` | Hero section |
-| `src/components/experiences/TriptychTimeline.tsx` | Day-by-day timeline |
-| `src/components/experiences/TriptychInquiryForm.tsx` | Lead capture form |
-| `src/components/admin/AffiliateSalesPanel.tsx` | Admin tracking |
-
-### Route Addition
-```
-/experiences/triptych → Public access (no login required)
-```
-
-### Form Submission Flow
-
-```text
-User fills form → Submits → 
-  → Saves to affiliate_sales table with your code
-  → Sends notification email to you
-  → Shows confirmation to user
-  → (Optional) Forwards to Bruno's incoming@journeysbeyondlimits.com
-```
-
-## Your Affiliate Code Details
-
-| Field | Value |
-|-------|-------|
-| Affiliate Code | `APC-TRIPTYCH-001` |
-| Partner | Journeys Beyond Limits |
-| Experience | TRIPTYCH Rio 2025 |
-| Commission | 6% (up to 10% at 30+ sales) |
-| Contact | incoming@journeysbeyondlimits.com |
-
-## Commission Tracking Logic
-
-```text
-Base Rate: 6% per sale
-Bonus Rate: 10% if 30+ total sales achieved
-Max Guests: 50 per category (200 total)
-```
-
-## Next Steps After Implementation
-
-1. Share the page URL with Bruno for approval
-2. Begin promoting to your Aurelia member network
-3. Track inquiries via admin dashboard
-4. Forward qualified leads to Bruno with your affiliate code
-5. Monitor conversions and commission accumulation
-
-## Security Considerations
-
-- Form submissions require rate limiting
-- Email validation on inquiry form
-- Admin-only access to affiliate sales data
-- No sensitive pricing stored (inquiry-based model)
+- Uses `toLocaleString()` for proper number formatting with commas
+- EUR and GBP shown as secondary currencies in smaller text
+- Maintains the luxury aesthetic with subtle typography hierarchy

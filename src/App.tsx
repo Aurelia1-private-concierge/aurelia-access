@@ -83,6 +83,7 @@ const Atelier = lazy(() => import("./pages/Atelier"));
 const SiteBuilder = lazy(() => import("./components/atelier/SiteBuilder"));
 const UserGuide = lazy(() => import("./pages/UserGuide"));
 const VideoShowcase = lazy(() => import("./pages/VideoShowcase"));
+const Triptych = lazy(() => import("./pages/experiences/Triptych"));
 
 // Social Platform Pages
 const Companies = lazy(() => import("./pages/Companies"));
@@ -646,6 +647,15 @@ const AnimatedRoutes = forwardRef<HTMLDivElement>((props, ref) => {
             element={
               <PageTransition>
                 <Auctions />
+              </PageTransition>
+            }
+          />
+          {/* Partner Experience Pages */}
+          <Route
+            path="/experiences/triptych"
+            element={
+              <PageTransition>
+                <Triptych />
               </PageTransition>
             }
           />

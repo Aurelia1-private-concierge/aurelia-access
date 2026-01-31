@@ -8,26 +8,30 @@ import EQProfileModule from "./eq/EQProfileModule";
 const FloatingOrb = memo(({ 
   className, 
   delay = 0,
-  size = "w-16 h-16"
+  size = "w-16 h-16",
+  color = "bg-primary"
 }: { 
   className?: string; 
   delay?: number;
   size?: string;
+  color?: string;
 }) => (
   <motion.div
-    initial={{ opacity: 0, scale: 0.8 }}
+    initial={{ opacity: 0, scale: 0.5 }}
+    whileInView={{ opacity: 1, scale: 1 }}
+    viewport={{ once: true }}
     animate={{ 
-      opacity: [0.3, 0.6, 0.3],
-      scale: [1, 1.1, 1],
-      y: [0, -10, 0],
+      y: [0, -15, 0],
+      x: [0, 5, 0],
     }}
     transition={{
-      duration: 4,
-      delay,
-      repeat: Infinity,
-      ease: "easeInOut"
+      y: { duration: 4, delay, repeat: Infinity, ease: "easeInOut" },
+      x: { duration: 5, delay: delay + 0.5, repeat: Infinity, ease: "easeInOut" },
+      opacity: { duration: 0.5 },
+      scale: { duration: 0.5 }
     }}
-    className={`absolute ${size} rounded-full blur-xl pointer-events-none ${className}`}
+    className={`absolute ${size} rounded-full blur-2xl ${color} ${className}`}
+    style={{ zIndex: 1 }}
   />
 ));
 
@@ -145,10 +149,10 @@ const MetaverseEntryPoint = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/10 to-background pointer-events-none" />
         
         {/* Animated floating orbs - using design token colors */}
-        <FloatingOrb className="bg-primary/20 top-10 left-[10%]" delay={0} size="w-20 h-20" />
-        <FloatingOrb className="bg-accent/20 top-20 right-[15%]" delay={1} size="w-16 h-16" />
-        <FloatingOrb className="bg-secondary/30 bottom-20 left-[20%]" delay={2} size="w-24 h-24" />
-        <FloatingOrb className="bg-primary/15 bottom-10 right-[10%]" delay={1.5} size="w-14 h-14" />
+        <FloatingOrb color="bg-primary/40" className="top-10 left-[10%]" delay={0} size="w-24 h-24" />
+        <FloatingOrb color="bg-accent/30" className="top-20 right-[15%]" delay={1} size="w-20 h-20" />
+        <FloatingOrb color="bg-muted/50" className="bottom-20 left-[20%]" delay={2} size="w-28 h-28" />
+        <FloatingOrb color="bg-primary/30" className="bottom-10 right-[10%]" delay={1.5} size="w-16 h-16" />
         
         {/* Animated rotating icons */}
         <div className="absolute top-[15%] left-[5%]">

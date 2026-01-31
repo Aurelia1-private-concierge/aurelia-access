@@ -165,6 +165,15 @@ const Index = () => {
 
       <SectionDivider variant="ornate" />
 
+      {/* Metaverse & EQ Intelligence Section - Moved to top */}
+      <SectionErrorBoundary fallback={<SectionLoader />}>
+        <Suspense fallback={<SectionLoader />}>
+          <MetaverseEntryPoint />
+        </Suspense>
+      </SectionErrorBoundary>
+
+      <SectionDivider variant="default" />
+
       {/* Below-the-fold content - Lazy loaded with error boundary */}
       <SectionErrorBoundary fallback={<SectionLoader />}>
         <Suspense fallback={<SectionLoader />}>
@@ -202,11 +211,6 @@ const Index = () => {
           <SecuritySection />
           
           <SectionDivider variant="wide" />
-
-          {/* Metaverse & EQ Intelligence Section */}
-          <MetaverseEntryPoint />
-
-          <SectionDivider variant="default" />
 
           {/* Wearables Hub */}
           <WearablesHub />

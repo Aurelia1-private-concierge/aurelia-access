@@ -31,6 +31,7 @@ const primaryLinks = [
 const discoverLinks = [
   { href: "/services/marketplace", label: "Marketplace" },
   { href: "/auctions", label: "Auction House" },
+  { href: "/experiences/triptych", label: "TRIPTYCH Brazil" },
   { href: "/videos", label: "Video Showcase" },
 ];
 
@@ -39,6 +40,7 @@ const pageLinks = [
   { href: "/services", label: "Services" },
   { href: "/services/marketplace", label: "Marketplace" },
   { href: "/auctions", label: "Auctions" },
+  { href: "/experiences/triptych", label: "TRIPTYCH Brazil" },
   { href: "/videos", label: "Videos" },
   { href: "/blog", label: "Journal" },
   { href: "/orla", label: "Meet Orla" },

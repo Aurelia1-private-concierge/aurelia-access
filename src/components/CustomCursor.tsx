@@ -1,11 +1,11 @@
 import { motion, useMotionValue, useSpring } from "framer-motion";
-import { useEffect, useState, useCallback, useRef } from "react";
+import { forwardRef, useEffect, useState, useCallback, useRef } from "react";
 
-const CustomCursor = () => {
+const CustomCursor = forwardRef<HTMLDivElement>((_, ref) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(true); // Default to true to prevent flash
+  const [isTouchDevice, setIsTouchDevice] = useState(true);
 
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
@@ -14,10 +14,8 @@ const CustomCursor = () => {
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
   
-  // Use refs to avoid re-renders
   const isHoveringRef = useRef(false);
 
-  // Memoized handlers to prevent recreation
   const moveCursor = useCallback((e: MouseEvent) => {
     cursorX.set(e.clientX);
     cursorY.set(e.clientY);
@@ -53,13 +51,11 @@ const CustomCursor = () => {
   }, []);
 
   useEffect(() => {
-    // Check for touch device only once
     const isTouchCapable = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     setIsTouchDevice(isTouchCapable);
 
     if (isTouchCapable) return;
 
-    // Use passive listeners for better performance
     const options = { passive: true };
     
     window.addEventListener('mousemove', moveCursor, options);
@@ -70,7 +66,6 @@ const CustomCursor = () => {
     window.addEventListener('mouseover', handleHoverStart, options);
     window.addEventListener('mouseout', handleHoverEnd, options);
 
-    // Add global cursor style
     document.body.style.cursor = 'none';
 
     return () => {
@@ -88,8 +83,7 @@ const CustomCursor = () => {
   if (isTouchDevice || !isVisible) return null;
 
   return (
-    <>
-      {/* Main cursor ring - simplified for performance */}
+    <div ref={ref}>
       <motion.div
         className="fixed pointer-events-none z-[9999] mix-blend-difference"
         style={{
@@ -107,7 +101,6 @@ const CustomCursor = () => {
           transition={{ duration: 0.15 }}
           className="relative"
         >
-          {/* Outer ring */}
           <div
             className={`rounded-full border transition-all duration-200 ${
               isHovering 
@@ -116,7 +109,6 @@ const CustomCursor = () => {
             }`}
           />
           
-          {/* Center dot */}
           <motion.div
             animate={{ scale: isHovering ? 0 : 1 }}
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-primary"
@@ -124,7 +116,6 @@ const CustomCursor = () => {
         </motion.div>
       </motion.div>
 
-      {/* Glow effect on hover */}
       {isHovering && (
         <motion.div
           initial={{ opacity: 0, scale: 0.5 }}
@@ -141,8 +132,10 @@ const CustomCursor = () => {
           <div className="w-20 h-20 rounded-full bg-primary/10 blur-xl" />
         </motion.div>
       )}
-    </>
+    </div>
   );
-};
+});
+
+CustomCursor.displayName = "CustomCursor";
 
 export default CustomCursor;

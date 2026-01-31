@@ -26,7 +26,7 @@ const Footer = () => {
     isInternal: false
   }, {
     icon: Linkedin,
-    href: "https://www.linkedin.com/comm/mynetwork/discovery-see-all?usecase=PEOPLE_FOLLOWS&followMember=tyrone-mitchell-730a253a4",
+    href: "https://www.linkedin.com/in/tyrone-m-730a253a4",
     label: "LinkedIn",
     isInternal: false
   }];

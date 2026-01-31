@@ -16,14 +16,14 @@ const Footer = () => {
   };
   const socialLinks = [{
     icon: Instagram,
-    href: "/instagram",
+    href: "https://www.instagram.com/aureliaprivate",
     label: "Instagram",
-    isInternal: true
+    isInternal: false
   }, {
     icon: Twitter,
-    href: "/twitter",
+    href: "https://twitter.com/AureliaConcierge",
     label: "X",
-    isInternal: true
+    isInternal: false
   }, {
     icon: Linkedin,
     href: "https://www.linkedin.com/comm/mynetwork/discovery-see-all?usecase=PEOPLE_FOLLOWS&followMember=tyrone-mitchell-730a253a4",

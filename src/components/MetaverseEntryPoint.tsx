@@ -1,8 +1,59 @@
 import { useState, memo, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Glasses, Brain, Sparkles, ChevronRight } from "lucide-react";
+import { Glasses, Brain, Sparkles, ChevronRight, Orbit, Zap } from "lucide-react";
 import VRExperienceHub from "./vr/VRExperienceHub";
 import EQProfileModule from "./eq/EQProfileModule";
+
+// Animated floating orb component for visual interest
+const FloatingOrb = memo(({ 
+  className, 
+  delay = 0,
+  size = "w-16 h-16"
+}: { 
+  className?: string; 
+  delay?: number;
+  size?: string;
+}) => (
+  <motion.div
+    initial={{ opacity: 0, scale: 0.8 }}
+    animate={{ 
+      opacity: [0.3, 0.6, 0.3],
+      scale: [1, 1.1, 1],
+      y: [0, -10, 0],
+    }}
+    transition={{
+      duration: 4,
+      delay,
+      repeat: Infinity,
+      ease: "easeInOut"
+    }}
+    className={`absolute ${size} rounded-full blur-xl pointer-events-none ${className}`}
+  />
+));
+
+FloatingOrb.displayName = "FloatingOrb";
+
+// Animated icon with rotation
+const AnimatedIcon = memo(({ delay = 0 }: { delay?: number }) => (
+  <motion.div
+    initial={{ opacity: 0, rotate: 0 }}
+    animate={{ 
+      opacity: [0.2, 0.5, 0.2],
+      rotate: 360,
+    }}
+    transition={{
+      duration: 8,
+      delay,
+      repeat: Infinity,
+      ease: "linear"
+    }}
+    className="absolute"
+  >
+    <Orbit className="w-6 h-6 text-primary/30" />
+  </motion.div>
+));
+
+AnimatedIcon.displayName = "AnimatedIcon";
 
 // Memoized feature card to prevent unnecessary re-renders
 const FeatureCard = memo(({ 
@@ -89,11 +140,38 @@ const MetaverseEntryPoint = () => {
 
   return (
     <>
-      <section className="py-16 px-6 relative">
+      <section className="py-16 px-6 relative overflow-hidden">
         {/* Background effects - contained within section */}
         <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/10 to-background pointer-events-none" />
-        <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/3 rounded-full blur-[80px] pointer-events-none"
+        
+        {/* Animated floating orbs - using design token colors */}
+        <FloatingOrb className="bg-primary/20 top-10 left-[10%]" delay={0} size="w-20 h-20" />
+        <FloatingOrb className="bg-accent/20 top-20 right-[15%]" delay={1} size="w-16 h-16" />
+        <FloatingOrb className="bg-secondary/30 bottom-20 left-[20%]" delay={2} size="w-24 h-24" />
+        <FloatingOrb className="bg-primary/15 bottom-10 right-[10%]" delay={1.5} size="w-14 h-14" />
+        
+        {/* Animated rotating icons */}
+        <div className="absolute top-[15%] left-[5%]">
+          <AnimatedIcon delay={0} />
+        </div>
+        <div className="absolute top-[25%] right-[8%]">
+          <AnimatedIcon delay={2} />
+        </div>
+        <div className="absolute bottom-[20%] left-[12%]">
+          <AnimatedIcon delay={4} />
+        </div>
+        
+        {/* Central glow */}
+        <motion.div 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full pointer-events-none"
+          animate={{
+            background: [
+              "radial-gradient(circle, rgba(212,175,55,0.05) 0%, transparent 70%)",
+              "radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 70%)",
+              "radial-gradient(circle, rgba(212,175,55,0.05) 0%, transparent 70%)",
+            ]
+          }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         />
         
         <div className="max-w-6xl mx-auto relative z-10">

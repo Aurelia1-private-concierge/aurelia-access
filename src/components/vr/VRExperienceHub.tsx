@@ -1,4 +1,4 @@
-import { Suspense, useRef, useState, useCallback, memo, useMemo, forwardRef } from "react";
+import { Suspense, useRef, useState, useCallback, useMemo, forwardRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { 
   OrbitControls, 
@@ -6,9 +6,7 @@ import {
   Float, 
   MeshDistortMaterial,
   Sparkles,
-  Stars,
-  AdaptiveDpr,
-  AdaptiveEvents
+  Stars
 } from "@react-three/drei";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Maximize2, RotateCcw, Plane, Anchor, Building2, Gem, Sparkles as SparklesIcon, Loader2 } from "lucide-react";
@@ -98,11 +96,11 @@ const ExperiencePortal = forwardRef<THREE.Group, {
 
 ExperiencePortal.displayName = "ExperiencePortal";
 
-// Main scene - optimized with useMemo for static elements
-const VRScene = memo(({ activeExperience, setActiveExperience }: { 
+// Main scene component
+const VRScene = forwardRef<THREE.Group, { 
   activeExperience: string | null;
   setActiveExperience: (exp: string | null) => void;
-}) => {
+}>(({ activeExperience, setActiveExperience }, _ref) => {
   const handleAviationClick = useCallback(() => setActiveExperience("aviation"), [setActiveExperience]);
   const handleYachtsClick = useCallback(() => setActiveExperience("yachts"), [setActiveExperience]);
   const handlePropertiesClick = useCallback(() => setActiveExperience("properties"), [setActiveExperience]);
@@ -110,10 +108,6 @@ const VRScene = memo(({ activeExperience, setActiveExperience }: {
 
   return (
     <>
-      {/* Adaptive performance */}
-      <AdaptiveDpr pixelated />
-      <AdaptiveEvents />
-      
       <PerspectiveCamera makeDefault position={[0, 0, 10]} fov={55} />
       <OrbitControls 
         enableZoom={true} 

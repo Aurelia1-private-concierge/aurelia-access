@@ -170,12 +170,16 @@ const VRScene = forwardRef<THREE.Group, {
 
 VRScene.displayName = "VRScene";
 
-// Loading fallback for Canvas - React 19 compatible with forwardRef
+// Loading fallback for Canvas - visible loading state
 const CanvasLoader = forwardRef<HTMLDivElement>((_, ref) => (
-  <div ref={ref} className="absolute inset-0 flex items-center justify-center bg-background">
+  <div ref={ref} className="absolute inset-0 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--secondary) / 0.3) 50%, hsl(var(--background)) 100%)' }}>
     <div className="text-center">
-      <Loader2 className="w-8 h-8 text-primary animate-spin mx-auto mb-4" />
-      <p className="text-sm text-muted-foreground">Loading immersive experience...</p>
+      <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4 animate-pulse">
+        <SparklesIcon className="w-8 h-8 text-primary" />
+      </div>
+      <Loader2 className="w-6 h-6 text-primary animate-spin mx-auto mb-3" />
+      <p className="text-sm text-foreground font-medium">Initializing Metaverse</p>
+      <p className="text-xs text-muted-foreground mt-1">Loading immersive 3D experience...</p>
     </div>
   </div>
 ));
@@ -223,7 +227,8 @@ const VRExperienceHub = ({ isOpen, onClose }: VRExperienceHubProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-background"
+          className="fixed inset-0 z-[100]"
+          style={{ background: 'linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--secondary) / 0.2) 50%, hsl(var(--background)) 100%)' }}
         >
           {/* Header */}
           <div className="absolute top-0 left-0 right-0 z-10 p-6 flex items-center justify-between bg-gradient-to-b from-background via-background/80 to-transparent">

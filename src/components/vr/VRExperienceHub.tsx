@@ -1,9 +1,8 @@
-import { Suspense, useRef, useState, useCallback, memo, useMemo } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Suspense, useRef, useState, useCallback, memo, useMemo, forwardRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { 
   OrbitControls, 
   PerspectiveCamera, 
-  Environment, 
   Float, 
   MeshDistortMaterial,
   Sparkles,
@@ -20,7 +19,7 @@ import * as THREE from "three";
 const LuxuryOrb = memo(({ position, color, scale = 1 }: { position: [number, number, number]; color: string; scale?: number }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   
-  useFrame((state) => {
+  useFrame(() => {
     if (meshRef.current) {
       // Simplified rotation for better performance
       meshRef.current.rotation.y += 0.003;
@@ -45,6 +44,7 @@ const LuxuryOrb = memo(({ position, color, scale = 1 }: { position: [number, num
 });
 
 LuxuryOrb.displayName = "LuxuryOrb";
+
 // Experience portal - optimized with memo and reduced particle count
 const ExperiencePortal = memo(({ 
   position, 
@@ -167,22 +167,25 @@ const VRScene = memo(({ activeExperience, setActiveExperience }: {
       <LuxuryOrb position={[6, 0, -3]} color="#9932cc" scale={0.4} />
       <LuxuryOrb position={[0, 4, -3]} color="#20b2aa" scale={0.4} />
       
-      <Environment preset="night" />
+      {/* Simple fog instead of Environment to avoid ref issues */}
+      <fog attach="fog" args={['#0a0a0a', 15, 40]} />
     </>
   );
 });
 
 VRScene.displayName = "VRScene";
 
-// Loading fallback for Canvas
-const CanvasLoader = () => (
-  <div className="absolute inset-0 flex items-center justify-center bg-background">
+// Loading fallback for Canvas - React 19 compatible with forwardRef
+const CanvasLoader = forwardRef<HTMLDivElement>((_, ref) => (
+  <div ref={ref} className="absolute inset-0 flex items-center justify-center bg-background">
     <div className="text-center">
       <Loader2 className="w-8 h-8 text-primary animate-spin mx-auto mb-4" />
-      <p className="text-sm text-muted-foreground">Loading experience...</p>
+      <p className="text-sm text-muted-foreground">Loading immersive experience...</p>
     </div>
   </div>
-);
+));
+
+CanvasLoader.displayName = "CanvasLoader";
 
 interface VRExperienceHubProps {
   isOpen: boolean;

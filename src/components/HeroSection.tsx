@@ -206,16 +206,19 @@ const HeroSection = ({
 
       {/* LCP Critical: H1 renders immediately without animation delay */}
       <div className="relative z-20 text-center px-6 max-w-4xl mx-auto w-full">
-        {/* Headline - LCP element, renders immediately for fast paint */}
-        <h1
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-white font-medium tracking-[-0.02em] leading-[0.95] mb-8 drop-shadow-lg"
+        {/* Headline - LCP element with animated gradient */}
+        <motion.h1
+          initial={{ opacity: 0, y: 30, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-medium tracking-[-0.02em] leading-[0.95] mb-8 drop-shadow-lg text-gradient-animated"
           style={{ 
             fontFamily: "'Cormorant Garamond', Georgia, serif",
             textShadow: '0 2px 20px hsl(30 8% 3% / 0.8)'
           }}
         >
           {campaign.title || t("hero.title")}
-        </h1>
+        </motion.h1>
         
       {/* Animated content wrapper - decorative elements can wait */}
       <motion.div 

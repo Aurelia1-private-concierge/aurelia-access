@@ -136,16 +136,19 @@ const Navigation = () => {
   return (
     <>
       <motion.nav
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ 
+          opacity: 1, 
+          y: isScrolled ? 0 : 0,
+        }}
         transition={{ duration: 0.6, delay: 2 }}
         data-tour="navigation"
         aria-label="Main navigation"
         role="navigation"
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
           isScrolled 
-            ? "border-b border-border/20 glass" 
-            : "bg-transparent"
+            ? "py-2 border-b border-primary/20 bg-background/80 backdrop-blur-xl shadow-lg shadow-background/50" 
+            : "py-0 bg-transparent"
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 h-16 md:h-20 flex items-center justify-between">

@@ -333,7 +333,7 @@ serve(async (req) => {
 
     // Send invitation email
     const emailResponse = await resend.emails.send({
-      from: 'Aurelia Partner Network <partnerships@aurelia-access.lovable.app>',
+      from: 'Aurelia Partner Network <concierge@aurelia-privateconcierge.com>',
       to: [contact_email],
       subject: emailSubject,
       html: emailHtml,

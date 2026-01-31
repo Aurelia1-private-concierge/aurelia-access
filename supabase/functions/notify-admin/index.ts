@@ -226,7 +226,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log(`Sending ${type} notification to admin`);
 
     const emailResponse = await resend.emails.send({
-      from: "Aurelia <notifications@aurelia-privateconcierge.com>",
+      from: "Aurelia <concierge@aurelia-privateconcierge.com>",
       to: [adminEmail],
       subject: subject,
       html: html,

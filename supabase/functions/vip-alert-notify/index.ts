@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const adminEmail = Deno.env.get("ADMIN_NOTIFICATION_EMAIL") || "tyrone.mitchell76@gotmail.com";
+    const adminEmail = Deno.env.get("ADMIN_NOTIFICATION_EMAIL") || "Tyrone.mitchell76@hotmail.com";
     const resendKey = Deno.env.get("RESEND_API_KEY");
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -119,7 +119,7 @@ Deno.serve(async (req) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: "Aurelia VIP Alerts <alerts@aurelia-privateconcierge.com>",
+            from: "Aurelia VIP Alerts <concierge@aurelia-privateconcierge.com>",
             to: [adminEmail],
             subject: `${urgency}: ${tier.toUpperCase()} Lead Detected (Score: ${score})`,
             html: emailHtml,

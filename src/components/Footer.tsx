@@ -73,16 +73,42 @@ const Footer = () => {
               href,
               label,
               isInternal
-            }) => isInternal ? <Link key={label} to={href} aria-label={`Follow us on ${label}`} role="listitem">
-                    <motion.div whileHover={{
-                scale: 1.05
-              }} className="w-10 h-10 rounded-full border border-border/20 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all duration-300">
+            }, index) => isInternal ? <Link key={label} to={href} aria-label={`Follow us on ${label}`} role="listitem">
+                    <motion.div 
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1, duration: 0.4 }}
+                      whileHover={{
+                        scale: 1.15,
+                        rotate: [0, -10, 10, 0],
+                        boxShadow: "0 0 20px hsl(var(--primary) / 0.4)"
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-10 h-10 rounded-full border border-border/20 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/10 transition-colors duration-300"
+                    >
                       <Icon className="w-4 h-4" aria-hidden="true" />
                       <span className="sr-only">{label}</span>
                     </motion.div>
-                  </Link> : <motion.a key={label} href={href} target="_blank" rel="noopener noreferrer" whileHover={{
-              scale: 1.05
-            }} className="w-10 h-10 rounded-full border border-border/20 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all duration-300" aria-label={`Follow us on ${label}`} role="listitem">
+                  </Link> : <motion.a 
+                    key={label} 
+                    href={href} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1, duration: 0.4 }}
+                    whileHover={{
+                      scale: 1.15,
+                      rotate: [0, -10, 10, 0],
+                      boxShadow: "0 0 20px hsl(var(--primary) / 0.4)"
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    className="w-10 h-10 rounded-full border border-border/20 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/10 transition-colors duration-300" 
+                    aria-label={`Follow us on ${label}`} 
+                    role="listitem"
+                  >
                     <Icon className="w-4 h-4" aria-hidden="true" />
                     <span className="sr-only">{label}</span>
                   </motion.a>)}

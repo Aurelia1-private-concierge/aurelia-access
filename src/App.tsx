@@ -20,6 +20,7 @@ import SkipLink from "./components/a11y/SkipLink";
 import { ReducedMotionProvider } from "./components/a11y/ReducedMotionProvider";
 import VisitorTracker from "./components/VisitorTracker";
 import GlobalQuantumWrapper from "./components/GlobalQuantumWrapper";
+import FloatingStars from "./components/ambient/FloatingStars";
 import ApolloTracker from "./components/ApolloTracker";
 import { OrlaIntelligenceProvider } from "./contexts/OrlaIntelligenceContext";
 import "@/i18n";
@@ -695,6 +696,7 @@ const App = () => {
                           <VisitorTracker />
                           <ApolloTracker />
                           <SkipLink />
+                          <FloatingStars />
                           <main id="main-content">
                             <AnimatedRoutes />
                           </main>

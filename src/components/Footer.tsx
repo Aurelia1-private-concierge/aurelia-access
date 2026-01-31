@@ -67,7 +67,7 @@ const Footer = () => {
             </p>
             
             {/* Social Links */}
-            <div className="flex items-center gap-3 mt-8" role="list" aria-label="Social media links">
+            <div className="flex items-center gap-4 mt-8" role="list" aria-label="Social media links">
               {socialLinks.map(({
               icon: Icon,
               href,
@@ -75,19 +75,19 @@ const Footer = () => {
               isInternal
             }, index) => isInternal ? <Link key={label} to={href} aria-label={`Follow us on ${label}`} role="listitem">
                     <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
+                      initial={{ opacity: 0, scale: 0 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
                       viewport={{ once: true }}
-                      transition={{ delay: index * 0.1, duration: 0.4 }}
+                      transition={{ delay: index * 0.15, type: "spring", stiffness: 200 }}
                       whileHover={{
-                        scale: 1.15,
+                        scale: 1.2,
                         rotate: [0, -10, 10, 0],
-                        boxShadow: "0 0 20px hsl(var(--primary) / 0.4)"
                       }}
-                      whileTap={{ scale: 0.95 }}
-                      className="w-10 h-10 rounded-full border border-border/20 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/10 transition-colors duration-300"
+                      whileTap={{ scale: 0.9 }}
+                      className="group relative w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 flex items-center justify-center text-primary shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:border-primary/60 hover:from-primary/30 hover:to-primary/10 transition-all duration-300"
                     >
-                      <Icon className="w-4 h-4" aria-hidden="true" />
+                      <div className="absolute inset-0 rounded-full bg-primary/10 blur-md group-hover:blur-lg transition-all duration-300" />
+                      <Icon className="w-5 h-5 relative z-10" aria-hidden="true" />
                       <span className="sr-only">{label}</span>
                     </motion.div>
                   </Link> : <motion.a 
@@ -95,21 +95,21 @@ const Footer = () => {
                     href={href} 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, scale: 0 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    transition={{ delay: index * 0.1, duration: 0.4 }}
+                    transition={{ delay: index * 0.15, type: "spring", stiffness: 200 }}
                     whileHover={{
-                      scale: 1.15,
+                      scale: 1.2,
                       rotate: [0, -10, 10, 0],
-                      boxShadow: "0 0 20px hsl(var(--primary) / 0.4)"
                     }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-10 h-10 rounded-full border border-border/20 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/10 transition-colors duration-300" 
+                    whileTap={{ scale: 0.9 }}
+                    className="group relative w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 flex items-center justify-center text-primary shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:border-primary/60 hover:from-primary/30 hover:to-primary/10 transition-all duration-300" 
                     aria-label={`Follow us on ${label}`} 
                     role="listitem"
                   >
-                    <Icon className="w-4 h-4" aria-hidden="true" />
+                    <div className="absolute inset-0 rounded-full bg-primary/10 blur-md group-hover:blur-lg transition-all duration-300" />
+                    <Icon className="w-5 h-5 relative z-10" aria-hidden="true" />
                     <span className="sr-only">{label}</span>
                   </motion.a>)}
             </div>

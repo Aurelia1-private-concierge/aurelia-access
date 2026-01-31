@@ -4,16 +4,16 @@ import { Glasses, Brain, Sparkles, ChevronRight, Orbit, Zap } from "lucide-react
 import VRExperienceHub from "./vr/VRExperienceHub";
 import EQProfileModule from "./eq/EQProfileModule";
 
-// Animated floating orb component for visual interest
+// Animated floating orb component - visible gold glows
 const FloatingOrb = memo(({ 
   className, 
   delay = 0,
-  size = "w-16 h-16",
-  color = "bg-primary"
+  size = 80,
+  color = "rgba(212, 175, 55, 0.4)"
 }: { 
   className?: string; 
   delay?: number;
-  size?: string;
+  size?: number;
   color?: string;
 }) => (
   <motion.div
@@ -21,17 +21,22 @@ const FloatingOrb = memo(({
     whileInView={{ opacity: 1, scale: 1 }}
     viewport={{ once: true }}
     animate={{ 
-      y: [0, -15, 0],
-      x: [0, 5, 0],
+      y: [0, -20, 0],
+      scale: [1, 1.1, 1],
     }}
     transition={{
       y: { duration: 4, delay, repeat: Infinity, ease: "easeInOut" },
-      x: { duration: 5, delay: delay + 0.5, repeat: Infinity, ease: "easeInOut" },
-      opacity: { duration: 0.5 },
-      scale: { duration: 0.5 }
+      scale: { duration: 3, delay: delay + 0.5, repeat: Infinity, ease: "easeInOut" },
+      opacity: { duration: 0.8 },
     }}
-    className={`absolute ${size} rounded-full blur-2xl ${color} ${className}`}
-    style={{ zIndex: 1 }}
+    className={`absolute rounded-full pointer-events-none ${className}`}
+    style={{ 
+      width: size,
+      height: size,
+      background: `radial-gradient(circle, ${color} 0%, transparent 70%)`,
+      boxShadow: `0 0 ${size/2}px ${color}`,
+      zIndex: 1 
+    }}
   />
 ));
 
@@ -148,11 +153,11 @@ const MetaverseEntryPoint = () => {
         {/* Background effects - contained within section */}
         <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/10 to-background pointer-events-none" />
         
-        {/* Animated floating orbs - using design token colors */}
-        <FloatingOrb color="bg-primary/40" className="top-10 left-[10%]" delay={0} size="w-24 h-24" />
-        <FloatingOrb color="bg-accent/30" className="top-20 right-[15%]" delay={1} size="w-20 h-20" />
-        <FloatingOrb color="bg-muted/50" className="bottom-20 left-[20%]" delay={2} size="w-28 h-28" />
-        <FloatingOrb color="bg-primary/30" className="bottom-10 right-[10%]" delay={1.5} size="w-16 h-16" />
+        {/* Animated floating orbs - gold glows visible on dark background */}
+        <FloatingOrb color="rgba(212, 175, 55, 0.5)" className="top-10 left-[10%]" delay={0} size={100} />
+        <FloatingOrb color="rgba(212, 175, 55, 0.35)" className="top-16 right-[12%]" delay={1.2} size={80} />
+        <FloatingOrb color="rgba(147, 112, 219, 0.4)" className="bottom-24 left-[18%]" delay={2} size={120} />
+        <FloatingOrb color="rgba(212, 175, 55, 0.4)" className="bottom-16 right-[8%]" delay={0.8} size={70} />
         
         {/* Animated rotating icons */}
         <div className="absolute top-[15%] left-[5%]">

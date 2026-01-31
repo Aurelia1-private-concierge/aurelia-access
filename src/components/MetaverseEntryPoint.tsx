@@ -33,7 +33,7 @@ const FeatureCard = memo(({
     whileHover={{ scale: 1.02 }}
     whileTap={{ scale: 0.99 }}
     onClick={onClick}
-    className="group relative cursor-pointer overflow-hidden rounded-2xl border border-border/30 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl p-6 flex flex-col h-full min-h-[320px] will-change-transform"
+    className="group relative cursor-pointer overflow-hidden rounded-2xl border border-border/30 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl p-6 flex flex-col"
   >
     {/* Animated background - reduced size */}
     <div className={`absolute inset-0 bg-gradient-to-br ${colorClass} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
@@ -89,12 +89,11 @@ const MetaverseEntryPoint = () => {
 
   return (
     <>
-      <section className="py-16 px-6 relative overflow-hidden">
-        {/* Background effects - reduced size */}
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/10 to-background" />
+      <section className="py-16 px-6 relative">
+        {/* Background effects - contained within section */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/10 to-background pointer-events-none" />
         <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/3 rounded-full blur-[80px] pointer-events-none" 
-          style={{ willChange: "transform" }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/3 rounded-full blur-[80px] pointer-events-none"
         />
         
         <div className="max-w-6xl mx-auto relative z-10">
@@ -119,8 +118,8 @@ const MetaverseEntryPoint = () => {
             </p>
           </motion.div>
 
-          {/* Feature Cards - Compact size */}
-          <div className="grid md:grid-cols-2 gap-6 items-stretch max-w-4xl mx-auto">
+          {/* Feature Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             <FeatureCard
               onClick={handleOpenVR}
               title="Metaverse Experience Hub"

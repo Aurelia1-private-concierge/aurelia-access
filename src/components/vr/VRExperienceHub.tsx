@@ -16,7 +16,10 @@ import { toast } from "sonner";
 import * as THREE from "three";
 
 // Performance-optimized floating orb with reduced animation complexity
-const LuxuryOrb = memo(({ position, color, scale = 1 }: { position: [number, number, number]; color: string; scale?: number }) => {
+const LuxuryOrb = forwardRef<THREE.Mesh, { position: [number, number, number]; color: string; scale?: number }>((
+  { position, color, scale = 1 }, 
+  _ref
+) => {
   const meshRef = useRef<THREE.Mesh>(null);
   
   useFrame(() => {
@@ -45,18 +48,16 @@ const LuxuryOrb = memo(({ position, color, scale = 1 }: { position: [number, num
 
 LuxuryOrb.displayName = "LuxuryOrb";
 
-// Experience portal - optimized with memo and reduced particle count
-const ExperiencePortal = memo(({ 
-  position, 
-  label, 
-  onClick,
-  active 
-}: { 
+// Experience portal - optimized with forwardRef for React 19 compatibility
+const ExperiencePortal = forwardRef<THREE.Group, { 
   position: [number, number, number]; 
   label: string; 
   onClick: () => void;
   active: boolean;
-}) => {
+}>((
+  { position, label, onClick, active },
+  _ref
+) => {
   const ringRef = useRef<THREE.Mesh>(null);
   
   useFrame(() => {

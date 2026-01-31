@@ -9,7 +9,7 @@ const FloatingOrb = memo(({
   className, 
   delay = 0,
   size = 80,
-  color = "rgba(212, 175, 55, 0.4)"
+  color = "rgba(212, 175, 55, 0.7)"
 }: { 
   className?: string; 
   delay?: number;
@@ -17,27 +17,37 @@ const FloatingOrb = memo(({
   color?: string;
 }) => (
   <motion.div
-    initial={{ opacity: 0, scale: 0.5 }}
-    whileInView={{ opacity: 1, scale: 1 }}
-    viewport={{ once: true }}
+    initial={{ opacity: 0.8 }}
     animate={{ 
+      opacity: [0.6, 1, 0.6],
       y: [0, -20, 0],
-      scale: [1, 1.1, 1],
+      scale: [1, 1.15, 1],
     }}
     transition={{
+      opacity: { duration: 3, delay, repeat: Infinity, ease: "easeInOut" },
       y: { duration: 4, delay, repeat: Infinity, ease: "easeInOut" },
       scale: { duration: 3, delay: delay + 0.5, repeat: Infinity, ease: "easeInOut" },
-      opacity: { duration: 0.8 },
     }}
     className={`absolute rounded-full pointer-events-none ${className}`}
     style={{ 
       width: size,
       height: size,
-      background: `radial-gradient(circle, ${color} 0%, transparent 70%)`,
-      boxShadow: `0 0 ${size/2}px ${color}`,
+      background: `radial-gradient(circle, ${color} 0%, ${color.replace('0.7', '0.3')} 40%, transparent 70%)`,
+      boxShadow: `0 0 ${size}px ${color}, 0 0 ${size * 1.5}px ${color.replace('0.7', '0.4')}`,
       zIndex: 1 
     }}
-  />
+  >
+    {/* Solid center dot for guaranteed visibility */}
+    <div 
+      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+      style={{
+        width: size * 0.2,
+        height: size * 0.2,
+        background: color.replace('0.7', '1'),
+        boxShadow: `0 0 ${size * 0.3}px ${color}`,
+      }}
+    />
+  </motion.div>
 ));
 
 FloatingOrb.displayName = "FloatingOrb";
@@ -149,15 +159,15 @@ const MetaverseEntryPoint = () => {
 
   return (
     <>
-      <section className="py-16 px-6 relative overflow-hidden">
+      <section className="py-16 px-6 relative min-h-[500px]" style={{ background: 'linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--secondary) / 0.15) 50%, hsl(var(--background)) 100%)' }}>
         {/* Background effects - contained within section */}
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/10 to-background pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-primary/5 pointer-events-none" />
         
-        {/* Animated floating orbs - gold glows visible on dark background */}
-        <FloatingOrb color="rgba(212, 175, 55, 0.5)" className="top-10 left-[10%]" delay={0} size={100} />
-        <FloatingOrb color="rgba(212, 175, 55, 0.35)" className="top-16 right-[12%]" delay={1.2} size={80} />
-        <FloatingOrb color="rgba(147, 112, 219, 0.4)" className="bottom-24 left-[18%]" delay={2} size={120} />
-        <FloatingOrb color="rgba(212, 175, 55, 0.4)" className="bottom-16 right-[8%]" delay={0.8} size={70} />
+        {/* Animated floating orbs - bright gold glows visible on dark background */}
+        <FloatingOrb color="rgba(212, 175, 55, 0.8)" className="top-10 left-[10%]" delay={0} size={100} />
+        <FloatingOrb color="rgba(212, 175, 55, 0.7)" className="top-16 right-[12%]" delay={1.2} size={80} />
+        <FloatingOrb color="rgba(167, 139, 250, 0.7)" className="bottom-24 left-[18%]" delay={2} size={120} />
+        <FloatingOrb color="rgba(212, 175, 55, 0.75)" className="bottom-16 right-[8%]" delay={0.8} size={70} />
         
         {/* Animated rotating icons */}
         <div className="absolute top-[15%] left-[5%]">

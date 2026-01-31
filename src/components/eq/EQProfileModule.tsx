@@ -1,17 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Brain, Heart, Sparkles, ArrowRight, ArrowLeft, Check,
-  Sun, Moon, Zap, Feather, Crown, Compass, Star
+  Sun, Moon, Zap, Feather, Crown, Compass, Star, X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { useOrlaIntelligence } from "@/contexts/OrlaIntelligenceContext";
+import { toast } from "sonner";
 
 interface EQQuestion {
   id: string;
   category: "emotional" | "social" | "lifestyle" | "preferences";
   question: string;
-  options: { value: string; label: string; icon?: any; description?: string }[];
+  options: { value: string; label: string; icon?: React.ComponentType<{ className?: string }>; description?: string }[];
 }
 
 const questions: EQQuestion[] = [
@@ -65,6 +67,16 @@ const questions: EQQuestion[] = [
       { value: "personalization", label: "Deep Personalization", icon: Heart, description: "Knowing you intimately" },
     ],
   },
+  {
+    id: "intelligence_mode",
+    category: "preferences",
+    question: "How should Orla communicate with you?",
+    options: [
+      { value: "eq", label: "Emotional Intelligence", icon: Heart, description: "Warm, empathetic, relationship-focused" },
+      { value: "iq", label: "Analytical Intelligence", icon: Brain, description: "Data-driven, efficient, precise" },
+      { value: "adaptive", label: "Adaptive Balance", icon: Compass, description: "Context-aware switching" },
+    ],
+  },
 ];
 
 interface EQProfileModuleProps {
@@ -77,13 +89,33 @@ const EQProfileModule = ({ isOpen, onClose, onComplete }: EQProfileModuleProps) 
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isComplete, setIsComplete] = useState(false);
+  const { setMode } = useOrlaIntelligence();
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;
   const question = questions[currentQuestion];
 
+  // Reset state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setCurrentQuestion(0);
+      setAnswers({});
+      setIsComplete(false);
+    }
+  }, [isOpen]);
+
   const handleAnswer = (value: string) => {
     const newAnswers = { ...answers, [question.id]: value };
     setAnswers(newAnswers);
+
+    // If this is the intelligence mode question, update the context
+    if (question.id === "intelligence_mode" && (value === "eq" || value === "iq")) {
+      setMode(value);
+      toast.success(`Orla Intelligence set to ${value.toUpperCase()} Mode`, {
+        description: value === "eq" 
+          ? "Warm, empathetic communication enabled" 
+          : "Data-driven, analytical mode enabled"
+      });
+    }
 
     if (currentQuestion < questions.length - 1) {
       setTimeout(() => setCurrentQuestion(currentQuestion + 1), 300);
@@ -111,6 +143,13 @@ const EQProfileModule = ({ isOpen, onClose, onComplete }: EQProfileModuleProps) 
       return { name: "The Adventurer", emoji: "🧭", description: "You follow your instincts to extraordinary places, embracing the magic of unplanned discoveries." };
     }
     return { name: "The Curator", emoji: "👑", description: "You orchestrate life with intention, balancing structure with spontaneity for optimal experiences." };
+  };
+
+  const getIntelligenceMode = () => {
+    const modeAnswer = answers.intelligence_mode;
+    if (modeAnswer === "eq") return { label: "EQ Mode", color: "text-primary" };
+    if (modeAnswer === "iq") return { label: "IQ Mode", color: "text-primary" };
+    return { label: "Adaptive", color: "text-primary" };
   };
 
   return (
@@ -254,14 +293,18 @@ const EQProfileModule = ({ isOpen, onClose, onComplete }: EQProfileModuleProps) 
                   {getArchetype().description}
                 </p>
 
-                <div className="grid grid-cols-2 gap-4 mb-8 max-w-sm mx-auto">
+                <div className="grid grid-cols-3 gap-4 mb-8 max-w-lg mx-auto">
                   <div className="p-4 rounded-xl bg-primary/10 border border-primary/20">
                     <p className="text-2xl font-serif text-primary mb-1">98%</p>
-                    <p className="text-xs text-muted-foreground">EQ Match Score</p>
+                    <p className="text-xs text-muted-foreground">EQ Match</p>
                   </div>
-                  <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                    <p className="text-2xl font-serif text-emerald-400 mb-1">Elite</p>
-                    <p className="text-xs text-muted-foreground">Service Tier</p>
+                  <div className="p-4 rounded-xl bg-secondary border border-border/30">
+                    <p className="text-2xl font-serif text-primary mb-1">{getIntelligenceMode().label}</p>
+                    <p className="text-xs text-muted-foreground">Orla Mode</p>
+                  </div>
+                  <div className="p-4 rounded-xl bg-accent border border-border/30">
+                    <p className="text-2xl font-serif text-accent-foreground mb-1">Elite</p>
+                    <p className="text-xs text-muted-foreground">Tier</p>
                   </div>
                 </div>
 

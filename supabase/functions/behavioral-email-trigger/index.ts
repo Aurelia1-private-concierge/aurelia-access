@@ -177,7 +177,7 @@ serve(async (req) => {
 
         try {
           await resend.emails.send({
-            from: "Aurelia Concierge <concierge@aurelia.com>",
+            from: "Aurelia Concierge <concierge@aurelia-privateconcierge.com>",
             to: trigger.email,
             subject: template.subject,
             html: template.getHtml(trigger.trigger_data),

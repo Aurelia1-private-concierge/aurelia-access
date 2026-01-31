@@ -292,7 +292,7 @@ async function sendEmail(resend: Resend, to: string, subject: string, message: s
   `;
 
   await resend.emails.send({
-    from: "Aurelia Concierge <notifications@resend.dev>",
+    from: "Aurelia Concierge <concierge@aurelia-privateconcierge.com>",
     to: [to],
     subject: `Aurelia: ${subject}`,
     html,
@@ -370,7 +370,7 @@ async function sendDigestEmail(resend: Resend, to: string, name: string | null, 
   `;
 
   await resend.emails.send({
-    from: "Aurelia Concierge <digest@resend.dev>",
+    from: "Aurelia Concierge <concierge@aurelia-privateconcierge.com>",
     to: [to],
     subject: `Your Aurelia Daily Digest - ${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}`,
     html,

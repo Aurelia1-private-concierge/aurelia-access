@@ -221,7 +221,7 @@ async function sendAdminNotification(submission: ContactSubmission, leadScore: n
     `;
     
     await resend.emails.send({
-      from: "Aurelia <notifications@aurelia-privateconcierge.com>",
+      from: "Aurelia <concierge@aurelia-privateconcierge.com>",
       to: [adminEmail],
       subject: `${priorityBadge} | New Contact: ${submission.name}`,
       html: html,

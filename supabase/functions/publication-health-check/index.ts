@@ -362,7 +362,7 @@ Deno.serve(async (req) => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              from: "Aurelia Health Monitor <alerts@aurelia-privateconcierge.com>",
+              from: "Aurelia Health Monitor <concierge@aurelia-privateconcierge.com>",
               to: [adminEmail],
               subject: `🚨 Critical: ${targetDomain} Infrastructure Alert`,
               html: emailBody,

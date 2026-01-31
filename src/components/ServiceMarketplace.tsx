@@ -654,25 +654,30 @@ export const ServiceMarketplace: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="text-center py-12"
             >
-              <Sparkles className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-foreground mb-2">No services found</h3>
-              <p className="text-muted-foreground mb-4">
-                Try adjusting your search criteria or contact our concierge for bespoke arrangements
-              </p>
-              <Button variant="outline" onClick={() => setActiveCategory('all')}>
-                View All Services
-              </Button>
+              {/* Show Vetted Partners prominently when no inventory */}
+              <VettedPartnersSection limit={9} showHeader={false} />
+              
+              {/* Contact CTA */}
+              <div className="text-center py-8 mt-8 border-t border-border">
+                <p className="text-muted-foreground mb-4">
+                  Looking for something specific? Our concierge team can arrange bespoke services.
+                </p>
+                <Button variant="outline" onClick={() => window.location.href = '/contact'}>
+                  Contact Concierge
+                </Button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* Vetted Partners */}
-      <div className="max-w-7xl mx-auto px-4 mt-16">
-        <VettedPartnersSection limit={6} showHeader={true} compact />
-      </div>
+      {/* Show additional partners only when there are inventory results */}
+      {displayServices.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 mt-16">
+          <VettedPartnersSection limit={6} showHeader={true} compact />
+        </div>
+      )}
     </section>
   );
 };

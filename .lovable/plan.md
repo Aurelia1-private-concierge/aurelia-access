@@ -119,31 +119,40 @@ Ultra-luxury concierge platform for UHNW clients featuring AI-powered matching, 
 
 ---
 
+## ✅ Recently Completed — Tier 3
+
+### 7. Voice Assistant with Biometric Recognition ✅
+**Status**: Implemented
+- Edge function: `voice-biometric-auth`
+- Tables: `voice_sessions`, `voice_commands`, `voiceprint_registry`
+- Features:
+  - Session lifecycle management (start, end, log_command)
+  - Intent detection and command logging
+  - Voiceprint enrollment and verification
+  - Biometric confidence scoring
+  - Integration with existing ElevenLabs conversation token
+
+### 8. Multi-Currency Payments + Fraud Detection ✅
+**Status**: Implemented
+- Edge function: `fraud-detection-engine`
+- Tables: `payment_intents`, `fraud_alerts`, `fraud_rules`, `payment_velocity`, `currency_exchange_cache`
+- Features:
+  - Velocity checks (hourly/daily transaction limits)
+  - Geolocation anomaly detection (haversine distance calculation)
+  - Device fingerprint tracking
+  - Amount threshold rules
+  - Time-based risk scoring
+  - Multiple failure detection
+  - Configurable fraud rules with priority
+  - Risk factor aggregation (0-100 score)
+  - Automatic alert generation for high-severity risks
+  - Currency exchange rate caching
+
+---
+
 ## 📋 Backlog — Priority Tiers
 
-### Tier 3: Premium Differentiators
-
-#### 7. Voice Assistant with Biometric Recognition
-**Purpose**: Hands-free concierge interaction with voice authentication
-```
-Implementation:
-- Integration: ElevenLabs (already installed)
-- Add: Whisper API for transcription
-- Tables: voice_sessions, voice_commands
-- Biometric: Voiceprint verification
-- UI: Voice-activated Orla interface
-```
-
-#### 8. Multi-Currency Payments + Fraud Detection
-**Purpose**: Seamless global payments with security
-```
-Implementation:
-- Integration: Stripe Connect (multi-currency)
-- Edge function: fraud-detection-engine
-- Rules: Velocity checks, geolocation anomalies
-- Tables: payment_intents, fraud_alerts
-- Features: Dynamic currency conversion, risk scoring
-```
+### Tier 4: Platform Excellence
 
 #### 9. VIP Event Management
 **Purpose**: End-to-end coordination for exclusive events
@@ -154,10 +163,6 @@ Implementation:
 - Integration: Calendar sync (Google, Outlook)
 - UI: Event planning dashboard
 ```
-
----
-
-### Tier 4: Platform Excellence
 
 #### 10. Offline Mobile PWA
 **Purpose**: Full functionality without connectivity

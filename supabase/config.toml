@@ -254,3 +254,9 @@ verify_jwt = false
 
 [functions.e-signature-handler]
 verify_jwt = false
+
+[functions.fraud-detection-engine]
+verify_jwt = false
+
+[functions.voice-biometric-auth]
+verify_jwt = false

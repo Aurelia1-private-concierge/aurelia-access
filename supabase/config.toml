@@ -260,3 +260,9 @@ verify_jwt = false
 
 [functions.voice-biometric-auth]
 verify_jwt = false
+
+[functions.event-management]
+verify_jwt = false
+
+[functions.offline-sync]
+verify_jwt = false

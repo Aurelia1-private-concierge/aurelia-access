@@ -2834,6 +2834,122 @@ export type Database = {
         }
         Relationships: []
       }
+      event_budget_items: {
+        Row: {
+          actual_amount: number | null
+          category: string
+          created_at: string
+          currency: string | null
+          description: string
+          due_date: string | null
+          estimated_amount: number
+          event_id: string | null
+          id: string
+          notes: string | null
+          paid_amount: number | null
+          paid_at: string | null
+          status: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          actual_amount?: number | null
+          category: string
+          created_at?: string
+          currency?: string | null
+          description: string
+          due_date?: string | null
+          estimated_amount: number
+          event_id?: string | null
+          id?: string
+          notes?: string | null
+          paid_amount?: number | null
+          paid_at?: string | null
+          status?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          actual_amount?: number | null
+          category?: string
+          created_at?: string
+          currency?: string | null
+          description?: string
+          due_date?: string | null
+          estimated_amount?: number
+          event_id?: string | null
+          id?: string
+          notes?: string | null
+          paid_amount?: number | null
+          paid_at?: string | null
+          status?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_budget_items_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "vip_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_budget_items_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "event_vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_itinerary: {
+        Row: {
+          activity: string
+          created_at: string | null
+          duration_minutes: number | null
+          event_id: string
+          id: string
+          is_public: boolean | null
+          location: string | null
+          notes: string | null
+          responsible_party: string | null
+          sort_order: number | null
+          time_slot: string
+        }
+        Insert: {
+          activity: string
+          created_at?: string | null
+          duration_minutes?: number | null
+          event_id: string
+          id?: string
+          is_public?: boolean | null
+          location?: string | null
+          notes?: string | null
+          responsible_party?: string | null
+          sort_order?: number | null
+          time_slot: string
+        }
+        Update: {
+          activity?: string
+          created_at?: string | null
+          duration_minutes?: number | null
+          event_id?: string
+          id?: string
+          is_public?: boolean | null
+          location?: string | null
+          notes?: string | null
+          responsible_party?: string | null
+          sort_order?: number | null
+          time_slot?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_itinerary_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "vip_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_participants: {
         Row: {
           accessibility_needs: string | null
@@ -2901,6 +3017,168 @@ export type Database = {
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_timeline: {
+        Row: {
+          assigned_vendor_id: string | null
+          created_at: string
+          description: string | null
+          end_time: string | null
+          event_id: string | null
+          id: string
+          is_completed: boolean | null
+          is_public: boolean | null
+          item_type: string | null
+          location: string | null
+          notes: string | null
+          start_time: string
+          title: string
+        }
+        Insert: {
+          assigned_vendor_id?: string | null
+          created_at?: string
+          description?: string | null
+          end_time?: string | null
+          event_id?: string | null
+          id?: string
+          is_completed?: boolean | null
+          is_public?: boolean | null
+          item_type?: string | null
+          location?: string | null
+          notes?: string | null
+          start_time: string
+          title: string
+        }
+        Update: {
+          assigned_vendor_id?: string | null
+          created_at?: string
+          description?: string | null
+          end_time?: string | null
+          event_id?: string | null
+          id?: string
+          is_completed?: boolean | null
+          is_public?: boolean | null
+          item_type?: string | null
+          location?: string | null
+          notes?: string | null
+          start_time?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_timeline_assigned_vendor_id_fkey"
+            columns: ["assigned_vendor_id"]
+            isOneToOne: false
+            referencedRelation: "event_vendors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_timeline_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "vip_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_vendors: {
+        Row: {
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          contract_signed_at: string | null
+          contract_url: string | null
+          contracted_amount: number | null
+          created_at: string
+          currency: string | null
+          delivery_date: string | null
+          deposit_amount: number | null
+          deposit_paid: boolean | null
+          event_id: string | null
+          id: string
+          metadata: Json | null
+          notes: string | null
+          paid_amount: number | null
+          partner_id: string | null
+          payment_terms: string | null
+          quoted_amount: number | null
+          rating: number | null
+          review: string | null
+          status: string
+          updated_at: string
+          vendor_name: string
+          vendor_type: string
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          contract_signed_at?: string | null
+          contract_url?: string | null
+          contracted_amount?: number | null
+          created_at?: string
+          currency?: string | null
+          delivery_date?: string | null
+          deposit_amount?: number | null
+          deposit_paid?: boolean | null
+          event_id?: string | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          paid_amount?: number | null
+          partner_id?: string | null
+          payment_terms?: string | null
+          quoted_amount?: number | null
+          rating?: number | null
+          review?: string | null
+          status?: string
+          updated_at?: string
+          vendor_name: string
+          vendor_type: string
+        }
+        Update: {
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          contract_signed_at?: string | null
+          contract_url?: string | null
+          contracted_amount?: number | null
+          created_at?: string
+          currency?: string | null
+          delivery_date?: string | null
+          deposit_amount?: number | null
+          deposit_paid?: boolean | null
+          event_id?: string | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          paid_amount?: number | null
+          partner_id?: string | null
+          payment_terms?: string | null
+          quoted_amount?: number | null
+          rating?: number | null
+          review?: string | null
+          status?: string
+          updated_at?: string
+          vendor_name?: string
+          vendor_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_vendors_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "vip_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_vendors_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
             referencedColumns: ["id"]
           },
         ]
@@ -3234,6 +3512,104 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      guest_lists: {
+        Row: {
+          accessibility_needs: string | null
+          arrival_time: string | null
+          checked_in: boolean | null
+          checked_in_at: string | null
+          created_at: string
+          departure_time: string | null
+          dietary_restrictions: string[] | null
+          event_id: string | null
+          gift_received: boolean | null
+          guest_email: string | null
+          guest_name: string
+          guest_phone: string | null
+          guest_type: string
+          id: string
+          invitation_sent: boolean | null
+          invitation_sent_at: string | null
+          metadata: Json | null
+          notes: string | null
+          plus_ones_allowed: number | null
+          plus_ones_confirmed: number | null
+          reminder_sent: boolean | null
+          rsvp_at: string | null
+          rsvp_status: string
+          seat_number: string | null
+          table_assignment: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          accessibility_needs?: string | null
+          arrival_time?: string | null
+          checked_in?: boolean | null
+          checked_in_at?: string | null
+          created_at?: string
+          departure_time?: string | null
+          dietary_restrictions?: string[] | null
+          event_id?: string | null
+          gift_received?: boolean | null
+          guest_email?: string | null
+          guest_name: string
+          guest_phone?: string | null
+          guest_type?: string
+          id?: string
+          invitation_sent?: boolean | null
+          invitation_sent_at?: string | null
+          metadata?: Json | null
+          notes?: string | null
+          plus_ones_allowed?: number | null
+          plus_ones_confirmed?: number | null
+          reminder_sent?: boolean | null
+          rsvp_at?: string | null
+          rsvp_status?: string
+          seat_number?: string | null
+          table_assignment?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          accessibility_needs?: string | null
+          arrival_time?: string | null
+          checked_in?: boolean | null
+          checked_in_at?: string | null
+          created_at?: string
+          departure_time?: string | null
+          dietary_restrictions?: string[] | null
+          event_id?: string | null
+          gift_received?: boolean | null
+          guest_email?: string | null
+          guest_name?: string
+          guest_phone?: string | null
+          guest_type?: string
+          id?: string
+          invitation_sent?: boolean | null
+          invitation_sent_at?: string | null
+          metadata?: Json | null
+          notes?: string | null
+          plus_ones_allowed?: number | null
+          plus_ones_confirmed?: number | null
+          reminder_sent?: boolean | null
+          rsvp_at?: string | null
+          rsvp_status?: string
+          seat_number?: string | null
+          table_assignment?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guest_lists_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "vip_events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       health_events: {
         Row: {
@@ -5043,6 +5419,138 @@ export type Database = {
           read?: boolean
           title?: string
           type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      offline_cache: {
+        Row: {
+          cache_key: string
+          cache_type: string
+          created_at: string | null
+          data: Json
+          expires_at: string | null
+          id: string
+          updated_at: string | null
+          user_id: string
+          version: number | null
+        }
+        Insert: {
+          cache_key: string
+          cache_type: string
+          created_at?: string | null
+          data: Json
+          expires_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id: string
+          version?: number | null
+        }
+        Update: {
+          cache_key?: string
+          cache_type?: string
+          created_at?: string | null
+          data?: Json
+          expires_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string
+          version?: number | null
+        }
+        Relationships: []
+      }
+      offline_cache_manifest: {
+        Row: {
+          cache_key: string
+          cached_at: string
+          checksum: string | null
+          entity_id: string | null
+          entity_type: string
+          expires_at: string | null
+          id: string
+          size_bytes: number | null
+          user_id: string
+          version: number | null
+        }
+        Insert: {
+          cache_key: string
+          cached_at?: string
+          checksum?: string | null
+          entity_id?: string | null
+          entity_type: string
+          expires_at?: string | null
+          id?: string
+          size_bytes?: number | null
+          user_id: string
+          version?: number | null
+        }
+        Update: {
+          cache_key?: string
+          cached_at?: string
+          checksum?: string | null
+          entity_id?: string | null
+          entity_type?: string
+          expires_at?: string | null
+          id?: string
+          size_bytes?: number | null
+          user_id?: string
+          version?: number | null
+        }
+        Relationships: []
+      }
+      offline_sync_queue: {
+        Row: {
+          action: string
+          attempts: number | null
+          client_timestamp: string | null
+          created_at: string
+          device_id: string | null
+          entity_id: string | null
+          entity_type: string
+          error_message: string | null
+          id: string
+          last_attempt_at: string | null
+          max_attempts: number | null
+          payload: Json
+          priority: number | null
+          status: string | null
+          synced_at: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          attempts?: number | null
+          client_timestamp?: string | null
+          created_at?: string
+          device_id?: string | null
+          entity_id?: string | null
+          entity_type: string
+          error_message?: string | null
+          id?: string
+          last_attempt_at?: string | null
+          max_attempts?: number | null
+          payload: Json
+          priority?: number | null
+          status?: string | null
+          synced_at?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          attempts?: number | null
+          client_timestamp?: string | null
+          created_at?: string
+          device_id?: string | null
+          entity_id?: string | null
+          entity_type?: string
+          error_message?: string | null
+          id?: string
+          last_attempt_at?: string | null
+          max_attempts?: number | null
+          payload?: Json
+          priority?: number | null
+          status?: string | null
+          synced_at?: string | null
           user_id?: string
         }
         Relationships: []
@@ -9156,6 +9664,105 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      vip_events: {
+        Row: {
+          actual_spend: number | null
+          budget_max: number | null
+          budget_min: number | null
+          calendar_provider: string | null
+          confirmed_guests: number | null
+          cover_image_url: string | null
+          created_at: string
+          currency: string | null
+          description: string | null
+          dress_code: string | null
+          end_date: string | null
+          event_type: string
+          expected_guests: number | null
+          external_calendar_id: string | null
+          gallery_urls: string[] | null
+          id: string
+          metadata: Json | null
+          notes: string | null
+          organizer_id: string
+          privacy_level: string | null
+          special_requirements: Json | null
+          start_date: string
+          status: string
+          theme: string | null
+          timezone: string | null
+          title: string
+          updated_at: string
+          venue_address: string | null
+          venue_coordinates: Json | null
+          venue_name: string | null
+        }
+        Insert: {
+          actual_spend?: number | null
+          budget_max?: number | null
+          budget_min?: number | null
+          calendar_provider?: string | null
+          confirmed_guests?: number | null
+          cover_image_url?: string | null
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          dress_code?: string | null
+          end_date?: string | null
+          event_type?: string
+          expected_guests?: number | null
+          external_calendar_id?: string | null
+          gallery_urls?: string[] | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          organizer_id: string
+          privacy_level?: string | null
+          special_requirements?: Json | null
+          start_date: string
+          status?: string
+          theme?: string | null
+          timezone?: string | null
+          title: string
+          updated_at?: string
+          venue_address?: string | null
+          venue_coordinates?: Json | null
+          venue_name?: string | null
+        }
+        Update: {
+          actual_spend?: number | null
+          budget_max?: number | null
+          budget_min?: number | null
+          calendar_provider?: string | null
+          confirmed_guests?: number | null
+          cover_image_url?: string | null
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          dress_code?: string | null
+          end_date?: string | null
+          event_type?: string
+          expected_guests?: number | null
+          external_calendar_id?: string | null
+          gallery_urls?: string[] | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          organizer_id?: string
+          privacy_level?: string | null
+          special_requirements?: Json | null
+          start_date?: string
+          status?: string
+          theme?: string | null
+          timezone?: string | null
+          title?: string
+          updated_at?: string
+          venue_address?: string | null
+          venue_coordinates?: Json | null
+          venue_name?: string | null
+        }
+        Relationships: []
       }
       visitor_logs: {
         Row: {

@@ -1,26 +1,35 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
+import triptychLandscape from "@/assets/triptych-landscape.jpg";
+import triptychSound from "@/assets/triptych-sound.jpg";
+import triptychTaste from "@/assets/triptych-taste.jpg";
+import triptychRest from "@/assets/triptych-rest.jpg";
+
 const galleryImages = [
   {
-    src: "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=800&q=80",
-    alt: "Rio de Janeiro panoramic view",
+    src: triptychLandscape,
+    alt: "Golden hour vista over Guanabara Bay from a private terrace",
     caption: "The Landscape",
+    description: "Where ocean meets mountain in eternal dialogue",
   },
   {
-    src: "https://images.unsplash.com/photo-1518109894936-1fc73c4f4e3a?w=800&q=80",
-    alt: "Orchestral performance",
+    src: triptychSound,
+    alt: "Intimate orchestral performance in an opulent Brazilian theater",
     caption: "The Sound",
+    description: "A symphony composed for this moment alone",
   },
   {
-    src: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
-    alt: "Fine dining experience",
+    src: triptychTaste,
+    alt: "Exquisite Brazilian-fusion cuisine in candlelit ambiance",
     caption: "The Taste",
+    description: "Gastronomy as cultural revelation",
   },
   {
-    src: "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&q=80",
-    alt: "Luxury accommodation",
+    src: triptychRest,
+    alt: "Ultra-luxury suite overlooking Rio de Janeiro at twilight",
     caption: "The Rest",
+    description: "Sanctuary between encounters",
   },
 ];
 
@@ -107,6 +116,9 @@ const TriptychGallery = () => {
                 >
                   {image.caption}
                 </motion.p>
+                <p className="text-[10px] text-muted-foreground/70 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  {image.description}
+                </p>
                 <div className="w-8 h-px bg-primary/50 mt-2 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
               </div>
             </motion.div>

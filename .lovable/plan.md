@@ -67,42 +67,35 @@ Ultra-luxury concierge platform for UHNW clients featuring AI-powered matching, 
 
 ---
 
-## 📋 Backlog — Priority Tiers
+## ✅ Recently Completed — Tier 1
 
-### Tier 1: High Impact / Foundation (Next Sprint)
+### 1. OCR for Partner Intake ✅
+**Status**: Implemented
+- Edge function: `ocr-document-processor`
+- Uses Lovable AI (Gemini 2.5 Flash) for vision-based OCR
+- Tables: `partner_documents`, `extracted_data`
+- Supports: Passport, ID, business licenses, tax certs, contracts
+- Auto-triggers KYC verification for identity documents
 
-#### 1. OCR for Partner Intake
-**Purpose**: Automate partner document ingestion and data extraction
-```
-Implementation:
-- Edge function: ocr-document-processor
-- Integration: Google Cloud Vision or Tesseract.js
-- Tables: partner_documents, extracted_data
-- UI: Document upload component in Partner Portal
-```
+### 2. KYC/AML Discrepancy Flagging ✅
+**Status**: Implemented
+- Edge function: `kyc-aml-checker`
+- Tables: `kyc_verifications`, `aml_alerts`
+- Checks: High-risk countries, PEP screening, sanctions, adverse media
+- AI-powered name screening with Gemini
+- Document discrepancy detection
+- Risk scoring (0-100) with alert generation
 
-#### 2. KYC/AML Discrepancy Flagging
-**Purpose**: Automated compliance checks for partner and client verification
-```
-Implementation:
-- Edge function: kyc-aml-checker
-- Integration: Third-party KYC provider (Onfido/Sumsub)
-- Tables: kyc_verifications, aml_alerts
-- UI: Compliance dashboard in Admin Portal
-- Flags: PEP status, sanctions lists, discrepancy alerts
-```
-
-#### 3. AI-Powered Preference Matching (Enhancement)
-**Purpose**: Deep learning on client preferences for hyper-personalized service
-```
-Implementation:
-- Enhance existing uhnwi-service-matcher
-- Add: preference_weights table
-- Add: behavioral tracking (service views, booking patterns)
-- Output: Personalized recommendations with confidence scores
-```
+### 3. AI-Powered Preference Matching (Enhancement) ✅
+**Status**: Enhanced
+- Enhanced `uhnwi-service-matcher` function
+- Tables: `preference_weights`, `service_interactions`
+- Features: Behavioral tracking, category affinities, price sensitivity
+- Learns from user interactions to improve recommendations
 
 ---
+
+## 📋 Backlog — Priority Tiers
 
 ### Tier 2: Core Business Features
 

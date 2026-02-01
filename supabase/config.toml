@@ -242,3 +242,9 @@ verify_jwt = false
 
 [functions.auto-service-matcher]
 verify_jwt = false
+
+[functions.ocr-document-processor]
+verify_jwt = false
+
+[functions.kyc-aml-checker]
+verify_jwt = false

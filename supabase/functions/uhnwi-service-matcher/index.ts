@@ -102,13 +102,29 @@ serve(async (req) => {
     console.log(`[UHNWI-Matcher] Request: "${serviceRequest.title}" | Category: ${serviceRequest.category}`);
 
     // =========================================================================
-    // STEP 2: Fetch user profile, preferences, and history
+    // STEP 2: Fetch user profile, preferences, and behavioral data
     // =========================================================================
     const { data: userProfile } = await supabase
       .from("profiles")
       .select("*")
       .eq("user_id", serviceRequest.client_id)
       .single();
+
+    // Get learned preference weights
+    const { data: preferenceWeights } = await supabase
+      .from("preference_weights")
+      .select("*")
+      .eq("user_id", serviceRequest.client_id)
+      .maybeSingle();
+
+    // Get recent service interactions (last 90 days)
+    const { data: recentInteractions } = await supabase
+      .from("service_interactions")
+      .select("*")
+      .eq("user_id", serviceRequest.client_id)
+      .gte("created_at", new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString())
+      .order("created_at", { ascending: false })
+      .limit(100);
 
     // Get user's past interactions with partners (ratings, completed requests)
     const { data: pastRequests } = await supabase
@@ -128,8 +144,11 @@ serve(async (req) => {
       .eq("updated_by", serviceRequest.client_id)
       .not("metadata", "is", null);
 
-    // Build user preference profile
+    // Build enhanced user preference profile
     const partnerRatings: Record<string, number[]> = {};
+    const partnerInteractionCounts: Record<string, number> = {};
+    
+    // From explicit feedback
     for (const fb of feedbackData || []) {
       const meta = fb.metadata as { rating?: number; partner_id?: string };
       if (meta?.rating) {
@@ -142,17 +161,39 @@ serve(async (req) => {
         }
       }
     }
+    
+    // From implicit behavioral signals
+    for (const interaction of recentInteractions || []) {
+      if (interaction.partner_id) {
+        partnerInteractionCounts[interaction.partner_id] = 
+          (partnerInteractionCounts[interaction.partner_id] || 0) + 1;
+        
+        // Add implicit rating from interactions
+        if (interaction.rating) {
+          if (!partnerRatings[interaction.partner_id]) {
+            partnerRatings[interaction.partner_id] = [];
+          }
+          partnerRatings[interaction.partner_id].push(interaction.rating);
+        }
+      }
+    }
 
     const preferredPartners = Object.entries(partnerRatings)
       .filter(([_, ratings]) => ratings.length > 0)
       .map(([partnerId, ratings]) => ({
         partnerId,
         avgRating: ratings.reduce((a, b) => a + b, 0) / ratings.length,
+        interactionCount: partnerInteractionCounts[partnerId] || 0,
       }))
       .filter(p => p.avgRating >= 4)
       .sort((a, b) => b.avgRating - a.avgRating);
+    
+    // Extract learned category affinities
+    const categoryAffinities: Record<string, number> = preferenceWeights?.category_weights as Record<string, number> || {};
+    const excludedPartners: string[] = preferenceWeights?.excluded_partners as string[] || [];
+    const priceSensitivity = (preferenceWeights?.price_sensitivity as number) ?? 50;
 
-    console.log(`[UHNWI-Matcher] User has ${preferredPartners.length} preferred partners from history`);
+    console.log(`[UHNWI-Matcher] User has ${preferredPartners.length} preferred partners, ${Object.keys(categoryAffinities).length} category affinities`);
 
     // =========================================================================
     // STEP 3: Query & filter partners by category, compliance, availability
@@ -187,9 +228,12 @@ serve(async (req) => {
       .eq("service_request_id", service_request_id);
 
     const alreadyBiddingIds = new Set(existingBids?.map(b => b.partner_id) || []);
+    const excludedPartnerSet = new Set(excludedPartners);
 
-    // Filter candidates
-    const eligibleCandidates = (candidates || []).filter(p => !alreadyBiddingIds.has(p.id));
+    // Filter candidates (exclude already bidding and user-excluded partners)
+    const eligibleCandidates = (candidates || []).filter(p => 
+      !alreadyBiddingIds.has(p.id) && !excludedPartnerSet.has(p.id)
+    );
 
     // =========================================================================
     // STEP 4: AI-powered ranking
@@ -201,7 +245,9 @@ serve(async (req) => {
         partner as PartnerCandidate,
         serviceRequest,
         preferredPartners,
-        userProfile
+        userProfile,
+        categoryAffinities,
+        priceSensitivity
       );
 
       if (score >= 30) {
@@ -447,20 +493,27 @@ For each partner, provide a 1-sentence personalized recommendation explaining wh
 function calculateAdvancedMatchScore(
   partner: PartnerCandidate,
   request: Record<string, unknown>,
-  preferredPartners: { partnerId: string; avgRating: number }[],
-  userProfile: Record<string, unknown> | null
+  preferredPartners: { partnerId: string; avgRating: number; interactionCount?: number }[],
+  userProfile: Record<string, unknown> | null,
+  categoryAffinities: Record<string, number> = {},
+  priceSensitivity: number = 50
 ): { score: number; reasons: string[]; aiConfidence: number } {
   let score = 0;
   const reasons: string[] = [];
   let confidenceFactors = 0;
 
-  // 1. Category match (35 points)
+  // 1. Category match (30 points base, up to 40 with affinity bonus)
   const partnerCategories = partner.categories?.map(c => c.toLowerCase()) || [];
   const requestCategory = (request.category as string)?.toLowerCase() || "";
   
   if (partnerCategories.includes(requestCategory)) {
-    score += 35;
+    const baseScore = 30;
+    const affinityBonus = Math.min(10, (categoryAffinities[requestCategory] || 0) / 10);
+    score += baseScore + affinityBonus;
     reasons.push(`Specializes in ${request.category}`);
+    if (affinityBonus > 5) {
+      reasons.push("Matches your preferred category");
+    }
     confidenceFactors++;
   }
 
@@ -521,11 +574,16 @@ function calculateAdvancedMatchScore(
     score += 3;
   }
 
-  // 4. Client preference bonus (15 points)
+  // 4. Client preference bonus (20 points max)
   const isPreferred = preferredPartners.find(p => p.partnerId === partner.id);
   if (isPreferred) {
-    score += 15;
+    const basePreferenceScore = 12;
+    const interactionBonus = Math.min(8, (isPreferred.interactionCount || 0) * 2);
+    score += basePreferenceScore + interactionBonus;
     reasons.push(`Previously rated ${isPreferred.avgRating.toFixed(1)}★ by you`);
+    if (isPreferred.interactionCount && isPreferred.interactionCount > 2) {
+      reasons.push("Frequently chosen partner");
+    }
     confidenceFactors += 2; // High confidence for repeat preference
   }
 
@@ -539,6 +597,16 @@ function calculateAdvancedMatchScore(
     }
   }
 
+  // 6. Price sensitivity adjustment (-5 to +5 based on partner tier)
+  // Higher sensitivity = prefer more affordable options
+  if (priceSensitivity > 70 && partner.min_budget !== null && partner.min_budget < 10000) {
+    score += 3;
+    reasons.push("Value-conscious option");
+  } else if (priceSensitivity < 30 && partner.min_budget !== null && partner.min_budget > 50000) {
+    score += 3;
+    reasons.push("Premium-tier partner");
+  }
+
   // Calculate AI confidence (0-1)
   const aiConfidence = Math.min(1, confidenceFactors / 4);
 
@@ -547,4 +615,71 @@ function calculateAdvancedMatchScore(
     reasons,
     aiConfidence,
   };
+}
+
+/**
+ * Update user preference weights based on interaction outcomes
+ * Note: Uses type assertions due to dynamic table structure
+ */
+async function updatePreferenceWeights(
+  supabase: ReturnType<typeof createClient>,
+  userId: string,
+  category: string,
+  partnerId: string,
+  outcome: "viewed" | "inquired" | "booked" | "rated",
+  rating?: number
+): Promise<void> {
+  try {
+    // Get or create preference weights
+    const { data: existing } = await supabase
+      .from("preference_weights" as any)
+      .select("*")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    const existingData = existing as Record<string, unknown> | null;
+    const categoryWeights = ((existingData?.category_weights as Record<string, number>) || {});
+    const preferredPartners = ((existingData?.preferred_partners as string[]) || []);
+    
+    // Update category affinity based on outcome
+    const outcomeWeights: Record<string, number> = {
+      viewed: 1,
+      inquired: 3,
+      booked: 10,
+      rated: rating ? rating * 2 : 5,
+    };
+    
+    categoryWeights[category] = Math.min(100, (categoryWeights[category] || 0) + outcomeWeights[outcome]);
+
+    // Add to preferred partners if rated highly
+    if (outcome === "booked" || (outcome === "rated" && rating && rating >= 4)) {
+      if (!preferredPartners.includes(partnerId)) {
+        preferredPartners.push(partnerId);
+      }
+    }
+
+    if (existingData) {
+      await (supabase
+        .from("preference_weights" as any) as any)
+        .update({
+          category_weights: categoryWeights,
+          preferred_partners: preferredPartners.slice(-20), // Keep last 20
+          total_interactions: ((existingData.total_interactions as number) || 0) + 1,
+          last_interaction_at: new Date().toISOString(),
+        })
+        .eq("user_id", userId);
+    } else {
+      await (supabase
+        .from("preference_weights" as any) as any)
+        .insert({
+          user_id: userId,
+          category_weights: categoryWeights,
+          preferred_partners: preferredPartners,
+          total_interactions: 1,
+          last_interaction_at: new Date().toISOString(),
+        });
+    }
+  } catch (error) {
+    console.error("[PreferenceWeights] Update failed:", error);
+  }
 }

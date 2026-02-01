@@ -392,13 +392,16 @@ const VRExperienceHub = ({ isOpen, onClose }: VRExperienceHubProps) => {
             </Canvas>
           </Suspense>
 
-          {/* Experience selector */}
-          <div className="absolute bottom-0 left-0 right-0 z-10 p-6 bg-gradient-to-t from-background via-background/80 to-transparent">
+          {/* Experience selector - positioned at top */}
+          <div className="absolute top-20 left-0 right-0 z-10 p-4 bg-gradient-to-b from-background via-background/80 to-transparent">
             <div className="max-w-4xl mx-auto">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {experiences.map((exp) => (
+                {experiences.map((exp, index) => (
                   <motion.button
                     key={exp.id}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
                     onClick={() => setActiveExperience(exp.id)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -426,7 +429,7 @@ const VRExperienceHub = ({ isOpen, onClose }: VRExperienceHubProps) => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="absolute top-24 left-6 w-80 rounded-xl bg-card/95 backdrop-blur-xl border border-primary/30 overflow-hidden"
+                className="absolute top-52 left-6 w-80 rounded-xl bg-card/95 backdrop-blur-xl border border-primary/30 overflow-hidden"
               >
                 {/* Video Preview */}
                 <LuxuryVideoPreview 

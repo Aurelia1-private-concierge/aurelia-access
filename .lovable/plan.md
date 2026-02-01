@@ -95,43 +95,31 @@ Ultra-luxury concierge platform for UHNW clients featuring AI-powered matching, 
 
 ---
 
-## 📋 Backlog — Priority Tiers
+## ✅ Recently Completed — Tier 2
 
-### Tier 2: Core Business Features
+### 4. PII Redaction Service ✅
+**Status**: Implemented
+- Edge function: `pii-redaction-service`
+- Tables: `redaction_rules`, `redaction_logs`
+- Features: Field-level masking, pseudonymization, audit logging
+- Default rules for email, phone, name, address, financial data
 
-#### 4. Redaction Service for Partner Views
-**Purpose**: Protect client PII when sharing requests with partners
-```
-Implementation:
-- Edge function: pii-redaction-service
-- Rules: Mask name, contact, financial details
-- Generate: Anonymized request views for bidding
-- Preserve: Context needed for accurate quotes
-```
+### 5. E-Signature Handler ✅
+**Status**: Implemented
+- Edge function: `e-signature-handler`
+- Tables: `legal_documents`, `document_signers`, `events`, `event_participants`
+- Features: NDA/DPA templates, multi-party signing, email notifications
+- Actions: create, send, sign, void, status, remind
 
-#### 5. Event Management + E-Signature for NDA/DPA
-**Purpose**: Streamline VIP event coordination and legal agreements
-```
-Implementation:
-- Tables: events, event_participants, legal_documents
-- Edge function: e-signature-handler
-- Integration: DocuSign or HelloSign API
-- UI: Event calendar, NDA/DPA templates
-- Workflow: Auto-generate → Send → Track → Store
-```
-
-#### 6. Competitive Bidding Platform (Phase 2)
-**Purpose**: Real-time reverse auction for service requests
-```
-Implementation:
-- Enhance: house_partner_bids with realtime
-- Add: bid_deadlines, bid_notifications
-- UI: Live bidding dashboard for partners
-- Features: Auto-bid, bid comparison, winner selection
-- Realtime: Supabase channels for live updates
-```
+### 6. Competitive Bidding Phase 2 ✅
+**Status**: Implemented
+- Table: `bid_notifications` with Supabase Realtime enabled
+- `service_request_bids` already has realtime
+- Features: Live bid updates, deadline warnings, winner notifications
 
 ---
+
+## 📋 Backlog — Priority Tiers
 
 ### Tier 3: Premium Differentiators
 

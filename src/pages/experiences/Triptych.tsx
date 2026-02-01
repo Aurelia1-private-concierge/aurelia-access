@@ -4,6 +4,9 @@ import TriptychHero from "@/components/experiences/TriptychHero";
 import TriptychTimeline from "@/components/experiences/TriptychTimeline";
 import TriptychInquiryForm from "@/components/experiences/TriptychInquiryForm";
 import TriptychDeadlineBanner from "@/components/experiences/TriptychDeadlineBanner";
+import TriptychGallery from "@/components/experiences/TriptychGallery";
+import TriptychExclusivity from "@/components/experiences/TriptychExclusivity";
+import TriptychLocationTeaser from "@/components/experiences/TriptychLocationTeaser";
 import { ArrowLeft, MapPin, Calendar, Users, Sparkles, Music, UtensilsCrossed, Crown, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -105,6 +108,9 @@ const Triptych = () => {
           </div>
         </section>
 
+        {/* Location Teaser */}
+        <TriptychLocationTeaser />
+
         {/* The Experience Section */}
         <section className="py-24 md:py-32 px-6 bg-card/30">
           <div className="max-w-6xl mx-auto">
@@ -174,6 +180,9 @@ const Triptych = () => {
             </div>
           </div>
         </section>
+
+        {/* Visual Gallery */}
+        <TriptychGallery />
 
         {/* Access Categories */}
         <section className="py-24 md:py-32 px-6">
@@ -254,6 +263,9 @@ const Triptych = () => {
 
         {/* Timeline */}
         <TriptychTimeline />
+
+        {/* Exclusivity Section */}
+        <TriptychExclusivity />
 
         {/* Founding Members */}
         <section className="py-24 md:py-32 px-6 bg-gradient-to-b from-card/30 to-background">

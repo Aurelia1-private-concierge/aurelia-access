@@ -1,98 +1,268 @@
-
-# Reposition Category Cards to Top of Page
+# Aurelia Private Concierge — Feature Roadmap
 
 ## Overview
-Move the luxury experience category cards from the bottom to the top of both the **Metaverse Hub** and **EQ Profile Module** so users immediately see the important content without having to look at the bottom of the screen.
+Ultra-luxury concierge platform for UHNW clients featuring AI-powered matching, biometric authentication, competitive bidding, and white-glove service delivery.
 
 ---
 
-## Changes for VRExperienceHub.tsx
+## ✅ Implemented Features
 
-### Current Layout Problem
-```text
-┌────────────────────────────────────────────┐
-│  Header (Metaverse Experience Hub title)   │
-├────────────────────────────────────────────┤
-│                                            │
-│          3D Scene (large canvas)           │
-│                                            │
-├────────────────────────────────────────────┤
-│  Category Cards (at bottom - hard to see)  │  ← Users miss this
-└────────────────────────────────────────────┘
+### 1. Authentication & Security
+- [x] MFA-ready authentication (email, phone, password validation)
+- [x] Biometric/WebAuthn passkey support (Touch ID, Face ID, Windows Hello)
+- [x] JWT session management with refresh endpoints
+- [x] Zero-trust architecture (least privilege, need-to-know)
+- [x] End-to-end encryption for communications
+- [x] GDPR compliance foundations (PII redaction, audit trails)
+- [x] Auth event logging infrastructure
+
+### 2. User/Partner Management
+- [x] User profile management (USER_ME, USER_UPDATE endpoints)
+- [x] Partner prospect intake system
+- [x] Partner discovery with AI matching (uhnwi-service-matcher)
+- [x] Partner services catalog
+
+### 3. Dashboard Features
+- [x] Arrangements/Booking module with booking view
+- [x] Membership management (Signature, Prestige, Black Card tiers)
+- [x] Overview & reporting (analytics dashboard)
+- [x] Settings management (user and system)
+- [x] Credit system with tier-based allocations
+
+### 4. Luxury Concierge Services
+- [x] Service categories (Travel, Dining, Aviation, Yacht, etc.)
+- [x] Sidebar menu navigation
+- [x] Auto-service matcher (proactive recommendations)
+
+### 5. Core Routing and UI
+- [x] PWA-ready frontend (React, TypeScript)
+- [x] Mobile-first, luxury-themed UI (gold accents, marble gradients)
+- [x] ARIA-accessible navigation
+- [x] i18n plumbing (react-i18next)
+- [x] Theme selection (dark ultra-premium)
+
+### 6. REST API / Edge Functions
+- [x] Authentication flows (signup, login, logout)
+- [x] AI partner discovery
+- [x] Service matching
+- [x] Firecrawl integration for real-time data
+
+### 7. Bidding System (Phase 1)
+- [x] House partner bids table
+- [x] Bid management panel for admins
+- [x] Bid revision tracking
+
+### 8. Audit & Compliance
+- [x] Audit logging infrastructure
+- [x] RLS policies blocking anonymous access
+- [x] Sensitive data masking in logs
+
+---
+
+## 🚧 In Progress
+
+### VR/Metaverse Experience Hub
+- [ ] Reposition category cards to top of page
+- [ ] Enhance EQ Profile category indicators
+
+---
+
+## 📋 Backlog — Priority Tiers
+
+### Tier 1: High Impact / Foundation (Next Sprint)
+
+#### 1. OCR for Partner Intake
+**Purpose**: Automate partner document ingestion and data extraction
+```
+Implementation:
+- Edge function: ocr-document-processor
+- Integration: Google Cloud Vision or Tesseract.js
+- Tables: partner_documents, extracted_data
+- UI: Document upload component in Partner Portal
 ```
 
-### New Layout
-```text
-┌────────────────────────────────────────────┐
-│  Header (Metaverse Experience Hub title)   │
-├────────────────────────────────────────────┤
-│  ┌────────┐ ┌────────┐ ┌────────┐ ┌──────┐│  ← Category Cards 
-│  │Aviation│ │ Yachts │ │Property│ │Collec││    NOW AT TOP
-│  └────────┘ └────────┘ └────────┘ └──────┘│
-├────────────────────────────────────────────┤
-│                                            │
-│          3D Scene (canvas)                 │
-│                                            │
-└────────────────────────────────────────────┘
+#### 2. KYC/AML Discrepancy Flagging
+**Purpose**: Automated compliance checks for partner and client verification
+```
+Implementation:
+- Edge function: kyc-aml-checker
+- Integration: Third-party KYC provider (Onfido/Sumsub)
+- Tables: kyc_verifications, aml_alerts
+- UI: Compliance dashboard in Admin Portal
+- Flags: PEP status, sanctions lists, discrepancy alerts
 ```
 
-### Implementation Steps
-
-1. **Move Experience Selector to Top** (lines 396-420)
-   - Change `absolute bottom-0` to `absolute top-20` (directly below header)
-   - Update gradient from `from-background via-background/80 to-transparent` (bottom fade) to `to-background via-background/80 from-transparent` (top fade)
-   - Add staggered entrance animation for cards
-
-2. **Adjust 3D Canvas Layout**
-   - Add top padding to the canvas area so it doesn't overlap with the new category cards position
-
-3. **Reposition Active Experience Panel** (lines 422-476)
-   - Move from `top-24` to approximately `top-56` to sit below the category cards row
-   - Ensure proper spacing and no overlap
+#### 3. AI-Powered Preference Matching (Enhancement)
+**Purpose**: Deep learning on client preferences for hyper-personalized service
+```
+Implementation:
+- Enhance existing uhnwi-service-matcher
+- Add: preference_weights table
+- Add: behavioral tracking (service views, booking patterns)
+- Output: Personalized recommendations with confidence scores
+```
 
 ---
 
-## Changes for EQProfileModule.tsx
+### Tier 2: Core Business Features
 
-The EQ module is a questionnaire flow rather than a category selector like the Metaverse Hub. The content is already well-structured with:
-- Header at top with Brain icon
-- Progress bar
-- Question with answer options
+#### 4. Redaction Service for Partner Views
+**Purpose**: Protect client PII when sharing requests with partners
+```
+Implementation:
+- Edge function: pii-redaction-service
+- Rules: Mask name, contact, financial details
+- Generate: Anonymized request views for bidding
+- Preserve: Context needed for accurate quotes
+```
 
-The EQ module doesn't have the same "bottom positioning" issue - its question options are already in the main content flow. However, I'll enhance it by:
+#### 5. Event Management + E-Signature for NDA/DPA
+**Purpose**: Streamline VIP event coordination and legal agreements
+```
+Implementation:
+- Tables: events, event_participants, legal_documents
+- Edge function: e-signature-handler
+- Integration: DocuSign or HelloSign API
+- UI: Event calendar, NDA/DPA templates
+- Workflow: Auto-generate → Send → Track → Store
+```
 
-1. **Add Visual Category Indicators at Top**
-   - Show the 4 question categories (Emotional, Social, Lifestyle, Preferences) as small pills/tags at the top
-   - Highlight the current category as the user progresses
-   - This gives users immediate visibility into what areas the profile covers
-
-2. **Improve Question Category Badge**
-   - Add a prominent category badge above each question showing which aspect is being assessed
-   - Use color-coding for each category type
-
----
-
-## Technical Changes Summary
-
-### File: `src/components/vr/VRExperienceHub.tsx`
-
-| Line Range | Change |
-|------------|--------|
-| 396-420 | Move experience selector from `bottom-0` to `top-20`, update gradient direction |
-| 429 | Change `top-24` to `top-56` for active experience panel |
-| Add padding | Ensure 3D canvas doesn't overlap with top-positioned cards |
-
-### File: `src/components/eq/EQProfileModule.tsx`
-
-| Line Range | Change |
-|------------|--------|
-| 171-183 | Add category indicator pills below header showing all 4 categories |
-| 194-206 | Add category badge above current question |
+#### 6. Competitive Bidding Platform (Phase 2)
+**Purpose**: Real-time reverse auction for service requests
+```
+Implementation:
+- Enhance: house_partner_bids with realtime
+- Add: bid_deadlines, bid_notifications
+- UI: Live bidding dashboard for partners
+- Features: Auto-bid, bid comparison, winner selection
+- Realtime: Supabase channels for live updates
+```
 
 ---
 
-## Expected Outcome
+### Tier 3: Premium Differentiators
 
-**Metaverse Hub**: Users immediately see all four luxury experience categories (Private Aviation, Superyachts, Luxury Properties, Rare Collectibles) at the top upon opening the modal.
+#### 7. Voice Assistant with Biometric Recognition
+**Purpose**: Hands-free concierge interaction with voice authentication
+```
+Implementation:
+- Integration: ElevenLabs (already installed)
+- Add: Whisper API for transcription
+- Tables: voice_sessions, voice_commands
+- Biometric: Voiceprint verification
+- UI: Voice-activated Orla interface
+```
 
-**EQ Profile Module**: Users see a visual map of the profile categories at the top, with the current category highlighted as they progress through questions.
+#### 8. Multi-Currency Payments + Fraud Detection
+**Purpose**: Seamless global payments with security
+```
+Implementation:
+- Integration: Stripe Connect (multi-currency)
+- Edge function: fraud-detection-engine
+- Rules: Velocity checks, geolocation anomalies
+- Tables: payment_intents, fraud_alerts
+- Features: Dynamic currency conversion, risk scoring
+```
+
+#### 9. VIP Event Management
+**Purpose**: End-to-end coordination for exclusive events
+```
+Implementation:
+- Tables: vip_events, event_vendors, guest_lists
+- Features: Venue sourcing, vendor coordination
+- Integration: Calendar sync (Google, Outlook)
+- UI: Event planning dashboard
+```
+
+---
+
+### Tier 4: Platform Excellence
+
+#### 10. Offline Mobile PWA
+**Purpose**: Full functionality without connectivity
+```
+Implementation:
+- Service Worker: Enhanced caching strategies
+- IndexedDB: Local data persistence
+- Sync: Background sync when online
+- Features: Offline requests queue, cached catalogs
+```
+
+---
+
+## Technical Architecture
+
+### File Structure (Planned)
+```
+/src
+├── /services/          # Backend business logic
+│   ├── matching/       # AI preference matching
+│   ├── bidding/        # Competitive bidding
+│   └── payments/       # Multi-currency, fraud
+├── /api/               # REST endpoint definitions
+├── /auth/              # Auth flows (existing)
+├── /utils/             # Helpers, constants
+└── /infrastructure/    # Deployment configs
+
+/supabase/functions/
+├── ocr-document-processor/
+├── kyc-aml-checker/
+├── pii-redaction-service/
+├── e-signature-handler/
+├── fraud-detection-engine/
+└── voice-biometric-auth/
+```
+
+### Database Schema (Planned Additions)
+```sql
+-- OCR & Documents
+partner_documents (id, partner_id, document_type, file_url, ocr_status)
+extracted_data (id, document_id, field_name, field_value, confidence)
+
+-- KYC/AML
+kyc_verifications (id, entity_type, entity_id, status, provider_response)
+aml_alerts (id, entity_id, alert_type, severity, resolved_at)
+
+-- Events & Signatures
+events (id, title, type, date, status, organizer_id)
+legal_documents (id, template_type, recipient_id, signature_status)
+
+-- Payments & Fraud
+payment_intents (id, amount, currency, status, fraud_score)
+fraud_alerts (id, payment_id, rule_triggered, action_taken)
+
+-- Voice
+voice_sessions (id, user_id, transcript, intent_detected, created_at)
+```
+
+---
+
+## Security Requirements
+- MFA required for all admin actions
+- PII redaction in all partner-facing views
+- No secrets/credentials in logs or commits
+- Credential rotation schedule (90 days)
+- Zero-trust: Verify at every layer
+
+---
+
+## Success Metrics
+| Feature | KPI |
+|---------|-----|
+| OCR Intake | 80% auto-extraction accuracy |
+| KYC/AML | <24h verification time |
+| AI Matching | >85% recommendation acceptance |
+| Bidding | 3+ bids average per request |
+| Voice Assistant | <3s response latency |
+| Payments | 99.9% success rate |
+
+---
+
+## Next Steps
+
+1. **OCR for Partner Intake** — Implement document upload + Vision API
+2. **KYC/AML Flagging** — Add verification workflow
+3. **Enhance AI Matching** — Behavioral preference learning
+4. **Redaction Service** — PII masking for partner views
+
+Ready to implement on your command.

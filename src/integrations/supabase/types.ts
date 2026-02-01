@@ -406,6 +406,86 @@ export type Database = {
         }
         Relationships: []
       }
+      aml_alerts: {
+        Row: {
+          alert_type: Database["public"]["Enums"]["aml_alert_type"]
+          assigned_to: string | null
+          created_at: string
+          description: string | null
+          entity_id: string
+          entity_type: string
+          escalated_at: string | null
+          escalated_to: string | null
+          id: string
+          kyc_verification_id: string | null
+          match_details: Json | null
+          match_score: number | null
+          resolution_action: string | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: Database["public"]["Enums"]["aml_severity"]
+          source: string | null
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          alert_type: Database["public"]["Enums"]["aml_alert_type"]
+          assigned_to?: string | null
+          created_at?: string
+          description?: string | null
+          entity_id: string
+          entity_type: string
+          escalated_at?: string | null
+          escalated_to?: string | null
+          id?: string
+          kyc_verification_id?: string | null
+          match_details?: Json | null
+          match_score?: number | null
+          resolution_action?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity: Database["public"]["Enums"]["aml_severity"]
+          source?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          alert_type?: Database["public"]["Enums"]["aml_alert_type"]
+          assigned_to?: string | null
+          created_at?: string
+          description?: string | null
+          entity_id?: string
+          entity_type?: string
+          escalated_at?: string | null
+          escalated_to?: string | null
+          id?: string
+          kyc_verification_id?: string | null
+          match_details?: Json | null
+          match_score?: number | null
+          resolution_action?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: Database["public"]["Enums"]["aml_severity"]
+          source?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aml_alerts_kyc_verification_id_fkey"
+            columns: ["kyc_verification_id"]
+            isOneToOne: false
+            referencedRelation: "kyc_verifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       analytics_events: {
         Row: {
           created_at: string
@@ -2623,6 +2703,59 @@ export type Database = {
         }
         Relationships: []
       }
+      extracted_data: {
+        Row: {
+          bounding_box: Json | null
+          confidence: number
+          created_at: string
+          document_id: string
+          field_name: string
+          field_type: string | null
+          field_value: string | null
+          id: string
+          needs_verification: boolean | null
+          page_number: number | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          bounding_box?: Json | null
+          confidence?: number
+          created_at?: string
+          document_id: string
+          field_name: string
+          field_type?: string | null
+          field_value?: string | null
+          id?: string
+          needs_verification?: boolean | null
+          page_number?: number | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          bounding_box?: Json | null
+          confidence?: number
+          created_at?: string
+          document_id?: string
+          field_name?: string
+          field_type?: string | null
+          field_value?: string | null
+          id?: string
+          needs_verification?: boolean | null
+          page_number?: number | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "extracted_data_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "partner_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       funnel_events: {
         Row: {
           campaign: string | null
@@ -3514,6 +3647,96 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      kyc_verifications: {
+        Row: {
+          address_verified: boolean | null
+          address_verified_at: string | null
+          created_at: string
+          documents_verified: boolean | null
+          documents_verified_at: string | null
+          entity_id: string
+          entity_type: string
+          expires_at: string | null
+          id: string
+          identity_verified: boolean | null
+          identity_verified_at: string | null
+          pep_checked: boolean | null
+          pep_status: string | null
+          provider: string | null
+          provider_reference_id: string | null
+          provider_response: Json | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          risk_factors: Json | null
+          risk_level: string | null
+          risk_score: number | null
+          sanctions_checked: boolean | null
+          sanctions_status: string | null
+          status: Database["public"]["Enums"]["kyc_status"] | null
+          updated_at: string
+          verification_level: string | null
+        }
+        Insert: {
+          address_verified?: boolean | null
+          address_verified_at?: string | null
+          created_at?: string
+          documents_verified?: boolean | null
+          documents_verified_at?: string | null
+          entity_id: string
+          entity_type: string
+          expires_at?: string | null
+          id?: string
+          identity_verified?: boolean | null
+          identity_verified_at?: string | null
+          pep_checked?: boolean | null
+          pep_status?: string | null
+          provider?: string | null
+          provider_reference_id?: string | null
+          provider_response?: Json | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          risk_factors?: Json | null
+          risk_level?: string | null
+          risk_score?: number | null
+          sanctions_checked?: boolean | null
+          sanctions_status?: string | null
+          status?: Database["public"]["Enums"]["kyc_status"] | null
+          updated_at?: string
+          verification_level?: string | null
+        }
+        Update: {
+          address_verified?: boolean | null
+          address_verified_at?: string | null
+          created_at?: string
+          documents_verified?: boolean | null
+          documents_verified_at?: string | null
+          entity_id?: string
+          entity_type?: string
+          expires_at?: string | null
+          id?: string
+          identity_verified?: boolean | null
+          identity_verified_at?: string | null
+          pep_checked?: boolean | null
+          pep_status?: string | null
+          provider?: string | null
+          provider_reference_id?: string | null
+          provider_response?: Json | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          risk_factors?: Json | null
+          risk_level?: string | null
+          risk_score?: number | null
+          sanctions_checked?: boolean | null
+          sanctions_status?: string | null
+          status?: Database["public"]["Enums"]["kyc_status"] | null
+          updated_at?: string
+          verification_level?: string | null
+        }
+        Relationships: []
       }
       launch_signups: {
         Row: {
@@ -4512,6 +4735,68 @@ export type Database = {
           },
         ]
       }
+      partner_documents: {
+        Row: {
+          created_at: string
+          document_type: Database["public"]["Enums"]["document_type"]
+          file_name: string | null
+          file_size_bytes: number | null
+          file_url: string
+          id: string
+          metadata: Json | null
+          mime_type: string | null
+          ocr_confidence_score: number | null
+          ocr_error_message: string | null
+          ocr_processed_at: string | null
+          ocr_status: Database["public"]["Enums"]["ocr_status"] | null
+          partner_id: string
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          document_type: Database["public"]["Enums"]["document_type"]
+          file_name?: string | null
+          file_size_bytes?: number | null
+          file_url: string
+          id?: string
+          metadata?: Json | null
+          mime_type?: string | null
+          ocr_confidence_score?: number | null
+          ocr_error_message?: string | null
+          ocr_processed_at?: string | null
+          ocr_status?: Database["public"]["Enums"]["ocr_status"] | null
+          partner_id: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          document_type?: Database["public"]["Enums"]["document_type"]
+          file_name?: string | null
+          file_size_bytes?: number | null
+          file_url?: string
+          id?: string
+          metadata?: Json | null
+          mime_type?: string | null
+          ocr_confidence_score?: number | null
+          ocr_error_message?: string | null
+          ocr_processed_at?: string | null
+          ocr_status?: Database["public"]["Enums"]["ocr_status"] | null
+          partner_id?: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_documents_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       partner_messages: {
         Row: {
           attachments: string[] | null
@@ -5437,6 +5722,66 @@ export type Database = {
         }
         Relationships: []
       }
+      preference_weights: {
+        Row: {
+          category_weights: Json | null
+          communication_style: string | null
+          created_at: string
+          excluded_partners: string[] | null
+          excluded_regions: string[] | null
+          id: string
+          last_interaction_at: string | null
+          max_response_time_hours: number | null
+          min_partner_rating: number | null
+          model_version: string | null
+          preferred_language: string | null
+          preferred_partners: string[] | null
+          preferred_regions: string[] | null
+          price_sensitivity: number | null
+          total_interactions: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category_weights?: Json | null
+          communication_style?: string | null
+          created_at?: string
+          excluded_partners?: string[] | null
+          excluded_regions?: string[] | null
+          id?: string
+          last_interaction_at?: string | null
+          max_response_time_hours?: number | null
+          min_partner_rating?: number | null
+          model_version?: string | null
+          preferred_language?: string | null
+          preferred_partners?: string[] | null
+          preferred_regions?: string[] | null
+          price_sensitivity?: number | null
+          total_interactions?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category_weights?: Json | null
+          communication_style?: string | null
+          created_at?: string
+          excluded_partners?: string[] | null
+          excluded_regions?: string[] | null
+          id?: string
+          last_interaction_at?: string | null
+          max_response_time_hours?: number | null
+          min_partner_rating?: number | null
+          model_version?: string | null
+          preferred_language?: string | null
+          preferred_partners?: string[] | null
+          preferred_regions?: string[] | null
+          price_sensitivity?: number | null
+          total_interactions?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pricing_history: {
         Row: {
           change_type: string
@@ -6266,6 +6611,90 @@ export type Database = {
             columns: ["service_request_id"]
             isOneToOne: false
             referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_interactions: {
+        Row: {
+          added_to_favorites: boolean | null
+          booking_value: number | null
+          clicked_contact: boolean | null
+          converted: boolean | null
+          created_at: string
+          feedback_text: string | null
+          id: string
+          interaction_type: string
+          partner_id: string | null
+          rating: number | null
+          recommendation_rank: number | null
+          recommendation_score: number | null
+          scroll_depth_percent: number | null
+          search_query: string | null
+          service_category: string | null
+          service_id: string | null
+          session_id: string | null
+          source: string | null
+          time_spent_seconds: number | null
+          user_id: string
+        }
+        Insert: {
+          added_to_favorites?: boolean | null
+          booking_value?: number | null
+          clicked_contact?: boolean | null
+          converted?: boolean | null
+          created_at?: string
+          feedback_text?: string | null
+          id?: string
+          interaction_type: string
+          partner_id?: string | null
+          rating?: number | null
+          recommendation_rank?: number | null
+          recommendation_score?: number | null
+          scroll_depth_percent?: number | null
+          search_query?: string | null
+          service_category?: string | null
+          service_id?: string | null
+          session_id?: string | null
+          source?: string | null
+          time_spent_seconds?: number | null
+          user_id: string
+        }
+        Update: {
+          added_to_favorites?: boolean | null
+          booking_value?: number | null
+          clicked_contact?: boolean | null
+          converted?: boolean | null
+          created_at?: string
+          feedback_text?: string | null
+          id?: string
+          interaction_type?: string
+          partner_id?: string | null
+          rating?: number | null
+          recommendation_rank?: number | null
+          recommendation_score?: number | null
+          scroll_depth_percent?: number | null
+          search_query?: string | null
+          service_category?: string | null
+          service_id?: string | null
+          session_id?: string | null
+          source?: string | null
+          time_spent_seconds?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_interactions_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_interactions_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "partner_services"
             referencedColumns: ["id"]
           },
         ]
@@ -8309,14 +8738,47 @@ export type Database = {
       run_data_retention_cleanup: { Args: never; Returns: Json }
     }
     Enums: {
+      aml_alert_type:
+        | "pep_match"
+        | "sanctions_match"
+        | "adverse_media"
+        | "watchlist_match"
+        | "unusual_activity"
+        | "document_discrepancy"
+        | "identity_mismatch"
+      aml_severity: "low" | "medium" | "high" | "critical"
       app_role: "admin" | "partner" | "member"
       bid_status: "pending" | "accepted" | "rejected" | "withdrawn" | "expired"
       certificate_status: "active" | "pending" | "expired" | "revoked"
       connection_status: "pending" | "accepted" | "declined" | "blocked"
+      document_type:
+        | "passport"
+        | "drivers_license"
+        | "national_id"
+        | "business_license"
+        | "tax_certificate"
+        | "insurance_certificate"
+        | "bank_statement"
+        | "utility_bill"
+        | "contract"
+        | "other"
       encryption_key_status: "active" | "rotating" | "retired" | "compromised"
       household_member_status: "active" | "pending" | "suspended"
       household_role: "owner" | "admin" | "member" | "dependent"
       household_type: "family" | "enterprise"
+      kyc_status:
+        | "pending"
+        | "in_progress"
+        | "approved"
+        | "rejected"
+        | "expired"
+        | "manual_review"
+      ocr_status:
+        | "pending"
+        | "processing"
+        | "completed"
+        | "failed"
+        | "manual_review"
       opportunity_status: "open" | "filled" | "closed" | "cancelled"
       opportunity_type:
         | "co_investment"
@@ -8494,14 +8956,51 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      aml_alert_type: [
+        "pep_match",
+        "sanctions_match",
+        "adverse_media",
+        "watchlist_match",
+        "unusual_activity",
+        "document_discrepancy",
+        "identity_mismatch",
+      ],
+      aml_severity: ["low", "medium", "high", "critical"],
       app_role: ["admin", "partner", "member"],
       bid_status: ["pending", "accepted", "rejected", "withdrawn", "expired"],
       certificate_status: ["active", "pending", "expired", "revoked"],
       connection_status: ["pending", "accepted", "declined", "blocked"],
+      document_type: [
+        "passport",
+        "drivers_license",
+        "national_id",
+        "business_license",
+        "tax_certificate",
+        "insurance_certificate",
+        "bank_statement",
+        "utility_bill",
+        "contract",
+        "other",
+      ],
       encryption_key_status: ["active", "rotating", "retired", "compromised"],
       household_member_status: ["active", "pending", "suspended"],
       household_role: ["owner", "admin", "member", "dependent"],
       household_type: ["family", "enterprise"],
+      kyc_status: [
+        "pending",
+        "in_progress",
+        "approved",
+        "rejected",
+        "expired",
+        "manual_review",
+      ],
+      ocr_status: [
+        "pending",
+        "processing",
+        "completed",
+        "failed",
+        "manual_review",
+      ],
       opportunity_status: ["open", "filled", "closed", "cancelled"],
       opportunity_type: [
         "co_investment",

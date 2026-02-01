@@ -170,7 +170,7 @@ const EQProfileModule = ({ isOpen, onClose, onComplete }: EQProfileModuleProps) 
             {!isComplete ? (
               <>
                 {/* Header */}
-                <div className="text-center mb-8">
+                <div className="text-center mb-6">
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
@@ -180,6 +180,36 @@ const EQProfileModule = ({ isOpen, onClose, onComplete }: EQProfileModuleProps) 
                   </motion.div>
                   <h2 className="text-2xl font-serif text-foreground mb-2">Emotional Intelligence Profile</h2>
                   <p className="text-sm text-muted-foreground">Help us understand you for a truly personalized experience</p>
+                </div>
+
+                {/* Category Indicators - All 4 categories shown at top */}
+                <div className="flex justify-center gap-2 mb-6">
+                  {(["emotional", "social", "lifestyle", "preferences"] as const).map((cat) => {
+                    const categoryQuestions = questions.filter(q => q.category === cat);
+                    const isCurrentCategory = question.category === cat;
+                    const categoryCompleted = categoryQuestions.every(q => answers[q.id]);
+                    const categoryIcon = cat === "emotional" ? Heart : cat === "social" ? Sparkles : cat === "lifestyle" ? Sun : Compass;
+                    const IconComponent = categoryIcon;
+                    
+                    return (
+                      <motion.div
+                        key={cat}
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                          isCurrentCategory
+                            ? "bg-primary/20 text-primary border border-primary/50"
+                            : categoryCompleted
+                              ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                              : "bg-secondary/50 text-muted-foreground border border-border/30"
+                        }`}
+                      >
+                        <IconComponent className="w-3 h-3" />
+                        <span className="capitalize">{cat}</span>
+                        {categoryCompleted && <Check className="w-3 h-3" />}
+                      </motion.div>
+                    );
+                  })}
                 </div>
 
                 {/* Progress */}
@@ -198,8 +228,24 @@ const EQProfileModule = ({ isOpen, onClose, onComplete }: EQProfileModuleProps) 
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
-                    className="space-y-6"
+                    className="space-y-4"
                   >
+                    {/* Category Badge */}
+                    <div className="flex justify-center">
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider ${
+                        question.category === "emotional" ? "bg-pink-500/20 text-pink-400 border border-pink-500/30" :
+                        question.category === "social" ? "bg-purple-500/20 text-purple-400 border border-purple-500/30" :
+                        question.category === "lifestyle" ? "bg-amber-500/20 text-amber-400 border border-amber-500/30" :
+                        "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                      }`}>
+                        {question.category === "emotional" && <Heart className="w-3 h-3" />}
+                        {question.category === "social" && <Sparkles className="w-3 h-3" />}
+                        {question.category === "lifestyle" && <Sun className="w-3 h-3" />}
+                        {question.category === "preferences" && <Compass className="w-3 h-3" />}
+                        {question.category}
+                      </span>
+                    </div>
+                    
                     <h3 className="text-xl font-serif text-center text-foreground">
                       {question.question}
                     </h3>

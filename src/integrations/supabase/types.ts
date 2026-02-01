@@ -519,6 +519,69 @@ export type Database = {
         }
         Relationships: []
       }
+      anomaly_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          actual_value: number | null
+          affected_entity_id: string | null
+          affected_entity_type: string | null
+          alert_type: string
+          created_at: string | null
+          description: string | null
+          deviation_percent: number | null
+          expected_value: number | null
+          id: string
+          metric_name: string | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string | null
+          status: string | null
+          title: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          actual_value?: number | null
+          affected_entity_id?: string | null
+          affected_entity_type?: string | null
+          alert_type: string
+          created_at?: string | null
+          description?: string | null
+          deviation_percent?: number | null
+          expected_value?: number | null
+          id?: string
+          metric_name?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string | null
+          status?: string | null
+          title: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          actual_value?: number | null
+          affected_entity_id?: string | null
+          affected_entity_type?: string | null
+          alert_type?: string
+          created_at?: string | null
+          description?: string | null
+          deviation_percent?: number | null
+          expected_value?: number | null
+          id?: string
+          metric_name?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string | null
+          status?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       app_settings: {
         Row: {
           created_at: string
@@ -1381,6 +1444,104 @@ export type Database = {
         }
         Relationships: []
       }
+      campaign_analytics: {
+        Row: {
+          campaign_id: string | null
+          channel_breakdown: Json | null
+          conversion_value: number | null
+          cost_per_click: number | null
+          cost_per_conversion: number | null
+          created_at: string | null
+          date: string
+          id: string
+          return_on_ad_spend: number | null
+          total_clicks: number | null
+          total_conversions: number | null
+          total_engagement: number | null
+          total_impressions: number | null
+          total_reach: number | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          channel_breakdown?: Json | null
+          conversion_value?: number | null
+          cost_per_click?: number | null
+          cost_per_conversion?: number | null
+          created_at?: string | null
+          date: string
+          id?: string
+          return_on_ad_spend?: number | null
+          total_clicks?: number | null
+          total_conversions?: number | null
+          total_engagement?: number | null
+          total_impressions?: number | null
+          total_reach?: number | null
+        }
+        Update: {
+          campaign_id?: string | null
+          channel_breakdown?: Json | null
+          conversion_value?: number | null
+          cost_per_click?: number | null
+          cost_per_conversion?: number | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          return_on_ad_spend?: number | null
+          total_clicks?: number | null
+          total_conversions?: number | null
+          total_engagement?: number | null
+          total_impressions?: number | null
+          total_reach?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_analytics_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "marketing_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_content: {
+        Row: {
+          assigned_at: string | null
+          assigned_by: string | null
+          campaign_id: string | null
+          content_id: string | null
+          id: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          campaign_id?: string | null
+          content_id?: string | null
+          id?: string
+        }
+        Update: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          campaign_id?: string | null
+          content_id?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_content_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "marketing_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_content_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "social_content"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       certificates: {
         Row: {
           auto_renew: boolean | null
@@ -1802,6 +1963,89 @@ export type Database = {
         }
         Relationships: []
       }
+      cohort_definitions: {
+        Row: {
+          avg_lifetime_value: number | null
+          cohort_name: string
+          cohort_type: string
+          color_hex: string | null
+          created_at: string | null
+          created_by: string | null
+          definition_rules: Json
+          description: string | null
+          id: string
+          is_active: boolean | null
+          last_calculated_at: string | null
+          member_count: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          avg_lifetime_value?: number | null
+          cohort_name: string
+          cohort_type: string
+          color_hex?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          definition_rules: Json
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_calculated_at?: string | null
+          member_count?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          avg_lifetime_value?: number | null
+          cohort_name?: string
+          cohort_type?: string
+          color_hex?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          definition_rules?: Json
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_calculated_at?: string | null
+          member_count?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      cohort_members: {
+        Row: {
+          cohort_id: string
+          id: string
+          is_active: boolean | null
+          joined_at: string | null
+          left_at: string | null
+          user_id: string
+        }
+        Insert: {
+          cohort_id: string
+          id?: string
+          is_active?: boolean | null
+          joined_at?: string | null
+          left_at?: string | null
+          user_id: string
+        }
+        Update: {
+          cohort_id?: string
+          id?: string
+          is_active?: boolean | null
+          joined_at?: string | null
+          left_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cohort_members_cohort_id_fkey"
+            columns: ["cohort_id"]
+            isOneToOne: false
+            referencedRelation: "cohort_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       comment_likes: {
         Row: {
           comment_id: string
@@ -2213,6 +2457,69 @@ export type Database = {
         }
         Relationships: []
       }
+      content_ab_tests: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          ended_at: string | null
+          id: string
+          metric_to_optimize: string | null
+          name: string
+          started_at: string | null
+          statistical_significance: number | null
+          status: string | null
+          variant_a_content_id: string | null
+          variant_b_content_id: string | null
+          winner_variant: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          ended_at?: string | null
+          id?: string
+          metric_to_optimize?: string | null
+          name: string
+          started_at?: string | null
+          statistical_significance?: number | null
+          status?: string | null
+          variant_a_content_id?: string | null
+          variant_b_content_id?: string | null
+          winner_variant?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          ended_at?: string | null
+          id?: string
+          metric_to_optimize?: string | null
+          name?: string
+          started_at?: string | null
+          statistical_significance?: number | null
+          status?: string | null
+          variant_a_content_id?: string | null
+          variant_b_content_id?: string | null
+          winner_variant?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_ab_tests_variant_a_content_id_fkey"
+            columns: ["variant_a_content_id"]
+            isOneToOne: false
+            referencedRelation: "social_content"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_ab_tests_variant_b_content_id_fkey"
+            columns: ["variant_b_content_id"]
+            isOneToOne: false
+            referencedRelation: "social_content"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       content_gaps: {
         Row: {
           assigned_to: string | null
@@ -2502,6 +2809,48 @@ export type Database = {
         }
         Relationships: []
       }
+      dashboard_metrics: {
+        Row: {
+          change_percent: number | null
+          created_at: string | null
+          dimensions: Json | null
+          granularity: string | null
+          id: string
+          metric_name: string
+          metric_type: string
+          metric_value: number
+          period_end: string
+          period_start: string
+          previous_value: number | null
+        }
+        Insert: {
+          change_percent?: number | null
+          created_at?: string | null
+          dimensions?: Json | null
+          granularity?: string | null
+          id?: string
+          metric_name: string
+          metric_type: string
+          metric_value: number
+          period_end: string
+          period_start: string
+          previous_value?: number | null
+        }
+        Update: {
+          change_percent?: number | null
+          created_at?: string | null
+          dimensions?: Json | null
+          granularity?: string | null
+          id?: string
+          metric_name?: string
+          metric_type?: string
+          metric_value?: number
+          period_end?: string
+          period_start?: string
+          previous_value?: number | null
+        }
+        Relationships: []
+      }
       db_schema_cache: {
         Row: {
           id: string
@@ -2783,6 +3132,60 @@ export type Database = {
           rotated_at?: string | null
           rotation_interval_days?: number | null
           status?: Database["public"]["Enums"]["encryption_key_status"]
+        }
+        Relationships: []
+      }
+      engagement_scores: {
+        Row: {
+          activity_score: number | null
+          created_at: string | null
+          feedback_score: number | null
+          id: string
+          last_calculated_at: string | null
+          lifetime_value_estimate: number | null
+          loyalty_score: number | null
+          overall_score: number | null
+          referral_score: number | null
+          risk_of_churn: number | null
+          score_breakdown: Json | null
+          spending_score: number | null
+          tier_recommendation: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          activity_score?: number | null
+          created_at?: string | null
+          feedback_score?: number | null
+          id?: string
+          last_calculated_at?: string | null
+          lifetime_value_estimate?: number | null
+          loyalty_score?: number | null
+          overall_score?: number | null
+          referral_score?: number | null
+          risk_of_churn?: number | null
+          score_breakdown?: Json | null
+          spending_score?: number | null
+          tier_recommendation?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          activity_score?: number | null
+          created_at?: string | null
+          feedback_score?: number | null
+          id?: string
+          last_calculated_at?: string | null
+          lifetime_value_estimate?: number | null
+          loyalty_score?: number | null
+          overall_score?: number | null
+          referral_score?: number | null
+          risk_of_churn?: number | null
+          score_breakdown?: Json | null
+          spending_score?: number | null
+          tier_recommendation?: string | null
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -5016,6 +5419,66 @@ export type Database = {
         }
         Relationships: []
       }
+      marketing_campaigns: {
+        Row: {
+          budget_amount: number | null
+          budget_currency: string | null
+          campaign_type: string | null
+          channels: string[] | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          end_date: string | null
+          goals: Json | null
+          id: string
+          name: string
+          spent_amount: number | null
+          start_date: string | null
+          status: string | null
+          tags: string[] | null
+          target_audience: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          budget_amount?: number | null
+          budget_currency?: string | null
+          campaign_type?: string | null
+          channels?: string[] | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
+          goals?: Json | null
+          id?: string
+          name: string
+          spent_amount?: number | null
+          start_date?: string | null
+          status?: string | null
+          tags?: string[] | null
+          target_audience?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          budget_amount?: number | null
+          budget_currency?: string | null
+          campaign_type?: string | null
+          channels?: string[] | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
+          goals?: Json | null
+          id?: string
+          name?: string
+          spent_amount?: number | null
+          start_date?: string | null
+          status?: string | null
+          tags?: string[] | null
+          target_audience?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       marketing_strategies: {
         Row: {
           category: string
@@ -7179,6 +7642,60 @@ export type Database = {
         }
         Relationships: []
       }
+      proactive_recommendations: {
+        Row: {
+          accepted_at: string | null
+          action_label: string | null
+          action_url: string | null
+          confidence_score: number | null
+          context_data: Json | null
+          created_at: string | null
+          description: string | null
+          dismissed_at: string | null
+          expires_at: string | null
+          id: string
+          reasoning: Json | null
+          recommendation_type: string
+          status: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          action_label?: string | null
+          action_url?: string | null
+          confidence_score?: number | null
+          context_data?: Json | null
+          created_at?: string | null
+          description?: string | null
+          dismissed_at?: string | null
+          expires_at?: string | null
+          id?: string
+          reasoning?: Json | null
+          recommendation_type: string
+          status?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string | null
+          action_label?: string | null
+          action_url?: string | null
+          confidence_score?: number | null
+          context_data?: Json | null
+          created_at?: string | null
+          description?: string | null
+          dismissed_at?: string | null
+          expires_at?: string | null
+          id?: string
+          reasoning?: Json | null
+          recommendation_type?: string
+          status?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -8915,6 +9432,77 @@ export type Database = {
         }
         Relationships: []
       }
+      social_content: {
+        Row: {
+          ai_model: string | null
+          approval_status: string | null
+          approved_at: string | null
+          approved_by: string | null
+          call_to_action: string | null
+          content_type: string
+          created_at: string | null
+          created_by: string | null
+          generated_text: string
+          generation_params: Json | null
+          hashtags: string[] | null
+          id: string
+          media_urls: string[] | null
+          mentions: string[] | null
+          platform: string
+          rejection_reason: string | null
+          template_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          ai_model?: string | null
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          call_to_action?: string | null
+          content_type?: string
+          created_at?: string | null
+          created_by?: string | null
+          generated_text: string
+          generation_params?: Json | null
+          hashtags?: string[] | null
+          id?: string
+          media_urls?: string[] | null
+          mentions?: string[] | null
+          platform: string
+          rejection_reason?: string | null
+          template_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          ai_model?: string | null
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          call_to_action?: string | null
+          content_type?: string
+          created_at?: string | null
+          created_by?: string | null
+          generated_text?: string
+          generation_params?: Json | null
+          hashtags?: string[] | null
+          id?: string
+          media_urls?: string[] | null
+          mentions?: string[] | null
+          platform?: string
+          rejection_reason?: string | null
+          template_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_content_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "social_content_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       social_content_library: {
         Row: {
           category: string | null
@@ -8966,6 +9554,131 @@ export type Database = {
         }
         Relationships: []
       }
+      social_content_templates: {
+        Row: {
+          content_type: string
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          hashtag_strategy: Json | null
+          id: string
+          is_active: boolean | null
+          name: string
+          platform: string
+          target_audience: string[] | null
+          template_text: string
+          tone: string | null
+          updated_at: string | null
+          variables: string[] | null
+        }
+        Insert: {
+          content_type?: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          hashtag_strategy?: Json | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          platform: string
+          target_audience?: string[] | null
+          template_text: string
+          tone?: string | null
+          updated_at?: string | null
+          variables?: string[] | null
+        }
+        Update: {
+          content_type?: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          hashtag_strategy?: Json | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          platform?: string
+          target_audience?: string[] | null
+          template_text?: string
+          tone?: string | null
+          updated_at?: string | null
+          variables?: string[] | null
+        }
+        Relationships: []
+      }
+      social_performance_metrics: {
+        Row: {
+          clicks: number | null
+          comments: number | null
+          created_at: string | null
+          demographic_insights: Json | null
+          engagement_rate: number | null
+          fetched_at: string | null
+          follower_change: number | null
+          id: string
+          impressions: number | null
+          likes: number | null
+          platform: string
+          platform_post_id: string | null
+          post_schedule_id: string | null
+          reach: number | null
+          saves: number | null
+          sentiment_breakdown: Json | null
+          sentiment_score: number | null
+          shares: number | null
+          video_views: number | null
+        }
+        Insert: {
+          clicks?: number | null
+          comments?: number | null
+          created_at?: string | null
+          demographic_insights?: Json | null
+          engagement_rate?: number | null
+          fetched_at?: string | null
+          follower_change?: number | null
+          id?: string
+          impressions?: number | null
+          likes?: number | null
+          platform: string
+          platform_post_id?: string | null
+          post_schedule_id?: string | null
+          reach?: number | null
+          saves?: number | null
+          sentiment_breakdown?: Json | null
+          sentiment_score?: number | null
+          shares?: number | null
+          video_views?: number | null
+        }
+        Update: {
+          clicks?: number | null
+          comments?: number | null
+          created_at?: string | null
+          demographic_insights?: Json | null
+          engagement_rate?: number | null
+          fetched_at?: string | null
+          follower_change?: number | null
+          id?: string
+          impressions?: number | null
+          likes?: number | null
+          platform?: string
+          platform_post_id?: string | null
+          post_schedule_id?: string | null
+          reach?: number | null
+          saves?: number | null
+          sentiment_breakdown?: Json | null
+          sentiment_score?: number | null
+          shares?: number | null
+          video_views?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_performance_metrics_post_schedule_id_fkey"
+            columns: ["post_schedule_id"]
+            isOneToOne: false
+            referencedRelation: "social_post_schedule"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       social_post_analytics: {
         Row: {
           clicks: number | null
@@ -9015,6 +9728,71 @@ export type Database = {
             columns: ["post_id"]
             isOneToOne: false
             referencedRelation: "social_advertising_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_post_schedule: {
+        Row: {
+          account_id: string | null
+          content_id: string | null
+          created_at: string | null
+          created_by: string | null
+          error_message: string | null
+          id: string
+          max_retries: number | null
+          platform: string
+          platform_post_id: string | null
+          platform_response: Json | null
+          published_at: string | null
+          retry_count: number | null
+          scheduled_for: string
+          status: string | null
+          timezone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          account_id?: string | null
+          content_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          error_message?: string | null
+          id?: string
+          max_retries?: number | null
+          platform: string
+          platform_post_id?: string | null
+          platform_response?: Json | null
+          published_at?: string | null
+          retry_count?: number | null
+          scheduled_for: string
+          status?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          account_id?: string | null
+          content_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          error_message?: string | null
+          id?: string
+          max_retries?: number | null
+          platform?: string
+          platform_post_id?: string | null
+          platform_response?: Json | null
+          published_at?: string | null
+          retry_count?: number | null
+          scheduled_for?: string
+          status?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_post_schedule_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "social_content"
             referencedColumns: ["id"]
           },
         ]
@@ -9222,6 +10000,48 @@ export type Database = {
           traveler_archetype?: string | null
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      trend_analysis: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          data_points: Json | null
+          id: string
+          insights: string | null
+          magnitude: number | null
+          peak_date: string | null
+          recommendations: string[] | null
+          start_date: string | null
+          trend_direction: string | null
+          trend_type: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          data_points?: Json | null
+          id?: string
+          insights?: string | null
+          magnitude?: number | null
+          peak_date?: string | null
+          recommendations?: string[] | null
+          start_date?: string | null
+          trend_direction?: string | null
+          trend_type: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          data_points?: Json | null
+          id?: string
+          insights?: string | null
+          magnitude?: number | null
+          peak_date?: string | null
+          recommendations?: string[] | null
+          start_date?: string | null
+          trend_direction?: string | null
+          trend_type?: string
         }
         Relationships: []
       }

@@ -266,3 +266,12 @@ verify_jwt = false
 
 [functions.offline-sync]
 verify_jwt = false
+
+[functions.social-content-generator]
+verify_jwt = false
+
+[functions.social-scheduler]
+verify_jwt = false
+
+[functions.marketing-analytics]
+verify_jwt = false

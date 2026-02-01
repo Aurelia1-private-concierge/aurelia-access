@@ -2448,6 +2448,36 @@ export type Database = {
           },
         ]
       }
+      currency_exchange_cache: {
+        Row: {
+          base_currency: string
+          expires_at: string
+          fetched_at: string
+          id: string
+          rate: number
+          source: string | null
+          target_currency: string
+        }
+        Insert: {
+          base_currency: string
+          expires_at: string
+          fetched_at?: string
+          id?: string
+          rate: number
+          source?: string | null
+          target_currency: string
+        }
+        Update: {
+          base_currency?: string
+          expires_at?: string
+          fetched_at?: string
+          id?: string
+          rate?: number
+          source?: string | null
+          target_currency?: string
+        }
+        Relationships: []
+      }
       currency_rates_cache: {
         Row: {
           base_currency: string
@@ -3061,6 +3091,107 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      fraud_alerts: {
+        Row: {
+          action_reason: string | null
+          action_taken: string | null
+          alert_type: string
+          created_at: string
+          id: string
+          is_false_positive: boolean | null
+          payment_intent_id: string | null
+          resolution: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          rule_details: Json | null
+          rule_triggered: string | null
+          severity: string
+          user_id: string | null
+        }
+        Insert: {
+          action_reason?: string | null
+          action_taken?: string | null
+          alert_type: string
+          created_at?: string
+          id?: string
+          is_false_positive?: boolean | null
+          payment_intent_id?: string | null
+          resolution?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          rule_details?: Json | null
+          rule_triggered?: string | null
+          severity?: string
+          user_id?: string | null
+        }
+        Update: {
+          action_reason?: string | null
+          action_taken?: string | null
+          alert_type?: string
+          created_at?: string
+          id?: string
+          is_false_positive?: boolean | null
+          payment_intent_id?: string | null
+          resolution?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          rule_details?: Json | null
+          rule_triggered?: string | null
+          severity?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fraud_alerts_payment_intent_id_fkey"
+            columns: ["payment_intent_id"]
+            isOneToOne: false
+            referencedRelation: "payment_intents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fraud_rules: {
+        Row: {
+          action: string
+          condition: Json
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          priority: number | null
+          rule_type: string
+          severity: string
+          updated_at: string
+        }
+        Insert: {
+          action?: string
+          condition: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          priority?: number | null
+          rule_type: string
+          severity?: string
+          updated_at?: string
+        }
+        Update: {
+          action?: string
+          condition?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          priority?: number | null
+          rule_type?: string
+          severity?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       funnel_events: {
         Row: {
@@ -5755,6 +5886,132 @@ export type Database = {
           last_used_at?: string | null
           public_key?: string
           transports?: string[] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      payment_intents: {
+        Row: {
+          amount: number
+          converted_amount: number | null
+          converted_currency: string | null
+          created_at: string
+          currency: string
+          description: string | null
+          device_fingerprint: string | null
+          exchange_rate: number | null
+          fraud_score: number | null
+          fraud_status: string | null
+          geolocation: Json | null
+          id: string
+          ip_address: unknown
+          metadata: Json | null
+          partner_id: string | null
+          risk_factors: Json | null
+          service_request_id: string | null
+          status: string
+          stripe_payment_intent_id: string | null
+          updated_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          converted_amount?: number | null
+          converted_currency?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          device_fingerprint?: string | null
+          exchange_rate?: number | null
+          fraud_score?: number | null
+          fraud_status?: string | null
+          geolocation?: Json | null
+          id?: string
+          ip_address?: unknown
+          metadata?: Json | null
+          partner_id?: string | null
+          risk_factors?: Json | null
+          service_request_id?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          converted_amount?: number | null
+          converted_currency?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          device_fingerprint?: string | null
+          exchange_rate?: number | null
+          fraud_score?: number | null
+          fraud_status?: string | null
+          geolocation?: Json | null
+          id?: string
+          ip_address?: unknown
+          metadata?: Json | null
+          partner_id?: string | null
+          risk_factors?: Json | null
+          service_request_id?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_intents_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_intents_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_velocity: {
+        Row: {
+          created_at: string
+          currencies_used: string[] | null
+          id: string
+          period_start: string
+          period_type: string
+          total_amount: number | null
+          transaction_count: number | null
+          unique_ips: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          currencies_used?: string[] | null
+          id?: string
+          period_start: string
+          period_type: string
+          total_amount?: number | null
+          transaction_count?: number | null
+          unique_ips?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          currencies_used?: string[] | null
+          id?: string
+          period_start?: string
+          period_type?: string
+          total_amount?: number | null
+          transaction_count?: number | null
+          unique_ips?: number | null
           user_id?: string
         }
         Relationships: []
@@ -8930,6 +9187,160 @@ export type Database = {
           timestamp?: string
           user_agent?: string | null
           visit_date?: string
+        }
+        Relationships: []
+      }
+      voice_commands: {
+        Row: {
+          action_result: Json | null
+          action_taken: string | null
+          confidence: number | null
+          created_at: string
+          entities: Json | null
+          id: string
+          intent: string | null
+          latency_ms: number | null
+          response_audio_url: string | null
+          response_text: string | null
+          session_id: string | null
+          transcript: string
+          user_id: string
+        }
+        Insert: {
+          action_result?: Json | null
+          action_taken?: string | null
+          confidence?: number | null
+          created_at?: string
+          entities?: Json | null
+          id?: string
+          intent?: string | null
+          latency_ms?: number | null
+          response_audio_url?: string | null
+          response_text?: string | null
+          session_id?: string | null
+          transcript: string
+          user_id: string
+        }
+        Update: {
+          action_result?: Json | null
+          action_taken?: string | null
+          confidence?: number | null
+          created_at?: string
+          entities?: Json | null
+          id?: string
+          intent?: string | null
+          latency_ms?: number | null
+          response_audio_url?: string | null
+          response_text?: string | null
+          session_id?: string | null
+          transcript?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voice_commands_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "voice_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      voice_sessions: {
+        Row: {
+          commands_executed: number | null
+          conversation_id: string | null
+          created_at: string
+          duration_seconds: number | null
+          ended_at: string | null
+          id: string
+          intents_detected: Json | null
+          metadata: Json | null
+          provider: string | null
+          session_type: string
+          started_at: string
+          transcript_summary: string | null
+          user_id: string
+          voiceprint_confidence: number | null
+          voiceprint_verified: boolean | null
+        }
+        Insert: {
+          commands_executed?: number | null
+          conversation_id?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          ended_at?: string | null
+          id?: string
+          intents_detected?: Json | null
+          metadata?: Json | null
+          provider?: string | null
+          session_type?: string
+          started_at?: string
+          transcript_summary?: string | null
+          user_id: string
+          voiceprint_confidence?: number | null
+          voiceprint_verified?: boolean | null
+        }
+        Update: {
+          commands_executed?: number | null
+          conversation_id?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          ended_at?: string | null
+          id?: string
+          intents_detected?: Json | null
+          metadata?: Json | null
+          provider?: string | null
+          session_type?: string
+          started_at?: string
+          transcript_summary?: string | null
+          user_id?: string
+          voiceprint_confidence?: number | null
+          voiceprint_verified?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voice_sessions_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      voiceprint_registry: {
+        Row: {
+          created_at: string
+          enrollment_samples: number | null
+          id: string
+          is_active: boolean | null
+          last_verified_at: string | null
+          updated_at: string
+          user_id: string
+          verification_threshold: number | null
+          voiceprint_hash: string
+        }
+        Insert: {
+          created_at?: string
+          enrollment_samples?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_verified_at?: string | null
+          updated_at?: string
+          user_id: string
+          verification_threshold?: number | null
+          voiceprint_hash: string
+        }
+        Update: {
+          created_at?: string
+          enrollment_samples?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_verified_at?: string | null
+          updated_at?: string
+          user_id?: string
+          verification_threshold?: number | null
+          voiceprint_hash?: string
         }
         Relationships: []
       }

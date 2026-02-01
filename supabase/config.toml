@@ -248,3 +248,9 @@ verify_jwt = false
 
 [functions.kyc-aml-checker]
 verify_jwt = false
+
+[functions.pii-redaction-service]
+verify_jwt = false
+
+[functions.e-signature-handler]
+verify_jwt = false

@@ -1021,6 +1021,72 @@ export type Database = {
         }
         Relationships: []
       }
+      bid_notifications: {
+        Row: {
+          bid_id: string | null
+          created_at: string
+          data: Json | null
+          delivered_via: string[] | null
+          id: string
+          is_read: boolean | null
+          message: string | null
+          notification_type: string
+          partner_id: string | null
+          read_at: string | null
+          recipient_id: string | null
+          recipient_type: string
+          service_request_id: string
+          title: string
+        }
+        Insert: {
+          bid_id?: string | null
+          created_at?: string
+          data?: Json | null
+          delivered_via?: string[] | null
+          id?: string
+          is_read?: boolean | null
+          message?: string | null
+          notification_type: string
+          partner_id?: string | null
+          read_at?: string | null
+          recipient_id?: string | null
+          recipient_type: string
+          service_request_id: string
+          title: string
+        }
+        Update: {
+          bid_id?: string | null
+          created_at?: string
+          data?: Json | null
+          delivered_via?: string[] | null
+          id?: string
+          is_read?: boolean | null
+          message?: string | null
+          notification_type?: string
+          partner_id?: string | null
+          read_at?: string | null
+          recipient_id?: string | null
+          recipient_type?: string
+          service_request_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bid_notifications_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bid_notifications_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bid_revisions: {
         Row: {
           bid_id: string
@@ -2502,6 +2568,74 @@ export type Database = {
         }
         Relationships: []
       }
+      document_signers: {
+        Row: {
+          created_at: string
+          decline_reason: string | null
+          declined_at: string | null
+          document_id: string
+          email: string
+          id: string
+          name: string
+          provider_recipient_id: string | null
+          role: string | null
+          signature_data: Json | null
+          signature_ip: string | null
+          signature_user_agent: string | null
+          signed_at: string | null
+          signing_order: number | null
+          status: string | null
+          user_id: string | null
+          viewed_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          decline_reason?: string | null
+          declined_at?: string | null
+          document_id: string
+          email: string
+          id?: string
+          name: string
+          provider_recipient_id?: string | null
+          role?: string | null
+          signature_data?: Json | null
+          signature_ip?: string | null
+          signature_user_agent?: string | null
+          signed_at?: string | null
+          signing_order?: number | null
+          status?: string | null
+          user_id?: string | null
+          viewed_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          decline_reason?: string | null
+          declined_at?: string | null
+          document_id?: string
+          email?: string
+          id?: string
+          name?: string
+          provider_recipient_id?: string | null
+          role?: string | null
+          signature_data?: Json | null
+          signature_ip?: string | null
+          signature_user_agent?: string | null
+          signed_at?: string | null
+          signing_order?: number | null
+          status?: string | null
+          user_id?: string | null
+          viewed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_signers_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "legal_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       edge_function_metrics: {
         Row: {
           created_at: string
@@ -2669,6 +2803,178 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      event_participants: {
+        Row: {
+          accessibility_needs: string | null
+          checked_in: boolean | null
+          checked_in_at: string | null
+          created_at: string
+          dietary_restrictions: string | null
+          email: string | null
+          event_id: string
+          id: string
+          invitation_sent_at: string | null
+          invitation_status: string | null
+          name: string | null
+          notes: string | null
+          phone: string | null
+          plus_one_count: number | null
+          responded_at: string | null
+          role: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          accessibility_needs?: string | null
+          checked_in?: boolean | null
+          checked_in_at?: string | null
+          created_at?: string
+          dietary_restrictions?: string | null
+          email?: string | null
+          event_id: string
+          id?: string
+          invitation_sent_at?: string | null
+          invitation_status?: string | null
+          name?: string | null
+          notes?: string | null
+          phone?: string | null
+          plus_one_count?: number | null
+          responded_at?: string | null
+          role?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          accessibility_needs?: string | null
+          checked_in?: boolean | null
+          checked_in_at?: string | null
+          created_at?: string
+          dietary_restrictions?: string | null
+          email?: string | null
+          event_id?: string
+          id?: string
+          invitation_sent_at?: string | null
+          invitation_status?: string | null
+          name?: string | null
+          notes?: string | null
+          phone?: string | null
+          plus_one_count?: number | null
+          responded_at?: string | null
+          role?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_participants_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          actual_spend: number | null
+          created_at: string
+          currency: string | null
+          current_guest_count: number | null
+          description: string | null
+          end_date: string | null
+          estimated_budget: number | null
+          event_type: string | null
+          id: string
+          is_all_day: boolean | null
+          is_virtual: boolean | null
+          max_guests: number | null
+          metadata: Json | null
+          organizer_id: string
+          organizer_type: string | null
+          service_request_id: string | null
+          start_date: string
+          status: Database["public"]["Enums"]["event_status"] | null
+          tags: string[] | null
+          timezone: string | null
+          title: string
+          updated_at: string
+          venue_address: string | null
+          venue_city: string | null
+          venue_country: string | null
+          venue_name: string | null
+          virtual_meeting_url: string | null
+          visibility: string | null
+        }
+        Insert: {
+          actual_spend?: number | null
+          created_at?: string
+          currency?: string | null
+          current_guest_count?: number | null
+          description?: string | null
+          end_date?: string | null
+          estimated_budget?: number | null
+          event_type?: string | null
+          id?: string
+          is_all_day?: boolean | null
+          is_virtual?: boolean | null
+          max_guests?: number | null
+          metadata?: Json | null
+          organizer_id: string
+          organizer_type?: string | null
+          service_request_id?: string | null
+          start_date: string
+          status?: Database["public"]["Enums"]["event_status"] | null
+          tags?: string[] | null
+          timezone?: string | null
+          title: string
+          updated_at?: string
+          venue_address?: string | null
+          venue_city?: string | null
+          venue_country?: string | null
+          venue_name?: string | null
+          virtual_meeting_url?: string | null
+          visibility?: string | null
+        }
+        Update: {
+          actual_spend?: number | null
+          created_at?: string
+          currency?: string | null
+          current_guest_count?: number | null
+          description?: string | null
+          end_date?: string | null
+          estimated_budget?: number | null
+          event_type?: string | null
+          id?: string
+          is_all_day?: boolean | null
+          is_virtual?: boolean | null
+          max_guests?: number | null
+          metadata?: Json | null
+          organizer_id?: string
+          organizer_type?: string | null
+          service_request_id?: string | null
+          start_date?: string
+          status?: Database["public"]["Enums"]["event_status"] | null
+          tags?: string[] | null
+          timezone?: string | null
+          title?: string
+          updated_at?: string
+          venue_address?: string | null
+          venue_city?: string | null
+          venue_country?: string | null
+          venue_name?: string | null
+          virtual_meeting_url?: string | null
+          visibility?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       exit_intent_conversions: {
         Row: {
@@ -3869,6 +4175,115 @@ export type Database = {
           url?: string | null
         }
         Relationships: []
+      }
+      legal_documents: {
+        Row: {
+          completed_at: string | null
+          completed_signatures: number | null
+          content: string | null
+          created_at: string
+          created_by: string
+          document_type: Database["public"]["Enums"]["legal_document_type"]
+          event_id: string | null
+          expires_at: string | null
+          file_url: string | null
+          id: string
+          metadata: Json | null
+          partner_id: string | null
+          provider: string | null
+          provider_document_id: string | null
+          provider_envelope_id: string | null
+          requires_signatures: number | null
+          sent_at: string | null
+          service_request_id: string | null
+          signature_status:
+            | Database["public"]["Enums"]["signature_status"]
+            | null
+          template_id: string | null
+          title: string
+          updated_at: string
+          voided_at: string | null
+          voided_reason: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          completed_signatures?: number | null
+          content?: string | null
+          created_at?: string
+          created_by: string
+          document_type: Database["public"]["Enums"]["legal_document_type"]
+          event_id?: string | null
+          expires_at?: string | null
+          file_url?: string | null
+          id?: string
+          metadata?: Json | null
+          partner_id?: string | null
+          provider?: string | null
+          provider_document_id?: string | null
+          provider_envelope_id?: string | null
+          requires_signatures?: number | null
+          sent_at?: string | null
+          service_request_id?: string | null
+          signature_status?:
+            | Database["public"]["Enums"]["signature_status"]
+            | null
+          template_id?: string | null
+          title: string
+          updated_at?: string
+          voided_at?: string | null
+          voided_reason?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          completed_signatures?: number | null
+          content?: string | null
+          created_at?: string
+          created_by?: string
+          document_type?: Database["public"]["Enums"]["legal_document_type"]
+          event_id?: string | null
+          expires_at?: string | null
+          file_url?: string | null
+          id?: string
+          metadata?: Json | null
+          partner_id?: string | null
+          provider?: string | null
+          provider_document_id?: string | null
+          provider_envelope_id?: string | null
+          requires_signatures?: number | null
+          sent_at?: string | null
+          service_request_id?: string | null
+          signature_status?:
+            | Database["public"]["Enums"]["signature_status"]
+            | null
+          template_id?: string | null
+          title?: string
+          updated_at?: string
+          voided_at?: string | null
+          voided_reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_documents_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_documents_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_documents_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       lifestyle_opportunities: {
         Row: {
@@ -6086,6 +6501,104 @@ export type Database = {
           created_at?: string
           id?: string
           identifier?: string
+        }
+        Relationships: []
+      }
+      redaction_logs: {
+        Row: {
+          created_at: string
+          entity_id: string
+          entity_type: string
+          field_name: string
+          id: string
+          redaction_type: string | null
+          rule_id: string | null
+          viewer_id: string | null
+          viewer_role: string | null
+        }
+        Insert: {
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          field_name: string
+          id?: string
+          redaction_type?: string | null
+          rule_id?: string | null
+          viewer_id?: string | null
+          viewer_role?: string | null
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          field_name?: string
+          id?: string
+          redaction_type?: string | null
+          rule_id?: string | null
+          viewer_id?: string | null
+          viewer_role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "redaction_logs_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "redaction_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      redaction_rules: {
+        Row: {
+          applies_to_roles: string[] | null
+          created_at: string
+          description: string | null
+          exception_roles: string[] | null
+          field_names: string[]
+          id: string
+          is_active: boolean | null
+          mask_character: string | null
+          pattern_type: string | null
+          preserve_length: boolean | null
+          redaction_type: string | null
+          regex_pattern: string | null
+          rule_name: string
+          show_last_n: number | null
+          updated_at: string
+        }
+        Insert: {
+          applies_to_roles?: string[] | null
+          created_at?: string
+          description?: string | null
+          exception_roles?: string[] | null
+          field_names: string[]
+          id?: string
+          is_active?: boolean | null
+          mask_character?: string | null
+          pattern_type?: string | null
+          preserve_length?: boolean | null
+          redaction_type?: string | null
+          regex_pattern?: string | null
+          rule_name: string
+          show_last_n?: number | null
+          updated_at?: string
+        }
+        Update: {
+          applies_to_roles?: string[] | null
+          created_at?: string
+          description?: string | null
+          exception_roles?: string[] | null
+          field_names?: string[]
+          id?: string
+          is_active?: boolean | null
+          mask_character?: string | null
+          pattern_type?: string | null
+          preserve_length?: boolean | null
+          redaction_type?: string | null
+          regex_pattern?: string | null
+          rule_name?: string
+          show_last_n?: number | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -8763,6 +9276,14 @@ export type Database = {
         | "contract"
         | "other"
       encryption_key_status: "active" | "rotating" | "retired" | "compromised"
+      event_status:
+        | "draft"
+        | "planning"
+        | "confirmed"
+        | "in_progress"
+        | "completed"
+        | "cancelled"
+        | "postponed"
       household_member_status: "active" | "pending" | "suspended"
       household_role: "owner" | "admin" | "member" | "dependent"
       household_type: "family" | "enterprise"
@@ -8773,6 +9294,15 @@ export type Database = {
         | "rejected"
         | "expired"
         | "manual_review"
+      legal_document_type:
+        | "nda"
+        | "dpa"
+        | "service_agreement"
+        | "partnership_agreement"
+        | "terms_of_service"
+        | "privacy_policy"
+        | "consent_form"
+        | "other"
       ocr_status:
         | "pending"
         | "processing"
@@ -8806,6 +9336,14 @@ export type Database = {
         | "wellness"
         | "shopping"
         | "chauffeur"
+      signature_status:
+        | "draft"
+        | "pending_signature"
+        | "partially_signed"
+        | "completed"
+        | "declined"
+        | "expired"
+        | "voided"
       site_status: "draft" | "published" | "archived"
       social_campaign_status:
         | "draft"
@@ -8983,6 +9521,15 @@ export const Constants = {
         "other",
       ],
       encryption_key_status: ["active", "rotating", "retired", "compromised"],
+      event_status: [
+        "draft",
+        "planning",
+        "confirmed",
+        "in_progress",
+        "completed",
+        "cancelled",
+        "postponed",
+      ],
       household_member_status: ["active", "pending", "suspended"],
       household_role: ["owner", "admin", "member", "dependent"],
       household_type: ["family", "enterprise"],
@@ -8993,6 +9540,16 @@ export const Constants = {
         "rejected",
         "expired",
         "manual_review",
+      ],
+      legal_document_type: [
+        "nda",
+        "dpa",
+        "service_agreement",
+        "partnership_agreement",
+        "terms_of_service",
+        "privacy_policy",
+        "consent_form",
+        "other",
       ],
       ocr_status: [
         "pending",
@@ -9030,6 +9587,15 @@ export const Constants = {
         "wellness",
         "shopping",
         "chauffeur",
+      ],
+      signature_status: [
+        "draft",
+        "pending_signature",
+        "partially_signed",
+        "completed",
+        "declined",
+        "expired",
+        "voided",
       ],
       site_status: ["draft", "published", "archived"],
       social_campaign_status: [
